@@ -1,0 +1,241 @@
+resources:
+- id: 1
+  title: Curso de Algoritmos - Gustavo Guanabara
+  url: https://www.youtube.com/playlist?list=PLHz_AreHm4dmSj0MHol_aoNYCSGFqvfXV
+  resource_type: videoaula
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 2
+  title: Apostila de Lógica de Programação - IFC
+  url: https://professor.luzerna.ifc.edu.br/marcelo-cendron/wp-content/uploads/sites/40/2017/02/Apostila-Conceitos-de-Programa%C3%A7%C3%A3o.pdf
+  resource_type: apostila
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 3
+  title: Introdução à Programação - IFSC
+  url: https://wiki.sj.ifsc.edu.br/images/e/e2/Introducao_a_Programacao.pdf
+  resource_type: apostila
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 4
+  title: Algoritmos e Programação I EBOOK - EduCAPES
+  url: https://educapes.capes.gov.br/bitstream/capes/176223/2/Algoritmos%20e%20Programa%C3%A7%C3%A3o%20I%20EBOOK.pdf
+  resource_type: ebook
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 5
+  title: Lógica de Programação e Algoritmos com JavaScript - Edécio Iepsen
+  url: https://www.kufunda.net/publicdocs/L%C3%B3gica%20de%20Programa%C3%A7%C3%A3o%20e%20Algor%C3%ADtmos%20com%20JavaScript%20(Ed%C3%A9cio%20Fernando%20Iepsen).pdf
+  resource_type: livro
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 6
+  title: 'Introdução à Programação: 500 Algoritmos Resolvidos'
+  url: https://www.kufunda.net/publicdocs/Introdu%C3%A7%C3%A3o%20%C3%A0%20Programa%C3%A7%C3%A3o%20500%20Algoritmos%20Resolvidos%20(Anita%20Lopes,%20Guto%20Garcia).pdf
+  resource_type: livro
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 7
+  title: Python para Iniciantes - Hashtag Treinamentos
+  url: https://www.hashtagtreinamentos.com/exercicios-de-python
+  resource_type: lista de exercícios
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 8
+  title: Lista de Exercícios de Lógica de Programação - FACCAT
+  url: https://fit.faccat.br/~fpereira/apostilas/exerc_resp_alg_mar2007.pdf
+  resource_type: lista de exercícios
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 9
+  title: Beecrowd 1000 - Hello World
+  url: https://judge.beecrowd.com/pt/problems/view/1000
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 10
+  title: Beecrowd 1001 - Extremamente Básico
+  url: https://judge.beecrowd.com/pt/problems/view/1001
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 11
+  title: Beecrowd 1002 - Área do Círculo
+  url: https://judge.beecrowd.com/pt/problems/view/1002
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 12
+  title: Beecrowd 1003 - Soma Simples
+  url: https://judge.beecrowd.com/pt/problems/view/1003
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 13
+  title: Beecrowd 1004 - Produto Simples
+  url: https://judge.beecrowd.com/pt/problems/view/1004
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 14
+  title: Beecrowd 1005 - Média 1
+  url: https://judge.beecrowd.com/pt/problems/view/1005
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 15
+  title: Beecrowd 1006 - Média 2
+  url: https://judge.beecrowd.com/pt/problems/view/1006
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 16
+  title: Beecrowd 1007 - Diferença
+  url: https://judge.beecrowd.com/pt/problems/view/1007
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 17
+  title: Beecrowd 1008 - Salário
+  url: https://judge.beecrowd.com/pt/problems/view/1008
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 18
+  title: Beecrowd 1009 - Salário com Bônus
+  url: https://judge.beecrowd.com/pt/problems/view/1009
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 19
+  title: Beecrowd 1010 - Cálculo Simples
+  url: https://judge.beecrowd.com/pt/problems/view/1010
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 20
+  title: Neps Academy - Soma Fácil
+  url: https://neps.academy/br/exercise/1
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 21
+  title: Neps Academy - Média Inteira
+  url: https://neps.academy/br/exercise/2
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 22
+  title: Neps Academy - Área do Quadrado
+  url: https://neps.academy/br/exercise/3
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 23
+  title: Neps Academy - Bondinho
+  url: https://neps.academy/br/exercise/13
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 24
+  title: Neps Academy - Fliper
+  url: https://neps.academy/br/exercise/87
+  resource_type: problema prático
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 25
+  title: Portugol Studio
+  url: http://univali.br/portugolstudio
+  resource_type: ferramenta
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 26
+  title: Visualg
+  url: https://visualg3.com.br/
+  resource_type: ferramenta
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 27
+  title: Curso de Python para Iniciantes - Google
+  url: https://developers.google.com/edu/python/introduction?hl=pt-br
+  resource_type: tutorial
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 28
+  title: 'Lição Neps Academy: Entrada e Saída'
+  url: https://neps.academy/br/course/introducao-a-programacao/lesson/entrada-e-saida-de-dados
+  resource_type: lição
+  classification: nuclear
+  status_curatorial: aprovado
+- id: 29
+  title: Exercícios de Lógica - Scribd
+  url: https://pt.scribd.com/document/708970054/Exercicios-Variaveis-Operadores-e-Comandos-de-Entrada-e-Saida-1
+  resource_type: lista de exercícios
+  classification: complementar
+  status_curatorial: aprovado
+- id: 30
+  title: Ebook Introdução a Python - IFRN
+  url: https://memoria.ifrn.edu.br/bitstream/handle/1044/2090/EBOOK%20-%20INTRODU%C3%87%C3%83O%20A%20PYTHON%20(EDITORA%20IFRN).pdf
+  resource_type: ebook
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 31
+  title: Tutorial Python Iniciante - Hashtag
+  url: https://www.youtube.com/watch?v=GQpQha2Mfpg
+  resource_type: videoaula
+  classification: complementar
+  status_curatorial: aprovado
+- id: 32
+  title: 'Algoritmos: Formas de Representação - CPT'
+  url: https://www.cpt.com.br/cursos-informatica-desenvolvimentodesoftwares/artigos/logica-de-programacao-formas-de-representacao-da-logica-o-algoritmo
+  resource_type: artigo
+  classification: complementar
+  status_curatorial: aprovado
+- id: 33
+  title: Lista de Exercícios de Python - Wiki Python Brasil
+  url: https://wiki.python.org.br/ListaDeExercicios
+  resource_type: lista de exercícios
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 34
+  title: Khan Academy - Introdução ao JS
+  url: https://pt.khanacademy.org/computing/computer-programming
+  resource_type: plataforma
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 35
+  title: FreeCodeCamp Português - Algoritmos
+  url: https://www.freecodecamp.org/portuguese/learn/javascript-algorithms-and-data-structures/
+  resource_type: plataforma
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 36
+  title: Introdução à Programação com Python - Nilo Ney
+  url: https://python.nilo.pro.br/exercicios_resolvidos3.pdf
+  resource_type: pdf de apoio
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 37
+  title: 50 Exercícios Visualg Resolvidos
+  url: https://pt.scribd.com/document/497641594/50-exercicios-Visualg-portugol-resolvidos
+  resource_type: lista de exercícios
+  classification: complementar
+  status_curatorial: aprovado
+- id: 38
+  title: Manual da Linguagem Visualg - CEFET-MG
+  url: https://www.acad.cefetmg.br/uploads/MATERIAIS_AULAS/340988-A_Linguagem_de_Programa%C3%A7%C3%A3o_do_VisuAlg.pdf
+  resource_type: manual
+  classification: complementar
+  status_curatorial: aprovado
+- id: 39
+  title: LoP (Lógica de Programação) - UFRN
+  url: https://lop.natal.ufrn.br/
+  resource_type: plataforma
+  classification: apoio estruturado
+  status_curatorial: aprovado
+- id: 40
+  title: Code.org (Português)
+  url: https://code.org/
+  resource_type: plataforma
+  classification: complementar
+  status_curatorial: aprovado
