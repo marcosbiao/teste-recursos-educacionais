@@ -1,0 +1,23 @@
+id: 87
+title: Resumo Básico da Linguagem C para Lógica - Dev.to
+source: dev.to
+url: https://dev.to/nfo94/resumo-basico-da-linguagem-c-para-logica-de-programacao-23o4
+resource_type: artigo
+format: web
+language: pt-BR
+programming_language: C
+estimated_duration: 1 hora
+access_mode: livre
+granularity: recurso curto
+target_competency: CC01. Traduzir problemas simples em algoritmos claros por decomposição
+  e abstração
+subskills_supported: decomposição de problemas, abstração, lógica sequencial, estruturação
+  de algoritmos em C
+pedagogical_use: Recurso focado na fase de planejamento e modelagem de algoritmos
+  usando a linguagem C.
+difficulty_level: iniciante
+evidence_type: múltiplos
+alignment_strength: média
+summary: não identificado
+curation_notes: Rodada massiva para Competência CC01 em Linguagem C.
+status_curatorial: aprovado

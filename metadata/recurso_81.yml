@@ -1,0 +1,23 @@
+id: 81
+title: 500 Algoritmos Resolvidos (Anita Lopes & Guto Garcia)
+source: www.kufunda.net
+url: https://www.kufunda.net/publicdocs/Introdu%C3%A7%C3%A3o%20%C3%A0%20Programa%C3%A7%C3%A3o%20500%20Algoritmos%20Resolvidos%20(Anita%20Lopes,%20Guto%20Garcia).pdf
+resource_type: livro
+format: web
+language: pt-BR
+programming_language: C
+estimated_duration: 40 horas
+access_mode: livre
+granularity: recurso estruturado
+target_competency: CC01. Traduzir problemas simples em algoritmos claros por decomposição
+  e abstração
+subskills_supported: decomposição de problemas, abstração, lógica sequencial, estruturação
+  de algoritmos em C
+pedagogical_use: Recurso focado na fase de planejamento e modelagem de algoritmos
+  usando a linguagem C.
+difficulty_level: iniciante
+evidence_type: múltiplos
+alignment_strength: alta
+summary: não identificado
+curation_notes: Rodada massiva para Competência CC01 em Linguagem C.
+status_curatorial: aprovado

@@ -1,0 +1,23 @@
+id: 100
+title: 'Algoritmos em C: Uma Abordagem Prática - YouTube'
+source: www.youtube.com
+url: https://www.youtube.com/playlist?list=PLp8G5vK0fG-L_X8M55V9_FmK29-3p3o_t
+resource_type: videoaula
+format: web
+language: pt-BR
+programming_language: C
+estimated_duration: 12 horas
+access_mode: livre
+granularity: recurso curto
+target_competency: CC01. Traduzir problemas simples em algoritmos claros por decomposição
+  e abstração
+subskills_supported: decomposição de problemas, abstração, lógica sequencial, estruturação
+  de algoritmos em C
+pedagogical_use: Recurso focado na fase de planejamento e modelagem de algoritmos
+  usando a linguagem C.
+difficulty_level: iniciante
+evidence_type: múltiplos
+alignment_strength: alta
+summary: não identificado
+curation_notes: Rodada massiva para Competência CC01 em Linguagem C.
+status_curatorial: aprovado
