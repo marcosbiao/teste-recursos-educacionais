@@ -1,0 +1,21 @@
+id: 15
+title: Beecrowd 1006 - Média 2
+source: judge.beecrowd.com
+url: https://judge.beecrowd.com/pt/problems/view/1006
+resource_type: problema prático
+format: web
+language: pt-BR
+access_mode: livre
+estimated_duration: não identificado
+granularity: recurso curto
+target_competency: Implementar programas introdutórios com fluxo verificável de entrada,
+  processamento e saída
+subskills_supported: identificação de entrada/saída, manipulação de variáveis, expressões
+  aritméticas, controle de fluxo condicional
+pedagogical_use: não identificado
+difficulty_level: iniciante
+evidence_type: resolução de problemas
+alignment_strength: alta
+summary: não identificado
+curation_notes: não identificado
+status_curatorial: aprovado

@@ -1,0 +1,21 @@
+id: 3
+title: Introdução à Programação - IFSC
+source: wiki.sj.ifsc.edu.br
+url: https://wiki.sj.ifsc.edu.br/images/e/e2/Introducao_a_Programacao.pdf
+resource_type: apostila
+format: web
+language: pt-BR
+access_mode: não identificado
+estimated_duration: não identificado
+granularity: recurso estruturado
+target_competency: Implementar programas introdutórios com fluxo verificável de entrada,
+  processamento e saída
+subskills_supported: identificação de entrada/saída, manipulação de variáveis, expressões
+  aritméticas, controle de fluxo condicional
+pedagogical_use: não identificado
+difficulty_level: iniciante
+evidence_type: leitura
+alignment_strength: média
+summary: não identificado
+curation_notes: não identificado
+status_curatorial: aprovado

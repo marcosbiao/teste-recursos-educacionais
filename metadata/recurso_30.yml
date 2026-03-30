@@ -1,0 +1,21 @@
+id: 30
+title: Ebook Introdução a Python - IFRN
+source: memoria.ifrn.edu.br
+url: https://memoria.ifrn.edu.br/bitstream/handle/1044/2090/EBOOK%20-%20INTRODU%C3%87%C3%83O%20A%20PYTHON%20(EDITORA%20IFRN).pdf
+resource_type: ebook
+format: web
+language: pt-BR
+access_mode: não identificado
+estimated_duration: não identificado
+granularity: recurso estruturado
+target_competency: Implementar programas introdutórios com fluxo verificável de entrada,
+  processamento e saída
+subskills_supported: identificação de entrada/saída, manipulação de variáveis, expressões
+  aritméticas, controle de fluxo condicional
+pedagogical_use: não identificado
+difficulty_level: iniciante
+evidence_type: leitura
+alignment_strength: média
+summary: não identificado
+curation_notes: não identificado
+status_curatorial: aprovado
