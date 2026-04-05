@@ -1,0 +1,24 @@
+id: 234
+title: 'Exercícios de Seleção de Estruturas: Registros - Scribd'
+source: pt.scribd.com
+url: https://pt.scribd.com/document/152815343/AvRecuperacao-ESt-Dados
+resource_type: lista de exercícios
+format: web
+language: pt-BR
+programming_language: C
+estimated_duration: 1.5 horas
+access_mode: livre
+granularity: recurso estruturado
+target_competency: CC10. Selecionar estruturas de dados adequadas para a resolução
+  de problemas, justificando a escolha técnica entre variáveis simples, vetores ou
+  strings
+subskills_supported: struct, registros, seleção de estruturas, tipos heterogêneos,
+  organização de dados, justificativa técnica em C
+pedagogical_use: Recurso focado na seleção e uso de estruturas de dados (especialmente
+  structs) na linguagem C.
+difficulty_level: iniciante-intermediário
+evidence_type: múltiplos
+alignment_strength: média
+summary: não identificado
+curation_notes: Rodada final massiva para Competência CC10 em Linguagem C.
+status_curatorial: aprovado

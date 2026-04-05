@@ -1,0 +1,24 @@
+id: 233
+title: Estrutura de Dados em Algoritmo C - Slideshare
+source: pt.slideshare.net
+url: https://pt.slideshare.net/slideshow/estrutura-de-dados-em-algoritmo-c/58439698
+resource_type: slides
+format: web
+language: pt-BR
+programming_language: C
+estimated_duration: 1 hora
+access_mode: livre
+granularity: recurso curto
+target_competency: CC10. Selecionar estruturas de dados adequadas para a resolução
+  de problemas, justificando a escolha técnica entre variáveis simples, vetores ou
+  strings
+subskills_supported: struct, registros, seleção de estruturas, tipos heterogêneos,
+  organização de dados, justificativa técnica em C
+pedagogical_use: Recurso focado na seleção e uso de estruturas de dados (especialmente
+  structs) na linguagem C.
+difficulty_level: iniciante-intermediário
+evidence_type: múltiplos
+alignment_strength: média
+summary: não identificado
+curation_notes: Rodada final massiva para Competência CC10 em Linguagem C.
+status_curatorial: aprovado
