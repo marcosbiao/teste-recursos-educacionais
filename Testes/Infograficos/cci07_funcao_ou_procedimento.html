@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Função ou procedimento? Entenda a diferença</title>
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      border-radius: 28px;
+      padding: 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.08);
+      position: absolute;
+      right: -60px;
+      top: -60px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.1;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.1rem;
+      max-width: 760px;
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 32px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 130px;
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 6px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .concept-box {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .concept-main strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .flow-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+    }
+
+    .flow-number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .keyword {
+      color: var(--cor-primaria-escura);
+      font-weight: 800;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border-radius: 12px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .comparison {
+      margin-top: 16px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .example-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .accent-card {
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: #FFFBEB;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--cor-borda);
+      padding: 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+    }
+
+    pre {
+      background: var(--cor-texto-principal);
+      color: #F8FAFC;
+      padding: 18px;
+      border-radius: 18px;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      list-style-position: outside;
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 12px;
+    }
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .closing p {
+      color: #E0E7FF;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 980px) {
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .concept-box,
+      .example {
+        grid-template-columns: 1fr;
+      }
+
+      .flow,
+      .error-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-table {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="tag">Infográfico educacional por competências</div>
+      <h1>Função ou procedimento? Entenda a diferença</h1>
+      <p class="subtitle">
+        Compare função com retorno e procedimento void para modularizar programas simples em C com mais clareza.
+      </p>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI07</div>
+          <p>Modularizar soluções por funções ou procedimentos.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI03 e CCI08</div>
+          <p>Manipular dados simples e selecionar a estratégia adequada.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Função e procedimento</div>
+          <p>Diferença entre retorno de valor e ação void.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">10 a 15 minutos</div>
+          <p>Uso rápido antes de implementar subprogramas.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Comparativo e visual</div>
+          <p>Organização por decisão, exemplo e contraste entre usos.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">Variáveis e tipos</span>
+        <span class="pill">Expressões simples</span>
+        <span class="pill">Fluxo de execução</span>
+        <span class="pill">Entrada e saída em C</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-main">
+          <h3>Modularizar é separar responsabilidades</h3>
+          <p>
+            Uma <strong>função com retorno</strong> calcula ou produz um valor que será usado depois. Um <strong>procedimento void</strong> executa uma ação e não devolve valor para quem chamou.
+          </p>
+        </div>
+
+        <div class="flow">
+          <article class="flow-card">
+            <span class="flow-number">1</span>
+            <h3>Há valor a devolver?</h3>
+            <p>Use função com retorno quando o resultado precisa ser guardado ou usado em outra expressão.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">2</span>
+            <h3>É apenas uma ação?</h3>
+            <p>Use procedimento void quando a tarefa é mostrar, organizar ou executar algo sem devolver valor.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">3</span>
+            <h3>A chamada deve fazer sentido</h3>
+            <p>Observe se a chamada será usada como valor ou apenas como uma instrução no programa.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Como escolher entre função e procedimento</h2>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-label">Pergunta 1</span>
+          <h3>O módulo calcula algo?</h3>
+          <p>Se o módulo produz um resultado, prefira uma <span class="keyword">função com retorno</span>.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Pergunta 2</span>
+          <h3>O resultado será usado?</h3>
+          <p>Se o valor entra em outra conta, comparação ou atribuição, ele precisa ser retornado.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Pergunta 3</span>
+          <h3>O módulo só executa?</h3>
+          <p>Se a tarefa é apenas exibir uma mensagem ou imprimir um resultado, <span class="keyword">void</span> pode ser suficiente.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Pergunta 4</span>
+          <h3>A responsabilidade está clara?</h3>
+          <p>Evite colocar cálculo, leitura e exibição no mesmo módulo quando isso prejudicar a clareza.</p>
+        </article>
+      </div>
+
+      <div class="comparison">
+        <table class="mini-table">
+          <thead>
+            <tr>
+              <th>Tipo de módulo</th>
+              <th>Quando usar</th>
+              <th>Como aparece na chamada</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Função com retorno</td>
+              <td>Quando há um valor a devolver</td>
+              <td><code>resultado = dobro(x);</code></td>
+            </tr>
+            <tr>
+              <td>Procedimento void</td>
+              <td>Quando a tarefa apenas executa uma ação</td>
+              <td><code>mostrarResultado(resultado);</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplo mínimo</h2>
+      </div>
+
+      <div class="example">
+        <div class="example-card accent-card">
+          <h3>Problema</h3>
+          <p>Calcular o dobro de um número e mostrar o resultado.</p>
+
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Parte</th>
+                <th>Aplicação no exemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Função com retorno</td>
+                <td><code>dobro</code> calcula e devolve um valor inteiro.</td>
+              </tr>
+              <tr>
+                <td>Procedimento void</td>
+                <td><code>mostrarResultado</code> apenas exibe o valor recebido.</td>
+              </tr>
+              <tr>
+                <td>Programa principal</td>
+                <td><code>main</code> chama os módulos na ordem necessária.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="example-card">
+          <h3>Código curto em C</h3>
+          <pre><code>#include &lt;stdio.h&gt;
+
+int dobro(int valor) {
+    return valor * 2;
+}
+
+void mostrarResultado(int numero) {
+    printf("Resultado: %d\n", numero);
+}
+
+int main() {
+    int x = 4;
+    int resultado;
+
+    resultado = dobro(x);
+    mostrarResultado(resultado);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Esperar retorno de void</h3>
+          <p><strong>Por que acontece:</strong> o aluno usa um procedimento como se ele devolvesse um valor.</p>
+          <p><strong>Como evitar:</strong> use <code>void</code> apenas quando a tarefa não precisa retornar resultado.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Esquecer o return</h3>
+          <p><strong>Por que acontece:</strong> a função foi declarada com tipo de retorno, mas não devolve o valor calculado.</p>
+          <p><strong>Como evitar:</strong> toda função com retorno deve ter um <code>return</code> coerente com o tipo declarado.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Fazer tudo no main</h3>
+          <p><strong>Por que acontece:</strong> o aluno não separa responsabilidades e concentra todas as ações em um único bloco.</p>
+          <p><strong>Como evitar:</strong> crie módulos pequenos para cálculos, exibições ou tarefas repetidas.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>Quando devo usar uma função com retorno?</summary>
+          <p>Quando o módulo precisa produzir um valor que será guardado, comparado, impresso ou usado em outra expressão.</p>
+        </details>
+
+        <details>
+          <summary>O que significa usar void em um procedimento?</summary>
+          <p>Significa que o procedimento executa uma ação, mas não devolve um valor para quem fez a chamada.</p>
+        </details>
+
+        <details>
+          <summary>No exemplo, por que dobro não é void?</summary>
+          <p>Porque ele calcula um valor e esse valor precisa voltar para o programa principal para ser armazenado em resultado.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>
+        Depois de estudar este infográfico, o aluno deve conseguir escolher entre função com retorno e procedimento void para modularizar programas simples em C.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

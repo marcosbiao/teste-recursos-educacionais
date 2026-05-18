@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O fluxo E P S: entrada, processamento e saída</title>
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      border-radius: 28px;
+      padding: 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.08);
+      position: absolute;
+      right: -60px;
+      top: -60px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.1;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.1rem;
+      max-width: 760px;
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 32px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 130px;
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .concept-box {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .concept-main strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .flow-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+    }
+
+    .flow-number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .keyword {
+      color: var(--cor-primaria-escura);
+      font-weight: 800;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border-radius: 12px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .example-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .accent-card {
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: #FFFBEB;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--cor-borda);
+      padding: 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+    }
+
+    pre {
+      background: var(--cor-texto-principal);
+      color: #F8FAFC;
+      padding: 18px;
+      border-radius: 18px;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      list-style-position: outside;
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 12px;
+    }
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .closing p {
+      color: #E0E7FF;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 980px) {
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .concept-box,
+      .example {
+        grid-template-columns: 1fr;
+      }
+
+      .flow,
+      .error-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-table {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="tag">Infográfico educacional por competências</div>
+      <h1>O fluxo E P S: entrada, processamento e saída</h1>
+      <p class="subtitle">
+        Entenda a sequência lógica básica de um programa introdutório: receber dados, transformar esses dados e apresentar um resultado claro ao usuário.
+      </p>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI02</div>
+          <p>Implementar programas introdutórios com fluxo verificável de entrada, processamento e saída.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI01 e CCI03</div>
+          <p>Organizar a solução e manipular variáveis simples com coerência.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Entrada, processamento e saída</div>
+          <p>Reconhecer o caminho dos dados dentro do programa.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">8 a 12 minutos</div>
+          <p>Uso rápido antes dos primeiros exercícios completos em C.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e sequencial</div>
+          <p>Organização por fluxo, etapas e relação entre dados.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">Noção de algoritmo</span>
+        <span class="pill">Sequência de instruções</span>
+        <span class="pill">Variáveis simples</span>
+        <span class="pill">Comandos printf e scanf</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-main">
+          <h3>Um programa transforma dados em resposta</h3>
+          <p>
+            O fluxo <strong>E P S</strong> ajuda a enxergar a lógica mínima de um programa: primeiro entram os dados, depois acontece o processamento e, por fim, o programa mostra uma saída compreensível.
+          </p>
+        </div>
+
+        <div class="flow">
+          <article class="flow-card">
+            <span class="flow-number">E</span>
+            <h3>Entrada</h3>
+            <p>Dados recebidos pelo programa, normalmente com <span class="keyword">scanf</span>.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">P</span>
+            <h3>Processamento</h3>
+            <p>Transformação dos dados por cálculo, comparação ou outra operação.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">S</span>
+            <h3>Saída</h3>
+            <p>Resultado apresentado ao usuário, normalmente com <span class="keyword">printf</span>.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Como reconhecer o fluxo E P S</h2>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-label">Etapa 1</span>
+          <h3>Leia o enunciado</h3>
+          <p>Identifique o que o programa precisa resolver. Procure verbos como <span class="keyword">ler</span>, <span class="keyword">calcular</span> e <span class="keyword">mostrar</span>.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 2</span>
+          <h3>Marque as entradas</h3>
+          <p>Liste os valores que precisam ser informados antes do cálculo ou da decisão.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 3</span>
+          <h3>Defina o processamento</h3>
+          <p>Escreva a operação que transforma os dados de entrada em resultado.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 4</span>
+          <h3>Determine a saída</h3>
+          <p>Descreva exatamente o que será mostrado ao usuário ao final do programa.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplo mínimo</h2>
+      </div>
+
+      <div class="example">
+        <div class="example-card accent-card">
+          <h3>Problema</h3>
+          <p>Ler dois números inteiros, calcular a soma e mostrar o resultado.</p>
+
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Parte</th>
+                <th>Definição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Entrada</td>
+                <td>Dois números inteiros</td>
+              </tr>
+              <tr>
+                <td>Processamento</td>
+                <td>Somar os dois números</td>
+              </tr>
+              <tr>
+                <td>Saída</td>
+                <td>Valor da soma calculada</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="example-card">
+          <h3>Código curto em C</h3>
+          <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int a, b, soma;
+
+    scanf("%d", &amp;a);
+    scanf("%d", &amp;b);
+
+    soma = a + b;
+
+    printf("Soma: %d", soma);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Pular a entrada</h3>
+          <p><strong>Por que acontece:</strong> o aluno começa pelo cálculo sem receber os dados necessários.</p>
+          <p><strong>Como evitar:</strong> confirme quais valores precisam ser lidos antes do processamento.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Confundir processamento com saída</h3>
+          <p><strong>Por que acontece:</strong> o aluno mostra um valor antes de calcular ou atualizar a variável correta.</p>
+          <p><strong>Como evitar:</strong> faça o cálculo primeiro e use <code>printf</code> depois.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Mostrar resultado sem contexto</h3>
+          <p><strong>Por que acontece:</strong> o programa imprime apenas um número, sem indicar o que ele representa.</p>
+          <p><strong>Como evitar:</strong> escreva uma mensagem clara junto com o valor exibido.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>Em um programa que calcula média, quais dados normalmente fazem parte da entrada?</summary>
+          <p>As notas que serão usadas para calcular a média.</p>
+        </details>
+
+        <details>
+          <summary>No fluxo E P S, em qual etapa ocorre o cálculo <code>media = (n1 + n2) / 2</code>?</summary>
+          <p>Esse cálculo ocorre no processamento, pois transforma as notas de entrada em um resultado.</p>
+        </details>
+
+        <details>
+          <summary>Qual comando em C costuma ser usado para apresentar a saída ao usuário?</summary>
+          <p>O comando mais comum é <code>printf</code>, usado para mostrar mensagens e valores na tela.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>
+        Depois de estudar este infográfico, o aluno deve conseguir identificar entrada, processamento e saída em problemas simples antes de implementar o programa em C.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

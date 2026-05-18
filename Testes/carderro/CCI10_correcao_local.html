@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Correção local sem testar o conjunto</title>
+  <style>
+    :root {
+      --cor-primaria: #DC2626;
+      --cor-primaria-escura: #7F1D1D;
+      --cor-destaque-pontual: #F97316;
+      --cor-fundo: #FEF2F2;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #FEE2E2;
+      --cor-superficie-neutra: #F8FAFC;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #FECACA;
+      --cor-borda-neutra: #E5E7EB;
+      --cor-codigo: #111827;
+      --cor-codigo-texto: #F8FAFC;
+      --cor-correcao-suave: #FFF7ED;
+      --cor-correcao-texto: #7C2D12;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(220, 38, 38, 0.08), transparent 28rem),
+        var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .diagnostic_shell {
+      width: min(1040px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .diagnostic_header {
+      background: linear-gradient(135deg, var(--cor-primaria-escura), #991B1B);
+      color: white;
+      border-radius: 22px;
+      padding: 22px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 18px 36px rgba(127, 29, 29, 0.18);
+    }
+
+    .header_tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .competency_tag,
+    .error_type_tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .competency_tag {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: white;
+    }
+
+    .error_type_tag {
+      background: var(--cor-correcao-suave);
+      color: var(--cor-correcao-texto);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+    }
+
+    .error_title {
+      font-size: clamp(1.65rem, 4vw, 2.45rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .diagnostic_subtitle {
+      color: #FEE2E2;
+      max-width: 780px;
+      font-size: 1rem;
+    }
+
+    .alert_panel,
+    .statement_panel,
+    .diagnostic_card,
+    .code_panel,
+    .trace_panel,
+    .compare_panel,
+    .concept_panel,
+    .verification_panel,
+    .quick_test_panel,
+    .synthesis_panel {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .alert_panel {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr 1.2fr;
+      gap: 0;
+      overflow: hidden;
+      border-color: rgba(220, 38, 38, 0.25);
+    }
+
+    .severity_box,
+    .symptom_box,
+    .impact_box {
+      padding: 20px;
+      min-height: 132px;
+      display: grid;
+      align-content: center;
+      border-right: 1px solid var(--cor-borda);
+    }
+
+    .impact_box {
+      border-right: 0;
+    }
+
+    .severity_box {
+      background: var(--cor-superficie-suave);
+      border-left: 6px solid var(--cor-primaria);
+    }
+
+    .severity_value {
+      color: var(--cor-primaria-escura);
+      font-size: 1.65rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-top: 3px;
+    }
+
+    .panel_label,
+    .section_kicker,
+    .code_label {
+      color: var(--cor-primaria);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.75rem;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .panel_text {
+      color: var(--cor-texto-principal);
+      font-weight: 750;
+    }
+
+    .muted {
+      color: var(--cor-texto-secundario);
+    }
+
+    .statement_panel {
+      padding: 22px;
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-neutra));
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.25rem;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.02rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .statement_text {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 16px;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      margin-top: 10px;
+    }
+
+    .diagnostic_grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .diagnostic_card {
+      padding: 18px;
+      border-color: var(--cor-borda-neutra);
+      border-top: 4px solid var(--cor-primaria);
+    }
+
+    .cause_card {
+      border-top-color: var(--cor-primaria);
+    }
+
+    .evidence_card {
+      border-top-color: var(--cor-destaque-pontual);
+    }
+
+    .when_card {
+      border-top-color: var(--cor-primaria-escura);
+    }
+
+    .diagnostic_list {
+      display: grid;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .diagnostic_list li {
+      color: var(--cor-texto-secundario);
+      margin-left: 18px;
+    }
+
+    .diagnostic_list strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .code_comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .code_panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-color: var(--cor-borda-neutra);
+    }
+
+    .error_code {
+      border-top: 4px solid var(--cor-primaria);
+    }
+
+    .correct_code {
+      border-top: 4px solid var(--cor-destaque-pontual);
+      background: linear-gradient(180deg, var(--cor-superficie), var(--cor-correcao-suave));
+    }
+
+    pre {
+      background: var(--cor-codigo);
+      color: var(--cor-codigo-texto);
+      padding: 16px;
+      border-radius: 16px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .code_note {
+      color: var(--cor-texto-secundario);
+      font-size: 0.95rem;
+    }
+
+    .trace_panel,
+    .compare_panel,
+    .concept_panel,
+    .verification_panel,
+    .quick_test_panel,
+    .synthesis_panel {
+      padding: 22px;
+    }
+
+    .trace_table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      border-radius: 14px;
+      overflow: hidden;
+      font-size: 0.93rem;
+    }
+
+    .trace_table th,
+    .trace_table td {
+      border: 1px solid var(--cor-borda-neutra);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .trace_table th {
+      background: var(--cor-superficie-suave);
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+    }
+
+    .trace_table td {
+      background: var(--cor-superficie);
+      color: var(--cor-texto-secundario);
+    }
+
+    .diagnostic_question {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--cor-correcao-suave);
+      color: var(--cor-correcao-texto);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      border-radius: 14px;
+      font-weight: 800;
+    }
+
+    .before_after_grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .before_box,
+    .after_box {
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--cor-borda-neutra);
+      background: var(--cor-superficie-neutra);
+    }
+
+    .before_box {
+      border-left: 5px solid var(--cor-primaria);
+    }
+
+    .after_box {
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: var(--cor-correcao-suave);
+    }
+
+    .logic_label {
+      color: var(--cor-texto-principal);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .concept_panel {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      background: var(--cor-superficie);
+    }
+
+    .explanation_block,
+    .identify_block,
+    .correction_block {
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 16px;
+      padding: 16px;
+      background: var(--cor-superficie-neutra);
+    }
+
+    .correction_block {
+      background: var(--cor-correcao-suave);
+      border-color: rgba(249, 115, 22, 0.25);
+    }
+
+    .correction_steps {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      counter-reset: steps;
+    }
+
+    .correction_steps li {
+      list-style: none;
+      color: var(--cor-texto-secundario);
+      position: relative;
+      padding-left: 34px;
+    }
+
+    .correction_steps li::before {
+      counter-increment: steps;
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: var(--cor-destaque-pontual);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .question_list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 900;
+    }
+
+    details p {
+      margin-top: 10px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--cor-texto-secundario);
+    }
+
+    .quick_question {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .mini_statement,
+    .quick_prompt {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+
+    .options_group {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option_item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px 14px;
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 14px;
+      background: var(--cor-superficie-neutra);
+      cursor: pointer;
+      color: var(--cor-texto-secundario);
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    }
+
+    .option_item:hover {
+      border-color: var(--cor-borda);
+      background: var(--cor-superficie);
+      transform: translateY(-1px);
+    }
+
+    .option_item input {
+      margin-top: 4px;
+      accent-color: var(--cor-primaria);
+      flex: 0 0 auto;
+    }
+
+    .feedback_button {
+      width: fit-content;
+      border: 0;
+      border-radius: 999px;
+      background: var(--cor-primaria);
+      color: white;
+      padding: 10px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.18s ease;
+    }
+
+    .feedback_button:hover {
+      background: var(--cor-primaria-escura);
+      transform: translateY(-1px);
+    }
+
+    .test_feedback {
+      display: none;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: 750;
+    }
+
+    .test_feedback.show {
+      display: block;
+    }
+
+    .test_feedback.correct {
+      background: var(--cor-correcao-suave);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      color: var(--cor-correcao-texto);
+    }
+
+    .test_feedback.incorrect {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-primaria-escura);
+    }
+
+    .test_feedback.neutral {
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      color: var(--cor-texto-principal);
+    }
+
+    .synthesis_panel {
+      background: linear-gradient(135deg, var(--cor-primaria-escura), #991B1B);
+      color: white;
+      border: 0;
+      box-shadow: 0 18px 36px rgba(127, 29, 29, 0.16);
+    }
+
+    .synthesis_panel h2,
+    .synthesis_panel h3 {
+      color: white;
+    }
+
+    .synthesis_panel p {
+      color: #FEE2E2;
+    }
+
+    .synthesis_grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .synthesis_item {
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      padding: 13px;
+    }
+
+    .synthesis_item strong {
+      display: block;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    .final_question {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      color: white;
+      font-weight: 900;
+    }
+
+    .sr_only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 920px) {
+      .alert_panel,
+      .diagnostic_grid,
+      .code_comparison,
+      .before_after_grid,
+      .concept_panel,
+      .synthesis_grid {
+        grid-template-columns: 1fr;
+      }
+
+      .severity_box,
+      .symptom_box,
+      .impact_box {
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--cor-borda);
+      }
+
+      .impact_box {
+        border-bottom: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px 10px;
+      }
+
+      .diagnostic_header,
+      .alert_panel,
+      .statement_panel,
+      .diagnostic_card,
+      .code_panel,
+      .trace_panel,
+      .compare_panel,
+      .concept_panel,
+      .verification_panel,
+      .quick_test_panel,
+      .synthesis_panel {
+        border-radius: 18px;
+      }
+
+      .trace_table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      pre {
+        font-size: 0.82rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="diagnostic_shell">
+    <header class="diagnostic_header">
+      <div class="header_tags">
+        <span class="competency_tag">CCI10 Integrar múltiplas estruturas em soluções introdutórias mais complexas</span>
+        <span class="error_type_tag">Erro de validação</span>
+      </div>
+      <h1 class="error_title">Correção local sem testar o conjunto</h1>
+      <p class="diagnostic_subtitle">Painel diagnóstico para reconhecer, compreender e corrigir alterações que resolvem uma parte do programa, mas comprometem o fluxo completo.</p>
+    </header>
+
+    <section class="alert_panel" aria-label="Painel de alerta do erro">
+      <div class="severity_box">
+        <p class="panel_label">Gravidade</p>
+        <p class="severity_value">Médio</p>
+        <p class="muted">O erro pode passar despercebido em testes parciais.</p>
+      </div>
+      <div class="symptom_box">
+        <p class="panel_label">Sintoma observado</p>
+        <p class="panel_text">O aluno corrige uma parte, mas cria erro em outra.</p>
+      </div>
+      <div class="impact_box">
+        <p class="panel_label">Impacto no programa</p>
+        <p class="panel_text">A solução parece funcionar no trecho alterado, mas o resultado final deixa de representar corretamente todo o processamento.</p>
+      </div>
+    </section>
+
+    <section class="statement_panel">
+      <p class="section_kicker">Referência diagnóstica</p>
+      <h2>Enunciado analisado</h2>
+      <p>Use este enunciado como base para comparar o que foi pedido com o que o código realmente faz depois da correção local.</p>
+      <div class="statement_text">Leia as vendas de 5 dias, some todas as vendas informadas e mostre o total final.</div>
+    </section>
+
+    <section class="diagnostic_grid" aria-label="Grade diagnóstica curta">
+      <article class="diagnostic_card cause_card">
+        <p class="section_kicker">Origem do problema</p>
+        <h2>Causa provável</h2>
+        <p>Esse erro costuma ocorrer quando o aluno ajusta apenas o ponto em que percebeu o problema, sem verificar se a mudança continua coerente com as outras estruturas conectadas ao programa.</p>
+      </article>
+
+      <article class="diagnostic_card evidence_card">
+        <p class="section_kicker">Sinais observáveis</p>
+        <h2>Evidência no código</h2>
+        <ul class="diagnostic_list">
+          <li><strong>Padrão detectável:</strong> a condição do laço foi alterada, mas o cálculo final continua dependendo de todas as repetições.</li>
+          <li><strong>Comportamento observado:</strong> o programa executa sem erro de sintaxe, mas deixa uma venda fora do total.</li>
+          <li><strong>Teste revelador:</strong> informar 5 valores simples e conferir se todos participaram da soma.</li>
+        </ul>
+      </article>
+
+      <article class="diagnostic_card when_card">
+        <p class="section_kicker">Contexto típico</p>
+        <h2>Quando aparece</h2>
+        <p>Quando uma solução envolve várias estruturas conectadas, como leitura em laço, atualização de acumulador e saída final. Uma mudança local no laço pode quebrar o cálculo global.</p>
+      </article>
+    </section>
+
+    <section class="code_comparison" aria-label="Exemplo com erro e correção mínima">
+      <article class="code_panel error_code">
+        <div>
+          <p class="code_label">Código com erro</p>
+          <h2>Exemplo com erro</h2>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    float venda, total = 0;
+
+    for (int dia = 1; dia &lt; 5; dia++) { // erro: lê apenas 4 dias
+        printf("Venda do dia %d: ", dia);
+        scanf("%f", &amp;venda);
+        total = total + venda;
+    }
+
+    printf("Total: %.2f\n", total);
+    return 0;
+}</code></pre>
+        <p class="code_note">O enunciado pede 5 vendas, mas a condição <strong>dia &lt; 5</strong> faz o laço executar apenas para os dias 1, 2, 3 e 4. A correção local na condição do laço quebrou o cálculo final, pois o total deixa de incluir o quinto dia.</p>
+      </article>
+
+      <article class="code_panel correct_code">
+        <div>
+          <p class="code_label">Código corrigido</p>
+          <h2>Correção mínima</h2>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    float venda, total = 0;
+
+    for (int dia = 1; dia &lt;= 5; dia++) { // correção: lê os 5 dias
+        printf("Venda do dia %d: ", dia);
+        scanf("%f", &amp;venda);
+        total = total + venda;
+    }
+
+    printf("Total: %.2f\n", total);
+    return 0;
+}</code></pre>
+        <p class="code_note">A correção muda apenas a condição do laço para incluir o dia 5. Agora a leitura, o acumulador e a saída final permanecem coerentes com o enunciado.</p>
+      </article>
+    </section>
+
+    <section class="trace_panel">
+      <p class="section_kicker">Rastreamento diagnóstico</p>
+      <h2>Entrada, processamento e saída</h2>
+      <p>A tabela ajuda a localizar onde a alteração local comprometeu o fluxo completo da solução.</p>
+      <table class="trace_table">
+        <thead>
+          <tr>
+            <th>Parte do problema</th>
+            <th>O que o enunciado pede</th>
+            <th>O que o código com erro fez</th>
+            <th>Diagnóstico</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Entrada</td>
+            <td>Ler as vendas de 5 dias.</td>
+            <td>Leu apenas as vendas dos dias 1 a 4.</td>
+            <td>Uma entrada necessária ficou fora do laço.</td>
+          </tr>
+          <tr>
+            <td>Processamento</td>
+            <td>Somar todas as vendas informadas.</td>
+            <td>Somou somente 4 valores.</td>
+            <td>O acumulador ficou correto localmente, mas incompleto no conjunto.</td>
+          </tr>
+          <tr>
+            <td>Saída</td>
+            <td>Mostrar o total dos 5 dias.</td>
+            <td>Mostrou um total parcial.</td>
+            <td>A saída parece válida, mas não responde ao enunciado inteiro.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="diagnostic_question">Minha solução responde exatamente ao enunciado ou apenas a uma parte dele?</div>
+    </section>
+
+    <section class="compare_panel">
+      <p class="section_kicker">Contraste essencial</p>
+      <h2>Antes e depois</h2>
+      <p>Compare a lógica incorreta com a lógica corrigida. A diferença principal está em testar o fluxo completo, não apenas o trecho modificado.</p>
+      <div class="before_after_grid">
+        <article class="before_box">
+          <p class="logic_label">Lógica incorreta</p>
+          <pre><code>para dia de 1 enquanto dia &lt; 5:
+    ler venda
+    somar venda no total
+
+mostrar total</code></pre>
+          <p>A leitura foi reduzida a 4 repetições, mas a saída continua aparentando ser o total final.</p>
+        </article>
+        <article class="after_box">
+          <p class="logic_label">Lógica correta</p>
+          <pre><code>para dia de 1 enquanto dia &lt;= 5:
+    ler venda
+    somar venda no total
+
+mostrar total</code></pre>
+          <p>A condição percorre todos os 5 dias, preservando a relação entre entrada, processamento e saída.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="concept_panel" aria-label="Explicação e identificação">
+      <article class="explanation_block">
+        <p class="section_kicker">Conceito</p>
+        <h2>Por que isso acontece</h2>
+        <p>Em soluções integradas, mudanças locais podem afetar o comportamento global. Um ajuste no laço, por exemplo, altera também quantos dados entram no cálculo final.</p>
+      </article>
+
+      <article class="identify_block">
+        <p class="section_kicker">Estratégia prática</p>
+        <h2>Como identificar</h2>
+        <p>Teste casos completos, não apenas trechos isolados. Para este caso, use entradas simples como 10, 20, 30, 40 e 50. O total esperado é 150. Se o programa mostrar 100, alguma etapa ficou fora do fluxo.</p>
+      </article>
+
+      <article class="correction_block">
+        <p class="section_kicker">Princípio de correção</p>
+        <h2>Forma correta</h2>
+        <p>Executar testes que passem por todas as etapas principais do programa.</p>
+        <ol class="correction_steps">
+          <li>Revise o enunciado completo.</li>
+          <li>Identifique entrada, processamento e saída.</li>
+          <li>Aplique a alteração mínima necessária.</li>
+          <li>Teste o fluxo inteiro com dados conhecidos.</li>
+        </ol>
+      </article>
+    </section>
+
+    <section class="verification_panel">
+      <p class="section_kicker">Autoavaliação curta</p>
+      <h2>Perguntas de verificação</h2>
+      <div class="question_list">
+        <details>
+          <summary>Por que testar apenas o trecho alterado pode ser insuficiente?</summary>
+          <p>Porque o trecho alterado pode estar conectado a outras partes do programa. A mudança pode parecer correta localmente, mas produzir uma saída final incoerente.</p>
+        </details>
+        <details>
+          <summary>Qual sinal indica uma correção local sem teste do conjunto?</summary>
+          <p>Um sinal comum é o programa continuar executando, mas deixar de processar todos os dados exigidos pelo enunciado.</p>
+        </details>
+        <details>
+          <summary>O que deve ser feito depois de alterar a condição de um laço?</summary>
+          <p>Executar um teste completo, verificando se todas as entradas esperadas foram lidas, processadas e refletidas na saída final.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="quick_test_panel">
+      <p class="section_kicker">Aplicação diagnóstica</p>
+      <h2>Teste rápido</h2>
+      <div class="quick_question">
+        <div class="mini_statement">Mini enunciado: leia 5 números inteiros, conte quantos são pares e mostre a quantidade final.</div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int numero, pares = 0;
+
+    for (int i = 1; i &lt; 5; i++) { // alteração local deixou um número fora
+        scanf("%d", &amp;numero);
+        if (numero % 2 == 0) {
+            pares++;
+        }
+    }
+
+    printf("Pares: %d\n", pares);
+    return 0;
+}</code></pre>
+        <div class="quick_prompt">Qual alternativa melhor diagnostica o erro?</div>
+        <div class="options_group" role="radiogroup" aria-labelledby="quick_test_label">
+          <span id="quick_test_label" class="sr_only">Alternativas do teste rápido</span>
+          <label class="option_item">
+            <input type="radio" name="quickTest" value="a">
+            <span>O erro principal é de validação, pois a condição do laço foi corrigida localmente, mas o programa deixou de testar o fluxo completo exigido para 5 números.</span>
+          </label>
+          <label class="option_item">
+            <input type="radio" name="quickTest" value="b">
+            <span>O erro principal é de declaração, pois a variável pares deveria ser do tipo float para contar números pares.</span>
+          </label>
+          <label class="option_item">
+            <input type="radio" name="quickTest" value="c">
+            <span>O erro principal é de saída, pois o printf deveria aparecer dentro do if para mostrar cada número par imediatamente.</span>
+          </label>
+        </div>
+        <button class="feedback_button" type="button" id="feedbackButton">Ver feedback</button>
+        <div class="test_feedback" id="testFeedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="synthesis_panel">
+      <h2>Síntese para revisar</h2>
+      <p>Use este resumo antes de considerar a correção concluída.</p>
+      <div class="synthesis_grid">
+        <article class="synthesis_item">
+          <strong>Erro</strong>
+          <p>Corrigir uma parte do código sem validar o conjunto.</p>
+        </article>
+        <article class="synthesis_item">
+          <strong>Como aparece</strong>
+          <p>Uma mudança local altera leitura, cálculo ou saída final.</p>
+        </article>
+        <article class="synthesis_item">
+          <strong>Como identificar</strong>
+          <p>Comparar o enunciado com testes completos e resultados esperados.</p>
+        </article>
+        <article class="synthesis_item">
+          <strong>Como corrigir</strong>
+          <p>Testar todas as etapas principais depois da alteração.</p>
+        </article>
+      </div>
+      <div class="final_question">Minha solução responde exatamente ao enunciado ou apenas a uma parte dele?</div>
+    </section>
+  </main>
+
+  <script>
+    const feedbackButton = document.getElementById("feedbackButton");
+    const testFeedback = document.getElementById("testFeedback");
+    const feedbackAluno = "É necessário testar o fluxo completo para verificar se a solução continua coerente.";
+
+    feedbackButton.addEventListener("click", function () {
+      const selected = document.querySelector('input[name="quickTest"]:checked');
+
+      testFeedback.className = "test_feedback show";
+
+      if (!selected) {
+        testFeedback.classList.add("neutral");
+        testFeedback.textContent = "Selecione uma alternativa antes de verificar o feedback.";
+        return;
+      }
+
+      if (selected.value === "a") {
+        testFeedback.classList.add("correct");
+        testFeedback.textContent = "Correto. " + feedbackAluno + " A alternativa identifica que o laço processa apenas 4 números, embora o enunciado exija 5. O diagnóstico central é validar o comportamento global depois da alteração local.";
+      } else {
+        testFeedback.classList.add("incorrect");
+        testFeedback.textContent = "Incorreto. " + feedbackAluno + " A alternativa correta é a primeira, pois o problema não está no tipo da variável nem na posição do printf. O erro está em aceitar uma correção local sem confirmar se as 5 entradas ainda passam pelo fluxo completo.";
+      }
+    });
+  </script>
+</body>
+</html>

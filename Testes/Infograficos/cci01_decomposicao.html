@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quebrando um problema em partes menores</title>
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      border-radius: 28px;
+      padding: 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.08);
+      position: absolute;
+      right: -60px;
+      top: -60px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.1;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.1rem;
+      max-width: 760px;
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 32px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 130px;
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .concept-box {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .concept-main strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .flow-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+    }
+
+    .flow-number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .keyword {
+      color: var(--cor-primaria-escura);
+      font-weight: 800;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border-radius: 12px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .example-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .accent-card {
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: #FFFBEB;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--cor-borda);
+      padding: 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+    }
+
+    pre {
+      background: var(--cor-texto-principal);
+      color: #F8FAFC;
+      padding: 18px;
+      border-radius: 18px;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      list-style-position: outside;
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 12px;
+    }
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .closing p {
+      color: #E0E7FF;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 980px) {
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .concept-box,
+      .example {
+        grid-template-columns: 1fr;
+      }
+
+      .flow,
+      .error-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-table {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="tag">Infográfico educacional por competências</div>
+      <h1>Quebrando um problema em partes menores</h1>
+      <p class="subtitle">
+        Aprenda a transformar um problema grande em etapas menores, mais claras e programáveis, antes de escrever o código em C.
+      </p>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI01</div>
+          <p>Representar problemas por soluções algorítmicas claras.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI02 e CCI08</div>
+          <p>Implementar fluxo simples e escolher estratégias adequadas.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Decomposição do problema</div>
+          <p>Separar uma tarefa em partes menores.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">10 a 15 minutos</div>
+          <p>Uso rápido antes de resolver um exercício.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e sequencial</div>
+          <p>Organização por etapas, blocos e relações entre ações.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">Noção de algoritmo</span>
+        <span class="pill">Entrada, processamento e saída</span>
+        <span class="pill">Variáveis simples</span>
+        <span class="pill">Leitura de enunciados</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-main">
+          <h3>Decompor é organizar antes de programar</h3>
+          <p>
+            Um problema fica mais fácil quando você identifica <strong>o que entra</strong>, <strong>o que precisa ser feito</strong> e <strong>qual resultado deve sair</strong>. Essa separação ajuda a criar uma solução algorítmica clara.
+          </p>
+        </div>
+
+        <div class="flow">
+          <article class="flow-card">
+            <span class="flow-number">1</span>
+            <h3>Entenda o pedido</h3>
+            <p>Leia o enunciado e destaque a tarefa principal.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">2</span>
+            <h3>Separe as partes</h3>
+            <p>Identifique dados de entrada, ações necessárias e saída esperada.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">3</span>
+            <h3>Monte o caminho</h3>
+            <p>Ordene as etapas em uma sequência lógica e programável.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Como quebrar o problema</h2>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-label">Etapa 1</span>
+          <h3>Localize a tarefa</h3>
+          <p>Descubra qual problema deve ser resolvido. Procure verbos como <span class="keyword">calcular</span>, <span class="keyword">mostrar</span>, <span class="keyword">ler</span> ou <span class="keyword">comparar</span>.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 2</span>
+          <h3>Identifique entradas</h3>
+          <p>Liste os dados que o programa precisa receber antes de começar o processamento.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 3</span>
+          <h3>Defina o processamento</h3>
+          <p>Descreva as operações necessárias em ordem. Cada ação deve ser pequena e objetiva.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 4</span>
+          <h3>Determine a saída</h3>
+          <p>Especifique o que o programa deve apresentar ao final, com clareza e sem dados desnecessários.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplo mínimo</h2>
+      </div>
+
+      <div class="example">
+        <div class="example-card accent-card">
+          <h3>Problema</h3>
+          <p>Calcular a média de duas notas e mostrar o resultado.</p>
+
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Parte</th>
+                <th>Definição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Entrada</td>
+                <td>Duas notas</td>
+              </tr>
+              <tr>
+                <td>Processamento</td>
+                <td>Somar as notas e dividir por 2</td>
+              </tr>
+              <tr>
+                <td>Saída</td>
+                <td>Média calculada</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="example-card">
+          <h3>Código curto em C</h3>
+          <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    float nota1, nota2, media;
+
+    scanf("%f", &amp;nota1);
+    scanf("%f", &amp;nota2);
+
+    media = (nota1 + nota2) / 2;
+
+    printf("Media: %.2f", media);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Começar pelo código</h3>
+          <p><strong>Por que acontece:</strong> o aluno tenta resolver digitando comandos antes de entender o problema.</p>
+          <p><strong>Como evitar:</strong> escreva primeiro entrada, processamento e saída.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Ignorar dados de entrada</h3>
+          <p><strong>Por que acontece:</strong> o aluno olha apenas para o cálculo e esquece quais valores precisam ser lidos.</p>
+          <p><strong>Como evitar:</strong> pergunte quais dados o programa precisa receber para funcionar.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Misturar várias ações</h3>
+          <p><strong>Por que acontece:</strong> uma etapa fica grande demais e perde clareza.</p>
+          <p><strong>Como evitar:</strong> divida cada ação em passos simples e ordenados.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>Qual é o primeiro passo ao decompor um problema?</summary>
+          <p>Entender o que o enunciado pede e identificar a tarefa principal.</p>
+        </details>
+
+        <details>
+          <summary>No exemplo da média de duas notas, quais são os dados de entrada?</summary>
+          <p>As duas notas que serão usadas para calcular a média.</p>
+        </details>
+
+        <details>
+          <summary>Por que separar entrada, processamento e saída ajuda o aluno iniciante?</summary>
+          <p>Porque organiza o raciocínio e facilita a transformação do problema em uma sequência programável.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>
+        Depois de estudar este infográfico, o aluno deve conseguir representar um problema simples por etapas claras antes de iniciar a implementação em C.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
