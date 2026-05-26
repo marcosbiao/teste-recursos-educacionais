@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variável não é número solto: é memória com nome</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero" aria-labelledby="titulo">
+      <section class="hero-content">
+        <span class="badge"><span class="badge-dot"></span> Infográfico interativo por competências</span>
+        <h1 id="titulo">Variável não é número solto: é memória com nome</h1>
+        <p class="hero-text">
+          Em um programa, um valor não fica perdido. Ele pode ser guardado em uma variável, protegido em uma constante e alterado por atribuições ao longo da execução.
+        </p>
+
+        <div class="hero-meta" aria-label="Resumo pedagógico">
+          <article>
+            <strong>Competência</strong>
+            <span>CCI03</span>
+          </article>
+          <article>
+            <strong>Item</strong>
+            <span>Variável, constante e atribuição</span>
+          </article>
+          <article>
+            <strong>Foco</strong>
+            <span>Mudança de estado</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="hero-visual" aria-label="Ilustração de memória com nome, valor armazenado e atribuição">
+        <div class="memory-bench">
+          <div class="bench-title">Bancada de memória do programa</div>
+
+          <div class="value-tile tile-moving">+1</div>
+
+          <div class="memory-slot slot-variable">
+            <span class="slot-label">variável</span>
+            <strong>idade</strong>
+            <div class="slot-value" id="heroVariableValue">18</div>
+            <small>pode mudar</small>
+          </div>
+
+          <div class="assignment-arm">
+            <span>=</span>
+          </div>
+
+          <div class="memory-slot slot-constant">
+            <span class="slot-label">constante</span>
+            <strong>PI</strong>
+            <div class="slot-value">3.14</div>
+            <small>não deve mudar</small>
+            <div class="lock-body">🔒</div>
+          </div>
+
+          <div class="state-panel">
+            <span>Estado atual</span>
+            <code>idade = 18</code>
+          </div>
+
+          <div class="state-panel state-panel-next">
+            <span>Após atribuição</span>
+            <code>idade = 19</code>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <section class="section" aria-labelledby="identificacao">
+      <div class="section-title">
+        <span class="icon">ID</span>
+        <h2 id="identificacao">Identificação pedagógica</h2>
+      </div>
+
+      <div class="info-grid">
+        <article class="info-card">
+          <span>Competência principal</span>
+          <strong>CCI03</strong>
+          <p>Manipular dados simples, variáveis, constantes e expressões preservando coerência do estado.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Competências secundárias</span>
+          <strong>CCI02 e CCI08</strong>
+          <p>Relacionar dados ao fluxo do programa e justificar escolhas de representação.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Item trabalhado</span>
+          <strong>Variável, constante e atribuição</strong>
+          <p>Compreender nome, valor armazenado e atualização de estado.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Tempo estimado</span>
+          <strong>10 a 15 min</strong>
+          <p>Uso recomendado antes dos primeiros exercícios com variáveis em C.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Estilo associado</span>
+          <strong>Visual e interativo</strong>
+          <p>Aprendizagem por metáfora de memória, simulação e comparação.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pre-requisitos">
+      <div class="section-title">
+        <span class="icon">↧</span>
+        <h2 id="pre-requisitos">Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="prereq-grid">
+        <article>
+          <span class="mini-icon">D</span>
+          <h3>Dados simples</h3>
+          <p>Reconhecer valores como números inteiros, reais e caracteres.</p>
+        </article>
+
+        <article>
+          <span class="mini-icon">C</span>
+          <h3>Comandos básicos</h3>
+          <p>Ter contato inicial com declaração, leitura e impressão em C.</p>
+        </article>
+
+        <article>
+          <span class="mini-icon">=</span>
+          <h3>Expressões simples</h3>
+          <p>Entender operações como soma, divisão e comparação básica.</p>
+        </article>
+
+        <article>
+          <span class="mini-icon">⏱</span>
+          <h3>Sequência de execução</h3>
+          <p>Perceber que comandos executam em ordem e podem alterar valores.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section central" aria-labelledby="ideia-central">
+      <div class="section-title">
+        <span class="icon">◎</span>
+        <h2 id="ideia-central">Ideia central</h2>
+      </div>
+
+      <div class="central-grid">
+        <article class="concept-panel">
+          <h3>Variável é um espaço nomeado na memória</h3>
+          <p>
+            Uma variável permite que o programa guarde um valor e use esse valor depois. O nome da variável funciona como uma identificação para acessar o conteúdo armazenado.
+          </p>
+
+          <div class="memory-diagram" aria-label="Diagrama visual de variável, nome e valor">
+            <div class="name-tag">
+              <span>nome</span>
+              <strong>idade</strong>
+            </div>
+
+            <div class="memory-box">
+              <span>endereço simbólico</span>
+              <strong>18</strong>
+              <small>valor armazenado</small>
+            </div>
+
+            <div class="access-arrow">→</div>
+          </div>
+        </article>
+
+        <article class="concept-panel concept-panel-dark">
+          <h3>Constante é valor protegido</h3>
+          <p>
+            Uma constante também tem nome e valor, mas seu papel é representar um dado que não deve ser alterado durante a execução do programa.
+          </p>
+
+          <div class="constant-visual">
+            <div class="constant-box">
+              <span>const float PI</span>
+              <strong>3.14</strong>
+              <small>valor fixo</small>
+            </div>
+            <div class="lock-large">🔒</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section simulator" aria-labelledby="simulador">
+      <div class="section-title">
+        <span class="icon">▶</span>
+        <h2 id="simulador">Simulador de estado: o que a atribuição muda?</h2>
+      </div>
+
+      <div class="simulator-layout">
+        <article class="simulator-controls">
+          <h3>Escolha uma instrução</h3>
+          <p>Observe como o valor armazenado muda após cada atribuição.</p>
+
+          <div class="command-buttons" role="group" aria-label="Comandos de atribuição disponíveis">
+            <button type="button" class="command-btn active" data-step="0">idade = 18;</button>
+            <button type="button" class="command-btn" data-step="1">idade = idade + 1;</button>
+            <button type="button" class="command-btn" data-step="2">idade = 25;</button>
+          </div>
+        </article>
+
+        <article class="simulator-stage" aria-live="polite">
+          <div class="code-window">
+            <span>comando executado</span>
+            <code id="commandCode">idade = 18;</code>
+          </div>
+
+          <div class="state-machine">
+            <div class="variable-box" id="variableBox">
+              <span>variável</span>
+              <strong>idade</strong>
+              <div id="variableValue">18</div>
+            </div>
+
+            <div class="assignment-symbol">=</div>
+
+            <div class="incoming-value" id="incomingValue">18</div>
+          </div>
+
+          <div class="state-explanation" id="stateExplanation">
+            A variável <code>idade</code> recebe o valor <strong>18</strong>. Esse passa a ser o estado atual dessa variável.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="comparacao">
+      <div class="section-title">
+        <span class="icon">⇄</span>
+        <h2 id="comparacao">Variável, constante e atribuição</h2>
+      </div>
+
+      <div class="comparison-grid">
+        <article class="comparison-card comparison-variable">
+          <div class="comparison-icon">V</div>
+          <h3>Variável</h3>
+          <p>Tem nome, tipo e valor armazenado. Pode receber novos valores ao longo do programa.</p>
+          <pre><code>int idade = 18;
+idade = 19;</code></pre>
+        </article>
+
+        <article class="comparison-card comparison-constant">
+          <div class="comparison-icon">C</div>
+          <h3>Constante</h3>
+          <p>Tem nome e valor fixo. Deve representar dados que não serão alterados.</p>
+          <pre><code>const float PI = 3.14;</code></pre>
+        </article>
+
+        <article class="comparison-card comparison-assignment">
+          <div class="comparison-icon">=</div>
+          <h3>Atribuição</h3>
+          <p>Atualiza o conteúdo de uma variável. O lado direito é calculado antes de guardar o resultado.</p>
+          <pre><code>total = total + 1;</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="section example" aria-labelledby="exemplo">
+      <div class="section-title">
+        <span class="icon">C</span>
+        <h2 id="exemplo">Exemplo mínimo em C</h2>
+      </div>
+
+      <div class="example-grid">
+        <article class="example-problem">
+          <h3>Problema</h3>
+          <p>Guardar a idade de uma pessoa, atualizar essa idade e mostrar o novo valor.</p>
+
+          <div class="evidence-list">
+            <span><strong>Variável:</strong> <code>idade</code></span>
+            <span><strong>Valor inicial:</strong> <code>18</code></span>
+            <span><strong>Atribuição:</strong> <code>idade = idade + 1</code></span>
+            <span><strong>Novo estado:</strong> <code>19</code></span>
+          </div>
+        </article>
+
+        <article class="code-panel">
+          <h3>Código curto</h3>
+          <pre><code>int idade = 18;
+const int MAIORIDADE = 18;
+
+idade = idade + 1;
+
+printf("Idade: %d", idade);
+printf("Maioridade: %d", MAIORIDADE);</code></pre>
+        </article>
+
+        <article class="translation-card">
+          <h3>Leitura técnica</h3>
+          <p>
+            A variável <code>idade</code> começa com valor 18 e depois recebe um novo valor calculado a partir do estado anterior. A constante <code>MAIORIDADE</code> representa um valor fixo usado como referência e não deve ser alterada.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section errors" aria-labelledby="erros">
+      <div class="section-title">
+        <span class="icon">!</span>
+        <h2 id="erros">Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Tratar variável como número solto</h3>
+          <p><strong>Por que acontece:</strong> o aluno vê apenas o valor e esquece que ele está guardado em um nome.</p>
+          <p><strong>Como evitar:</strong> sempre pergunte qual variável guarda esse valor.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Confundir atribuição com igualdade matemática</h3>
+          <p><strong>Por que acontece:</strong> o símbolo <code>=</code> parece uma igualdade comum.</p>
+          <p><strong>Como evitar:</strong> leia como “recebe”: <code>x = x + 1</code> significa x recebe o valor anterior de x mais 1.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Alterar uma constante</h3>
+          <p><strong>Por que acontece:</strong> o aluno não distingue valor fixo de valor variável.</p>
+          <p><strong>Como evitar:</strong> use constante apenas para valores que devem permanecer estáveis.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Perder o estado atual</h3>
+          <p><strong>Por que acontece:</strong> o aluno não acompanha as mudanças após cada comando.</p>
+          <p><strong>Como evitar:</strong> simule linha por linha qual valor fica armazenado depois de cada atribuição.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section quiz" aria-labelledby="perguntas">
+      <div class="section-title">
+        <span class="icon">✓</span>
+        <h2 id="perguntas">Perguntas rápidas</h2>
+      </div>
+
+      <div class="quiz-list">
+        <article class="quiz-card">
+          <h3>1. O que uma variável representa?</h3>
+          <div class="quiz-options">
+            <button type="button" data-answer="correct">Um espaço nomeado que guarda um valor.</button>
+            <button type="button" data-answer="wrong">Um número solto sem relação com a memória.</button>
+          </div>
+          <p class="quiz-feedback" aria-live="polite"></p>
+        </article>
+
+        <article class="quiz-card">
+          <h3>2. Em <code>x = x + 1</code>, o que acontece?</h3>
+          <div class="quiz-options">
+            <button type="button" data-answer="correct">O novo valor de x passa a ser o valor anterior de x mais 1.</button>
+            <button type="button" data-answer="wrong">O comando afirma que x é matematicamente igual a x + 1.</button>
+          </div>
+          <p class="quiz-feedback" aria-live="polite"></p>
+        </article>
+
+        <article class="quiz-card">
+          <h3>3. Quando uma constante deve ser usada?</h3>
+          <div class="quiz-options">
+            <button type="button" data-answer="wrong">Quando o valor precisa mudar a cada linha.</button>
+            <button type="button" data-answer="correct">Quando o valor deve permanecer fixo durante o programa.</button>
+          </div>
+          <p class="quiz-feedback" aria-live="polite"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="fechamento">
+      <h2 id="fechamento">Fechamento pedagógico</h2>
+      <p>
+        Depois de estudar este infográfico, o aluno deve conseguir explicar o papel de variáveis, constantes e atribuições, acompanhando como o valor armazenado muda ou permanece fixo durante a execução do programa.
+      </p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

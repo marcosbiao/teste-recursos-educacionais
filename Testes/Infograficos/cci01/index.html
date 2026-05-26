@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quebrando um problema em partes menores</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero" aria-labelledby="titulo">
+      <section class="hero-content">
+        <span class="badge"><span class="badge-dot"></span> Infográfico interativo por competências</span>
+        <h1 id="titulo">Quebrando um problema em partes menores</h1>
+        <p class="hero-text">Um problema grande fica mais fácil quando deixa de ser uma massa única e passa a ser visto como uma sequência de partes menores, claras e programáveis.</p>
+        <div class="hero-meta" aria-label="Resumo pedagógico">
+          <article><strong>Competência</strong><span>CCI01</span></article>
+          <article><strong>Item</strong><span>Decomposição</span></article>
+          <article><strong>Foco</strong><span>Etapas programáveis</span></article>
+        </div>
+      </section>
+      <section class="hero-visual" aria-label="Ilustração de um problema sendo decomposto em etapas menores">
+        <div class="decomposer-machine">
+          <div class="machine-title">Quebrador de problemas</div>
+          <div class="problem-sheet"><span>Problema grande</span><strong>“Calcule a média e diga se o aluno foi aprovado.”</strong></div>
+          <div class="machine-body">
+            <div class="machine-slot"></div>
+            <div class="machine-core"><span class="gear gear-one">⚙</span><span class="gear gear-two">⚙</span><strong>decompor</strong></div>
+            <div class="machine-light"></div>
+          </div>
+          <div class="part-stream" aria-hidden="true"><span class="part-token token-one">entrada</span><span class="part-token token-two">processo</span><span class="part-token token-three">saída</span></div>
+          <div class="output-parts">
+            <article><span>E</span><strong>Entrada</strong><small>quais dados?</small></article>
+            <article><span>P</span><strong>Processamento</strong><small>quais ações?</small></article>
+            <article><span>S</span><strong>Saída</strong><small>qual resultado?</small></article>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <section class="section" aria-labelledby="identificacao">
+      <div class="section-title"><span class="icon">ID</span><h2 id="identificacao">Identificação pedagógica</h2></div>
+      <div class="info-grid">
+        <article class="info-card"><span>Competência principal</span><strong>CCI01</strong><p>Representar problemas por soluções algorítmicas claras.</p></article>
+        <article class="info-card"><span>Competência secundária</span><strong>CCI02</strong><p>Relacionar entrada, processamento e saída em programas introdutórios.</p></article>
+        <article class="info-card"><span>Item trabalhado</span><strong>Decomposição</strong><p>Separar um problema em etapas menores e verificáveis.</p></article>
+        <article class="info-card"><span>Tempo estimado</span><strong>10 a 15 min</strong><p>Uso recomendado antes de exercícios simples em C.</p></article>
+        <article class="info-card"><span>Estilo associado</span><strong>Visual e sequencial</strong><p>Aprendizagem por fluxo, blocos, comparação e simulação.</p></article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pre-requisitos">
+      <div class="section-title"><span class="icon">↧</span><h2 id="pre-requisitos">Pré requisitos mínimos</h2></div>
+      <div class="prereq-grid">
+        <article><span class="mini-icon">A</span><h3>Noção de algoritmo</h3><p>Entender algoritmo como uma sequência organizada de ações.</p></article>
+        <article><span class="mini-icon">E</span><h3>Entrada de dados</h3><p>Reconhecer quais informações precisam ser recebidas pelo programa.</p></article>
+        <article><span class="mini-icon">V</span><h3>Variáveis simples</h3><p>Perceber que valores podem ser guardados e usados no processamento.</p></article>
+        <article><span class="mini-icon">L</span><h3>Leitura de enunciados</h3><p>Identificar verbos como ler, calcular, comparar, repetir e mostrar.</p></article>
+      </div>
+    </section>
+
+    <section class="section central" aria-labelledby="ideia-central">
+      <div class="section-title"><span class="icon">◎</span><h2 id="ideia-central">Ideia central</h2></div>
+      <div class="central-grid">
+        <article class="concept-panel">
+          <h3>Decompor é transformar confusão em caminho</h3>
+          <p>Quando o aluno lê um enunciado, ele pode sentir que tudo acontece ao mesmo tempo. A decomposição separa o problema em partes pequenas, cada uma com uma função clara na solução.</p>
+          <div class="before-after" aria-label="Comparação entre problema não decomposto e problema decomposto">
+            <div class="messy-problem"><span>Antes</span><p>“Ler, calcular, decidir e mostrar...”</p><div class="mess-lines"><i></i><i></i><i></i><i></i></div></div>
+            <div class="arrow-transform">→</div>
+            <div class="organized-problem"><span>Depois</span><ul><li>1. Ler dados</li><li>2. Calcular</li><li>3. Decidir</li><li>4. Mostrar</li></ul></div>
+          </div>
+        </article>
+        <article class="concept-panel concept-panel-dark">
+          <h3>Regra prática</h3>
+          <p>Se uma etapa ainda parece grande demais, ela provavelmente pode ser quebrada outra vez.</p>
+          <div class="rule-visual"><div class="large-block">calcular resultado</div><div class="split-arrow">↓</div><div class="small-blocks"><span>somar</span><span>dividir</span><span>guardar</span></div></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section interactive-lab" aria-labelledby="laboratorio">
+      <div class="section-title"><span class="icon">▶</span><h2 id="laboratorio">Laboratório visual de decomposição</h2></div>
+      <div class="lab-layout">
+        <article class="lab-controls">
+          <h3>Escolha um problema</h3>
+          <p>Observe como o mesmo enunciado pode ser quebrado em partes menores.</p>
+          <div class="scenario-buttons" role="group" aria-label="Problemas disponíveis">
+            <button type="button" class="scenario-btn active" data-scenario="media">Média de duas notas</button>
+            <button type="button" class="scenario-btn" data-scenario="troco">Cálculo de troco</button>
+            <button type="button" class="scenario-btn" data-scenario="maior">Maior de dois números</button>
+          </div>
+        </article>
+        <article class="lab-stage" aria-live="polite">
+          <div class="enunciation-card"><span>Enunciado</span><strong id="scenarioTitle">Calcular a média de duas notas.</strong><p id="scenarioText">Leia duas notas, calcule a média e mostre o resultado.</p></div>
+          <div class="decomposition-track">
+            <div class="track-line"></div>
+            <article class="track-card track-input"><span>Entrada</span><strong id="inputStep">nota1 e nota2</strong></article>
+            <article class="track-card track-process"><span>Processamento</span><strong id="processStep">(nota1 + nota2) / 2</strong></article>
+            <article class="track-card track-output"><span>Saída</span><strong id="outputStep">média calculada</strong></article>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="etapas">
+      <div class="section-title"><span class="icon">1→</span><h2 id="etapas">Como quebrar o problema</h2></div>
+      <div class="steps-grid">
+        <article class="step-card"><span class="step-number">1</span><h3>Entenda o objetivo</h3><p>Escreva em uma frase curta o que o programa precisa resolver.</p></article>
+        <article class="step-card"><span class="step-number">2</span><h3>Separe as entradas</h3><p>Liste quais dados serão informados pelo usuário ou pelo enunciado.</p></article>
+        <article class="step-card"><span class="step-number">3</span><h3>Defina o processamento</h3><p>Indique quais operações transformam as entradas no resultado esperado.</p></article>
+        <article class="step-card"><span class="step-number">4</span><h3>Indique a saída</h3><p>Determine exatamente o que o programa deve apresentar ao final.</p></article>
+        <article class="step-card"><span class="step-number">5</span><h3>Ordene os passos</h3><p>Coloque as ações em uma sequência lógica, sem pular etapas.</p></article>
+        <article class="step-card"><span class="step-number">6</span><h3>Revise a clareza</h3><p>Confira se outra pessoa conseguiria seguir a solução descrita.</p></article>
+      </div>
+    </section>
+
+    <section class="section example" aria-labelledby="exemplo">
+      <div class="section-title"><span class="icon">C</span><h2 id="exemplo">Exemplo mínimo em C</h2></div>
+      <div class="example-grid">
+        <article class="example-problem"><h3>Problema</h3><p>Calcular a média de duas notas e mostrar o resultado.</p><div class="evidence-list"><span><strong>Entrada:</strong> duas notas</span><span><strong>Processamento:</strong> somar e dividir por 2</span><span><strong>Saída:</strong> média calculada</span></div></article>
+        <article class="code-panel"><h3>Código curto</h3><pre><code>float nota1, nota2, media;
+
+scanf("%f", &amp;nota1);
+scanf("%f", &amp;nota2);
+
+media = (nota1 + nota2) / 2;
+
+printf("Media: %.2f", media);</code></pre></article>
+        <article class="translation-card"><h3>Tradução das etapas para o código</h3><p>As duas leituras correspondem à entrada. A expressão da média corresponde ao processamento. O <code>printf</code> corresponde à saída. A solução fica mais clara porque cada trecho do código tem uma função identificável.</p></article>
+      </div>
+    </section>
+
+    <section class="section errors" aria-labelledby="erros">
+      <div class="section-title"><span class="icon">!</span><h2 id="erros">Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Começar pelo código</h3><p><strong>Por que acontece:</strong> o aluno tenta digitar comandos antes de entender o problema.</p><p><strong>Como evitar:</strong> escreva objetivo, entrada, processamento e saída antes da implementação.</p></article>
+        <article class="error-card"><h3>Pular etapas intermediárias</h3><p><strong>Por que acontece:</strong> parte da solução fica implícita na cabeça do aluno.</p><p><strong>Como evitar:</strong> registre cada ação necessária, mesmo que pareça simples.</p></article>
+        <article class="error-card"><h3>Misturar entrada com processamento</h3><p><strong>Por que acontece:</strong> o aluno não separa dado recebido de cálculo realizado.</p><p><strong>Como evitar:</strong> pergunte primeiro quais dados entram e depois o que será feito com eles.</p></article>
+        <article class="error-card"><h3>Usar passos vagos</h3><p><strong>Por que acontece:</strong> frases como “resolver a conta” não indicam uma ação programável.</p><p><strong>Como evitar:</strong> use verbos claros como ler, somar, dividir, comparar e mostrar.</p></article>
+      </div>
+    </section>
+
+    <section class="section quiz" aria-labelledby="perguntas">
+      <div class="section-title"><span class="icon">✓</span><h2 id="perguntas">Perguntas rápidas</h2></div>
+      <div class="quiz-list">
+        <article class="quiz-card"><h3>1. O que deve ser identificado antes do processamento?</h3><div class="quiz-options"><button type="button" data-answer="correct">Os dados de entrada.</button><button type="button" data-answer="wrong">A cor da tela do programa.</button></div><p class="quiz-feedback" aria-live="polite"></p></article>
+        <article class="quiz-card"><h3>2. Por que decompor ajuda o aluno iniciante?</h3><div class="quiz-options"><button type="button" data-answer="correct">Porque organiza o raciocínio em etapas programáveis.</button><button type="button" data-answer="wrong">Porque elimina a necessidade de testar o código.</button></div><p class="quiz-feedback" aria-live="polite"></p></article>
+        <article class="quiz-card"><h3>3. No exemplo da média, qual é o processamento?</h3><div class="quiz-options"><button type="button" data-answer="wrong">Ler nota1 e nota2.</button><button type="button" data-answer="correct">Somar as notas e dividir por 2.</button></div><p class="quiz-feedback" aria-live="polite"></p></article>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="fechamento">
+      <h2 id="fechamento">Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir transformar um problema simples em etapas claras, ordenadas e programáveis antes de iniciar a implementação em C.</p>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

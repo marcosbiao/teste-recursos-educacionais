@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Não basta funcionar: explique por que funciona</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero" aria-labelledby="titulo">
+      <section class="hero-content">
+        <span class="badge"><span class="badge-dot"></span> Infográfico interativo por competências</span>
+        <h1 id="titulo">Não basta funcionar: explique por que funciona</h1>
+        <p class="hero-text">
+          Uma resposta técnica não diz apenas que o código “deu certo”. Ela mostra a relação entre o enunciado, a escolha feita no código e a evidência que justifica essa escolha.
+        </p>
+
+        <div class="hero-meta" aria-label="Resumo pedagógico">
+          <article>
+            <strong>Competência</strong>
+            <span>CCI08</span>
+          </article>
+          <article>
+            <strong>Item</strong>
+            <span>Justificativa técnica</span>
+          </article>
+          <article>
+            <strong>Foco</strong>
+            <span>Explicar escolhas</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="hero-visual" aria-label="Ilustração de investigação técnica entre enunciado, código e justificativa">
+        <div class="analysis-desk">
+          <div class="desk-title">Mesa de revisão técnica</div>
+
+          <div class="brief-paper">
+            <span class="paper-label">Enunciado</span>
+            <strong>Ler 3 notas e mostrar a média.</strong>
+            <p>O problema pede cálculo e saída numérica.</p>
+          </div>
+
+          <div class="code-paper">
+            <span class="paper-label">Código</span>
+            <code>media = (n1 + n2 + n3) / 3;</code>
+            <div class="scan-line"></div>
+          </div>
+
+          <div class="magnifier" aria-hidden="true">
+            <div class="magnifier-glass"></div>
+            <div class="magnifier-handle"></div>
+          </div>
+
+          <div class="evidence-stamp">
+            <span>evidência</span>
+            <strong>÷ 3</strong>
+          </div>
+
+          <div class="justification-note">
+            <span>Justificativa</span>
+            <p>Divide por 3 porque o enunciado informa três notas.</p>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <section class="section" aria-labelledby="identificacao">
+      <div class="section-title">
+        <span class="icon">ID</span>
+        <h2 id="identificacao">Identificação pedagógica</h2>
+      </div>
+
+      <div class="info-grid">
+        <article class="info-card">
+          <span>Competência principal</span>
+          <strong>CCI08</strong>
+          <p>Analisar, justificar e selecionar estruturas ou estratégias adequadas.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Competências secundárias</span>
+          <strong>CCI01 e CCI02</strong>
+          <p>Relacionar o problema à solução algorítmica e ao fluxo de entrada, processamento e saída.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Item trabalhado</span>
+          <strong>Justificativa técnica</strong>
+          <p>Explicar escolhas com base no enunciado e no código.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Tempo estimado</span>
+          <strong>10 a 15 min</strong>
+          <p>Uso rápido após resolver ou revisar um exercício.</p>
+        </article>
+
+        <article class="info-card">
+          <span>Estilo associado</span>
+          <strong>Analítico e visual</strong>
+          <p>Comparação entre afirmação, evidência e explicação.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pre-requisitos">
+      <div class="section-title">
+        <span class="icon">↧</span>
+        <h2 id="pre-requisitos">Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="prereq-grid">
+        <article>
+          <span class="mini-icon">E</span>
+          <h3>Ler enunciados</h3>
+          <p>Identificar dados, restrições e o resultado esperado.</p>
+        </article>
+
+        <article>
+          <span class="mini-icon">C</span>
+          <h3>Ler código simples</h3>
+          <p>Reconhecer variáveis, expressões, condicionais e saídas.</p>
+        </article>
+
+        <article>
+          <span class="mini-icon">→</span>
+          <h3>Relacionar causa e efeito</h3>
+          <p>Perceber que uma escolha no código produz determinado comportamento.</p>
+        </article>
+
+        <article>
+          <span class="mini-icon">?</span>
+          <h3>Explicar com clareza</h3>
+          <p>Escrever frases objetivas, sem depender de “porque sim”.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="ideia-central">
+      <div class="section-title">
+        <span class="icon">◎</span>
+        <h2 id="ideia-central">Ideia central</h2>
+      </div>
+
+      <div class="central-grid">
+        <article class="technical-claim">
+          <h3>Justificar é ligar três pontos</h3>
+          <p>
+            Uma justificativa técnica mostra que a escolha feita no código responde a uma exigência do problema.
+          </p>
+
+          <div class="claim-map" aria-label="Mapa visual da justificativa técnica">
+            <div class="map-node map-node-enunciado">
+              <span>1</span>
+              <strong>Enunciado</strong>
+              <small>O que foi pedido?</small>
+            </div>
+
+            <div class="map-arrow"></div>
+
+            <div class="map-node map-node-codigo">
+              <span>2</span>
+              <strong>Código</strong>
+              <small>O que foi escolhido?</small>
+            </div>
+
+            <div class="map-arrow"></div>
+
+            <div class="map-node map-node-evidencia">
+              <span>3</span>
+              <strong>Evidência</strong>
+              <small>Por que a escolha faz sentido?</small>
+            </div>
+          </div>
+        </article>
+
+        <article class="weak-strong">
+          <div class="answer-card answer-card-weak">
+            <span class="answer-label">Resposta fraca</span>
+            <p>“Usei <code>if</code> porque funcionou.”</p>
+          </div>
+
+          <div class="answer-card answer-card-strong">
+            <span class="answer-label">Resposta técnica</span>
+            <p>“Usei <code>if</code> porque o enunciado pede uma decisão: mostrar uma mensagem diferente conforme a nota.”</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section interactive-builder" aria-labelledby="construtor">
+      <div class="section-title">
+        <span class="icon">✎</span>
+        <h2 id="construtor">Construtor de justificativa técnica</h2>
+      </div>
+
+      <div class="builder-layout">
+        <article class="builder-panel">
+          <h3>Situação analisada</h3>
+          <div class="scenario-card">
+            <span>Enunciado</span>
+            <p>Leia a idade de uma pessoa e informe se ela é maior de idade.</p>
+          </div>
+
+          <div class="scenario-code">
+            <span>Código escolhido</span>
+            <pre><code>if (idade >= 18) {
+    printf("Maior de idade");
+}</code></pre>
+          </div>
+        </article>
+
+        <article class="builder-panel">
+          <h3>Monte a justificativa</h3>
+          <p class="builder-instruction">Selecione a melhor relação entre enunciado, código e evidência.</p>
+
+          <div class="choice-group" aria-label="Opções de justificativa">
+            <button type="button" class="choice-btn" data-choice="weak">
+              Usei <code>if</code> porque é um comando comum.
+            </button>
+            <button type="button" class="choice-btn" data-choice="partial">
+              Usei <code>if</code> porque o programa precisa comparar a idade.
+            </button>
+            <button type="button" class="choice-btn" data-choice="strong">
+              Usei <code>if</code> porque o enunciado exige uma decisão baseada na idade; a condição <code>idade >= 18</code> representa o critério de maioridade.
+            </button>
+          </div>
+
+          <div class="builder-result" id="builderResult" aria-live="polite">
+            Escolha uma justificativa para ver a análise.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="estrutura">
+      <div class="section-title">
+        <span class="icon">3</span>
+        <h2 id="estrutura">Estrutura simples para justificar</h2>
+      </div>
+
+      <div class="formula-grid">
+        <article class="formula-card">
+          <span class="formula-step">1</span>
+          <h3>Recupere o pedido</h3>
+          <p>Comece dizendo qual exigência do enunciado precisa ser atendida.</p>
+          <strong>“Como o problema pede...”</strong>
+        </article>
+
+        <article class="formula-card">
+          <span class="formula-step">2</span>
+          <h3>Aponte a escolha</h3>
+          <p>Mostre qual parte do código responde a esse pedido.</p>
+          <strong>“Usei esta condição...”</strong>
+        </article>
+
+        <article class="formula-card">
+          <span class="formula-step">3</span>
+          <h3>Explique a relação</h3>
+          <p>Deixe claro por que a escolha produz o comportamento esperado.</p>
+          <strong>“Isso funciona porque...”</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="section example" aria-labelledby="exemplo">
+      <div class="section-title">
+        <span class="icon">C</span>
+        <h2 id="exemplo">Exemplo mínimo em C</h2>
+      </div>
+
+      <div class="example-grid">
+        <article class="problem-card">
+          <h3>Enunciado</h3>
+          <p>Ler duas notas e informar se o aluno foi aprovado. Considere aprovado quem tem média maior ou igual a 7.</p>
+
+          <div class="evidence-list">
+            <span>Dado relevante: duas notas</span>
+            <span>Critério: média ≥ 7</span>
+            <span>Saída: aprovado ou não aprovado</span>
+          </div>
+        </article>
+
+        <article class="code-card-main">
+          <h3>Código</h3>
+          <pre><code>media = (nota1 + nota2) / 2;
+
+if (media >= 7) {
+    printf("Aprovado");
+} else {
+    printf("Nao aprovado");
+}</code></pre>
+        </article>
+
+        <article class="justification-card">
+          <h3>Justificativa técnica</h3>
+          <p>
+            A média é calculada somando as duas notas e dividindo por 2 porque o enunciado informa exatamente duas notas. A condição <code>media >= 7</code> foi usada porque o critério de aprovação definido no problema é média maior ou igual a 7. O <code>else</code> cobre os demais casos, nos quais a média fica abaixo do limite de aprovação.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section errors" aria-labelledby="erros">
+      <div class="section-title">
+        <span class="icon">!</span>
+        <h2 id="erros">Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Dizer apenas que funcionou</h3>
+          <p><strong>Por que acontece:</strong> o aluno confunde resultado correto com justificativa técnica.</p>
+          <p><strong>Como evitar:</strong> explique qual parte do enunciado é atendida pela escolha feita.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Justificar sem citar o código</h3>
+          <p><strong>Por que acontece:</strong> a explicação fica genérica e não mostra evidência.</p>
+          <p><strong>Como evitar:</strong> mencione a variável, condição, fórmula ou estrutura usada.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Repetir o código em palavras</h3>
+          <p><strong>Por que acontece:</strong> o aluno descreve o que o código faz, mas não explica por que ele faz sentido.</p>
+          <p><strong>Como evitar:</strong> relacione a escolha com o pedido do problema.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Usar argumento de autoridade</h3>
+          <p><strong>Por que acontece:</strong> aparecem frases como “porque o professor ensinou assim”.</p>
+          <p><strong>Como evitar:</strong> baseie a justificativa em evidências do enunciado e do código.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section quiz" aria-labelledby="perguntas">
+      <div class="section-title">
+        <span class="icon">✓</span>
+        <h2 id="perguntas">Perguntas rápidas</h2>
+      </div>
+
+      <div class="quiz-list">
+        <article class="quiz-card">
+          <h3>1. Qual frase é mais técnica?</h3>
+          <div class="quiz-options">
+            <button type="button" data-answer="wrong">“Usei <code>if</code> porque funcionou.”</button>
+            <button type="button" data-answer="correct">“Usei <code>if</code> porque o enunciado exige uma decisão.”</button>
+          </div>
+          <p class="quiz-feedback" aria-live="polite"></p>
+        </article>
+
+        <article class="quiz-card">
+          <h3>2. Uma boa justificativa deve citar o quê?</h3>
+          <div class="quiz-options">
+            <button type="button" data-answer="correct">Pedido do enunciado e evidência no código.</button>
+            <button type="button" data-answer="wrong">Apenas que o programa executou sem erro.</button>
+          </div>
+          <p class="quiz-feedback" aria-live="polite"></p>
+        </article>
+
+        <article class="quiz-card">
+          <h3>3. O que falta na frase “dividi por 2 porque sim”?</h3>
+          <div class="quiz-options">
+            <button type="button" data-answer="wrong">Mais comandos de entrada.</button>
+            <button type="button" data-answer="correct">Uma relação com o enunciado e com a fórmula usada.</button>
+          </div>
+          <p class="quiz-feedback" aria-live="polite"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="fechamento">
+      <div>
+        <h2 id="fechamento">Fechamento pedagógico</h2>
+        <p>
+          Depois de estudar este infográfico, o aluno deve conseguir justificar escolhas de implementação relacionando o pedido do enunciado, a estrutura usada no código e a evidência técnica que sustenta a solução.
+        </p>
+      </div>
+
+
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
