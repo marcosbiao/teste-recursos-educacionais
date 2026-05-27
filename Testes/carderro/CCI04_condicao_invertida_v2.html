@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card diagnóstico: Condição invertida</title>
+  <style>
+    :root {
+      --cor-primaria: #DC2626;
+      --cor-primaria-escura: #7F1D1D;
+      --cor-destaque-pontual: #F97316;
+      --cor-fundo: #FEF2F2;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #FEE2E2;
+      --cor-superficie-neutra: #F8FAFC;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #FECACA;
+      --cor-borda-neutra: #E5E7EB;
+      --cor-codigo: #111827;
+      --cor-codigo-texto: #F8FAFC;
+      --cor-correcao-suave: #FFF7ED;
+      --cor-correcao-texto: #7C2D12;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(220, 38, 38, 0.08), transparent 34rem),
+        var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .diagnostic_shell {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .diagnostic_header {
+      background: linear-gradient(135deg, var(--cor-primaria-escura), #991B1B);
+      border-radius: 22px;
+      padding: 22px 24px;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 18px 40px rgba(127, 29, 29, 0.18);
+      margin-bottom: 18px;
+    }
+
+    .header_tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .competency_tag,
+    .error_type_tag,
+    .code_label,
+    .status_pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .competency_tag {
+      background: rgba(255, 255, 255, 0.14);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .error_type_tag {
+      background: var(--cor-correcao-suave);
+      color: var(--cor-correcao-texto);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+    }
+
+    .error_title {
+      font-size: clamp(1.7rem, 4vw, 2.55rem);
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .diagnostic_subtitle {
+      color: #FEE2E2;
+      max-width: 780px;
+      font-size: 0.98rem;
+    }
+
+    section {
+      margin-bottom: 18px;
+    }
+
+    .statement_panel,
+    .diagnostic_card,
+    .evidence_card,
+    .cause_card,
+    .code_panel,
+    .trace_panel,
+    .compare_panel,
+    .concept_panel,
+    .verification_panel,
+    .synthesis_panel,
+    .initial_diagnosis_panel,
+    .diagnosis_question_panel,
+    .reveal_gate {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.045);
+    }
+
+    .section_header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .section_marker {
+      width: 9px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--cor-primaria);
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.18rem;
+      line-height: 1.25;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1rem;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .alert_panel {
+      display: grid;
+      grid-template-columns: 0.75fr 1.2fr 1.25fr;
+      gap: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      box-shadow: 0 16px 34px rgba(127, 29, 29, 0.1);
+      margin-bottom: 18px;
+    }
+
+    .severity_box,
+    .symptom_box,
+    .impact_box {
+      padding: 20px;
+      min-height: 136px;
+      display: grid;
+      align-content: center;
+      gap: 8px;
+    }
+
+    .severity_box {
+      background: var(--cor-primaria-escura);
+      color: white;
+    }
+
+    .symptom_box {
+      background: var(--cor-superficie-suave);
+      border-right: 1px solid var(--cor-borda);
+    }
+
+    .impact_box {
+      background: var(--cor-superficie);
+    }
+
+    .box_label {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: inherit;
+      opacity: 0.78;
+    }
+
+    .severity_value {
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1.1;
+      color: white;
+    }
+
+    .severity_note {
+      color: #FEE2E2;
+      font-size: 0.92rem;
+    }
+
+    .symptom_box .box_label,
+    .impact_box .box_label {
+      color: var(--cor-primaria);
+    }
+
+    .symptom_box p,
+    .impact_box p {
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+    }
+
+    .statement_panel,
+    .initial_diagnosis_panel,
+    .diagnosis_question_panel,
+    .reveal_gate,
+    .trace_panel,
+    .compare_panel,
+    .concept_panel,
+    .verification_panel,
+    .synthesis_panel {
+      padding: 20px;
+    }
+
+    .statement_text {
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 16px;
+      padding: 15px 16px;
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .statement_note {
+      margin-top: 10px;
+      font-size: 0.94rem;
+    }
+
+    .initial_grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .code_panel {
+      overflow: hidden;
+    }
+
+    .code_panel_header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--cor-borda-neutra);
+      background: var(--cor-superficie);
+    }
+
+    .code_label {
+      text-transform: uppercase;
+      background: var(--cor-superficie-suave);
+      color: var(--cor-primaria-escura);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .code_panel_body {
+      padding: 16px;
+    }
+
+    pre {
+      background: var(--cor-codigo);
+      color: var(--cor-codigo-texto);
+      padding: 16px;
+      border-radius: 16px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .test_observation_box {
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .test_table,
+    .trace_table,
+    .test_case_table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .test_table {
+      margin-top: 10px;
+    }
+
+    .test_table th,
+    .test_table td,
+    .trace_table th,
+    .trace_table td,
+    .test_case_table th,
+    .test_case_table td {
+      border: 1px solid var(--cor-borda-neutra);
+      padding: 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .test_table th,
+    .trace_table th,
+    .test_case_table th {
+      background: var(--cor-superficie-suave);
+      color: var(--cor-primaria-escura);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status_pill {
+      margin-top: 12px;
+      background: #FFEDD5;
+      color: var(--cor-correcao-texto);
+      border: 1px solid rgba(249, 115, 22, 0.22);
+    }
+
+    .diagnosis_question_panel {
+      background: linear-gradient(135deg, #FFFFFF, #FFF7ED);
+      border-color: rgba(249, 115, 22, 0.28);
+    }
+
+    .options_group {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .option_item {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 14px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+
+    .option_item:hover {
+      border-color: var(--cor-primaria);
+      background: var(--cor-superficie-neutra);
+      transform: translateY(-1px);
+    }
+
+    .option_item input {
+      margin-top: 4px;
+      accent-color: var(--cor-primaria);
+      flex: 0 0 auto;
+    }
+
+    .option_item span {
+      color: var(--cor-texto-secundario);
+      font-size: 0.95rem;
+    }
+
+    .student_note {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--cor-texto-secundario);
+    }
+
+    .reveal_gate {
+      text-align: center;
+      background: var(--cor-superficie);
+      border-style: dashed;
+    }
+
+    .gate_text {
+      max-width: 720px;
+      margin: 0 auto 14px auto;
+      color: var(--cor-texto-secundario);
+    }
+
+    .reveal_button {
+      cursor: pointer;
+      border: none;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-weight: 900;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .reveal_button:hover {
+      background: var(--cor-primaria-escura);
+      transform: translateY(-1px);
+    }
+
+    .gate_warning {
+      display: none;
+      width: fit-content;
+      margin: 12px auto 0 auto;
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .gate_warning.show {
+      display: block;
+    }
+
+    .locked_content {
+      display: none;
+    }
+
+    .locked_content.revealed {
+      display: block;
+      animation: revealContent 0.24s ease-out;
+    }
+
+    @keyframes revealContent {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .diagnostic_grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .diagnostic_card,
+    .evidence_card,
+    .cause_card {
+      padding: 18px;
+      min-height: 210px;
+    }
+
+    .cause_card {
+      border-top: 5px solid var(--cor-primaria);
+    }
+
+    .evidence_card {
+      border-top: 5px solid var(--cor-destaque-pontual);
+      background: var(--cor-superficie-neutra);
+    }
+
+    .diagnostic_card {
+      border-top: 5px solid var(--cor-borda);
+    }
+
+    .compact_list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      list-style: none;
+    }
+
+    .compact_list li {
+      color: var(--cor-texto-secundario);
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 12px;
+      padding: 10px 11px;
+      font-size: 0.92rem;
+    }
+
+    .compact_list li strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .correction_code_area {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .correct_code {
+      background: var(--cor-correcao-suave);
+      border-color: rgba(249, 115, 22, 0.26);
+    }
+
+    .correct_code .code_panel_header {
+      background: #FFEDD5;
+      border-bottom-color: rgba(249, 115, 22, 0.2);
+    }
+
+    .correct_code .code_label {
+      background: var(--cor-correcao-suave);
+      color: var(--cor-correcao-texto);
+      border: 1px solid rgba(249, 115, 22, 0.24);
+    }
+
+    .table_wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--cor-borda-neutra);
+    }
+
+    .trace_table {
+      min-width: 760px;
+      background: var(--cor-superficie);
+    }
+
+    .diagnostic_question {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+
+    .before_after_grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .before_box,
+    .after_box {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--cor-borda-neutra);
+    }
+
+    .before_box {
+      background: var(--cor-superficie-suave);
+      border-left: 5px solid var(--cor-primaria);
+    }
+
+    .after_box {
+      background: var(--cor-correcao-suave);
+      border-left: 5px solid var(--cor-destaque-pontual);
+    }
+
+    .logic_line {
+      display: block;
+      background: var(--cor-codigo);
+      color: var(--cor-codigo-texto);
+      border-radius: 12px;
+      padding: 11px 12px;
+      margin: 10px 0;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .concept_blocks {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .explanation_block,
+    .identify_block,
+    .correction_block {
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .correction_block {
+      background: var(--cor-correcao-suave);
+      color: var(--cor-correcao-texto);
+    }
+
+    .correction_block p,
+    .correction_block li {
+      color: var(--cor-correcao-texto);
+    }
+
+    .procedure_list {
+      margin-top: 10px;
+      padding-left: 20px;
+      color: var(--cor-texto-secundario);
+    }
+
+    .procedure_list li {
+      margin-bottom: 6px;
+    }
+
+    .test_case_table {
+      margin-top: 10px;
+    }
+
+    .question_list {
+      display: grid;
+      gap: 10px;
+    }
+
+    details {
+      background: var(--cor-superficie-neutra);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+
+    details p {
+      margin-top: 10px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda-neutra);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--cor-texto-secundario);
+    }
+
+    .synthesis_panel {
+      background: linear-gradient(135deg, var(--cor-primaria-escura), #991B1B);
+      color: white;
+    }
+
+    .synthesis_panel h2 {
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .synthesis_grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .synthesis_item {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .synthesis_item strong {
+      display: block;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .synthesis_item span {
+      color: #FEE2E2;
+      font-size: 0.9rem;
+    }
+
+    .final_question {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 13px 14px;
+      color: white;
+      font-weight: 900;
+    }
+
+    @media (max-width: 900px) {
+      .alert_panel,
+      .initial_grid,
+      .diagnostic_grid,
+      .correction_code_area,
+      .before_after_grid,
+      .concept_blocks,
+      .synthesis_grid {
+        grid-template-columns: 1fr;
+      }
+
+      .symptom_box {
+        border-right: none;
+        border-bottom: 1px solid var(--cor-borda);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px 10px;
+      }
+
+      .diagnostic_header,
+      .statement_panel,
+      .initial_diagnosis_panel,
+      .diagnosis_question_panel,
+      .reveal_gate,
+      .diagnostic_card,
+      .evidence_card,
+      .cause_card,
+      .trace_panel,
+      .compare_panel,
+      .concept_panel,
+      .verification_panel,
+      .synthesis_panel {
+        border-radius: 18px;
+      }
+
+      .severity_box,
+      .symptom_box,
+      .impact_box,
+      .statement_panel,
+      .initial_diagnosis_panel,
+      .diagnosis_question_panel,
+      .reveal_gate,
+      .trace_panel,
+      .compare_panel,
+      .concept_panel,
+      .verification_panel,
+      .synthesis_panel {
+        padding: 16px;
+      }
+
+      pre {
+        font-size: 0.82rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="diagnostic_shell">
+    <header class="diagnostic_header">
+      <div class="header_tags">
+        <span class="competency_tag">CCI04 Controlar fluxo por decisões condicionais e expressões lógicas</span>
+        <span class="error_type_tag">Erro lógico condicional</span>
+      </div>
+      <h1 class="error_title">Condição invertida</h1>
+      <p class="diagnostic_subtitle">Este card ajuda a reconhecer, compreender e corrigir uma condição que representa a regra do problema ao contrário.</p>
+    </header>
+
+    <section class="alert_panel" aria-label="Painel principal de diagnóstico">
+      <div class="severity_box">
+        <span class="box_label">Gravidade</span>
+        <p class="severity_value">Alto</p>
+        <p class="severity_note">O erro pode alterar completamente a decisão tomada pelo programa.</p>
+      </div>
+
+      <div class="symptom_box">
+        <span class="box_label">Sintoma observado</span>
+        <p>O programa executa o bloco errado para determinados casos.</p>
+      </div>
+
+      <div class="impact_box">
+        <span class="box_label">Impacto no programa</span>
+        <p>A lógica condicional aceita casos que deveriam ser rejeitados e rejeita casos que deveriam ser aceitos.</p>
+      </div>
+    </section>
+
+    <section class="statement_panel">
+      <div class="section_header">
+        <span class="section_marker"></span>
+        <h2>Enunciado analisado</h2>
+      </div>
+      <p>Use este enunciado como referência diagnóstica para comparar a regra pedida com a regra implementada no código.</p>
+      <div class="statement_text">
+        Leia a idade de uma pessoa. Se a idade for maior ou igual a 18, mostre “Maior de idade”. Caso contrário, mostre “Menor de idade”.
+      </div>
+      <p class="statement_note">A regra central é: idade 18 ou maior deve executar o bloco de maioridade.</p>
+    </section>
+
+    <section class="initial_diagnosis_panel" aria-label="Código inicial para análise">
+      <div class="section_header">
+        <span class="section_marker"></span>
+        <h2>Código observado e testes de entrada</h2>
+      </div>
+
+      <div class="initial_grid">
+        <article class="code_panel error_code">
+          <div class="code_panel_header">
+            <h3>Exemplo com erro</h3>
+            <span class="code_label">Código com erro</span>
+          </div>
+          <div class="code_panel_body">
+            <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int idade;
+
+    printf("Digite a idade: ");
+    scanf("%d", &amp;idade);
+
+    if (idade &lt; 18) {
+        printf("Maior de idade");
+    } else {
+        printf("Menor de idade");
+    }
+
+    return 0;
+}</code></pre>
+            <p>Observe o operador usado na condição e compare com a regra apresentada no enunciado.</p>
+          </div>
+        </article>
+
+        <aside class="test_observation_box">
+          <h3>Quadro de entradas e respostas</h3>
+          <p>Use os testes abaixo para observar o comportamento produzido pelo código.</p>
+          <table class="test_table">
+            <thead>
+              <tr>
+                <th>Entrada</th>
+                <th>Resposta produzida pelo código</th>
+                <th>Resposta esperada pelo enunciado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>17</td>
+                <td>Maior de idade</td>
+                <td>Menor de idade</td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>Menor de idade</td>
+                <td>Maior de idade</td>
+              </tr>
+              <tr>
+                <td>19</td>
+                <td>Menor de idade</td>
+                <td>Maior de idade</td>
+              </tr>
+            </tbody>
+          </table>
+          <span class="status_pill">Compare a regra com os casos limites</span>
+        </aside>
+      </div>
+    </section>
+
+    <section class="diagnosis_question_panel" aria-label="Pergunta diagnóstica inicial">
+      <div class="section_header">
+        <span class="section_marker"></span>
+        <h2>Antes de ver o diagnóstico</h2>
+      </div>
+      <h3>Qual hipótese melhor explica o problema observado?</h3>
+      <div class="options_group" role="radiogroup" aria-label="Hipóteses diagnósticas">
+        <label class="option_item">
+          <input type="radio" name="student_hypothesis" value="a">
+          <span>A variável idade foi declarada com um tipo incompatível para armazenar números inteiros.</span>
+        </label>
+
+        <label class="option_item">
+          <input type="radio" name="student_hypothesis" value="b">
+          <span>A condição usada no if não representa a mesma regra descrita no enunciado.</span>
+        </label>
+
+        <label class="option_item">
+          <input type="radio" name="student_hypothesis" value="c">
+          <span>O programa deveria usar dois comandos scanf para ler a idade corretamente.</span>
+        </label>
+
+        <label class="option_item">
+          <input type="radio" name="student_hypothesis" value="d">
+          <span>A mensagem do printf está ausente, por isso o programa não consegue mostrar resultado.</span>
+        </label>
+      </div>
+      <p class="student_note">Marque sua hipótese. A resposta não será mostrada aqui. Em seguida, revele o diagnóstico completo para comparar sua análise.</p>
+    </section>
+
+    <section class="reveal_gate" id="revealGate">
+      <button class="reveal_button" type="button" id="revealDiagnostic">Revelar diagnóstico completo</button>
+      <p class="gate_warning" id="gateWarning">Marque uma hipótese antes de revelar o diagnóstico.</p>
+    </section>
+
+    <div class="locked_content" id="lockedContent">
+      <section class="diagnostic_grid" aria-label="Grade diagnóstica curta">
+        <article class="cause_card">
+          <div class="section_header">
+            <span class="section_marker"></span>
+            <h2>Causa provável</h2>
+          </div>
+          <p>Esse erro costuma aparecer quando o aluno entende a ideia geral do problema, mas converte a regra para o operador relacional oposto. A troca de maior por menor, igual por diferente ou a leitura apressada do caso limite faz a condição representar o contrário do que o enunciado pede.</p>
+        </article>
+
+        <article class="evidence_card">
+          <div class="section_header">
+            <span class="section_marker"></span>
+            <h2>Evidência no código</h2>
+          </div>
+          <ul class="compact_list">
+            <li><strong>Padrão detectável</strong> O enunciado pede maior ou igual a 18, mas o código testa idade menor que 18.</li>
+            <li><strong>Comportamento observado</strong> Uma idade menor que 18 recebe a mensagem de maioridade.</li>
+            <li><strong>Teste revelador</strong> Testar 17, 18 e 19 mostra se o bloco correto está sendo executado.</li>
+          </ul>
+        </article>
+
+        <article class="diagnostic_card">
+          <div class="section_header">
+            <span class="section_marker"></span>
+            <h2>Quando aparece</h2>
+          </div>
+          <p>Quando o aluno troca maior por menor, igual por diferente ou confunde a regra do problema. Em condições, uma pequena inversão no operador muda o conjunto de casos que entra no bloco do if.</p>
+        </article>
+      </section>
+
+      <section class="correction_code_area" aria-label="Correção mínima">
+        <article class="code_panel error_code">
+          <div class="code_panel_header">
+            <h2>Exemplo com erro</h2>
+            <span class="code_label">Código com erro</span>
+          </div>
+          <div class="code_panel_body">
+            <pre><code>if (idade &lt; 18) {
+    printf("Maior de idade");
+} else {
+    printf("Menor de idade");
+}</code></pre>
+            <p>O bloco positivo imprime “Maior de idade”, mas a condição seleciona idades menores que 18. Assim, a decisão fica invertida em relação ao enunciado.</p>
+          </div>
+        </article>
+
+        <article class="code_panel correct_code">
+          <div class="code_panel_header">
+            <h2>Correção mínima</h2>
+            <span class="code_label">Código corrigido</span>
+          </div>
+          <div class="code_panel_body">
+            <pre><code>if (idade &gt;= 18) {
+    printf("Maior de idade");
+} else {
+    printf("Menor de idade");
+}</code></pre>
+            <p>A correção muda apenas a condição do if. Agora o bloco “Maior de idade” é executado quando idade é 18 ou maior, exatamente como o enunciado determina.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="trace_panel">
+        <div class="section_header">
+          <span class="section_marker"></span>
+          <h2>Entrada, processamento e saída</h2>
+        </div>
+
+        <div class="table_wrap">
+          <table class="trace_table">
+            <thead>
+              <tr>
+                <th>Parte do problema</th>
+                <th>O que o enunciado pede</th>
+                <th>O que o código com erro fez</th>
+                <th>Diagnóstico</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Entrada</td>
+                <td>Ler uma idade inteira.</td>
+                <td>Lê uma idade inteira.</td>
+                <td>A entrada está adequada. O problema não está na leitura do dado.</td>
+              </tr>
+              <tr>
+                <td>Processamento</td>
+                <td>Testar se idade é maior ou igual a 18.</td>
+                <td>Testa se idade é menor que 18.</td>
+                <td>A condição representa a regra no sentido contrário.</td>
+              </tr>
+              <tr>
+                <td>Saída</td>
+                <td>Mostrar maioridade para idade 18 ou maior.</td>
+                <td>Mostra maioridade para idade menor que 18.</td>
+                <td>A saída fica incorreta porque depende da condição invertida.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="diagnostic_question">Minha solução responde exatamente ao enunciado ou apenas a uma parte dele?</p>
+      </section>
+
+      <section class="compare_panel">
+        <div class="section_header">
+          <span class="section_marker"></span>
+          <h2>Antes e depois</h2>
+        </div>
+
+        <div class="before_after_grid">
+          <article class="before_box">
+            <h3>Lógica incorreta</h3>
+            <span class="logic_line">se idade &lt; 18, então mostrar "Maior de idade"</span>
+            <p>A condição seleciona menores de idade, mas o bloco imprime a mensagem de maioridade.</p>
+          </article>
+
+          <article class="after_box">
+            <h3>Lógica correta</h3>
+            <span class="logic_line">se idade &gt;= 18, então mostrar "Maior de idade"</span>
+            <p>A condição seleciona exatamente os casos que devem receber a mensagem de maioridade.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="concept_panel">
+        <div class="concept_blocks">
+          <article class="explanation_block">
+            <div class="section_header">
+              <span class="section_marker"></span>
+              <h2>Por que isso acontece</h2>
+            </div>
+            <p>A condição precisa representar exatamente a regra de decisão do problema. Se a regra diz “maior ou igual a 18”, o código não pode testar “menor que 18” para executar o mesmo bloco.</p>
+          </article>
+
+          <article class="identify_block">
+            <div class="section_header">
+              <span class="section_marker"></span>
+              <h2>Como identificar</h2>
+            </div>
+            <p>Teste a condição com valores de exemplo, incluindo casos limites.</p>
+            <table class="test_case_table">
+              <thead>
+                <tr>
+                  <th>Idade</th>
+                  <th>Saída esperada</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>17</td>
+                  <td>Menor de idade</td>
+                </tr>
+                <tr>
+                  <td>18</td>
+                  <td>Maior de idade</td>
+                </tr>
+                <tr>
+                  <td>19</td>
+                  <td>Maior de idade</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="correction_block">
+            <div class="section_header">
+              <span class="section_marker"></span>
+              <h2>Forma correta</h2>
+            </div>
+            <p>Reescreva a condição em linguagem natural e depois converta para código.</p>
+            <ol class="procedure_list">
+              <li>Leia a regra de decisão.</li>
+              <li>Escreva o caso que deve entrar no if.</li>
+              <li>Marque o caso limite.</li>
+              <li>Escolha o operador relacional adequado.</li>
+              <li>Teste exemplos antes de finalizar.</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="verification_panel">
+        <div class="section_header">
+          <span class="section_marker"></span>
+          <h2>Perguntas de verificação</h2>
+        </div>
+
+        <div class="question_list">
+          <details>
+            <summary>Se o enunciado pede idade maior ou igual a 18, qual condição representa essa regra?</summary>
+            <p>A condição adequada é idade &gt;= 18. Ela inclui o caso limite 18 e todos os valores maiores.</p>
+          </details>
+
+          <details>
+            <summary>Por que idade &lt; 18 está incorreta para imprimir “Maior de idade”?</summary>
+            <p>Porque idade &lt; 18 seleciona menores de idade. Se esse teste controla o bloco “Maior de idade”, a decisão fica invertida.</p>
+          </details>
+
+          <details>
+            <summary>Qual valor deve ser testado como caso limite nesse problema?</summary>
+            <p>O valor 18. Ele separa os dois grupos e revela se a condição incluiu corretamente a idade mínima para maioridade.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="synthesis_panel">
+        <h2>Síntese para revisar</h2>
+
+        <div class="synthesis_grid">
+          <div class="synthesis_item">
+            <strong>Erro</strong>
+            <span>A condição foi escrita no sentido contrário da regra.</span>
+          </div>
+
+          <div class="synthesis_item">
+            <strong>Como aparece</strong>
+            <span>O programa executa o bloco errado para alguns valores.</span>
+          </div>
+
+          <div class="synthesis_item">
+            <strong>Como identificar</strong>
+            <span>Teste valores comuns e casos limites, como 17, 18 e 19.</span>
+          </div>
+
+          <div class="synthesis_item">
+            <strong>Como corrigir</strong>
+            <span>Reescreva a regra em linguagem natural e converta para o operador correto.</span>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const revealButton = document.getElementById("revealDiagnostic");
+    const lockedContent = document.getElementById("lockedContent");
+    const gateWarning = document.getElementById("gateWarning");
+    const revealGate = document.getElementById("revealGate");
+
+    revealButton.addEventListener("click", function () {
+      const selectedHypothesis = document.querySelector('input[name="student_hypothesis"]:checked');
+
+      if (!selectedHypothesis) {
+        gateWarning.classList.add("show");
+        return;
+      }
+
+      gateWarning.classList.remove("show");
+      lockedContent.classList.add("revealed");
+      revealButton.textContent = "Diagnóstico revelado";
+      revealButton.disabled = true;
+      revealGate.style.borderStyle = "solid";
+      lockedContent.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  </script>
+</body>
+</html>
