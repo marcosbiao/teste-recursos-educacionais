@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notas, média da turma e contagem acima da média</title>
+  <style>
+    :root {
+      --cor-primaria: #059669;
+      --cor-primaria-escura: #064E3B;
+      --cor-destaque-pontual: #84CC16;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #ECFDF5;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #D1D5DB;
+      --cor-aviso-suave: #FEFCE8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+    }
+
+    .app_shell {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      padding: 22px 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+    }
+
+    .topbar_content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .competency_badge {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.22);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .page_title {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(1.55rem, 3.4vw, 2.35rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .page_subtitle {
+      color: var(--cor-texto-secundario);
+      max-width: 860px;
+      font-size: 1rem;
+    }
+
+    .attempt_note {
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .context_panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.22fr) minmax(300px, 0.78fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .problem_panel,
+    .pedagogy_panel,
+    .use_instructions,
+    .progress_panel,
+    .timeline_step,
+    .support_block {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.035);
+    }
+
+    .problem_panel,
+    .pedagogy_panel {
+      padding: 22px;
+    }
+
+    .panel_kicker {
+      color: var(--cor-primaria);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .problem_panel h2,
+    .pedagogy_panel h2,
+    .section_title {
+      color: var(--cor-primaria-escura);
+      font-size: 1.18rem;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .problem_statement {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(5, 150, 105, 0.22);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 12px 0;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 1.02rem;
+    }
+
+    .initial_question {
+      border-left: 4px solid var(--cor-destaque-pontual);
+      background: var(--cor-aviso-suave);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+    }
+
+    .context_note {
+      margin-top: 12px;
+      color: var(--cor-texto-secundario);
+    }
+
+    .compact_meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .meta_chip {
+      display: block;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.92rem;
+    }
+
+    .meta_chip strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .prerequisite_list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .prerequisite_chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+
+    .use_instructions {
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+
+    .instruction_strip {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .instruction_icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      font-weight: 900;
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .instruction_strip p {
+      color: var(--cor-texto-secundario);
+      font-size: 0.96rem;
+    }
+
+    .resolution_area {
+      margin-top: 18px;
+    }
+
+    .progress_panel {
+      padding: 18px;
+      margin-bottom: 22px;
+    }
+
+    .progress_header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress_text {
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .progress_hint {
+      color: var(--cor-texto-secundario);
+      font-size: 0.9rem;
+    }
+
+    .progress_track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .progress_fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque-pontual));
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 18px;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: rgba(5, 150, 105, 0.2);
+    }
+
+    .timeline_step {
+      position: relative;
+      padding: 0;
+      overflow: visible;
+    }
+
+    .timeline_marker {
+      position: absolute;
+      left: -31px;
+      top: 22px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cor-superficie);
+      border: 3px solid var(--cor-primaria);
+      color: var(--cor-primaria-escura);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 900;
+      z-index: 2;
+    }
+
+    .timeline_step.completed .timeline_marker {
+      background: var(--cor-primaria);
+      color: white;
+    }
+
+    .step_content {
+      padding: 22px;
+    }
+
+    .step_header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .step_label,
+    .skill_tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .step_label {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .skill_tag {
+      background: var(--cor-superficie-suave);
+      color: var(--cor-texto-secundario);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .step_title {
+      color: var(--cor-texto-principal);
+      font-size: 1.2rem;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .step_question {
+      color: var(--cor-texto-secundario);
+      margin-bottom: 16px;
+    }
+
+    .microtask {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .microtask_title {
+      color: var(--cor-texto-principal);
+      font-size: 0.98rem;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .field_grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field_grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field_group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field_group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--cor-texto-principal);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      padding: 10px 11px;
+      background: var(--cor-superficie);
+      color: var(--cor-texto-principal);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    input[readonly] {
+      background: #F8FAFC;
+      color: var(--cor-texto-secundario);
+      font-weight: 700;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--cor-primaria);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    }
+
+    textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .mini_table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 0.92rem;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .mini_table th,
+    .mini_table td {
+      border: 1px solid var(--cor-borda);
+      padding: 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini_table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      font-size: 0.84rem;
+    }
+
+    .mini_table input,
+    .mini_table select {
+      min-width: 110px;
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .option_stack {
+      display: grid;
+      gap: 8px;
+    }
+
+    .option_item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .option_item input {
+      width: auto;
+      margin-top: 4px;
+      accent-color: var(--cor-primaria);
+    }
+
+    .option_item span {
+      color: var(--cor-texto-secundario);
+      font-size: 0.94rem;
+    }
+
+    .help_area {
+      border: 1px solid rgba(5, 150, 105, 0.2);
+      background: var(--cor-superficie-destacada);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .help_header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .help_title {
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+      font-size: 0.96rem;
+    }
+
+    .help_btn {
+      cursor: pointer;
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.28);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .help_btn:hover {
+      background: var(--cor-superficie-suave);
+      transform: translateY(-1px);
+    }
+
+    .help_btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      transform: none;
+    }
+
+    .help_content {
+      display: grid;
+      gap: 8px;
+    }
+
+    .help_level {
+      display: none;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 11px 12px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.93rem;
+    }
+
+    .help_level.show {
+      display: block;
+    }
+
+    .help_level strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .live_feedback,
+    .feedback_message {
+      margin-top: 12px;
+      border-radius: 13px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      display: none;
+    }
+
+    .live_feedback {
+      background: var(--cor-aviso-suave);
+      border: 1px solid rgba(132, 204, 22, 0.35);
+      color: var(--cor-texto-principal);
+    }
+
+    .feedback_message {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-secundario);
+    }
+
+    .feedback_message.show,
+    .live_feedback.show {
+      display: block;
+    }
+
+    .step_actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .reveal_btn {
+      cursor: pointer;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .reveal_btn:hover {
+      background: var(--cor-primaria-escura);
+      transform: translateY(-1px);
+    }
+
+    .reveal_btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+      transform: none;
+    }
+
+    .orientation_box {
+      display: none;
+      margin-top: 14px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(5, 150, 105, 0.24);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--cor-texto-principal);
+    }
+
+    .orientation_box.show {
+      display: block;
+    }
+
+    .orientation_box strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .code_like {
+      display: block;
+      margin-top: 10px;
+      background: var(--cor-primaria-escura);
+      color: #ECFDF5;
+      border-radius: 14px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      white-space: pre;
+    }
+
+    .support_area {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .support_block {
+      padding: 22px;
+    }
+
+    .evidence_list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .evidence_item {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+    }
+
+    .evidence_item span {
+      display: block;
+      color: var(--cor-texto-secundario);
+      font-weight: 400;
+      margin-top: 6px;
+      font-size: 0.92rem;
+    }
+
+    .error_list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .error_item {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .error_item h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .error_item p {
+      color: var(--cor-texto-secundario);
+      font-size: 0.92rem;
+      margin-bottom: 7px;
+    }
+
+    .error_item p:last-child {
+      margin-bottom: 0;
+    }
+
+    .final_panel {
+      margin-top: 18px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .final_panel h2 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .final_panel p {
+      color: #D1FAE5;
+      max-width: 900px;
+    }
+
+    .small_note {
+      color: var(--cor-texto-secundario);
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .context_panel {
+        grid-template-columns: 1fr;
+      }
+
+      .field_grid,
+      .field_grid.three,
+      .evidence_list,
+      .error_list {
+        grid-template-columns: 1fr;
+      }
+
+      .progress_header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px 10px;
+      }
+
+      .topbar,
+      .problem_panel,
+      .pedagogy_panel,
+      .use_instructions,
+      .progress_panel,
+      .support_block,
+      .final_panel {
+        border-radius: 18px;
+      }
+
+      .timeline {
+        padding-left: 0;
+      }
+
+      .timeline::before,
+      .timeline_marker {
+        display: none;
+      }
+
+      .step_content {
+        padding: 18px;
+      }
+
+      .mini_table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app_shell">
+    <header class="topbar">
+      <div class="topbar_content">
+        <span class="competency_badge">CCI06</span>
+        <h1 class="page_title">Notas, média da turma e contagem acima da média</h1>
+        <p class="page_subtitle">Roteiro de resolução para armazenar notas em vetor, calcular a média da turma e contar quantos alunos ficaram acima dessa média.</p>
+        <p class="attempt_note">Tente resolver cada etapa antes de usar as ajudas e antes de ver a orientação esperada.</p>
+      </div>
+    </header>
+
+    <section class="context_panel" aria-label="Contexto da atividade">
+      <article class="problem_panel">
+        <p class="panel_kicker">Problema a resolver</p>
+        <h2>Calcular média e contar notas acima da média.</h2>
+        <div class="problem_statement">Escreva um algoritmo que permita a leitura das notas de uma turma de 20 alunos. Calcular a média da turma e contar quantos alunos obtiveram nota acima desta média calculada. Escrever a média da turma e o resultado da contagem.</div>
+        <p class="initial_question">Por que não basta calcular a média e descartar cada nota lida?</p>
+        <p class="context_note">Antes de avançar, pense que a média só fica conhecida depois da leitura das 20 notas. Para contar quem ficou acima dela, as notas precisam estar disponíveis novamente.</p>
+      </article>
+
+      <article class="pedagogy_panel">
+        <p class="panel_kicker">Resumo pedagógico</p>
+        <h2>Competência principal</h2>
+        <div class="compact_meta">
+          <span class="meta_chip"><strong>Competência:</strong> CCI06</span>
+          <span class="meta_chip"><strong>Descrição:</strong> Representar, percorrer e processar coleções indexadas e dados estruturados simples.</span>
+          <span class="meta_chip"><strong>Tema:</strong> Vetor, média, acumulador e contador.</span>
+          <span class="meta_chip"><strong>Tempo estimado:</strong> 20 a 25 minutos</span>
+          <span class="meta_chip"><strong>Estilo associado:</strong> Resolução guiada, simulação e construção progressiva da solução.</span>
+        </div>
+
+        <div class="prerequisite_list" aria-label="Pré requisitos">
+          <span class="prerequisite_chip">Variáveis</span>
+          <span class="prerequisite_chip">Entrada e saída</span>
+          <span class="prerequisite_chip">Laço for</span>
+          <span class="prerequisite_chip">Condicional if</span>
+          <span class="prerequisite_chip">Acumulador</span>
+          <span class="prerequisite_chip">Contador</span>
+          <span class="prerequisite_chip">Vetor</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="use_instructions" aria-label="Como usar este roteiro">
+      <div class="instruction_strip">
+        <span class="instruction_icon">i</span>
+        <p>Tente resolver primeiro, preencha a microtarefa da etapa, use as ajudas progressivas se necessário, observe o feedback formativo, libere a orientação esperada e compare sua tentativa antes de avançar.</p>
+      </div>
+    </section>
+
+    <section class="resolution_area" aria-label="Roteiro de resolução">
+      <div class="progress_panel">
+        <div class="progress_header">
+          <p class="progress_text" id="progressText">Etapas concluídas: 0 de 10.</p>
+          <p class="progress_hint">A etapa é concluída quando a orientação é liberada após tentativa válida ou após uso de todas as ajudas.</p>
+        </div>
+        <div class="progress_track" aria-hidden="true">
+          <div class="progress_fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <h2 class="section_title">Roteiro de resolução</h2>
+
+      <div class="timeline">
+        <article class="timeline_step" data-step="1">
+          <div class="timeline_marker">1</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 1</span>
+              <span class="skill_tag">Habilidade: Interpretar o objetivo do problema</span>
+            </div>
+            <h3 class="step_title">Entender o que o problema pede</h3>
+            <p class="step_question">Quais ações são realmente necessárias para resolver o enunciado?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Marque apenas as ações que fazem parte da solução.</p>
+              <div class="option_stack">
+                <label class="option_item"><input type="checkbox" id="s1_a" data-required><span>Ler as 20 notas da turma.</span></label>
+                <label class="option_item"><input type="checkbox" id="s1_b" data-required><span>Calcular a média da turma.</span></label>
+                <label class="option_item"><input type="checkbox" id="s1_c" data-required><span>Contar quantas notas são maiores que a média calculada.</span></label>
+                <label class="option_item"><input type="checkbox" id="s1_d" data-required><span>Mostrar a média e a quantidade de alunos acima da média.</span></label>
+                <label class="option_item"><input type="checkbox" id="s1_e" data-required><span>Mostrar todas as notas em ordem crescente.</span></label>
+              </div>
+              <p class="live_feedback" id="s1_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="1">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="1">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="1" data-level="1"><strong>Pista:</strong> procure no enunciado os verbos principais: ler, calcular, contar e escrever.</div>
+                <div class="help_level" data-help-step="1" data-level="2"><strong>Pergunta guia:</strong> o enunciado pede para ordenar as notas ou apenas usar as notas para calcular e contar?</div>
+                <div class="help_level" data-help-step="1" data-level="3"><strong>Exemplo parecido:</strong> quando um problema pede média de idades e quantidade acima da média, não é necessário listar todas as idades em ordem.</div>
+                <div class="help_level" data-help-step="1" data-level="4"><strong>Começo da resposta:</strong> a solução deve ler os dados, calcular uma média, comparar cada valor com essa média e mostrar dois resultados.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="1">Liberar orientação</button>
+              <p class="feedback_message" id="s1_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s1_orientation">
+              <strong>Orientação esperada:</strong> sua resposta deve indicar quatro ações centrais: ler 20 notas, calcular a média, contar notas maiores que a média e escrever a média junto com a contagem. Ordenar ou imprimir todas as notas não faz parte do pedido.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="2">
+          <div class="timeline_marker">2</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 2</span>
+              <span class="skill_tag">Habilidade: Separar entrada e saída</span>
+            </div>
+            <h3 class="step_title">Identificar entrada e saída</h3>
+            <p class="step_question">Quais dados entram no algoritmo e quais resultados devem aparecer no final?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Classifique cada item como entrada, saída ou dado intermediário.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Classificação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>20 notas dos alunos</td>
+                    <td>
+                      <select id="s2_notas" data-required>
+                        <option value="">Selecione</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                        <option value="intermediario">Dado intermediário</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Média da turma</td>
+                    <td>
+                      <select id="s2_media" data-required>
+                        <option value="">Selecione</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                        <option value="intermediario">Dado intermediário</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Quantidade de alunos acima da média</td>
+                    <td>
+                      <select id="s2_contagem" data-required>
+                        <option value="">Selecione</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                        <option value="intermediario">Dado intermediário</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Soma das notas</td>
+                    <td>
+                      <select id="s2_soma" data-required>
+                        <option value="">Selecione</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                        <option value="intermediario">Dado intermediário</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s2_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="2">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="2">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="2" data-level="1"><strong>Pista:</strong> entrada é aquilo que o usuário informa. Saída é aquilo que o programa mostra ao final.</div>
+                <div class="help_level" data-help-step="2" data-level="2"><strong>Pergunta guia:</strong> a soma das notas aparece no enunciado como resultado a ser escrito?</div>
+                <div class="help_level" data-help-step="2" data-level="3"><strong>Exemplo parecido:</strong> para calcular média de três preços, os preços entram, a soma ajuda no cálculo e a média pode ser exibida.</div>
+                <div class="help_level" data-help-step="2" data-level="4"><strong>Começo da resposta:</strong> as notas são entrada; a soma ajuda no processamento; média e contagem são resultados finais.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="2">Liberar orientação</button>
+              <p class="feedback_message" id="s2_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s2_orientation">
+              <strong>Orientação esperada:</strong> uma resposta adequada deve classificar as 20 notas como entrada, a soma como dado intermediário de processamento e a média e a contagem como saídas do algoritmo.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="3">
+          <div class="timeline_marker">3</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 3</span>
+              <span class="skill_tag">Habilidade: Definir variáveis e papéis</span>
+            </div>
+            <h3 class="step_title">Definir variáveis necessárias</h3>
+            <p class="step_question">Quais variáveis ajudam a armazenar as notas, controlar os laços e produzir os resultados?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Complete tipo e papel das variáveis já definidas pelo roteiro.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Variável</th>
+                    <th>Tipo esperado</th>
+                    <th>Papel na solução</th>
+                    <th>Valor inicial</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input value="notas[20]" readonly></td>
+                    <td>
+                      <select id="s3_tipo_notas" data-required>
+                        <option value="">Selecione</option>
+                        <option value="float">float</option>
+                        <option value="int">int</option>
+                        <option value="char">char</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_papel_notas" data-required>
+                        <option value="">Selecione</option>
+                        <option value="armazenar_notas">Armazenar as 20 notas</option>
+                        <option value="contar">Contar alunos</option>
+                        <option value="controlar">Controlar o laço</option>
+                      </select>
+                    </td>
+                    <td><input value="preenchido por leitura" readonly></td>
+                  </tr>
+                  <tr>
+                    <td><input value="soma" readonly></td>
+                    <td>
+                      <select id="s3_tipo_soma" data-required>
+                        <option value="">Selecione</option>
+                        <option value="float">float</option>
+                        <option value="int">int</option>
+                        <option value="char">char</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_papel_soma" data-required>
+                        <option value="">Selecione</option>
+                        <option value="acumular">Acumular as notas</option>
+                        <option value="guardar_media">Guardar a média</option>
+                        <option value="indice">Controlar o índice</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_ini_soma" data-required>
+                        <option value="">Selecione</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="20">20</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="media" readonly></td>
+                    <td>
+                      <select id="s3_tipo_media" data-required>
+                        <option value="">Selecione</option>
+                        <option value="float">float</option>
+                        <option value="int">int</option>
+                        <option value="char">char</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_papel_media" data-required>
+                        <option value="">Selecione</option>
+                        <option value="guardar_media">Guardar a média calculada</option>
+                        <option value="acumular">Acumular notas</option>
+                        <option value="contador">Contar notas</option>
+                      </select>
+                    </td>
+                    <td><input value="calculado após a leitura" readonly></td>
+                  </tr>
+                  <tr>
+                    <td><input value="acimaMedia" readonly></td>
+                    <td>
+                      <select id="s3_tipo_acima" data-required>
+                        <option value="">Selecione</option>
+                        <option value="int">int</option>
+                        <option value="float">float</option>
+                        <option value="char">char</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_papel_acima" data-required>
+                        <option value="">Selecione</option>
+                        <option value="contador">Contar alunos acima da média</option>
+                        <option value="vetor">Armazenar notas</option>
+                        <option value="media">Guardar média</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_ini_acima" data-required>
+                        <option value="">Selecione</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="20">20</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="i" readonly></td>
+                    <td>
+                      <select id="s3_tipo_i" data-required>
+                        <option value="">Selecione</option>
+                        <option value="int">int</option>
+                        <option value="float">float</option>
+                        <option value="char">char</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select id="s3_papel_i" data-required>
+                        <option value="">Selecione</option>
+                        <option value="indice">Controlar o índice do vetor</option>
+                        <option value="nota">Guardar nota</option>
+                        <option value="media">Guardar média</option>
+                      </select>
+                    </td>
+                    <td><input value="definido no for" readonly></td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s3_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="3">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="3">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="3" data-level="1"><strong>Pista:</strong> notas podem ter casas decimais, por isso precisam de um tipo numérico real.</div>
+                <div class="help_level" data-help-step="3" data-level="2"><strong>Pergunta guia:</strong> qual variável deve lembrar todas as notas para permitir comparação depois que a média for conhecida?</div>
+                <div class="help_level" data-help-step="3" data-level="3"><strong>Exemplo parecido:</strong> para contar temperaturas acima da média, um vetor guarda as temperaturas, uma soma calcula a média e um contador registra quantas superam a média.</div>
+                <div class="help_level" data-help-step="3" data-level="4"><strong>Começo da resposta:</strong> notas[20] guarda os valores, soma começa em 0, acimaMedia começa em 0 e i controla os índices.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="3">Liberar orientação</button>
+              <p class="feedback_message" id="s3_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s3_orientation">
+              <strong>Orientação esperada:</strong> sua resposta deve indicar notas[20] como vetor de float, soma e media como float, acimaMedia como int e i como int. O acumulador soma e o contador acimaMedia devem começar em 0.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="4">
+          <div class="timeline_marker">4</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 4</span>
+              <span class="skill_tag">Habilidade: Escolher estratégia de processamento</span>
+            </div>
+            <h3 class="step_title">Decidir por que usar vetor e duas passagens</h3>
+            <p class="step_question">Por que a solução precisa guardar as notas antes de contar quem ficou acima da média?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Escolha a estratégia mais coerente com o problema.</p>
+              <div class="option_stack">
+                <label class="option_item"><input type="radio" name="s4_strategy" value="a" data-required><span>Ler uma nota, comparar imediatamente com a média e descartar a nota.</span></label>
+                <label class="option_item"><input type="radio" name="s4_strategy" value="b" data-required><span>Ler todas as notas em um vetor, somar, calcular a média e depois percorrer o vetor para contar as notas acima da média.</span></label>
+                <label class="option_item"><input type="radio" name="s4_strategy" value="c" data-required><span>Calcular a média usando apenas a primeira e a última nota.</span></label>
+                <label class="option_item"><input type="radio" name="s4_strategy" value="d" data-required><span>Contar as notas acima de 7,0, mesmo que a média da turma seja diferente.</span></label>
+              </div>
+              <p class="live_feedback" id="s4_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="4">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="4">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="4" data-level="1"><strong>Pista:</strong> antes de calcular a média, você ainda não sabe qual valor será usado na comparação.</div>
+                <div class="help_level" data-help-step="4" data-level="2"><strong>Pergunta guia:</strong> depois que a média for calculada, como o algoritmo terá acesso novamente às notas já lidas?</div>
+                <div class="help_level" data-help-step="4" data-level="3"><strong>Exemplo parecido:</strong> para contar alturas acima da média, primeiro guarda as alturas e calcula a média; depois compara cada altura com a média.</div>
+                <div class="help_level" data-help-step="4" data-level="4"><strong>Começo da resposta:</strong> o vetor permite guardar as notas para uma segunda passagem de comparação.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="4">Liberar orientação</button>
+              <p class="feedback_message" id="s4_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s4_orientation">
+              <strong>Orientação esperada:</strong> uma resposta adequada deve reconhecer que a média só é conhecida após somar as 20 notas. Por isso, o vetor guarda as notas para que elas possam ser comparadas com a média em uma segunda passagem.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="5">
+          <div class="timeline_marker">5</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 5</span>
+              <span class="skill_tag">Habilidade: Configurar laço de leitura</span>
+            </div>
+            <h3 class="step_title">Ler as notas e acumular a soma</h3>
+            <p class="step_question">Como percorrer as 20 posições do vetor para ler cada nota e atualizar a soma?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Monte a estrutura mínima do primeiro laço.</p>
+              <div class="field_grid">
+                <div class="field_group">
+                  <label for="s5_indice">Variável de controle</label>
+                  <input id="s5_indice" value="i" readonly>
+                </div>
+                <div class="field_group">
+                  <label for="s5_inicio">Valor inicial</label>
+                  <select id="s5_inicio" data-required>
+                    <option value="">Selecione</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="20">20</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s5_condicao">Condição de permanência</label>
+                  <select id="s5_condicao" data-required>
+                    <option value="">Selecione</option>
+                    <option value="i < 20">i &lt; 20</option>
+                    <option value="i <= 20">i &lt;= 20</option>
+                    <option value="i < 19">i &lt; 19</option>
+                    <option value="i == 20">i == 20</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s5_atualizacao">Atualização</label>
+                  <select id="s5_atualizacao" data-required>
+                    <option value="">Selecione</option>
+                    <option value="i++">i++</option>
+                    <option value="i--">i--</option>
+                    <option value="sem atualização">Sem atualização</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s5_leitura">Ação de leitura</label>
+                  <select id="s5_leitura" data-required>
+                    <option value="">Selecione</option>
+                    <option value="scanf_notas_i">Ler notas[i]</option>
+                    <option value="ler_media">Ler media</option>
+                    <option value="ler_i">Ler i</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s5_soma">Atualização da soma</label>
+                  <select id="s5_soma" data-required>
+                    <option value="">Selecione</option>
+                    <option value="soma += notas[i]">soma += notas[i]</option>
+                    <option value="soma = notas[i]">soma = notas[i]</option>
+                    <option value="soma++">soma++</option>
+                  </select>
+                </div>
+              </div>
+              <p class="live_feedback" id="s5_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="5">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="5">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="5" data-level="1"><strong>Pista:</strong> um vetor de 20 posições em C usa índices de 0 a 19.</div>
+                <div class="help_level" data-help-step="5" data-level="2"><strong>Pergunta guia:</strong> se i começa em 0, qual condição permite passar por 0, 1, 2, ..., 19?</div>
+                <div class="help_level" data-help-step="5" data-level="3"><strong>Exemplo parecido:</strong> para ler 5 temperaturas em temp[5], uma forma é usar i de 0 enquanto i for menor que 5.</div>
+                <div class="help_level" data-help-step="5" data-level="4"><strong>Começo da resposta:</strong> para i iniciando em 0, enquanto i &lt; 20, ler notas[i] e somar esse valor em soma.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="5">Liberar orientação</button>
+              <p class="feedback_message" id="s5_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s5_orientation">
+              <strong>Orientação esperada:</strong> o primeiro laço deve iniciar i em 0, continuar enquanto i &lt; 20 e atualizar com i++. Dentro dele, o programa lê notas[i] e atualiza o acumulador com soma += notas[i].
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="6">
+          <div class="timeline_marker">6</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 6</span>
+              <span class="skill_tag">Habilidade: Calcular média com acumulador</span>
+            </div>
+            <h3 class="step_title">Calcular a média da turma</h3>
+            <p class="step_question">Depois que a soma das 20 notas foi obtida, qual expressão calcula a média?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Escolha a expressão correta e o momento em que ela deve ser executada.</p>
+              <div class="field_grid">
+                <div class="field_group">
+                  <label for="s6_expr">Expressão da média</label>
+                  <select id="s6_expr" data-required>
+                    <option value="">Selecione</option>
+                    <option value="soma / 20.0">media = soma / 20.0</option>
+                    <option value="soma + 20">media = soma + 20</option>
+                    <option value="notas[i] / 20">media = notas[i] / 20</option>
+                    <option value="soma / acimaMedia">media = soma / acimaMedia</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s6_momento">Momento do cálculo</label>
+                  <select id="s6_momento" data-required>
+                    <option value="">Selecione</option>
+                    <option value="apos_leitura">Após terminar o laço de leitura</option>
+                    <option value="antes_leitura">Antes de ler as notas</option>
+                    <option value="dentro_antes_somar">Dentro do laço antes de somar</option>
+                  </select>
+                </div>
+              </div>
+              <p class="live_feedback" id="s6_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="6">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="6">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="6" data-level="1"><strong>Pista:</strong> média é soma dos valores dividida pela quantidade de valores.</div>
+                <div class="help_level" data-help-step="6" data-level="2"><strong>Pergunta guia:</strong> qual é a quantidade fixa de notas lidas pelo problema?</div>
+                <div class="help_level" data-help-step="6" data-level="3"><strong>Exemplo parecido:</strong> se 4 notas somam 32, a média é 32 dividido por 4.</div>
+                <div class="help_level" data-help-step="6" data-level="4"><strong>Começo da resposta:</strong> depois do primeiro laço, media recebe soma dividida por ____.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="6">Liberar orientação</button>
+              <p class="feedback_message" id="s6_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s6_orientation">
+              <strong>Orientação esperada:</strong> a média deve ser calculada após a leitura e o acúmulo de todas as notas. A expressão adequada é media = soma / 20.0, pois o problema trabalha com 20 alunos e notas podem ter casas decimais.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="7">
+          <div class="timeline_marker">7</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 7</span>
+              <span class="skill_tag">Habilidade: Aplicar condição e contador</span>
+            </div>
+            <h3 class="step_title">Contar notas acima da média</h3>
+            <p class="step_question">Como verificar cada nota armazenada e atualizar o contador apenas quando ela for maior que a média?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Complete a lógica do segundo laço.</p>
+              <div class="field_grid">
+                <div class="field_group">
+                  <label for="s7_inicio">Valor inicial de i</label>
+                  <select id="s7_inicio" data-required>
+                    <option value="">Selecione</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="20">20</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s7_condicao_laco">Condição do laço</label>
+                  <select id="s7_condicao_laco" data-required>
+                    <option value="">Selecione</option>
+                    <option value="i < 20">i &lt; 20</option>
+                    <option value="i <= 20">i &lt;= 20</option>
+                    <option value="i < media">i &lt; media</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s7_condicao_if">Condição do if</label>
+                  <select id="s7_condicao_if" data-required>
+                    <option value="">Selecione</option>
+                    <option value="notas[i] > media">notas[i] &gt; media</option>
+                    <option value="notas[i] >= media">notas[i] &gt;= media</option>
+                    <option value="i > media">i &gt; media</option>
+                    <option value="media > notas[i]">media &gt; notas[i]</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s7_incremento">Ação quando a condição for verdadeira</label>
+                  <select id="s7_incremento" data-required>
+                    <option value="">Selecione</option>
+                    <option value="acimaMedia++">acimaMedia++</option>
+                    <option value="media++">media++</option>
+                    <option value="soma++">soma++</option>
+                    <option value="i = 0">i = 0</option>
+                  </select>
+                </div>
+              </div>
+              <p class="live_feedback" id="s7_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="7">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="7">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="7" data-level="1"><strong>Pista:</strong> a comparação deve usar o valor guardado no vetor, não o índice.</div>
+                <div class="help_level" data-help-step="7" data-level="2"><strong>Pergunta guia:</strong> o enunciado pede acima da média ou acima ou igual à média?</div>
+                <div class="help_level" data-help-step="7" data-level="3"><strong>Exemplo parecido:</strong> se a média é 7, uma nota 7 não está acima da média; ela está exatamente na média.</div>
+                <div class="help_level" data-help-step="7" data-level="4"><strong>Começo da resposta:</strong> se notas[i] for maior que media, então incrementar o contador acimaMedia.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="7">Liberar orientação</button>
+              <p class="feedback_message" id="s7_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s7_orientation">
+              <strong>Orientação esperada:</strong> o segundo laço também percorre i de 0 até 19. Dentro dele, a condição deve ser notas[i] &gt; media. Quando essa condição for verdadeira, o contador acimaMedia deve ser incrementado.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="8">
+          <div class="timeline_marker">8</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 8</span>
+              <span class="skill_tag">Habilidade: Simular com teste de mesa</span>
+            </div>
+            <h3 class="step_title">Simular com um caso pequeno</h3>
+            <p class="step_question">Se a turma tivesse apenas 4 notas para teste, como a soma, a média e a contagem evoluiriam?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Use as notas fixas 6, 8, 10 e 4 para validar a lógica.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Notas de teste</th>
+                    <th>Soma final</th>
+                    <th>Média</th>
+                    <th>Quantidade acima da média</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input value="6, 8, 10, 4" readonly></td>
+                    <td><input id="s8_soma" data-required type="number" step="0.01"></td>
+                    <td><input id="s8_media" data-required type="number" step="0.01"></td>
+                    <td><input id="s8_contagem" data-required type="number" step="1"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="small_note">Neste teste reduzido, divida por 4 porque foram usadas apenas 4 notas para simular a lógica.</p>
+              <p class="live_feedback" id="s8_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="8">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="8">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="8" data-level="1"><strong>Pista:</strong> primeiro some as quatro notas de teste.</div>
+                <div class="help_level" data-help-step="8" data-level="2"><strong>Pergunta guia:</strong> depois de calcular a média, quais notas são estritamente maiores do que ela?</div>
+                <div class="help_level" data-help-step="8" data-level="3"><strong>Exemplo parecido:</strong> se as notas são 5 e 9, a média é 7 e apenas 9 fica acima da média.</div>
+                <div class="help_level" data-help-step="8" data-level="4"><strong>Começo da resposta:</strong> a soma das notas de teste é 6 + 8 + 10 + 4.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="8">Liberar orientação</button>
+              <p class="feedback_message" id="s8_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s8_orientation">
+              <strong>Orientação esperada:</strong> compare sua simulação com estes valores: soma 28, média 7 e contagem 2, pois as notas 8 e 10 são maiores que 7. Essa simulação confirma que o algoritmo precisa calcular a média antes de contar.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="9">
+          <div class="timeline_marker">9</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 9</span>
+              <span class="skill_tag">Habilidade: Organizar pseudocódigo</span>
+            </div>
+            <h3 class="step_title">Montar a sequência do pseudocódigo</h3>
+            <p class="step_question">Qual é a ordem lógica das ações antes de escrever o código em C?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Associe cada ação à sua posição na sequência.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Ação</th>
+                    <th>Ordem</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Inicializar soma e acimaMedia com 0</td>
+                    <td><select id="s9_o1" data-required><option value="">Selecione</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></td>
+                  </tr>
+                  <tr>
+                    <td>Ler as 20 notas no vetor e acumular a soma</td>
+                    <td><select id="s9_o2" data-required><option value="">Selecione</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></td>
+                  </tr>
+                  <tr>
+                    <td>Calcular a média da turma</td>
+                    <td><select id="s9_o3" data-required><option value="">Selecione</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></td>
+                  </tr>
+                  <tr>
+                    <td>Percorrer novamente o vetor</td>
+                    <td><select id="s9_o4" data-required><option value="">Selecione</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></td>
+                  </tr>
+                  <tr>
+                    <td>Incrementar acimaMedia quando notas[i] for maior que media</td>
+                    <td><select id="s9_o5" data-required><option value="">Selecione</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></td>
+                  </tr>
+                  <tr>
+                    <td>Escrever média e contagem</td>
+                    <td><select id="s9_o6" data-required><option value="">Selecione</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s9_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="9">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="9">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="9" data-level="1"><strong>Pista:</strong> não é possível contar acima da média antes de calcular a média.</div>
+                <div class="help_level" data-help-step="9" data-level="2"><strong>Pergunta guia:</strong> o que precisa estar pronto antes da segunda passagem pelo vetor?</div>
+                <div class="help_level" data-help-step="9" data-level="3"><strong>Exemplo parecido:</strong> para contar salários acima da média, primeiro leia e some, depois calcule a média, depois compare cada salário.</div>
+                <div class="help_level" data-help-step="9" data-level="4"><strong>Começo da resposta:</strong> iniciar variáveis, ler e somar, calcular média, percorrer novamente, contar, escrever.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="9">Liberar orientação</button>
+              <p class="feedback_message" id="s9_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s9_orientation">
+              <strong>Orientação esperada:</strong> a sequência coerente é inicializar variáveis, ler notas e acumular soma, calcular a média, percorrer novamente o vetor, contar notas maiores que a média e escrever os dois resultados.
+              <span class="code_like">iniciar soma com 0
+iniciar acimaMedia com 0
+para i de 0 até 19:
+    ler notas[i]
+    soma recebe soma + notas[i]
+media recebe soma / 20
+para i de 0 até 19:
+    se notas[i] &gt; media:
+        acimaMedia recebe acimaMedia + 1
+mostrar media
+mostrar acimaMedia</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="10">
+          <div class="timeline_marker">10</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 10</span>
+              <span class="skill_tag">Habilidade: Traduzir solução para C</span>
+            </div>
+            <h3 class="step_title">Conferir a estrutura final em C</h3>
+            <p class="step_question">Quais trechos precisam aparecer no código final para implementar a solução?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Escolha os trechos coerentes com a solução construída.</p>
+              <div class="field_grid">
+                <div class="field_group">
+                  <label for="s10_vetor">Declaração do vetor</label>
+                  <select id="s10_vetor" data-required>
+                    <option value="">Selecione</option>
+                    <option value="float notas[20]">float notas[20]</option>
+                    <option value="int notas[2]">int notas[2]</option>
+                    <option value="char notas[20]">char notas[20]</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s10_laco1">Laço de leitura</label>
+                  <select id="s10_laco1" data-required>
+                    <option value="">Selecione</option>
+                    <option value="for i 0 20">for (i = 0; i &lt; 20; i++)</option>
+                    <option value="for i 1 20">for (i = 1; i &lt;= 20; i++)</option>
+                    <option value="for i 0 19">for (i = 0; i &lt; 19; i++)</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s10_media">Cálculo da média</label>
+                  <select id="s10_media" data-required>
+                    <option value="">Selecione</option>
+                    <option value="media soma 20">media = soma / 20.0</option>
+                    <option value="media notas 20">media = notas[i] / 20.0</option>
+                    <option value="media soma acima">media = soma / acimaMedia</option>
+                  </select>
+                </div>
+                <div class="field_group">
+                  <label for="s10_if">Condição de contagem</label>
+                  <select id="s10_if" data-required>
+                    <option value="">Selecione</option>
+                    <option value="notas maior media">if (notas[i] &gt; media)</option>
+                    <option value="notas maiorigual media">if (notas[i] &gt;= media)</option>
+                    <option value="i maior media">if (i &gt; media)</option>
+                  </select>
+                </div>
+              </div>
+              <p class="live_feedback" id="s10_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="10">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="10">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="10" data-level="1"><strong>Pista:</strong> o código em C deve refletir o pseudocódigo que você acabou de organizar.</div>
+                <div class="help_level" data-help-step="10" data-level="2"><strong>Pergunta guia:</strong> quais são os dois laços necessários e o que cada um faz?</div>
+                <div class="help_level" data-help-step="10" data-level="3"><strong>Exemplo parecido:</strong> para vetor com 5 valores, usa-se for (i = 0; i &lt; 5; i++), calcula-se a média e depois outro for compara cada valor.</div>
+                <div class="help_level" data-help-step="10" data-level="4"><strong>Começo da resposta:</strong> declare float notas[20], leia com for, calcule media = soma / 20.0 e conte quando notas[i] &gt; media.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="10">Liberar orientação</button>
+              <p class="feedback_message" id="s10_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s10_orientation">
+              <strong>Orientação esperada:</strong> compare sua seleção com o código final abaixo. Ele aparece somente agora porque as decisões de entrada, vetor, laços, média, contador e simulação já foram trabalhadas.
+              <span class="code_like">#include &lt;stdio.h&gt;
+
+int main() {
+    float notas[20], soma = 0, media;
+    int i, acimaMedia = 0;
+
+    for (i = 0; i &lt; 20; i++) {
+        printf("Digite a nota do aluno %d: ", i + 1);
+        scanf("%f", &amp;notas[i]);
+        soma += notas[i];
+    }
+
+    media = soma / 20.0;
+
+    for (i = 0; i &lt; 20; i++) {
+        if (notas[i] &gt; media) {
+            acimaMedia++;
+        }
+    }
+
+    printf("Media da turma: %.2f\n", media);
+    printf("Alunos acima da media: %d\n", acimaMedia);
+
+    return 0;
+}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="support_area" aria-label="Apoio pedagógico">
+      <article class="support_block">
+        <h2 class="section_title">Evidências esperadas</h2>
+        <div class="evidence_list">
+          <article class="evidence_item">Entrada e saída identificadas<span>O aluno distingue as 20 notas de entrada, a soma como dado intermediário e os dois resultados finais.</span></article>
+          <article class="evidence_item">Vetor usado com justificativa<span>O aluno explica que as notas precisam ser armazenadas para comparação depois do cálculo da média.</span></article>
+          <article class="evidence_item">Laços configurados corretamente<span>O aluno usa índices de 0 a 19 para ler, somar e depois comparar as notas armazenadas.</span></article>
+          <article class="evidence_item">Acumulador e contador aplicados<span>O aluno inicializa soma e acimaMedia com 0 e atualiza cada um no momento adequado.</span></article>
+          <article class="evidence_item">Condição coerente<span>O aluno usa notas[i] &gt; media, respeitando a expressão acima da média.</span></article>
+          <article class="evidence_item">Código final rastreável<span>O aluno reconhece no código final as decisões construídas nas etapas anteriores.</span></article>
+        </div>
+      </article>
+
+      <article class="support_block">
+        <h2 class="section_title">Erros comuns tratados</h2>
+        <div class="error_list">
+          <article class="error_item">
+            <h3>Contar antes de calcular a média</h3>
+            <p><strong>Por que acontece:</strong> o aluno tenta resolver tudo durante a primeira leitura.</p>
+            <p><strong>Como evitar:</strong> calcular a média primeiro e só depois comparar cada nota armazenada.</p>
+          </article>
+          <article class="error_item">
+            <h3>Não armazenar as notas</h3>
+            <p><strong>Por que acontece:</strong> o aluno soma as notas, mas perde os valores necessários para a comparação posterior.</p>
+            <p><strong>Como evitar:</strong> usar um vetor para guardar as 20 notas.</p>
+          </article>
+          <article class="error_item">
+            <h3>Usar maior ou igual</h3>
+            <p><strong>Por que acontece:</strong> o aluno interpreta acima da média como acima ou igual à média.</p>
+            <p><strong>Como evitar:</strong> usar a condição notas[i] &gt; media.</p>
+          </article>
+          <article class="error_item">
+            <h3>Esquecer inicialização</h3>
+            <p><strong>Por que acontece:</strong> acumulador e contador são usados antes de receber valor inicial.</p>
+            <p><strong>Como evitar:</strong> iniciar soma = 0 e acimaMedia = 0 antes dos laços.</p>
+          </article>
+        </div>
+      </article>
+    </section>
+
+    <section class="final_panel">
+      <h2>Fechamento pedagógico</h2>
+      <p>Ao concluir este roteiro, o aluno deve conseguir resolver problemas que exigem armazenar uma coleção de valores, calcular uma medida geral e depois percorrer novamente os dados para contar elementos que atendem a uma condição.</p>
+    </section>
+  </main>
+
+  <script>
+    const totalSteps = 10;
+    const completedSteps = new Set();
+    const helpState = {};
+    for (let i = 1; i <= totalSteps; i++) {
+      helpState[i] = 0;
+    }
+
+    const helpLabels = {
+      0: "Ver pista",
+      1: "Ver pergunta guia",
+      2: "Ver exemplo parecido",
+      3: "Ver começo da resposta",
+      4: "Ajudas exibidas"
+    };
+
+    const validators = {
+      1: validateStep1,
+      2: validateStep2,
+      3: validateStep3,
+      4: validateStep4,
+      5: validateStep5,
+      6: validateStep6,
+      7: validateStep7,
+      8: validateStep8,
+      9: validateStep9,
+      10: validateStep10
+    };
+
+    document.querySelectorAll(".reveal_btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.dataset.reveal);
+        const result = validators[step]();
+        const usedAllHelp = helpState[step] >= 4;
+
+        if (result.valid || usedAllHelp) {
+          const message = result.valid
+            ? "Tentativa válida. Agora compare sua resposta com a orientação esperada."
+            : "Orientação liberada após o uso das ajudas progressivas. Compare com calma e ajuste sua tentativa.";
+          showMessage(step, message, "ok");
+          revealOrientation(step);
+        } else {
+          showMessage(step, result.message || "Tente preencher a microtarefa ou use as pistas antes de liberar a orientação.", "warn");
+        }
+      });
+    });
+
+    document.querySelectorAll(".help_btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.dataset.help);
+        revealNextHelp(step, button);
+      });
+    });
+
+    document.querySelectorAll("input, select, textarea").forEach((field) => {
+      field.addEventListener("input", handleLiveFeedback);
+      field.addEventListener("change", handleLiveFeedback);
+    });
+
+    function revealNextHelp(step, button) {
+      if (helpState[step] >= 4) {
+        return;
+      }
+
+      helpState[step] += 1;
+      const nextLevel = helpState[step];
+      const helpItem = document.querySelector(`.help_level[data-help-step="${step}"][data-level="${nextLevel}"]`);
+
+      if (helpItem) {
+        helpItem.classList.add("show");
+      }
+
+      button.textContent = helpLabels[nextLevel] || "Ajudas exibidas";
+
+      if (nextLevel >= 4) {
+        button.textContent = "Ajudas exibidas";
+        button.disabled = true;
+        showMessage(step, "Você usou todos os níveis de ajuda. Agora pode liberar a orientação esperada mesmo que ainda não tenha completado a microtarefa.", "ok");
+      }
+    }
+
+    function revealOrientation(step) {
+      document.getElementById(`s${step}_orientation`).classList.add("show");
+      completedSteps.add(step);
+      document.querySelector(`.timeline_step[data-step="${step}"]`).classList.add("completed");
+      updateProgress();
+    }
+
+    function requiredValue(id) {
+      const element = document.getElementById(id);
+      return element ? element.value.trim() : "";
+    }
+
+    function selectedRadio(name) {
+      return document.querySelector(`input[name="${name}"]:checked`);
+    }
+
+    function checked(id) {
+      const element = document.getElementById(id);
+      return element ? element.checked : false;
+    }
+
+    function showMessage(step, text, type) {
+      const message = document.getElementById(`s${step}_feedback`);
+      message.textContent = text;
+      message.classList.add("show");
+      message.style.background = type === "ok" ? "var(--cor-superficie-destacada)" : "var(--cor-aviso-suave)";
+      message.style.borderColor = type === "ok" ? "rgba(5, 150, 105, 0.24)" : "rgba(132, 204, 22, 0.35)";
+      message.style.color = "var(--cor-texto-principal)";
+    }
+
+    function showLive(step, text) {
+      const live = document.getElementById(`s${step}_live`);
+      if (!live) return;
+      if (!text) {
+        live.textContent = "";
+        live.classList.remove("show");
+        return;
+      }
+      live.textContent = text;
+      live.classList.add("show");
+    }
+
+    function updateProgress() {
+      const count = completedSteps.size;
+      const percent = (count / totalSteps) * 100;
+      document.getElementById("progressText").textContent = `Etapas concluídas: ${count} de ${totalSteps}.`;
+      document.getElementById("progressFill").style.width = `${percent}%`;
+    }
+
+    function numberValue(id) {
+      const value = requiredValue(id).replace(",", ".");
+      return Number(value);
+    }
+
+    function sameNumber(value, expected, tolerance = 0.01) {
+      return Math.abs(value - expected) <= tolerance;
+    }
+
+    function validateStep1() {
+      const correct = checked("s1_a") && checked("s1_b") && checked("s1_c") && checked("s1_d");
+      const wrong = checked("s1_e");
+      if (!correct || wrong) {
+        if (wrong) {
+          showLive(1, "Revise a ação de ordenar. O enunciado não pede ordenação das notas.");
+        }
+        return { valid: false, message: "Marque as ações pedidas pelo enunciado e evite ações que não foram solicitadas." };
+      }
+      showLive(1, "As ações essenciais do problema foram identificadas.");
+      return { valid: true };
+    }
+
+    function validateStep2() {
+      const ok = requiredValue("s2_notas") === "entrada" &&
+        requiredValue("s2_media") === "saida" &&
+        requiredValue("s2_contagem") === "saida" &&
+        requiredValue("s2_soma") === "intermediario";
+      if (!ok) {
+        showLive(2, "Revise a diferença entre dado informado pelo usuário, dado usado no cálculo e resultado exibido.");
+        return { valid: false, message: "Classifique entrada, saída e dado intermediário de forma coerente." };
+      }
+      showLive(2, "Entrada, saídas e dado intermediário foram classificados de forma coerente.");
+      return { valid: true };
+    }
+
+    function validateStep3() {
+      const ok = requiredValue("s3_tipo_notas") === "float" &&
+        requiredValue("s3_papel_notas") === "armazenar_notas" &&
+        requiredValue("s3_tipo_soma") === "float" &&
+        requiredValue("s3_papel_soma") === "acumular" &&
+        requiredValue("s3_ini_soma") === "0" &&
+        requiredValue("s3_tipo_media") === "float" &&
+        requiredValue("s3_papel_media") === "guardar_media" &&
+        requiredValue("s3_tipo_acima") === "int" &&
+        requiredValue("s3_papel_acima") === "contador" &&
+        requiredValue("s3_ini_acima") === "0" &&
+        requiredValue("s3_tipo_i") === "int" &&
+        requiredValue("s3_papel_i") === "indice";
+
+      if (!ok) {
+        showLive(3, "Revise os papéis: vetor guarda notas, soma acumula, media guarda o resultado, acimaMedia conta e i controla o índice.");
+        return { valid: false, message: "Complete tipo, papel e inicialização das variáveis de modo coerente." };
+      }
+      showLive(3, "As variáveis foram associadas aos tipos e papéis esperados.");
+      return { valid: true };
+    }
+
+    function validateStep4() {
+      const choice = selectedRadio("s4_strategy");
+      if (!choice) {
+        return { valid: false, message: "Escolha uma estratégia de processamento." };
+      }
+      if (choice.value !== "b") {
+        showLive(4, "A média só fica conhecida depois da leitura. As notas precisam ser guardadas para a comparação posterior.");
+        return { valid: false, message: "Revise a estratégia de armazenamento e segunda passagem." };
+      }
+      showLive(4, "Estratégia coerente: armazenar, calcular média e comparar depois.");
+      return { valid: true };
+    }
+
+    function validateStep5() {
+      const ok = requiredValue("s5_inicio") === "0" &&
+        requiredValue("s5_condicao") === "i < 20" &&
+        requiredValue("s5_atualizacao") === "i++" &&
+        requiredValue("s5_leitura") === "scanf_notas_i" &&
+        requiredValue("s5_soma") === "soma += notas[i]";
+      if (!ok) {
+        showLive(5, "O primeiro laço deve percorrer os índices 0 a 19, ler notas[i] e somar cada nota ao acumulador.");
+        return { valid: false, message: "Revise início, condição, atualização, leitura e acúmulo." };
+      }
+      showLive(5, "Primeiro laço configurado para ler e acumular as 20 notas.");
+      return { valid: true };
+    }
+
+    function validateStep6() {
+      const expr = requiredValue("s6_expr");
+      const momento = requiredValue("s6_momento");
+      if (expr === "notas[i] / 20") {
+        showLive(6, "A média da turma usa a soma de todas as notas, não apenas a nota atual.");
+      } else if (expr === "soma / acimaMedia") {
+        showLive(6, "O contador acimaMedia ainda não deve ser usado para calcular a média da turma.");
+      }
+      const ok = expr === "soma / 20.0" && momento === "apos_leitura";
+      if (!ok) {
+        return { valid: false, message: "Escolha a expressão da média e o momento de cálculo adequados." };
+      }
+      showLive(6, "Média calculada corretamente após a soma das 20 notas.");
+      return { valid: true };
+    }
+
+    function validateStep7() {
+      const ok = requiredValue("s7_inicio") === "0" &&
+        requiredValue("s7_condicao_laco") === "i < 20" &&
+        requiredValue("s7_condicao_if") === "notas[i] > media" &&
+        requiredValue("s7_incremento") === "acimaMedia++";
+      if (requiredValue("s7_condicao_if") === "notas[i] >= media") {
+        showLive(7, "Cuidado: o enunciado pede acima da média, não acima ou igual à média.");
+      } else if (requiredValue("s7_condicao_if") === "i > media") {
+        showLive(7, "A comparação deve usar a nota armazenada, não o índice do vetor.");
+      }
+      if (!ok) {
+        return { valid: false, message: "Revise o segundo laço, a condição do if e o contador atualizado." };
+      }
+      showLive(7, "Contagem configurada para notas estritamente maiores que a média.");
+      return { valid: true };
+    }
+
+    function validateStep8() {
+      const soma = numberValue("s8_soma");
+      const media = numberValue("s8_media");
+      const contagem = numberValue("s8_contagem");
+
+      if (Number.isNaN(soma) || Number.isNaN(media) || Number.isNaN(contagem)) {
+        return { valid: false, message: "Preencha soma, média e contagem do teste de mesa." };
+      }
+
+      if (!sameNumber(soma, 28)) {
+        showLive(8, "Revise a soma das notas de teste: 6 + 8 + 10 + 4.");
+        return { valid: false, message: "A soma do teste de mesa ainda não está coerente." };
+      }
+
+      if (!sameNumber(media, 7)) {
+        showLive(8, "No teste reduzido, a média é a soma dividida por 4.");
+        return { valid: false, message: "A média do teste de mesa ainda não está coerente." };
+      }
+
+      if (contagem !== 2) {
+        showLive(8, "Apenas as notas estritamente maiores que 7 devem ser contadas.");
+        return { valid: false, message: "A contagem do teste de mesa ainda não está coerente." };
+      }
+
+      showLive(8, "Teste de mesa coerente com a lógica do algoritmo.");
+      return { valid: true };
+    }
+
+    function validateStep9() {
+      const values = ["s9_o1", "s9_o2", "s9_o3", "s9_o4", "s9_o5", "s9_o6"].map(requiredValue);
+      if (values.some(v => !v)) {
+        return { valid: false, message: "Defina a ordem de todas as ações." };
+      }
+      const unique = new Set(values);
+      if (unique.size !== 6) {
+        showLive(9, "Cada ação deve ter uma posição diferente na sequência.");
+        return { valid: false, message: "Revise as ordens repetidas." };
+      }
+      const ok = values.join(",") === "1,2,3,4,5,6";
+      if (!ok) {
+        showLive(9, "A média precisa ser calculada antes da segunda comparação, e a escrita dos resultados deve ficar ao final.");
+        return { valid: false, message: "Revise a ordem lógica do pseudocódigo." };
+      }
+      showLive(9, "Sequência lógica organizada antes da codificação.");
+      return { valid: true };
+    }
+
+    function validateStep10() {
+      const ok = requiredValue("s10_vetor") === "float notas[20]" &&
+        requiredValue("s10_laco1") === "for i 0 20" &&
+        requiredValue("s10_media") === "media soma 20" &&
+        requiredValue("s10_if") === "notas maior media";
+      if (requiredValue("s10_if") === "notas maiorigual media") {
+        showLive(10, "Maior ou igual incluiria notas iguais à média, mas o enunciado pede apenas acima da média.");
+      } else if (requiredValue("s10_laco1") === "for i 1 20") {
+        showLive(10, "Em C, percorrer de 1 até 20 não combina diretamente com os índices de notas[20].");
+      }
+      if (!ok) {
+        return { valid: false, message: "Selecione os trechos que implementam a solução construída." };
+      }
+      showLive(10, "Estrutura final em C coerente com o roteiro construído.");
+      return { valid: true };
+    }
+
+    function handleLiveFeedback(event) {
+      const stepElement = event.target.closest(".timeline_step");
+      if (!stepElement) return;
+      const step = Number(stepElement.dataset.step);
+
+      if (step === 1 && checked("s1_e")) {
+        showLive(1, "Ordenar as notas não foi solicitado pelo enunciado.");
+      }
+
+      if (step === 5) {
+        const cond = requiredValue("s5_condicao");
+        const soma = requiredValue("s5_soma");
+        if (cond === "i <= 20") {
+          showLive(5, "Essa condição tentaria acessar o índice 20, que fica fora do vetor notas[20].");
+        } else if (soma === "soma = notas[i]") {
+          showLive(5, "Essa atribuição substitui a soma anterior. O acumulador precisa preservar o valor anterior e somar a nova nota.");
+        }
+      }
+
+      if (step === 6 && requiredValue("s6_momento") === "antes_leitura") {
+        showLive(6, "Antes de ler as notas, a soma ainda não representa a turma.");
+      }
+
+      if (step === 7) {
+        const condIf = requiredValue("s7_condicao_if");
+        if (condIf === "notas[i] >= media") {
+          showLive(7, "Maior ou igual inclui notas exatamente iguais à média, mas o enunciado pede acima da média.");
+        } else if (condIf === "i > media") {
+          showLive(7, "O índice i indica posição, não nota do aluno.");
+        }
+      }
+
+      if (step === 9) {
+        const orderMedia = requiredValue("s9_o3");
+        const orderCount = requiredValue("s9_o5");
+        if (orderMedia && orderCount && Number(orderCount) < Number(orderMedia)) {
+          showLive(9, "A contagem acima da média não deve vir antes do cálculo da média.");
+        }
+      }
+    }
+  </script>
+</body>
+</html>
