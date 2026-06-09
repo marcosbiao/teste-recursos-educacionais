@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qual estrutura resolve melhor este problema?</title>
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 18px 45px rgba(15, 23, 42, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 28rem),
+        linear-gradient(180deg, var(--cor-fundo), #FFFFFF 55%, var(--cor-fundo));
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      border-radius: 30px;
+      padding: 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+      min-height: 330px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 230px;
+      height: 230px;
+      background: rgba(79, 70, 229, 0.08);
+      right: -84px;
+      top: -88px;
+    }
+
+    .hero::after {
+      width: 145px;
+      height: 145px;
+      background: rgba(245, 158, 11, 0.12);
+      left: 48%;
+      bottom: -70px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2rem, 5vw, 3.35rem);
+      line-height: 1.08;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.08rem;
+      max-width: 760px;
+    }
+
+    .hero-visual {
+      position: relative;
+      z-index: 2;
+      min-height: 270px;
+      display: grid;
+      place-items: center;
+    }
+
+    .decision-panel {
+      width: min(100%, 390px);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 26px;
+      padding: 20px;
+      box-shadow: 0 20px 44px rgba(15, 23, 42, 0.10);
+      backdrop-filter: blur(8px);
+      animation: floatPanel 5s ease-in-out infinite;
+    }
+
+    .decision-question {
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 18px;
+      padding: 16px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .decision-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      position: relative;
+    }
+
+    .decision-split::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      width: 2px;
+      height: 14px;
+      background: var(--cor-primaria);
+      transform: translateX(-50%);
+    }
+
+    .route-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 122px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .route-card::after {
+      content: "";
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      right: -18px;
+      bottom: -18px;
+      background: rgba(79, 70, 229, 0.10);
+      transform: rotate(18deg);
+    }
+
+    .route-card strong {
+      display: block;
+      color: var(--cor-primaria-escura);
+      font-size: 1.02rem;
+      margin-bottom: 6px;
+    }
+
+    .route-card span {
+      color: var(--cor-texto-secundario);
+      font-size: 0.88rem;
+      display: block;
+    }
+
+    .pulse-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--cor-destaque-pontual);
+      position: absolute;
+      top: 13px;
+      right: 13px;
+      animation: pulseDot 1.8s ease-in-out infinite;
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.035);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 32px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 132px;
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .concept-box {
+      display: grid;
+      grid-template-columns: 1.05fr 1.45fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background:
+        linear-gradient(135deg, var(--cor-superficie-destacada), #FFFFFF);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 22px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .concept-main::after {
+      content: "?";
+      position: absolute;
+      right: 20px;
+      bottom: -34px;
+      color: rgba(79, 70, 229, 0.10);
+      font-size: 8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .concept-main strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .flow-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flow-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cor-primaria), transparent);
+      opacity: 0.7;
+    }
+
+    .flow-number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .keyword {
+      color: var(--cor-primaria-escura);
+      font-weight: 800;
+    }
+
+    .decision-map {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .map-column {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      padding: 20px;
+      min-height: 260px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-column::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 40px;
+      background: rgba(79, 70, 229, 0.07);
+      right: -52px;
+      bottom: -52px;
+      transform: rotate(20deg);
+    }
+
+    .map-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-weight: 800;
+      font-size: 0.86rem;
+      margin-bottom: 14px;
+    }
+
+    .map-icon {
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      border-radius: 24px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      color: var(--cor-primaria-escura);
+      font-size: 2.2rem;
+      font-weight: 900;
+      margin-bottom: 14px;
+      animation: softBounce 3.4s ease-in-out infinite;
+    }
+
+    .map-column:nth-child(3) .map-icon {
+      animation-delay: 0.5s;
+    }
+
+    .map-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .map-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: var(--cor-texto-secundario);
+      font-size: 0.96rem;
+    }
+
+    .map-item::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--cor-primaria);
+      margin-top: 9px;
+      flex: 0 0 auto;
+    }
+
+    .map-center {
+      display: grid;
+      place-items: center;
+      min-width: 130px;
+    }
+
+    .choice-node {
+      width: 130px;
+      height: 130px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 34px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 14px;
+      font-weight: 900;
+      line-height: 1.15;
+      position: relative;
+      box-shadow: 0 18px 36px rgba(49, 46, 129, 0.22);
+      animation: nodeGlow 2.7s ease-in-out infinite;
+    }
+
+    .choice-node::before,
+    .choice-node::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 52px;
+      height: 2px;
+      background: var(--cor-primaria);
+    }
+
+    .choice-node::before {
+      right: 100%;
+    }
+
+    .choice-node::after {
+      left: 100%;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::after {
+      content: "";
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      right: -24px;
+      bottom: -24px;
+      background: rgba(79, 70, 229, 0.06);
+      border-radius: 18px;
+      transform: rotate(25deg);
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border-radius: 12px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      border: 1px solid rgba(79, 70, 229, 0.14);
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .compare-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .compare-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .compare-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      padding: 6px 10px;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+
+    .mini-code {
+      margin-top: 12px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 12px;
+      color: var(--cor-texto-principal);
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .example {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .example-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .accent-card {
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: #FFFBEB;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--cor-borda);
+      padding: 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+    }
+
+    pre {
+      background: var(--cor-texto-principal);
+      color: #F8FAFC;
+      padding: 18px;
+      border-radius: 18px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .code-block {
+      background: #0B1020;
+      color: #E5E7EB;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .tok-preprocessor {
+      color: #C084FC;
+    }
+
+    .tok-keyword {
+      color: #60A5FA;
+      font-weight: 700;
+    }
+
+    .tok-type {
+      color: #67E8F9;
+      font-weight: 700;
+    }
+
+    .tok-function {
+      color: #FDE68A;
+    }
+
+    .tok-string {
+      color: #86EFAC;
+    }
+
+    .tok-number {
+      color: #FCA5A5;
+    }
+
+    .tok-operator {
+      color: #F9A8D4;
+    }
+
+    .tok-variable {
+      color: #E5E7EB;
+    }
+
+    .tok-punctuation {
+      color: #CBD5E1;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px 18px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    details[open] {
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79, 70, 229, 0.25);
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      list-style-position: outside;
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 18px 38px rgba(49, 46, 129, 0.22);
+    }
+
+    .closing::after {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      right: -64px;
+      bottom: -82px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .closing p {
+      color: #E0E7FF;
+      font-size: 1.05rem;
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes floatPanel {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.55; }
+    }
+
+    @keyframes softBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes nodeGlow {
+      0%, 100% { box-shadow: 0 18px 36px rgba(49, 46, 129, 0.22); }
+      50% { box-shadow: 0 18px 44px rgba(79, 70, 229, 0.34); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .concept-box,
+      .example,
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .flow,
+      .error-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .decision-map {
+        grid-template-columns: 1fr;
+      }
+
+      .map-center {
+        min-height: 115px;
+      }
+
+      .choice-node::before,
+      .choice-node::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .hero-visual {
+        min-height: 240px;
+      }
+
+      .decision-split,
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-table {
+        display: block;
+        overflow-x: auto;
+        font-size: 0.88rem;
+      }
+
+      pre {
+        font-size: 0.82rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="tag">Infográfico educacional por competências</div>
+        <h1>Qual estrutura resolve melhor este problema?</h1>
+        <p class="subtitle">
+          Um guia visual para decidir quando usar uma função e quando usar um procedimento ao modularizar soluções em C.
+        </p>
+      </div>
+
+      <div class="hero-visual" aria-label="Esquema visual de decisão entre função e procedimento">
+        <div class="decision-panel">
+          <div class="decision-question">O subprograma precisa devolver um valor?</div>
+          <div class="decision-split">
+            <div class="route-card">
+              <span class="pulse-dot"></span>
+              <strong>Sim</strong>
+              <span>Use função com tipo de retorno.</span>
+            </div>
+            <div class="route-card">
+              <strong>Não</strong>
+              <span>Use procedimento, em C normalmente com void.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI07</div>
+          <p>Modularizar soluções por funções ou procedimentos.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI02 e CCI08</div>
+          <p>Organizar fluxo de entrada, processamento e saída, escolhendo estruturas adequadas.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Função ou procedimento</div>
+          <p>Decisão sobre o tipo de subprograma a usar.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">10 a 15 minutos</div>
+          <p>Leitura rápida antes de resolver exercícios com modularização.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e decisório</div>
+          <p>Comparação, rota de decisão e exemplo mínimo em C.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">Variáveis e tipos</span>
+        <span class="pill">Entrada e saída em C</span>
+        <span class="pill">Parâmetros simples</span>
+        <span class="pill">Noção de modularização</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-main">
+          <h3>A escolha depende do papel do subprograma</h3>
+          <p>
+            Use <strong>função</strong> quando o subprograma precisa calcular, produzir e devolver um valor para outra parte do programa. Use <strong>procedimento</strong> quando ele deve apenas executar uma ação, como imprimir uma mensagem ou organizar uma saída.
+          </p>
+        </div>
+
+        <div class="flow">
+          <article class="flow-card">
+            <span class="flow-number">1</span>
+            <h3>Observe o verbo</h3>
+            <p><span class="keyword">Calcular</span>, <span class="keyword">retornar</span> e <span class="keyword">obter</span> geralmente indicam função.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">2</span>
+            <h3>Procure a entrega</h3>
+            <p>Se outra parte do programa precisa usar o resultado, o subprograma deve devolver esse valor.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">3</span>
+            <h3>Separe a ação</h3>
+            <p>Se a tarefa é mostrar, ler ou informar algo, um procedimento pode ser suficiente.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Rota visual de decisão</h2>
+      </div>
+
+      <div class="decision-map">
+        <article class="map-column">
+          <span class="map-label">Função</span>
+          <div class="map-icon">f</div>
+          <h3>Quando usar?</h3>
+          <div class="map-list">
+            <p class="map-item">Quando existe um <strong>valor de retorno</strong>.</p>
+            <p class="map-item">Quando o resultado será usado em uma atribuição, condição ou cálculo.</p>
+            <p class="map-item">Quando a tarefa principal é processar dados e entregar resposta.</p>
+          </div>
+        </article>
+
+        <div class="map-center">
+          <div class="choice-node">Escolha pela saída esperada</div>
+        </div>
+
+        <article class="map-column">
+          <span class="map-label">Procedimento</span>
+          <div class="map-icon">void</div>
+          <h3>Quando usar?</h3>
+          <div class="map-list">
+            <p class="map-item">Quando não há valor a devolver.</p>
+            <p class="map-item">Quando a tarefa é <strong>executar uma ação</strong>.</p>
+            <p class="map-item">Quando o objetivo é imprimir, informar ou organizar uma etapa do programa.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="comparison">
+        <article class="compare-card">
+          <div class="compare-head">
+            <h3>Função em C</h3>
+            <span class="compare-badge">retorna valor</span>
+          </div>
+          <p>Tem tipo de retorno explícito, como <strong>int</strong>, <strong>float</strong> ou <strong>double</strong>. Normalmente usa <strong>return</strong>.</p>
+          <div class="mini-code">float calcularMedia(float a, float b) {<br>&nbsp;&nbsp;return (a + b) / 2;<br>}</div>
+        </article>
+
+        <article class="compare-card">
+          <div class="compare-head">
+            <h3>Procedimento em C</h3>
+            <span class="compare-badge">executa ação</span>
+          </div>
+          <p>Em C, costuma ser escrito como uma função <strong>void</strong>. Ele realiza uma ação e não devolve valor por return.</p>
+          <div class="mini-code">void mostrarMedia(float media) {<br>&nbsp;&nbsp;printf("Media: %.2f", media);<br>}</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Como pensar antes de codificar</h2>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-label">Etapa 1</span>
+          <h3>Leia a tarefa</h3>
+          <p>Identifique se o enunciado pede cálculo, decisão, leitura, impressão ou organização da saída.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 2</span>
+          <h3>Procure retorno</h3>
+          <p>Pergunte se o subprograma precisa entregar um valor para o escopo principal usar depois.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 3</span>
+          <h3>Defina parâmetros</h3>
+          <p>Liste quais dados o subprograma precisa receber para cumprir sua tarefa.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Etapa 4</span>
+          <h3>Escolha a estrutura</h3>
+          <p>Valor devolvido indica função. Ação sem devolução indica procedimento com void.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplo mínimo</h2>
+      </div>
+
+      <div class="example">
+        <div class="example-card accent-card">
+          <h3>Problema</h3>
+          <p>Calcular a média de dois números e mostrar o valor obtido.</p>
+
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Parte do problema</th>
+                <th>Estrutura adequada</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Calcular a média</td>
+                <td>Função, pois precisa devolver um valor float.</td>
+              </tr>
+              <tr>
+                <td>Mostrar o resultado</td>
+                <td>Procedimento, pois apenas imprime uma informação.</td>
+              </tr>
+              <tr>
+                <td>Ler os números</td>
+                <td>Escopo principal, para manter a entrada clara no main.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="example-card">
+          <h3>Código curto em C</h3>
+          <pre class="code-block"><code><span class="tok-preprocessor">#include</span> <span class="tok-string">&lt;stdio.h&gt;</span>
+
+<span class="tok-type">float</span> <span class="tok-function">calcularMedia</span><span class="tok-punctuation">(</span><span class="tok-type">float</span> <span class="tok-variable">a</span><span class="tok-punctuation">,</span> <span class="tok-type">float</span> <span class="tok-variable">b</span><span class="tok-punctuation">)</span> <span class="tok-punctuation">{</span>
+    <span class="tok-keyword">return</span> <span class="tok-punctuation">(</span><span class="tok-variable">a</span> <span class="tok-operator">+</span> <span class="tok-variable">b</span><span class="tok-punctuation">)</span> <span class="tok-operator">/</span> <span class="tok-number">2</span><span class="tok-punctuation">;</span>
+<span class="tok-punctuation">}</span>
+
+<span class="tok-keyword">void</span> <span class="tok-function">mostrarMedia</span><span class="tok-punctuation">(</span><span class="tok-type">float</span> <span class="tok-variable">media</span><span class="tok-punctuation">)</span> <span class="tok-punctuation">{</span>
+    <span class="tok-function">printf</span><span class="tok-punctuation">(</span><span class="tok-string">"Media: %.2f"</span><span class="tok-punctuation">,</span> <span class="tok-variable">media</span><span class="tok-punctuation">);</span>
+<span class="tok-punctuation">}</span>
+
+<span class="tok-type">int</span> <span class="tok-function">main</span><span class="tok-punctuation">()</span> <span class="tok-punctuation">{</span>
+    <span class="tok-type">float</span> <span class="tok-variable">n1</span><span class="tok-punctuation">,</span> <span class="tok-variable">n2</span><span class="tok-punctuation">,</span> <span class="tok-variable">media</span><span class="tok-punctuation">;</span>
+
+    <span class="tok-function">scanf</span><span class="tok-punctuation">(</span><span class="tok-string">"%f"</span><span class="tok-punctuation">,</span> <span class="tok-operator">&amp;</span><span class="tok-variable">n1</span><span class="tok-punctuation">);</span>
+    <span class="tok-function">scanf</span><span class="tok-punctuation">(</span><span class="tok-string">"%f"</span><span class="tok-punctuation">,</span> <span class="tok-operator">&amp;</span><span class="tok-variable">n2</span><span class="tok-punctuation">);</span>
+
+    <span class="tok-variable">media</span> <span class="tok-operator">=</span> <span class="tok-function">calcularMedia</span><span class="tok-punctuation">(</span><span class="tok-variable">n1</span><span class="tok-punctuation">,</span> <span class="tok-variable">n2</span><span class="tok-punctuation">);</span>
+    <span class="tok-function">mostrarMedia</span><span class="tok-punctuation">(</span><span class="tok-variable">media</span><span class="tok-punctuation">);</span>
+
+    <span class="tok-keyword">return</span> <span class="tok-number">0</span><span class="tok-punctuation">;</span>
+<span class="tok-punctuation">}</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Usar procedimento para cálculo que precisa ser reutilizado</h3>
+          <p><strong>Por que acontece:</strong> o aluno imprime o resultado dentro do subprograma e não consegue usar o valor depois.</p>
+          <p><strong>Como evitar:</strong> quando o resultado precisa voltar ao main, use função com return.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Usar return em procedimento void</h3>
+          <p><strong>Por que acontece:</strong> o aluno mistura a ideia de ação com a ideia de valor devolvido.</p>
+          <p><strong>Como evitar:</strong> em void, execute a ação sem tentar devolver um valor.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Colocar tudo no main</h3>
+          <p><strong>Por que acontece:</strong> o aluno resolve a tarefa inteira em um único bloco de código.</p>
+          <p><strong>Como evitar:</strong> separe cálculo e apresentação quando eles tiverem papéis diferentes.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>Se o subprograma calcula uma média e o main precisa usar esse valor, qual estrutura é mais adequada?</summary>
+          <p>Uma função, pois ela deve devolver a média calculada para o escopo principal.</p>
+        </details>
+
+        <details>
+          <summary>Em C, como normalmente representamos um procedimento?</summary>
+          <p>Com uma função do tipo void, usada para executar uma ação sem devolver valor.</p>
+        </details>
+
+        <details>
+          <summary>Mostrar uma mensagem na tela geralmente combina mais com função ou procedimento?</summary>
+          <p>Combina mais com procedimento, porque a tarefa principal é executar uma ação de saída.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>
+        Depois de estudar este infográfico, o aluno deve conseguir analisar uma tarefa simples, identificar se há valor de retorno e escolher entre função e procedimento de forma justificada.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

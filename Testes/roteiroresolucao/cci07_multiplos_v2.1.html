@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculando o M.M.C. por múltiplos</title>
+  <style>
+    :root {
+      --cor-primaria: #059669;
+      --cor-primaria-escura: #064E3B;
+      --cor-destaque-pontual: #84CC16;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #ECFDF5;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #D1D5DB;
+      --cor-aviso-suave: #FEFCE8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+    }
+
+    .app_shell {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      padding: 22px 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+    }
+
+    .topbar_content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .competency_badge {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.22);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .page_title {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(1.55rem, 3.4vw, 2.35rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .page_subtitle {
+      color: var(--cor-texto-secundario);
+      max-width: 870px;
+      font-size: 1rem;
+    }
+
+    .attempt_note {
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .context_panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .problem_panel,
+    .pedagogy_panel,
+    .use_instructions,
+    .progress_panel,
+    .timeline_step,
+    .support_block,
+    .solution_map {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.035);
+    }
+
+    .problem_panel,
+    .pedagogy_panel,
+    .solution_map {
+      padding: 22px;
+    }
+
+    .panel_kicker {
+      color: var(--cor-primaria);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .problem_panel h2,
+    .pedagogy_panel h2,
+    .section_title {
+      color: var(--cor-primaria-escura);
+      font-size: 1.18rem;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .problem_statement {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(5, 150, 105, 0.22);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 12px 0;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 1.02rem;
+    }
+
+    .initial_question {
+      border-left: 4px solid var(--cor-destaque-pontual);
+      background: var(--cor-aviso-suave);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+    }
+
+    .context_note {
+      margin-top: 12px;
+      color: var(--cor-texto-secundario);
+    }
+
+    .compact_meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .meta_chip {
+      display: block;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.92rem;
+    }
+
+    .meta_chip strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .prerequisite_list,
+    .variable_chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .prerequisite_chip,
+    .variable_chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+
+    .solution_map {
+      margin-bottom: 18px;
+    }
+
+    .map_intro {
+      color: var(--cor-texto-secundario);
+      margin-bottom: 14px;
+      max-width: 900px;
+    }
+
+    .map_grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .map_card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .map_card strong {
+      display: block;
+      color: var(--cor-texto-principal);
+      margin-bottom: 5px;
+    }
+
+    .map_card span {
+      color: var(--cor-texto-secundario);
+      font-size: 0.92rem;
+    }
+
+    .use_instructions {
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+
+    .instruction_strip {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .instruction_icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      font-weight: 900;
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .instruction_strip p {
+      color: var(--cor-texto-secundario);
+      font-size: 0.96rem;
+    }
+
+    .resolution_area {
+      margin-top: 18px;
+    }
+
+    .progress_panel {
+      padding: 18px;
+      margin-bottom: 22px;
+    }
+
+    .progress_header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress_text {
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .progress_hint {
+      color: var(--cor-texto-secundario);
+      font-size: 0.9rem;
+    }
+
+    .progress_track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .progress_fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque-pontual));
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 18px;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: rgba(5, 150, 105, 0.2);
+    }
+
+    .timeline_step {
+      position: relative;
+      padding: 0;
+      overflow: visible;
+    }
+
+    .timeline_marker {
+      position: absolute;
+      left: -31px;
+      top: 22px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cor-superficie);
+      border: 3px solid var(--cor-primaria);
+      color: var(--cor-primaria-escura);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 900;
+      z-index: 2;
+    }
+
+    .timeline_step.completed .timeline_marker {
+      background: var(--cor-primaria);
+      color: white;
+    }
+
+    .step_content {
+      padding: 22px;
+    }
+
+    .step_header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .step_label,
+    .skill_tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .step_label {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .skill_tag {
+      background: var(--cor-superficie-suave);
+      color: var(--cor-texto-secundario);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .step_title {
+      color: var(--cor-texto-principal);
+      font-size: 1.2rem;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .step_question {
+      color: var(--cor-texto-secundario);
+      margin-bottom: 16px;
+    }
+
+    .microtask {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .microtask_title {
+      color: var(--cor-texto-principal);
+      font-size: 0.98rem;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .field_grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field_grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field_group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field_group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--cor-texto-principal);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      padding: 10px 11px;
+      background: var(--cor-superficie);
+      color: var(--cor-texto-principal);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    input[readonly] {
+      background: #E2E8F0;
+      color: var(--cor-texto-secundario);
+      font-weight: 700;
+      cursor: not-allowed;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--cor-primaria);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    }
+
+    textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .mini_table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 0.92rem;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .mini_table th,
+    .mini_table td {
+      border: 1px solid var(--cor-borda);
+      padding: 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini_table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      font-size: 0.84rem;
+    }
+
+    .mini_table input,
+    .mini_table select {
+      min-width: 120px;
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .option_stack {
+      display: grid;
+      gap: 8px;
+    }
+
+    .option_item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .option_item input {
+      width: auto;
+      margin-top: 4px;
+      accent-color: var(--cor-primaria);
+    }
+
+    .option_item span {
+      color: var(--cor-texto-secundario);
+      font-size: 0.94rem;
+    }
+
+    .help_area {
+      border: 1px solid rgba(5, 150, 105, 0.2);
+      background: var(--cor-superficie-destacada);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .help_header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .help_title {
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+      font-size: 0.96rem;
+    }
+
+    .help_btn {
+      cursor: pointer;
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(5, 150, 105, 0.28);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .help_btn:hover {
+      background: var(--cor-superficie-suave);
+      transform: translateY(-1px);
+    }
+
+    .help_btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      transform: none;
+    }
+
+    .help_content {
+      display: grid;
+      gap: 8px;
+    }
+
+    .help_level {
+      display: none;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 11px 12px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.93rem;
+    }
+
+    .help_level.show {
+      display: block;
+    }
+
+    .help_level strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .live_feedback,
+    .feedback_message {
+      margin-top: 12px;
+      border-radius: 13px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      display: none;
+    }
+
+    .live_feedback {
+      background: var(--cor-aviso-suave);
+      border: 1px solid rgba(132, 204, 22, 0.35);
+      color: var(--cor-texto-principal);
+    }
+
+    .feedback_message {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-secundario);
+    }
+
+    .feedback_message.show,
+    .live_feedback.show {
+      display: block;
+    }
+
+    .step_actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .reveal_btn {
+      cursor: pointer;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .reveal_btn:hover {
+      background: var(--cor-primaria-escura);
+      transform: translateY(-1px);
+    }
+
+    .orientation_box {
+      display: none;
+      margin-top: 14px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(5, 150, 105, 0.24);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--cor-texto-principal);
+    }
+
+    .orientation_box.show {
+      display: block;
+    }
+
+    .orientation_box strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .code_like {
+      display: block;
+      margin-top: 10px;
+      background: var(--cor-primaria-escura);
+      color: #ECFDF5;
+      border-radius: 14px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      white-space: pre;
+    }
+
+    .code_like .kw { color: #A7F3D0; font-weight: 700; }
+    .code_like .fn { color: #BEF264; }
+    .code_like .str { color: #FDE68A; }
+    .code_like .cm { color: #CBD5E1; }
+    .code_like .num { color: #FDBA74; }
+
+    .support_area {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .support_block {
+      padding: 22px;
+    }
+
+    .evidence_list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .evidence_item {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+      font-weight: 700;
+    }
+
+    .evidence_item span {
+      display: block;
+      color: var(--cor-texto-secundario);
+      font-weight: 400;
+      margin-top: 6px;
+      font-size: 0.92rem;
+    }
+
+    .error_list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .error_item {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .error_item h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .error_item p {
+      color: var(--cor-texto-secundario);
+      font-size: 0.92rem;
+      margin-bottom: 7px;
+    }
+
+    .error_item p:last-child {
+      margin-bottom: 0;
+    }
+
+    .final_panel {
+      margin-top: 18px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .final_panel h2 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .final_panel p {
+      color: #D1FAE5;
+      max-width: 900px;
+    }
+
+    @media (max-width: 900px) {
+      .context_panel,
+      .map_grid,
+      .field_grid,
+      .field_grid.three,
+      .evidence_list,
+      .error_list {
+        grid-template-columns: 1fr;
+      }
+
+      .progress_header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px 10px;
+      }
+
+      .topbar,
+      .problem_panel,
+      .pedagogy_panel,
+      .use_instructions,
+      .progress_panel,
+      .support_block,
+      .solution_map,
+      .final_panel {
+        border-radius: 18px;
+      }
+
+      .timeline {
+        padding-left: 0;
+      }
+
+      .timeline::before,
+      .timeline_marker {
+        display: none;
+      }
+
+      .step_content {
+        padding: 18px;
+      }
+
+      .mini_table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app_shell">
+    <header class="topbar">
+      <div class="topbar_content">
+        <span class="competency_badge">CCI07</span>
+        <h1 class="page_title">Calculando o M.M.C. por múltiplos</h1>
+        <p class="page_subtitle">Roteiro de resolução para calcular o M.M.C. entre dois números naturais usando uma função para o cálculo e um procedimento para exibir o resultado.</p>
+        <p class="attempt_note">Tente construir o raciocínio antes de liberar as orientações. O código completo aparece somente no final.</p>
+      </div>
+    </header>
+
+    <section class="context_panel" aria-label="Contexto da atividade">
+      <article class="problem_panel">
+        <p class="panel_kicker">Problema a resolver</p>
+        <h2>Calcular o M.M.C. entre dois números naturais.</h2>
+        <div class="problem_statement">Escreva um algoritmo que calcula o M.M.C. entre dois números naturais. Utilize uma função para calcular o M.M.C.. Os dois números naturais são fornecidos no escopo principal. Mostre o resultado em um procedimento.</div>
+        <p class="initial_question">Como encontrar o primeiro múltiplo de um número que também serve para o outro?</p>
+        <p class="context_note">Este roteiro usa a ideia de tabuada: testar múltiplos do primeiro número até encontrar um valor divisível pelo segundo.</p>
+      </article>
+
+      <article class="pedagogy_panel">
+        <p class="panel_kicker">Resumo pedagógico</p>
+        <h2>Competência principal</h2>
+        <div class="compact_meta">
+          <span class="meta_chip"><strong>Competência:</strong> CCI07</span>
+          <span class="meta_chip"><strong>Descrição:</strong> Modularizar soluções por funções ou procedimentos.</span>
+          <span class="meta_chip"><strong>Tema:</strong> função com retorno, procedimento e escopo principal.</span>
+          <span class="meta_chip"><strong>Tempo estimado:</strong> 20 a 25 minutos.</span>
+          <span class="meta_chip"><strong>Estilo associado:</strong> resolução guiada, simulação de múltiplos e separação de responsabilidades.</span>
+        </div>
+
+        <div class="prerequisite_list" aria-label="Pré requisitos">
+          <span class="prerequisite_chip">Variáveis inteiras</span>
+          <span class="prerequisite_chip">Operador módulo</span>
+          <span class="prerequisite_chip">Laço while</span>
+          <span class="prerequisite_chip">Função com retorno</span>
+          <span class="prerequisite_chip">Procedimento void</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="solution_map" aria-label="Mapa da solução">
+      <p class="panel_kicker">Como a solução será organizada</p>
+      <h2 class="section_title">Mapa antes do código</h2>
+      <p class="map_intro">A solução será organizada em três partes. Este mapa mostra responsabilidades, não o código pronto. As variáveis só serão introduzidas quando forem necessárias para o raciocínio.</p>
+      <div class="map_grid">
+        <article class="map_card">
+          <strong>Escopo principal</strong>
+          <span>Lê os dois números, chama a função de cálculo e entrega o resultado ao procedimento.</span>
+        </article>
+        <article class="map_card">
+          <strong>Função de cálculo</strong>
+          <span>Recebe dois números, testa múltiplos do primeiro e retorna o M.M.C. encontrado.</span>
+        </article>
+        <article class="map_card">
+          <strong>Procedimento de saída</strong>
+          <span>Recebe o M.M.C. calculado e mostra a mensagem para o usuário.</span>
+        </article>
+      </div>
+      <div class="variable_chips" aria-label="Variáveis que serão usadas">
+        <span class="variable_chip">numero1: primeiro número lido</span>
+        <span class="variable_chip">numero2: segundo número lido</span>
+        <span class="variable_chip">multiploAtual: múltiplo que está sendo testado</span>
+        <span class="variable_chip">mmc: valor retornado pela função</span>
+      </div>
+    </section>
+
+    <section class="use_instructions" aria-label="Como usar este roteiro">
+      <div class="instruction_strip">
+        <span class="instruction_icon">i</span>
+        <p>Tente resolver primeiro, preencha a microtarefa, use as ajudas progressivas se necessário, observe o feedback, libere a orientação esperada e compare sua tentativa antes de avançar.</p>
+      </div>
+    </section>
+
+    <section class="resolution_area" aria-label="Roteiro de resolução">
+      <div class="progress_panel">
+        <div class="progress_header">
+          <p class="progress_text" id="progressText">Etapas concluídas: 0 de 8.</p>
+          <p class="progress_hint">A etapa é concluída quando a orientação é liberada após tentativa válida ou após uso de todas as ajudas.</p>
+        </div>
+        <div class="progress_track" aria-hidden="true">
+          <div class="progress_fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <h2 class="section_title">Roteiro de resolução</h2>
+
+      <div class="timeline">
+        <article class="timeline_step" data-step="1">
+          <div class="timeline_marker">1</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 1</span>
+              <span class="skill_tag">Habilidade: interpretar o conceito operacional de M.M.C.</span>
+            </div>
+            <h3 class="step_title">Entender o que será procurado</h3>
+            <p class="step_question">Qual ideia matemática pode orientar o algoritmo antes de pensar em código?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Escolha a descrição mais adequada para o M.M.C.</p>
+              <div class="option_stack">
+                <label class="option_item">
+                  <input type="radio" name="s1_choice" value="a" data-required>
+                  <span>O maior número entre os dois valores informados.</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s1_choice" value="b" data-required>
+                  <span>O primeiro múltiplo que serve ao mesmo tempo para os dois números.</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s1_choice" value="c" data-required>
+                  <span>A soma dos dois números naturais.</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s1_choice" value="d" data-required>
+                  <span>O número de repetições feitas pelo laço.</span>
+                </label>
+              </div>
+              <p class="live_feedback" id="s1_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="1">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="1">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="1" data-level="1"><strong>Pista:</strong> pense nas tabuadas dos dois números.</div>
+                <div class="help_level" data-help-step="1" data-level="2"><strong>Pergunta guia:</strong> qual é o primeiro valor que aparece nas duas tabuadas?</div>
+                <div class="help_level" data-help-step="1" data-level="3"><strong>Exemplo parecido:</strong> para 2 e 3, os múltiplos de 2 são 2, 4, 6. O 6 também é múltiplo de 3.</div>
+                <div class="help_level" data-help-step="1" data-level="4"><strong>Começo da resposta:</strong> o M.M.C. é o primeiro múltiplo que...</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="1">Liberar orientação</button>
+              <p class="feedback_message" id="s1_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s1_orientation">
+              <strong>Orientação esperada:</strong> uma resposta adequada deve indicar que o M.M.C. é o primeiro múltiplo comum entre os dois números. Essa ideia permite construir o algoritmo testando múltiplos do primeiro número até encontrar um que também seja divisível pelo segundo.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="2">
+          <div class="timeline_marker">2</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 2</span>
+              <span class="skill_tag">Habilidade: separar responsabilidades em módulos</span>
+            </div>
+            <h3 class="step_title">Distribuir responsabilidades</h3>
+            <p class="step_question">Que parte do programa deve ler, calcular e mostrar o resultado?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Associe cada parte do programa à sua responsabilidade.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Parte</th>
+                    <th>Responsabilidade</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input value="main" readonly></td>
+                    <td>
+                      <select id="s2_main" data-required>
+                        <option value="">Selecione</option>
+                        <option value="ler_coordenar">Ler os números e coordenar as chamadas</option>
+                        <option value="calcular">Calcular e retornar o M.M.C.</option>
+                        <option value="mostrar">Mostrar o resultado recebido</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="calcularMMC" readonly></td>
+                    <td>
+                      <select id="s2_funcao" data-required>
+                        <option value="">Selecione</option>
+                        <option value="ler_coordenar">Ler os números e coordenar as chamadas</option>
+                        <option value="calcular">Calcular e retornar o M.M.C.</option>
+                        <option value="mostrar">Mostrar o resultado recebido</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="mostrarResultado" readonly></td>
+                    <td>
+                      <select id="s2_procedimento" data-required>
+                        <option value="">Selecione</option>
+                        <option value="ler_coordenar">Ler os números e coordenar as chamadas</option>
+                        <option value="calcular">Calcular e retornar o M.M.C.</option>
+                        <option value="mostrar">Mostrar o resultado recebido</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s2_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="2">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="2">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="2" data-level="1"><strong>Pista:</strong> função com retorno deve calcular e devolver um valor.</div>
+                <div class="help_level" data-help-step="2" data-level="2"><strong>Pergunta guia:</strong> qual parte precisa devolver o M.M.C. para ser usado depois?</div>
+                <div class="help_level" data-help-step="2" data-level="3"><strong>Exemplo parecido:</strong> uma função calcularMedia retorna a média, enquanto um procedimento mostrarMedia apenas imprime.</div>
+                <div class="help_level" data-help-step="2" data-level="4"><strong>Começo da resposta:</strong> main lê e coordena; calcularMMC calcula; mostrarResultado...</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="2">Liberar orientação</button>
+              <p class="feedback_message" id="s2_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s2_orientation">
+              <strong>Orientação esperada:</strong> o escopo principal deve ler os dois números e coordenar as chamadas. A função calcularMMC deve receber os números, calcular e retornar o M.M.C. O procedimento mostrarResultado deve apenas apresentar o valor recebido.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="3">
+          <div class="timeline_marker">3</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 3</span>
+              <span class="skill_tag">Habilidade: reconhecer variáveis pelo papel</span>
+            </div>
+            <h3 class="step_title">Entender as variáveis antes do uso</h3>
+            <p class="step_question">Que papel cada variável terá na solução?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Os nomes já estão definidos. Selecione apenas o papel de cada variável.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Variável</th>
+                    <th>Onde aparece</th>
+                    <th>Papel</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input value="numero1" readonly></td>
+                    <td><input value="main e calcularMMC" readonly></td>
+                    <td>
+                      <select id="s3_numero1" data-required>
+                        <option value="">Selecione</option>
+                        <option value="primeiro_lido">Primeiro número informado pelo usuário</option>
+                        <option value="segundo_lido">Segundo número informado pelo usuário</option>
+                        <option value="multiplo_teste">Múltiplo que está sendo testado</option>
+                        <option value="valor_final">Valor final retornado pela função</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="numero2" readonly></td>
+                    <td><input value="main e calcularMMC" readonly></td>
+                    <td>
+                      <select id="s3_numero2" data-required>
+                        <option value="">Selecione</option>
+                        <option value="primeiro_lido">Primeiro número informado pelo usuário</option>
+                        <option value="segundo_lido">Segundo número informado pelo usuário</option>
+                        <option value="multiplo_teste">Múltiplo que está sendo testado</option>
+                        <option value="valor_final">Valor final retornado pela função</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="multiploAtual" readonly></td>
+                    <td><input value="calcularMMC" readonly></td>
+                    <td>
+                      <select id="s3_multiplo" data-required>
+                        <option value="">Selecione</option>
+                        <option value="primeiro_lido">Primeiro número informado pelo usuário</option>
+                        <option value="segundo_lido">Segundo número informado pelo usuário</option>
+                        <option value="multiplo_teste">Múltiplo de numero1 que está sendo testado</option>
+                        <option value="valor_final">Valor final recebido no escopo principal</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="mmc" readonly></td>
+                    <td><input value="main e mostrarResultado" readonly></td>
+                    <td>
+                      <select id="s3_mmc" data-required>
+                        <option value="">Selecione</option>
+                        <option value="primeiro_lido">Primeiro número informado pelo usuário</option>
+                        <option value="segundo_lido">Segundo número informado pelo usuário</option>
+                        <option value="multiplo_teste">Múltiplo que está sendo testado</option>
+                        <option value="valor_final">Valor final retornado pela função</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s3_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="3">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="3">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="3" data-level="1"><strong>Pista:</strong> uma variável deve ter nome ligado ao que ela representa.</div>
+                <div class="help_level" data-help-step="3" data-level="2"><strong>Pergunta guia:</strong> qual variável muda enquanto o algoritmo testa a tabuada de numero1?</div>
+                <div class="help_level" data-help-step="3" data-level="3"><strong>Exemplo parecido:</strong> em uma soma, somaAtual representa o valor acumulado até aquele momento.</div>
+                <div class="help_level" data-help-step="3" data-level="4"><strong>Começo da resposta:</strong> multiploAtual é o valor que muda durante os testes.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="3">Liberar orientação</button>
+              <p class="feedback_message" id="s3_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s3_orientation">
+              <strong>Orientação esperada:</strong> numero1 e numero2 representam os valores lidos. multiploAtual representa o múltiplo de numero1 que está sendo testado dentro da função. mmc representa o valor final recebido no escopo principal e enviado ao procedimento de saída.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="4">
+          <div class="timeline_marker">4</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 4</span>
+              <span class="skill_tag">Habilidade: simular a geração de múltiplos</span>
+            </div>
+            <h3 class="step_title">Construir os múltiplos do primeiro número</h3>
+            <p class="step_question">Se numero1 for 4, quais valores podem ser testados como múltiplos?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Complete a sequência de múltiplos para numero1 = 4 e numero2 = 6.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Tentativa</th>
+                    <th>multiploAtual</th>
+                    <th>É divisível por numero2?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input value="1" readonly></td>
+                    <td><input value="4" readonly></td>
+                    <td><input value="não" readonly></td>
+                  </tr>
+                  <tr>
+                    <td><input value="2" readonly></td>
+                    <td><input id="s4_mult2" data-required type="number"></td>
+                    <td>
+                      <select id="s4_div2" data-required>
+                        <option value="">Selecione</option>
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="3" readonly></td>
+                    <td><input id="s4_mult3" data-required type="number"></td>
+                    <td>
+                      <select id="s4_div3" data-required>
+                        <option value="">Selecione</option>
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s4_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="4">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="4">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="4" data-level="1"><strong>Pista:</strong> os próximos múltiplos de 4 são obtidos somando 4 ao valor anterior.</div>
+                <div class="help_level" data-help-step="4" data-level="2"><strong>Pergunta guia:</strong> depois de 4, qual é o próximo valor da tabuada de 4?</div>
+                <div class="help_level" data-help-step="4" data-level="3"><strong>Exemplo parecido:</strong> se numero1 fosse 5, a sequência seria 5, 10, 15, 20...</div>
+                <div class="help_level" data-help-step="4" data-level="4"><strong>Começo da resposta:</strong> 4, ____, ____.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="4">Liberar orientação</button>
+              <p class="feedback_message" id="s4_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s4_orientation">
+              <strong>Orientação esperada:</strong> para numero1 = 4, os múltiplos testados são 4, 8 e 12. O 8 ainda não é divisível por 6, mas o 12 é. Portanto, 12 é o primeiro múltiplo comum nesse caso.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="5">
+          <div class="timeline_marker">5</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 5</span>
+              <span class="skill_tag">Habilidade: definir condição de repetição</span>
+            </div>
+            <h3 class="step_title">Definir quando continuar testando</h3>
+            <p class="step_question">Enquanto o múltiplo atual ainda não servir para numero2, o que o laço deve fazer?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Escolha a condição que mantém o laço enquanto o M.M.C. ainda não foi encontrado.</p>
+              <div class="option_stack">
+                <label class="option_item">
+                  <input type="radio" name="s5_choice" value="a" data-required>
+                  <span>multiploAtual % numero2 != 0</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s5_choice" value="b" data-required>
+                  <span>multiploAtual % numero2 == 0</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s5_choice" value="c" data-required>
+                  <span>numero1 % multiploAtual != 0</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s5_choice" value="d" data-required>
+                  <span>numero1 + numero2 != 0</span>
+                </label>
+              </div>
+              <div class="field_group" style="margin-top: 12px;">
+                <label for="s5_reason">Justificativa curta</label>
+                <textarea id="s5_reason" data-required placeholder="Explique a ideia da condição, sem copiar código."></textarea>
+              </div>
+              <p class="live_feedback" id="s5_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="5">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="5">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="5" data-level="1"><strong>Pista:</strong> o laço continua enquanto o resto da divisão por numero2 ainda não for zero.</div>
+                <div class="help_level" data-help-step="5" data-level="2"><strong>Pergunta guia:</strong> se o resto for zero, o valor já é divisível por numero2. Nesse caso, o laço deve continuar?</div>
+                <div class="help_level" data-help-step="5" data-level="3"><strong>Exemplo parecido:</strong> para procurar um número par, você continua enquanto o resto por 2 for diferente de zero.</div>
+                <div class="help_level" data-help-step="5" data-level="4"><strong>Começo da resposta:</strong> continuar enquanto multiploAtual % numero2 for diferente de...</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="5">Liberar orientação</button>
+              <p class="feedback_message" id="s5_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s5_orientation">
+              <strong>Orientação esperada:</strong> a condição deve manter o laço enquanto multiploAtual ainda não for divisível por numero2. Uma forma adequada é verificar se o resto da divisão por numero2 é diferente de zero.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="6">
+          <div class="timeline_marker">6</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 6</span>
+              <span class="skill_tag">Habilidade: definir atualização do laço</span>
+            </div>
+            <h3 class="step_title">Avançar para o próximo múltiplo</h3>
+            <p class="step_question">Como atualizar multiploAtual sem perder a ideia de tabuada de numero1?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Escolha a atualização correta.</p>
+              <div class="option_stack">
+                <label class="option_item">
+                  <input type="radio" name="s6_choice" value="a" data-required>
+                  <span>multiploAtual = multiploAtual + numero1</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s6_choice" value="b" data-required>
+                  <span>multiploAtual = multiploAtual + numero2</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s6_choice" value="c" data-required>
+                  <span>multiploAtual = numero1 + numero2</span>
+                </label>
+                <label class="option_item">
+                  <input type="radio" name="s6_choice" value="d" data-required>
+                  <span>multiploAtual = multiploAtual - numero1</span>
+                </label>
+              </div>
+              <p class="live_feedback" id="s6_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="6">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="6">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="6" data-level="1"><strong>Pista:</strong> para continuar na tabuada de numero1, some numero1 ao valor atual.</div>
+                <div class="help_level" data-help-step="6" data-level="2"><strong>Pergunta guia:</strong> se numero1 é 4 e multiploAtual é 8, como chegar ao próximo múltiplo?</div>
+                <div class="help_level" data-help-step="6" data-level="3"><strong>Exemplo parecido:</strong> a tabuada de 7 avança somando 7: 7, 14, 21, 28.</div>
+                <div class="help_level" data-help-step="6" data-level="4"><strong>Começo da resposta:</strong> multiploAtual recebe multiploAtual + ...</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="6">Liberar orientação</button>
+              <p class="feedback_message" id="s6_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s6_orientation">
+              <strong>Orientação esperada:</strong> a atualização deve somar numero1 ao valor atual. Assim, multiploAtual percorre apenas valores que já são múltiplos de numero1, como 4, 8, 12, 16.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="7">
+          <div class="timeline_marker">7</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 7</span>
+              <span class="skill_tag">Habilidade: validar o algoritmo por teste de mesa</span>
+            </div>
+            <h3 class="step_title">Simular antes de codificar</h3>
+            <p class="step_question">O algoritmo encontra o M.M.C. se testarmos numero1 = 5 e numero2 = 3?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Complete a simulação. A primeira linha já mostra o padrão.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Tentativa</th>
+                    <th>multiploAtual</th>
+                    <th>multiploAtual % 3</th>
+                    <th>Continuar?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input value="1" readonly></td>
+                    <td><input value="5" readonly></td>
+                    <td><input value="2" readonly></td>
+                    <td><input value="sim" readonly></td>
+                  </tr>
+                  <tr>
+                    <td><input value="2" readonly></td>
+                    <td><input id="s7_mult2" data-required type="number"></td>
+                    <td><input id="s7_rest2" data-required type="number"></td>
+                    <td>
+                      <select id="s7_continue2" data-required>
+                        <option value="">Selecione</option>
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input value="3" readonly></td>
+                    <td><input id="s7_mult3" data-required type="number"></td>
+                    <td><input id="s7_rest3" data-required type="number"></td>
+                    <td>
+                      <select id="s7_continue3" data-required>
+                        <option value="">Selecione</option>
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s7_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="7">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="7">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="7" data-level="1"><strong>Pista:</strong> os múltiplos de 5 avançam somando 5 ao valor anterior.</div>
+                <div class="help_level" data-help-step="7" data-level="2"><strong>Pergunta guia:</strong> qual é o primeiro múltiplo de 5 cujo resto por 3 é zero?</div>
+                <div class="help_level" data-help-step="7" data-level="3"><strong>Exemplo parecido:</strong> 10 % 3 deixa resto 1, então ainda não serve. 15 % 3 deixa resto 0, então serve.</div>
+                <div class="help_level" data-help-step="7" data-level="4"><strong>Começo da resposta:</strong> depois de 5 vêm 10 e 15.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="7">Liberar orientação</button>
+              <p class="feedback_message" id="s7_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s7_orientation">
+              <strong>Orientação esperada:</strong> para numero1 = 5 e numero2 = 3, o algoritmo testa 5, 10 e 15. Como 15 % 3 é igual a zero, o laço para e o M.M.C. encontrado é 15.
+            </div>
+          </div>
+        </article>
+
+        <article class="timeline_step" data-step="8">
+          <div class="timeline_marker">8</div>
+          <div class="step_content">
+            <div class="step_header">
+              <span class="step_label">Etapa 8</span>
+              <span class="skill_tag">Habilidade: transformar raciocínio em solução modular</span>
+            </div>
+            <h3 class="step_title">Montar a solução final</h3>
+            <p class="step_question">Qual sequência representa a solução modular antes do código em C?</p>
+
+            <div class="microtask">
+              <p class="microtask_title">Ordene logicamente as ações escolhendo a posição de cada uma.</p>
+              <table class="mini_table">
+                <thead>
+                  <tr>
+                    <th>Ação</th>
+                    <th>Posição na solução</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Receber numero1 e numero2 no escopo principal</td>
+                    <td>
+                      <select id="s8_ler" data-required>
+                        <option value="">Selecione</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Chamar a função calcularMMC</td>
+                    <td>
+                      <select id="s8_chamar" data-required>
+                        <option value="">Selecione</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Na função, testar múltiplos de numero1 até encontrar um divisível por numero2</td>
+                    <td>
+                      <select id="s8_calcular" data-required>
+                        <option value="">Selecione</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Enviar o M.M.C. ao procedimento mostrarResultado</td>
+                    <td>
+                      <select id="s8_mostrar" data-required>
+                        <option value="">Selecione</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="live_feedback" id="s8_live"></p>
+            </div>
+
+            <div class="help_area" data-help-area="8">
+              <div class="help_header">
+                <p class="help_title">Precisa de ajuda?</p>
+                <button class="help_btn" type="button" data-help="8">Ver pista</button>
+              </div>
+              <div class="help_content">
+                <div class="help_level" data-help-step="8" data-level="1"><strong>Pista:</strong> primeiro os dados precisam existir. Depois a função calcula. Por fim, o procedimento mostra.</div>
+                <div class="help_level" data-help-step="8" data-level="2"><strong>Pergunta guia:</strong> é possível mostrar o M.M.C. antes de calculá-lo?</div>
+                <div class="help_level" data-help-step="8" data-level="3"><strong>Exemplo parecido:</strong> para calcular média, primeiro lê as notas, depois calcula a média, depois mostra.</div>
+                <div class="help_level" data-help-step="8" data-level="4"><strong>Começo da resposta:</strong> ler, chamar a função, calcular dentro da função, mostrar.</div>
+              </div>
+            </div>
+
+            <div class="step_actions">
+              <button class="reveal_btn" type="button" data-reveal="8">Liberar orientação</button>
+              <p class="feedback_message" id="s8_feedback"></p>
+            </div>
+
+            <div class="orientation_box" id="s8_orientation">
+              <strong>Orientação esperada:</strong> compare sua sequência com a organização abaixo. Primeiro o main lê os números. Depois chama a função. A função testa os múltiplos e retorna o M.M.C. Por fim, o main chama o procedimento para mostrar o resultado.
+              <span class="code_like">Pseudocódigo:
+
+função calcularMMC(numero1, numero2)
+    multiploAtual recebe numero1
+
+    enquanto multiploAtual não for divisível por numero2
+        multiploAtual recebe multiploAtual + numero1
+
+    retornar multiploAtual
+
+procedimento mostrarResultado(mmc)
+    mostrar mmc
+
+principal
+    ler numero1
+    ler numero2
+    mmc recebe calcularMMC(numero1, numero2)
+    mostrarResultado(mmc)</span>
+              <span class="code_like"><span class="kw">#include</span> &lt;stdio.h&gt;
+
+<span class="kw">int</span> <span class="fn">calcularMMC</span>(<span class="kw">int</span> numero1, <span class="kw">int</span> numero2) {
+    <span class="kw">int</span> multiploAtual = numero1;
+
+    <span class="kw">while</span> (multiploAtual % numero2 != <span class="num">0</span>) {
+        multiploAtual = multiploAtual + numero1;
+    }
+
+    <span class="kw">return</span> multiploAtual;
+}
+
+<span class="kw">void</span> <span class="fn">mostrarResultado</span>(<span class="kw">int</span> mmc) {
+    <span class="fn">printf</span>(<span class="str">"M.M.C.: %d\n"</span>, mmc);
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="kw">int</span> numero1;
+    <span class="kw">int</span> numero2;
+    <span class="kw">int</span> mmc;
+
+    <span class="fn">printf</span>(<span class="str">"Digite o primeiro numero: "</span>);
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;numero1);
+
+    <span class="fn">printf</span>(<span class="str">"Digite o segundo numero: "</span>);
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;numero2);
+
+    mmc = <span class="fn">calcularMMC</span>(numero1, numero2);
+    <span class="fn">mostrarResultado</span>(mmc);
+
+    <span class="kw">return</span> <span class="num">0</span>;
+}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="support_area" aria-label="Apoio pedagógico">
+      <article class="support_block">
+        <h2 class="section_title">Evidências esperadas</h2>
+        <div class="evidence_list">
+          <article class="evidence_item">Raciocínio por múltiplos<span>O aluno deve explicar que o M.M.C. pode ser encontrado testando múltiplos de um número até servir ao outro.</span></article>
+          <article class="evidence_item">Separação modular<span>O aluno deve distinguir leitura no main, cálculo em função com retorno e exibição em procedimento.</span></article>
+          <article class="evidence_item">Simulação coerente<span>O aluno deve simular multiploAtual, condição de parada e atualização antes de codificar.</span></article>
+        </div>
+      </article>
+
+      <article class="support_block">
+        <h2 class="section_title">Erros comuns tratados</h2>
+        <div class="error_list">
+          <article class="error_item">
+            <h3>Usar variável sem compreender o papel</h3>
+            <p><strong>Por que acontece:</strong> o aluno vê nomes como resultado ou candidato sem saber o que representam.</p>
+            <p><strong>Como evitar:</strong> apresentar cada variável pelo papel antes do primeiro uso.</p>
+          </article>
+          <article class="error_item">
+            <h3>Parar o laço no momento errado</h3>
+            <p><strong>Por que acontece:</strong> o aluno confunde continuar enquanto o resto é diferente de zero com parar quando o resto é zero.</p>
+            <p><strong>Como evitar:</strong> simular duas ou três tentativas antes de escrever o while.</p>
+          </article>
+          <article class="error_item">
+            <h3>Atualizar o múltiplo com o número errado</h3>
+            <p><strong>Por que acontece:</strong> o aluno soma numero2 ou soma os dois números, saindo da tabuada de numero1.</p>
+            <p><strong>Como evitar:</strong> lembrar que multiploAtual deve continuar sendo múltiplo de numero1.</p>
+          </article>
+        </div>
+      </article>
+    </section>
+
+    <section class="final_panel">
+      <h2>Fechamento pedagógico</h2>
+      <p>Ao concluir este roteiro, o aluno deve conseguir transformar a ideia de M.M.C. em um algoritmo modular, usando uma função para calcular o valor e um procedimento para apresentar o resultado, com variáveis nomeadas a partir de seus papéis.</p>
+    </section>
+  </main>
+
+  <script>
+    const totalSteps = 8;
+    const completedSteps = new Set();
+    const helpState = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+
+    const helpLabels = {
+      0: "Ver pista",
+      1: "Ver pergunta guia",
+      2: "Ver exemplo parecido",
+      3: "Ver começo da resposta",
+      4: "Ajudas exibidas"
+    };
+
+    const validators = {
+      1: validateStep1,
+      2: validateStep2,
+      3: validateStep3,
+      4: validateStep4,
+      5: validateStep5,
+      6: validateStep6,
+      7: validateStep7,
+      8: validateStep8
+    };
+
+    document.querySelectorAll(".reveal_btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.dataset.reveal);
+        const result = validators[step]();
+        const usedAllHelp = helpState[step] >= 4;
+
+        if (result.valid || usedAllHelp) {
+          const message = result.valid
+            ? "Tentativa válida. Agora compare sua resposta com a orientação esperada."
+            : "Orientação liberada após o uso das ajudas progressivas. Compare com calma e ajuste sua tentativa.";
+          showMessage(step, message, "ok");
+          revealOrientation(step);
+        } else {
+          showMessage(step, "Tente preencher a microtarefa ou use as pistas antes de liberar a orientação.", "warn");
+        }
+      });
+    });
+
+    document.querySelectorAll(".help_btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const step = Number(button.dataset.help);
+        revealNextHelp(step, button);
+      });
+    });
+
+    document.querySelectorAll("input, select, textarea").forEach((field) => {
+      field.addEventListener("input", handleLiveFeedback);
+      field.addEventListener("change", handleLiveFeedback);
+    });
+
+    function revealNextHelp(step, button) {
+      if (helpState[step] >= 4) {
+        return;
+      }
+
+      helpState[step] += 1;
+      const nextLevel = helpState[step];
+      const helpItem = document.querySelector(`.help_level[data-help-step="${step}"][data-level="${nextLevel}"]`);
+
+      if (helpItem) {
+        helpItem.classList.add("show");
+      }
+
+      button.textContent = helpLabels[nextLevel] || "Ajudas exibidas";
+
+      if (nextLevel >= 4) {
+        button.textContent = "Ajudas exibidas";
+        button.disabled = true;
+        showMessage(step, "Você usou todos os níveis de ajuda. Agora pode liberar a orientação esperada mesmo que ainda não tenha completado a microtarefa.", "ok");
+      }
+    }
+
+    function revealOrientation(step) {
+      document.getElementById(`s${step}_orientation`).classList.add("show");
+      completedSteps.add(step);
+      document.querySelector(`.timeline_step[data-step="${step}"]`).classList.add("completed");
+      updateProgress();
+    }
+
+    function requiredValue(id) {
+      const element = document.getElementById(id);
+      return element ? element.value.trim() : "";
+    }
+
+    function selectedRadio(name) {
+      return document.querySelector(`input[name="${name}"]:checked`);
+    }
+
+    function hasMeaningfulText(value, min = 3) {
+      return value.trim().length >= min;
+    }
+
+    function numberValue(id) {
+      const value = requiredValue(id).replace(",", ".");
+      return Number(value);
+    }
+
+    function showMessage(step, text, type) {
+      const message = document.getElementById(`s${step}_feedback`);
+      message.textContent = text;
+      message.classList.add("show");
+      message.style.background = type === "ok" ? "var(--cor-superficie-destacada)" : "var(--cor-aviso-suave)";
+      message.style.borderColor = type === "ok" ? "rgba(5, 150, 105, 0.24)" : "rgba(132, 204, 22, 0.35)";
+      message.style.color = "var(--cor-texto-principal)";
+    }
+
+    function showLive(step, text) {
+      const live = document.getElementById(`s${step}_live`);
+      if (!text) {
+        live.textContent = "";
+        live.classList.remove("show");
+        return;
+      }
+      live.textContent = text;
+      live.classList.add("show");
+    }
+
+    function updateProgress() {
+      const count = completedSteps.size;
+      const percent = (count / totalSteps) * 100;
+      document.getElementById("progressText").textContent = `Etapas concluídas: ${count} de ${totalSteps}.`;
+      document.getElementById("progressFill").style.width = `${percent}%`;
+    }
+
+    function validateStep1() {
+      const choice = selectedRadio("s1_choice");
+      if (!choice) {
+        return { valid: false, message: "Escolha uma alternativa." };
+      }
+      if (choice.value !== "b") {
+        showLive(1, "Revise a ideia de menor múltiplo comum. O foco não é maior valor, soma ou contador.");
+        return { valid: false, message: "A alternativa escolhida ainda não representa o M.M.C." };
+      }
+      showLive(1, "Conceito operacional do M.M.C. identificado corretamente.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep2() {
+      const main = requiredValue("s2_main");
+      const funcao = requiredValue("s2_funcao");
+      const procedimento = requiredValue("s2_procedimento");
+      if (!main || !funcao || !procedimento) {
+        return { valid: false, message: "Associe as três partes do programa." };
+      }
+      if (main !== "ler_coordenar" || funcao !== "calcular" || procedimento !== "mostrar") {
+        showLive(2, "Revise a diferença entre função com retorno, procedimento e escopo principal.");
+        return { valid: false, message: "Há uma responsabilidade associada ao módulo errado." };
+      }
+      showLive(2, "Responsabilidades separadas de forma coerente.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep3() {
+      const numero1 = requiredValue("s3_numero1");
+      const numero2 = requiredValue("s3_numero2");
+      const multiplo = requiredValue("s3_multiplo");
+      const mmc = requiredValue("s3_mmc");
+      if (!numero1 || !numero2 || !multiplo || !mmc) {
+        return { valid: false, message: "Selecione o papel de todas as variáveis." };
+      }
+      if (numero1 !== "primeiro_lido" || numero2 !== "segundo_lido" || multiplo !== "multiplo_teste" || mmc !== "valor_final") {
+        showLive(3, "Revise o papel das variáveis. multiploAtual é a variável que muda dentro da função.");
+        return { valid: false, message: "Alguma variável ainda está com papel incoerente." };
+      }
+      showLive(3, "Variáveis reconhecidas pelo papel, antes de aparecerem no algoritmo.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep4() {
+      const mult2 = numberValue("s4_mult2");
+      const mult3 = numberValue("s4_mult3");
+      const div2 = requiredValue("s4_div2");
+      const div3 = requiredValue("s4_div3");
+      if (Number.isNaN(mult2) || Number.isNaN(mult3) || !div2 || !div3) {
+        return { valid: false, message: "Complete os múltiplos e a divisibilidade." };
+      }
+      if (mult2 !== 8 || mult3 !== 12) {
+        showLive(4, "A sequência deve seguir a tabuada de 4, somando 4 ao valor anterior.");
+        return { valid: false, message: "Revise a sequência de múltiplos." };
+      }
+      if (div2 !== "nao" || div3 !== "sim") {
+        showLive(4, "Verifique se 8 e 12 são divisíveis por 6.");
+        return { valid: false, message: "Revise a divisibilidade por numero2." };
+      }
+      showLive(4, "Sequência de múltiplos simulada corretamente.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep5() {
+      const choice = selectedRadio("s5_choice");
+      const reason = requiredValue("s5_reason").toLowerCase();
+      if (!choice || !hasMeaningfulText(reason)) {
+        return { valid: false, message: "Escolha uma condição e escreva uma justificativa curta." };
+      }
+      if (choice.value !== "a") {
+        showLive(5, "O laço deve continuar enquanto multiploAtual ainda não for divisível por numero2.");
+        return { valid: false, message: "Revise a condição de permanência do laço." };
+      }
+      if (!reason.includes("resto") && !reason.includes("divis") && !reason.includes("zero")) {
+        showLive(5, "A justificativa deve mencionar a ideia de divisibilidade ou resto zero.");
+        return { valid: false, message: "Revise a justificativa da condição." };
+      }
+      showLive(5, "Condição de permanência coerente com a busca do M.M.C.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep6() {
+      const choice = selectedRadio("s6_choice");
+      if (!choice) {
+        return { valid: false, message: "Escolha uma atualização." };
+      }
+      if (choice.value !== "a") {
+        showLive(6, "A atualização precisa manter multiploAtual na tabuada de numero1.");
+        return { valid: false, message: "Revise a atualização do laço." };
+      }
+      showLive(6, "Atualização adequada para avançar na tabuada de numero1.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep7() {
+      const mult2 = numberValue("s7_mult2");
+      const rest2 = numberValue("s7_rest2");
+      const cont2 = requiredValue("s7_continue2");
+      const mult3 = numberValue("s7_mult3");
+      const rest3 = numberValue("s7_rest3");
+      const cont3 = requiredValue("s7_continue3");
+
+      if ([mult2, rest2, mult3, rest3].some((value) => Number.isNaN(value)) || !cont2 || !cont3) {
+        return { valid: false, message: "Complete as duas linhas da simulação." };
+      }
+      if (mult2 !== 10 || mult3 !== 15) {
+        showLive(7, "A sequência deve seguir os múltiplos de 5: 5, 10, 15.");
+        return { valid: false, message: "Revise os valores de multiploAtual." };
+      }
+      if (rest2 !== 1 || rest3 !== 0) {
+        showLive(7, "Revise os restos: 10 % 3 é 1 e 15 % 3 é 0.");
+        return { valid: false, message: "Revise o cálculo do resto." };
+      }
+      if (cont2 !== "sim" || cont3 !== "nao") {
+        showLive(7, "O laço só para quando o resto é zero.");
+        return { valid: false, message: "Revise a decisão de continuar." };
+      }
+      showLive(7, "Teste de mesa coerente. O laço para no primeiro múltiplo comum.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function validateStep8() {
+      const ler = requiredValue("s8_ler");
+      const chamar = requiredValue("s8_chamar");
+      const calcular = requiredValue("s8_calcular");
+      const mostrar = requiredValue("s8_mostrar");
+      if (!ler || !chamar || !calcular || !mostrar) {
+        return { valid: false, message: "Escolha a posição de todas as ações." };
+      }
+      const positions = [ler, chamar, calcular, mostrar];
+      const unique = new Set(positions);
+      if (unique.size !== 4) {
+        showLive(8, "Cada ação deve ocupar uma posição diferente na sequência.");
+        return { valid: false, message: "Revise posições repetidas." };
+      }
+      if (ler !== "1" || chamar !== "2" || calcular !== "3" || mostrar !== "4") {
+        showLive(8, "A leitura vem antes da chamada; o cálculo ocorre na função; a exibição vem depois do valor calculado.");
+        return { valid: false, message: "Revise a ordem lógica da solução." };
+      }
+      showLive(8, "Sequência modular organizada corretamente.");
+      return { valid: true, message: "Tentativa válida." };
+    }
+
+    function handleLiveFeedback(event) {
+      const stepElement = event.target.closest(".timeline_step");
+      if (!stepElement) {
+        return;
+      }
+
+      const step = Number(stepElement.dataset.step);
+
+      if (step === 1) {
+        const choice = selectedRadio("s1_choice");
+        if (choice && choice.value === "a") {
+          showLive(1, "O maior número pode ajudar em algumas estratégias, mas aqui vamos usar múltiplos do primeiro número.");
+        }
+      }
+
+      if (step === 3) {
+        const multiplo = requiredValue("s3_multiplo");
+        if (multiplo === "valor_final") {
+          showLive(3, "multiploAtual ainda não é necessariamente o valor final. Ele está sendo testado dentro da função.");
+        }
+      }
+
+      if (step === 4) {
+        const mult2 = requiredValue("s4_mult2");
+        if (mult2 === "6") {
+          showLive(4, "Cuidado: estamos listando múltiplos de numero1, que neste exemplo é 4.");
+        }
+      }
+
+      if (step === 5) {
+        const choice = selectedRadio("s5_choice");
+        if (choice && choice.value === "b") {
+          showLive(5, "Essa condição fica verdadeira quando o valor já serve. O while precisa continuar enquanto ainda não serve.");
+        }
+      }
+
+      if (step === 6) {
+        const choice = selectedRadio("s6_choice");
+        if (choice && choice.value === "b") {
+          showLive(6, "Somar numero2 pode sair da sequência de múltiplos de numero1.");
+        }
+      }
+
+      if (step === 7) {
+        const rest3 = requiredValue("s7_rest3");
+        const cont3 = requiredValue("s7_continue3");
+        if (rest3 === "0" && cont3 === "sim") {
+          showLive(7, "Quando o resto é zero, o M.M.C. foi encontrado. O laço deve parar.");
+        }
+      }
+    }
+  </script>
+</body>
+</html>

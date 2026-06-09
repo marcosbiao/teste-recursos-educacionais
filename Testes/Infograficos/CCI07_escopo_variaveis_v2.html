@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onde a variável existe?</title>
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 18px 45px rgba(15, 23, 42, 0.07);
+      --raio-secao: 24px;
+      --raio-card: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 34rem),
+        var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      border-radius: 28px;
+      padding: 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::after {
+      content: "";
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.08);
+      position: absolute;
+      right: -70px;
+      top: -70px;
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.92fr);
+      gap: 26px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.1;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.1rem;
+      max-width: 780px;
+    }
+
+    .hero-visual {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(79, 70, 229, 0.14);
+      border-radius: 24px;
+      padding: 20px;
+      min-height: 280px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px dashed rgba(79, 70, 229, 0.24);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    .visual-title {
+      position: relative;
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .scope-rooms {
+      position: relative;
+      display: grid;
+      gap: 14px;
+    }
+
+    .room {
+      position: relative;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 90px;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .room-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      font-weight: 900;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+    }
+
+    .variable-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .var-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .var-chip::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cor-primaria);
+    }
+
+    .floating-value {
+      position: absolute;
+      left: 52%;
+      top: 102px;
+      transform: translateX(-50%);
+      background: var(--cor-destaque-pontual);
+      color: #111827;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: 900;
+      font-size: 0.84rem;
+      box-shadow: 0 12px 24px rgba(245, 158, 11, 0.28);
+      animation: sendValue 4.8s ease-in-out infinite;
+      z-index: 3;
+    }
+
+    .return-value {
+      position: absolute;
+      right: 25px;
+      bottom: 25px;
+      background: var(--cor-primaria-escura);
+      color: #EEF2FF;
+      border-radius: 14px;
+      padding: 9px 12px;
+      font-weight: 900;
+      font-size: 0.82rem;
+      animation: pulseReturn 4.8s ease-in-out infinite;
+      z-index: 3;
+    }
+
+    @keyframes sendValue {
+      0%, 12% {
+        transform: translate(-50%, -38px) scale(0.96);
+        opacity: 0;
+      }
+      24%, 46% {
+        transform: translate(-50%, 0) scale(1);
+        opacity: 1;
+      }
+      62%, 86% {
+        transform: translate(-50%, 82px) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, 110px) scale(0.96);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulseReturn {
+      0%, 58% {
+        opacity: 0.35;
+        transform: scale(0.96);
+      }
+      70%, 86% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0.35;
+        transform: scale(0.96);
+      }
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-secao);
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.035);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 32px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.45rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-card);
+      padding: 18px;
+      min-height: 130px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .meta-card::after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      right: -35px;
+      bottom: -35px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.06);
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.98rem;
+      margin-bottom: 6px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .concept-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 22px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .concept-main::after {
+      content: "{ }";
+      position: absolute;
+      right: 18px;
+      bottom: 8px;
+      color: rgba(79, 70, 229, 0.13);
+      font-size: 4.8rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .concept-main h3,
+    .concept-main p {
+      position: relative;
+      z-index: 1;
+    }
+
+    .concept-main strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .flow-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-card);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flow-card::before {
+      content: "";
+      position: absolute;
+      inset: auto 18px 0 18px;
+      height: 4px;
+      background: rgba(79, 70, 229, 0.12);
+      border-radius: 999px 999px 0 0;
+    }
+
+    .flow-number {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .keyword {
+      color: var(--cor-primaria-escura);
+      font-weight: 800;
+    }
+
+    .scope-visual-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .scope-illustration {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      min-height: 420px;
+    }
+
+    .scope-illustration h3 {
+      color: var(--cor-primaria-escura);
+      margin-bottom: 14px;
+    }
+
+    .function-panel {
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+      min-height: 128px;
+    }
+
+    .function-panel.local {
+      border-color: rgba(79, 70, 229, 0.24);
+      background: linear-gradient(180deg, var(--cor-superficie), var(--cor-superficie-destacada));
+    }
+
+    .function-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .function-name {
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+      font-size: 0.95rem;
+    }
+
+    .brace-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+    }
+
+    .inside-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-secundario);
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .animated-call {
+      position: relative;
+      height: 78px;
+      margin: 6px 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .call-line {
+      width: min(360px, 84%);
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(79, 70, 229, 0.18), rgba(245, 158, 11, 0.52), rgba(79, 70, 229, 0.18));
+      position: relative;
+    }
+
+    .call-line::before,
+    .call-line::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--cor-primaria);
+      transform: translateY(-50%);
+    }
+
+    .call-line::before {
+      left: 0;
+    }
+
+    .call-line::after {
+      right: 0;
+    }
+
+    .moving-chip {
+      position: absolute;
+      top: 17px;
+      left: 11%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: var(--cor-destaque-pontual);
+      color: #111827;
+      font-weight: 900;
+      font-size: 0.84rem;
+      animation: moveAcross 5.4s ease-in-out infinite;
+      box-shadow: 0 12px 22px rgba(245, 158, 11, 0.24);
+    }
+
+    .moving-return {
+      top: 48px;
+      background: var(--cor-primaria-escura);
+      color: #EEF2FF;
+      animation: moveBack 5.4s ease-in-out infinite;
+    }
+
+    @keyframes moveAcross {
+      0%, 15% {
+        left: 11%;
+        opacity: 0;
+      }
+      25%, 58% {
+        opacity: 1;
+      }
+      68%, 78% {
+        left: 73%;
+        opacity: 1;
+      }
+      100% {
+        left: 73%;
+        opacity: 0;
+      }
+    }
+
+    @keyframes moveBack {
+      0%, 55% {
+        left: 73%;
+        opacity: 0;
+      }
+      66%, 82% {
+        opacity: 1;
+      }
+      92%, 100% {
+        left: 11%;
+        opacity: 0;
+      }
+    }
+
+    .map-cards {
+      display: grid;
+      gap: 14px;
+    }
+
+    .map-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 13px;
+      align-items: start;
+    }
+
+    .map-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      border: 1px solid rgba(79, 70, 229, 0.18);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .step-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-card);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      border: 1px solid rgba(79, 70, 229, 0.1);
+      background: rgba(79, 70, 229, 0.04);
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border-radius: 12px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .scope-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .scope-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-card);
+      padding: 18px;
+      position: relative;
+      min-height: 210px;
+      overflow: hidden;
+    }
+
+    .scope-card.highlight {
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79, 70, 229, 0.18);
+    }
+
+    .scope-card::after {
+      content: "";
+      position: absolute;
+      width: 95px;
+      height: 95px;
+      right: -38px;
+      top: -38px;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+    }
+
+    .scope-tag {
+      display: inline-flex;
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .scope-line {
+      height: 1px;
+      background: var(--cor-borda);
+      margin: 14px 0;
+    }
+
+    .scope-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .scope-item {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      padding: 9px 10px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.93rem;
+    }
+
+    .scope-item strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .example-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-card);
+      padding: 20px;
+    }
+
+    .accent-card {
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: var(--cor-superficie-suave);
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--cor-borda);
+      padding: 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+    }
+
+    .code-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.83rem;
+      font-weight: 800;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--cor-primaria);
+    }
+
+    .legend-dot.accent {
+      background: var(--cor-destaque-pontual);
+    }
+
+    pre {
+      background: var(--cor-texto-principal);
+      color: #F8FAFC;
+      padding: 18px;
+      border-radius: 18px;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      position: relative;
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .code-local {
+      color: #C7D2FE;
+      font-weight: 800;
+    }
+
+    .code-flow {
+      color: #FCD34D;
+      font-weight: 800;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: var(--raio-card);
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-card);
+      padding: 16px 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      list-style-position: outside;
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-radius: var(--raio-secao);
+      padding: 28px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .closing p {
+      color: #E0E7FF;
+      font-size: 1.05rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-layout,
+      .scope-visual-grid,
+      .concept-box,
+      .example,
+      .scope-map {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .flow,
+      .error-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scope-illustration {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .hero-visual {
+        min-height: 250px;
+      }
+
+      .meta-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-table {
+        display: block;
+        overflow-x: auto;
+        font-size: 0.88rem;
+      }
+
+      .moving-chip,
+      .moving-return,
+      .floating-value,
+      .return-value {
+        animation: none;
+        position: static;
+        transform: none;
+        margin-top: 10px;
+        width: fit-content;
+      }
+
+      .animated-call {
+        height: auto;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .call-line {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-layout">
+        <div class="hero-text">
+          <div class="tag">Infográfico educacional por competências</div>
+          <h1>Onde a variável existe?</h1>
+          <p class="subtitle">
+            Entenda escopo, variável local e por que variáveis globais devem ser usadas apenas quando houver uma necessidade clara.
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-label="Ilustração de escopo entre funções">
+          <p class="visual-title">Mapa visual do escopo</p>
+          <div class="scope-rooms">
+            <div class="room">
+              <span class="room-label">main()</span>
+              <div class="variable-row">
+                <span class="var-chip">n1</span>
+                <span class="var-chip">n2</span>
+                <span class="var-chip">m</span>
+              </div>
+            </div>
+
+            <div class="room">
+              <span class="room-label">media(a, b)</span>
+              <div class="variable-row">
+                <span class="var-chip">a</span>
+                <span class="var-chip">b</span>
+                <span class="var-chip">resultado</span>
+              </div>
+            </div>
+          </div>
+          <span class="floating-value">valor enviado</span>
+          <span class="return-value">return</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI07</div>
+          <p>Modularizar soluções por funções ou procedimentos.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI03 e CCI08</div>
+          <p>Controlar variáveis, estado e escolha adequada de estratégia.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Escopo e variáveis locais</div>
+          <p>Entender onde uma variável pode ser acessada.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">10 a 15 minutos</div>
+          <p>Uso rápido antes de exercícios com funções em C.</p>
+        </article>
+
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e comparativo</div>
+          <p>Mapa de escopo, animação leve e perguntas com resposta.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">Variáveis simples</span>
+        <span class="pill">Funções em C</span>
+        <span class="pill">Parâmetros e retorno</span>
+        <span class="pill">Entrada, processamento e saída</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-box">
+        <div class="concept-main">
+          <h3>Variável local pertence ao bloco onde foi criada</h3>
+          <p>
+            Uma variável declarada dentro de uma função, procedimento ou bloco só pode ser usada naquele <strong>espaço de código</strong>. Esse limite é chamado de <strong>escopo</strong> e ajuda a evitar confusão entre partes diferentes do programa.
+          </p>
+        </div>
+
+        <div class="flow">
+          <article class="flow-card">
+            <span class="flow-number">1</span>
+            <h3>Criação</h3>
+            <p>A variável nasce quando é declarada dentro de um bloco.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">2</span>
+            <h3>Uso</h3>
+            <p>Ela pode ser lida e alterada apenas dentro do seu escopo.</p>
+          </article>
+
+          <article class="flow-card">
+            <span class="flow-number">3</span>
+            <h3>Limite</h3>
+            <p>Fora do bloco, o nome daquela variável deixa de existir para o programa.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Visualizando o escopo</h2>
+      </div>
+
+      <div class="scope-visual-grid">
+        <div class="scope-illustration">
+          <h3>Dois blocos, duas memórias locais</h3>
+
+          <div class="function-panel local">
+            <div class="function-header">
+              <span class="function-name">int main() { ... }</span>
+              <span class="brace-badge">{ }</span>
+            </div>
+            <span class="inside-label">variáveis locais de main</span>
+            <div class="variable-row">
+              <span class="var-chip">n1</span>
+              <span class="var-chip">n2</span>
+              <span class="var-chip">m</span>
+            </div>
+          </div>
+
+          <div class="animated-call" aria-label="Animação de passagem de valor entre main e função media">
+            <span class="call-line"></span>
+            <span class="moving-chip">n1, n2</span>
+            <span class="moving-chip moving-return">m</span>
+          </div>
+
+          <div class="function-panel">
+            <div class="function-header">
+              <span class="function-name">float media(float a, float b) { ... }</span>
+              <span class="brace-badge">{ }</span>
+            </div>
+            <span class="inside-label">parâmetros e variável local da função</span>
+            <div class="variable-row">
+              <span class="var-chip">a</span>
+              <span class="var-chip">b</span>
+              <span class="var-chip">resultado</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-cards">
+          <article class="map-card">
+            <span class="map-icon">{ }</span>
+            <div>
+              <h3>As chaves delimitam o espaço</h3>
+              <p>O escopo acompanha o bloco onde a variável foi declarada. Fora dele, aquele nome não está disponível.</p>
+            </div>
+          </article>
+
+          <article class="map-card">
+            <span class="map-icon">→</span>
+            <div>
+              <h3>Parâmetros levam valores</h3>
+              <p>Quando main chama uma função, os valores podem ser enviados por parâmetros. A função usa seus próprios nomes locais.</p>
+            </div>
+          </article>
+
+          <article class="map-card">
+            <span class="map-icon">↩</span>
+            <div>
+              <h3>Retorno traz resultado</h3>
+              <p>A função não precisa expor sua variável local. Ela calcula internamente e devolve apenas o valor final.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Como pensar no escopo</h2>
+      </div>
+
+      <div class="scope-map">
+        <article class="scope-card highlight">
+          <span class="scope-tag">Função main</span>
+          <h3>Um espaço próprio</h3>
+          <p>Variáveis declaradas dentro de <span class="keyword">main</span> pertencem a esse bloco.</p>
+          <div class="scope-line"></div>
+          <div class="scope-list">
+            <div class="scope-item"><strong>nota1</strong> existe em main</div>
+            <div class="scope-item"><strong>nota2</strong> existe em main</div>
+            <div class="scope-item">A função pode enviar valores por chamada</div>
+          </div>
+        </article>
+
+        <article class="scope-card">
+          <span class="scope-tag">Função media</span>
+          <h3>Outro espaço próprio</h3>
+          <p>Parâmetros e variáveis internas existem apenas durante a execução da função.</p>
+          <div class="scope-line"></div>
+          <div class="scope-list">
+            <div class="scope-item"><strong>a</strong> e <strong>b</strong> recebem cópias dos valores</div>
+            <div class="scope-item"><strong>resultado</strong> é local da função</div>
+            <div class="scope-item">O retorno envia apenas o valor calculado</div>
+          </div>
+        </article>
+
+        <article class="scope-card">
+          <span class="scope-tag">Global</span>
+          <h3>Use com cuidado</h3>
+          <p>Uma variável global pode ser acessada por várias funções, mas aumenta o risco de alteração indevida.</p>
+          <div class="scope-line"></div>
+          <div class="scope-list">
+            <div class="scope-item">Pode dificultar testes</div>
+            <div class="scope-item">Pode esconder dependências</div>
+            <div class="scope-item">Deve ter justificativa clara</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Aplicando o conceito</h2>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-label">Passo 1</span>
+          <h3>Localize a declaração</h3>
+          <p>Veja em qual função ou bloco a variável foi criada.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Passo 2</span>
+          <h3>Defina o limite</h3>
+          <p>O escopo acompanha as chaves <span class="keyword">{ }</span> onde a variável foi declarada.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Passo 3</span>
+          <h3>Passe dados corretamente</h3>
+          <p>Use parâmetros para levar valores até uma função e retorno para trazer resultado.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-label">Passo 4</span>
+          <h3>Evite global sem motivo</h3>
+          <p>Prefira variáveis locais quando o dado só faz sentido em uma parte do programa.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplo mínimo</h2>
+      </div>
+
+      <div class="example">
+        <div class="example-card accent-card">
+          <h3>Problema</h3>
+          <p>Calcular a média de duas notas usando uma função. A leitura fica em <strong>main</strong> e o cálculo fica na função.</p>
+
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Parte</th>
+                <th>Aplicação no exemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Variáveis locais de main</td>
+                <td><strong>n1</strong>, <strong>n2</strong> e <strong>m</strong> existem apenas dentro de main.</td>
+              </tr>
+              <tr>
+                <td>Parâmetros da função</td>
+                <td><strong>a</strong> e <strong>b</strong> recebem os valores enviados por main.</td>
+              </tr>
+              <tr>
+                <td>Variável local da função</td>
+                <td><strong>resultado</strong> existe apenas dentro da função media.</td>
+              </tr>
+              <tr>
+                <td>Retorno</td>
+                <td>A função devolve o valor calculado para main.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="example-card">
+          <h3>Código curto em C</h3>
+          <div class="code-legend" aria-label="Legenda visual do código">
+            <span class="legend-item"><span class="legend-dot"></span>variável local</span>
+            <span class="legend-item"><span class="legend-dot accent"></span>fluxo de valor</span>
+          </div>
+          <pre><code>#include &lt;stdio.h&gt;
+
+float media(float <span class="code-local">a</span>, float <span class="code-local">b</span>) {
+    float <span class="code-local">resultado</span>;
+    <span class="code-local">resultado</span> = (<span class="code-local">a</span> + <span class="code-local">b</span>) / 2;
+    return <span class="code-flow">resultado</span>;
+}
+
+int main() {
+    float <span class="code-local">n1</span>, <span class="code-local">n2</span>, <span class="code-local">m</span>;
+
+    scanf("%f", &amp;<span class="code-local">n1</span>);
+    scanf("%f", &amp;<span class="code-local">n2</span>);
+
+    <span class="code-local">m</span> = <span class="code-flow">media(n1, n2)</span>;
+
+    printf("Media: %.2f", <span class="code-local">m</span>);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Usar variável local fora do escopo</h3>
+          <p><strong>Por que acontece:</strong> o aluno declara uma variável dentro da função e tenta acessá-la em outra parte do programa.</p>
+          <p><strong>Como evitar:</strong> verifique em qual bloco a variável foi criada e use retorno ou parâmetro quando precisar comunicar dados.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Criar global para resolver acesso</h3>
+          <p><strong>Por que acontece:</strong> a variável global parece uma solução rápida para ser vista por todas as funções.</p>
+          <p><strong>Como evitar:</strong> prefira variáveis locais e passagem de valores por parâmetros.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Confundir parâmetro com variável original</h3>
+          <p><strong>Por que acontece:</strong> o aluno acha que o nome usado na função precisa ser igual ao nome usado em main.</p>
+          <p><strong>Como evitar:</strong> entenda que parâmetros recebem valores enviados na chamada, mesmo com nomes diferentes.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>Uma variável declarada dentro de uma função pode ser usada diretamente em outra função?</summary>
+          <p>Não. Ela é local da função onde foi declarada. Para compartilhar um valor, use parâmetro, retorno ou outra estratégia justificada.</p>
+        </details>
+
+        <details>
+          <summary>No exemplo, a variável resultado existe dentro de main?</summary>
+          <p>Não. A variável resultado foi declarada dentro da função media. O que chega em main é o valor retornado pela função.</p>
+        </details>
+
+        <details>
+          <summary>Quando uma variável global pode ser inadequada para um iniciante?</summary>
+          <p>Quando ela é usada apenas para evitar passagem de parâmetros. Isso pode esconder dependências e dificultar a compreensão do fluxo do programa.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>
+        Depois de estudar este infográfico, o aluno deve conseguir identificar onde uma variável existe, usar variáveis locais em funções e evitar variáveis globais sem necessidade clara.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
