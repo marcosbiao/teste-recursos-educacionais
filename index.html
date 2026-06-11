@@ -3,114 +3,1864 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Teste de recursos</title>
+  <title>Recursos Educacionais | Introdução à Programação</title>
   <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-muted: #eef2ff;
+      --text: #111827;
+      --muted: #4b5563;
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --green: #10b981;
+      --orange: #f59e0b;
+      --purple: #7c3aed;
+      --border: #e5e7eb;
+      --shadow: 0 20px 55px rgba(17, 24, 39, 0.08);
+      --soft-shadow: 0 10px 24px rgba(17, 24, 39, 0.07);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      line-height: 1.5;
-      margin: 2rem;
+      margin: 0;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, #ffffff 0, var(--bg) 460px),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
     }
 
-    ul {
-      padding-left: 1.25rem;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
+    button,
     summary {
+      font: inherit;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -4rem;
+      z-index: 20;
+      padding: 0.75rem 1rem;
+      color: #ffffff;
+      background: var(--primary-dark);
+      border-radius: 999px;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner,
+    .section,
+    .footer-inner {
+      width: min(1160px, calc(100% - 2rem));
+      margin-inline: auto;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 78px;
+      padding: 0.75rem 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-width: max-content;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.28);
+      border-radius: 8px;
+      background: #eef2ff;
+    }
+
+    .brand-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 0.2rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0.4rem 0.8rem;
+      color: #1f2937;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--primary-dark);
+      background: #eef2ff;
+      outline: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 46px;
+      padding: 0.8rem 1.1rem;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 800;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .btn-primary {
+      color: #ffffff;
+      background: var(--primary);
+      box-shadow: 0 14px 24px rgba(79, 70, 229, 0.24);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      color: var(--primary-dark);
+      background: #ffffff;
+      border-color: rgba(79, 70, 229, 0.28);
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.08);
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus-visible {
+      border-color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .btn-ghost {
+      color: #1f2937;
+      background: #ffffff;
+      border-color: var(--border);
+    }
+
+    .btn-ghost:hover,
+    .btn-ghost:focus-visible {
+      color: var(--primary-dark);
+      border-color: rgba(79, 70, 229, 0.32);
+      background: #f8fafc;
+    }
+
+    .hero {
+      padding: 4.6rem 0 2.4rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(330px, 0.98fr);
+      align-items: center;
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 0 0 1rem;
+      padding: 0.4rem 0.7rem;
+      color: var(--primary-dark);
+      background: #eef2ff;
+      border: 1px solid rgba(79, 70, 229, 0.15);
+      border-radius: 999px;
+      font-size: 0.83rem;
+      font-weight: 800;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin-bottom: 1.15rem;
+      font-size: 5.25rem;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    h1 span {
+      color: var(--primary);
+    }
+
+    .hero-subtitle {
+      max-width: 760px;
+      margin-bottom: 1.65rem;
+      color: #374151;
+      font-size: 1.16rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      max-width: 640px;
+    }
+
+    .metric {
+      padding: 0.85rem 0.95rem;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(229, 231, 235, 0.92);
+      border-radius: 8px;
+      box-shadow: 0 8px 18px rgba(17, 24, 39, 0.05);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.15;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
       font-weight: 700;
     }
 
-    details ul {
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
+    .hero-visual {
+      position: relative;
+      min-height: 390px;
+      overflow: hidden;
+      border: 1px solid rgba(199, 210, 254, 0.85);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(238, 242, 255, 0.96), rgba(255, 255, 255, 0.9) 58%, rgba(236, 253, 245, 0.68));
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(79, 70, 229, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 70, 229, 0.1) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(135deg, transparent 0, #000 30%, #000 70%, transparent 100%);
+    }
+
+    .visual-card {
+      position: absolute;
+      left: 8%;
+      top: 12%;
+      width: 78%;
+      min-height: 238px;
+      padding: 1rem;
+      border: 10px solid #172036;
+      border-radius: 8px 8px 6px 6px;
+      background: #ffffff;
+      box-shadow: 0 28px 38px rgba(23, 32, 54, 0.2);
+    }
+
+    .visual-card::after {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      bottom: -38px;
+      height: 28px;
+      border-radius: 0 0 8px 8px;
+      background: #172036;
+      box-shadow: 0 10px 14px rgba(23, 32, 54, 0.18);
+    }
+
+    .window-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      height: 24px;
+      margin: -0.35rem -0.35rem 0.85rem;
+      padding-inline: 0.45rem;
+      border-radius: 8px;
+      background: #f3f4f6;
+    }
+
+    .window-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #c7d2fe;
+    }
+
+    .code-layout {
+      display: grid;
+      grid-template-columns: 1fr 0.62fr;
+      gap: 0.9rem;
+    }
+
+    .code-lines {
+      display: grid;
+      gap: 0.55rem;
+      padding-top: 0.15rem;
+    }
+
+    .code-line {
+      height: 10px;
+      border-radius: 999px;
+      background: #c7d2fe;
+    }
+
+    .code-line:nth-child(2) {
+      width: 74%;
+      background: #99f6e4;
+    }
+
+    .code-line:nth-child(3) {
+      width: 88%;
+      background: #bfdbfe;
+    }
+
+    .code-line:nth-child(4) {
+      width: 62%;
+      background: #fed7aa;
+    }
+
+    .code-line:nth-child(5) {
+      width: 78%;
+      background: #ddd6fe;
+    }
+
+    .code-panel {
+      padding: 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .panel-title {
+      width: 70%;
+      height: 12px;
+      margin-bottom: 0.75rem;
+      border-radius: 999px;
+      background: #c7d2fe;
+    }
+
+    .panel-row {
+      width: 100%;
+      height: 9px;
+      margin-top: 0.55rem;
+      border-radius: 999px;
+      background: #e5e7eb;
+    }
+
+    .floating-chip {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 62px;
+      height: 52px;
+      color: #ffffff;
+      border-radius: 8px;
+      background: var(--green);
+      box-shadow: 0 18px 28px rgba(16, 185, 129, 0.25);
+    }
+
+    .chip-code {
+      left: 4%;
+      bottom: 24%;
+    }
+
+    .chip-cap {
+      right: 12%;
+      top: 8%;
+      width: 88px;
+      height: 58px;
+      background: var(--purple);
+      transform: rotate(9deg);
+    }
+
+    .book-stack {
+      position: absolute;
+      right: 6%;
+      bottom: 16%;
+      width: 108px;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .book-stack span {
+      height: 22px;
+      border-radius: 999px 8px 8px 999px;
+      background: #dbeafe;
+      border: 1px solid rgba(59, 130, 246, 0.18);
+      box-shadow: 0 9px 15px rgba(17, 24, 39, 0.08);
+    }
+
+    .book-stack span:nth-child(2) {
+      width: 92%;
+      margin-left: auto;
+      background: #ede9fe;
+      border-color: rgba(124, 58, 237, 0.18);
+    }
+
+    .book-stack span:nth-child(3) {
+      width: 84%;
+      margin-left: auto;
+      background: #ecfdf5;
+      border-color: rgba(16, 185, 129, 0.18);
+    }
+
+    .section {
+      padding: 2.2rem 0;
+    }
+
+    .info-panel {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: start;
+      padding: clamp(1rem, 2vw, 1.35rem);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .info-icon {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      color: var(--primary);
+      border-radius: 8px;
+      background: #eef2ff;
+    }
+
+    .info-panel h2,
+    .section-heading h2 {
+      margin-bottom: 0.4rem;
+      font-size: 2rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .info-panel p,
+    .section-heading p {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+      color: var(--primary);
+      font-size: 0.84rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .resource-summary {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .category-card {
+      --accent: var(--primary);
+      --accent-soft: #eef2ff;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 12px 28px rgba(17, 24, 39, 0.05);
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(79, 70, 229, 0.22);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .category-card[open] {
+      grid-column: span 2;
+      border-color: rgba(79, 70, 229, 0.3);
+      box-shadow: var(--shadow);
+    }
+
+    .category-card[data-category="roteiros"] {
+      --accent: var(--green);
+      --accent-soft: #ecfdf5;
+    }
+
+    .category-card[data-category="erros"] {
+      --accent: var(--orange);
+      --accent-soft: #fff7ed;
+    }
+
+    .category-card[data-category="desafios"] {
+      --accent: var(--purple);
+      --accent-soft: #f5f3ff;
+    }
+
+    .category-card summary {
+      display: grid;
+      min-height: 316px;
+      padding: 1.2rem;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .category-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .category-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 0.85rem;
+      margin-bottom: 1.05rem;
+    }
+
+    .category-icon {
+      display: grid;
+      width: 50px;
+      height: 50px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: #ffffff;
+      border-radius: 8px;
+      background: var(--accent);
+      box-shadow: 0 14px 22px color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+
+    .category-count {
+      padding: 0.34rem 0.55rem;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .category-card h3 {
+      margin-bottom: 0.55rem;
+      font-size: 1.16rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .category-card p {
+      margin-bottom: 0.9rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: auto;
+      padding-top: 0.15rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 0.22rem 0.55rem;
+      color: #374151;
+      background: #f3f4f6;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .tag.accent {
+      color: color-mix(in srgb, var(--accent) 82%, #111827);
+      background: var(--accent-soft);
+      border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      color: var(--accent);
+      border-top: 1px solid var(--border);
+      font-weight: 900;
+    }
+
+    .category-card[open] .card-action svg {
+      transform: rotate(90deg);
+    }
+
+    .category-body {
+      padding: 0 1.2rem 1.2rem;
+    }
+
+    .version-note {
+      margin: 0 0 1rem;
+      padding: 0.9rem 1rem;
+      color: #374151;
+      background: var(--accent-soft);
+      border: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .resource-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      min-height: 86px;
+      padding: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .resource-item:hover,
+    .resource-item:focus-visible {
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+      background: #fbfdff;
+      outline: none;
+    }
+
+    .resource-marker {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      color: var(--accent);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .resource-title {
+      display: block;
+      min-width: 0;
+      color: #111827;
+      font-size: 0.94rem;
+      font-weight: 850;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .resource-title .cci {
+      color: var(--accent);
+      font-weight: 950;
+    }
+
+    .resource-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.45rem;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 0.15rem 0.45rem;
+      color: #4b5563;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .meta-pill.version {
+      color: #374151;
+      background: #f3f4f6;
+    }
+
+    .resource-item.is-updated .meta-pill.version {
+      color: var(--primary-dark);
+      background: #eef2ff;
+      border-color: rgba(79, 70, 229, 0.18);
+    }
+
+    .access-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0.45rem 0.65rem;
+      color: #ffffff;
+      background: var(--accent);
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .evaluation-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .callout {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(1.25rem, 3vw, 2rem);
+      border: 1px solid rgba(245, 158, 11, 0.24);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, #fffaf0, #ffffff 58%),
+        #ffffff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .callout::after {
+      content: "";
+      position: absolute;
+      right: -20px;
+      bottom: -42px;
+      width: 190px;
+      height: 190px;
+      opacity: 0.16;
+      background:
+        linear-gradient(90deg, transparent 47%, #f59e0b 48%, #f59e0b 52%, transparent 53%),
+        linear-gradient(transparent 47%, #f59e0b 48%, #f59e0b 52%, transparent 53%);
+      background-size: 34px 34px;
+      transform: rotate(-9deg);
+    }
+
+    .callout h2,
+    .steps-panel h2 {
+      margin-bottom: 0.6rem;
+      font-size: 1.95rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .callout p,
+    .steps-panel p {
+      color: var(--muted);
+    }
+
+    .callout-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .copy-feedback {
+      display: block;
+      min-height: 1.25rem;
+      margin-top: 0.7rem;
+      color: var(--primary-dark);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .steps-panel {
+      padding: clamp(1.25rem, 3vw, 2rem);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, #ffffff, #eff6ff),
+        #ffffff;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .step-list {
+      display: grid;
+      gap: 0.8rem;
+      margin: 1.15rem 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: steps;
+    }
+
+    .step-list li {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+      color: #374151;
+      counter-increment: steps;
+    }
+
+    .step-list li::before {
+      content: counter(steps);
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.28);
+      border-radius: 999px;
+      background: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .site-footer {
+      margin-top: 2rem;
+      padding: 1.3rem 0 1.6rem;
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      color: #374151;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .footer-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+
+    .footer-item svg {
+      flex: 0 0 auto;
+      color: var(--primary);
+    }
+
+    @media (max-width: 1100px) {
+      .category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .category-card[open] {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .header-inner {
+        flex-wrap: wrap;
+      }
+
+      .nav-actions {
+        flex: 1 1 100%;
+        justify-content: space-between;
+      }
+
+      .hero {
+        padding-top: 3rem;
+      }
+
+      .hero-grid,
+      .evaluation-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 330px;
+      }
+
+      .footer-inner {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .header-inner,
+      .section,
+      .footer-inner {
+        width: min(100% - 1rem, 1160px);
+      }
+
+      .site-header {
+        position: relative;
+      }
+
+      .nav-actions,
+      .nav-links,
+      .hero-actions,
+      .callout-actions {
+        width: 100%;
+      }
+
+      .nav-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: space-between;
+        gap: 0.25rem;
+      }
+
+      .nav-links a {
+        flex: 1 1 auto;
+        justify-content: center;
+        padding-inline: 0.45rem;
+        font-size: 0.82rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero {
+        padding: 2.2rem 0 1.6rem;
+      }
+
+      h1 {
+        font-size: 3.2rem;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        min-height: 290px;
+        border-radius: 8px;
+      }
+
+      .visual-card {
+        left: 5%;
+        width: 80%;
+        min-height: 205px;
+        border-width: 8px;
+      }
+
+      .chip-cap {
+        right: 6%;
+        width: 74px;
+      }
+
+      .chip-code {
+        bottom: 18%;
+      }
+
+      .book-stack {
+        right: 4%;
+        bottom: 8%;
+        width: 86px;
+      }
+
+      .section-heading {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .resource-summary {
+        justify-content: space-between;
+        white-space: normal;
+      }
+
+      .category-grid,
+      .resource-list,
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .category-card[open] {
+        grid-column: span 1;
+      }
+
+      .category-card summary {
+        min-height: 0;
+      }
+
+      .resource-item {
+        grid-template-columns: auto minmax(0, 1fr);
+      }
+
+      .access-pill {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Explore os Recursos educacionais</h1>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 
-  Esses recursos educacionais estão sendo desenvolvidos como parte do meu projeto de doutorado, que investiga o uso de recursos educacionais no apoio à aprendizagem em Introdução à Programação.
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#topo" aria-label="Recursos Educacionais - Introdução à Programação">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+            <path d="M8 21h8"></path>
+            <path d="M12 17v4"></path>
+            <path d="m10 9-2 2 2 2"></path>
+            <path d="m14 9 2 2-2 2"></path>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-title">Recursos Educacionais</span>
+          <span class="brand-subtitle">Introdução à Programação</span>
+        </span>
+      </a>
 
-<br><br>Convido você a acessar, utilizar e avaliar os recursos disponíveis. Como o projeto ainda está em desenvolvimento, os materiais poderão passar por ajustes e melhorias ao longo do processo.
+      <div class="nav-actions" aria-label="Navegação principal">
+        <nav class="nav-links">
+          <a href="#sobre">Sobre o projeto</a>
+          <a href="#recursos">Recursos</a>
+          <a href="#avaliacao">Avaliação</a>
+        </nav>
+        <a class="btn btn-primary" href="https://forms.gle/P9j7JNMTzRxNfiDh8" target="_blank" rel="noopener noreferrer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="m12 2.75 2.8 5.67 6.25.91-4.52 4.4 1.07 6.22L12 17l-5.6 2.95 1.07-6.22-4.52-4.4 6.25-.91L12 2.75Z"></path>
+          </svg>
+          Avaliar recursos
+        </a>
+      </div>
+    </div>
+  </header>
 
-<br><br>O meu pedido é que observe o <strong>formato do recurso</strong>. O conteúdo será ajustado e validado após a avaliação do formato.
+  <main id="conteudo">
+    <section class="hero section" id="topo">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 3v18"></path>
+              <path d="M5 7h14"></path>
+              <path d="M5 12h14"></path>
+              <path d="M5 17h14"></path>
+            </svg>
+            Projeto de Doutorado
+          </p>
+          <h1>Explore os <span>Recursos Educacionais</span></h1>
+          <p class="hero-subtitle">Recursos desenvolvidos como parte de uma pesquisa de doutorado sobre o uso de recursos educacionais no apoio à aprendizagem em Introdução à Programação.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#recursos">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 3h6v6"></path>
+                <path d="M10 14 21 3"></path>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              </svg>
+              Explorar recursos
+            </a>
+            <a class="btn btn-secondary" href="https://forms.gle/P9j7JNMTzRxNfiDh8" target="_blank" rel="noopener noreferrer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.08 5.05a.56.56 0 0 0 .47.35l5.45.44a.56.56 0 0 1 .32.98l-4.15 3.55a.56.56 0 0 0-.18.56l1.27 5.31a.56.56 0 0 1-.84.61l-4.67-2.85a.56.56 0 0 0-.58 0l-4.67 2.85a.56.56 0 0 1-.84-.61l1.27-5.31a.56.56 0 0 0-.18-.56L3.16 10.32a.56.56 0 0 1 .32-.98l5.45-.44a.56.56 0 0 0 .47-.35L11.48 3.5Z"></path>
+              </svg>
+              Avaliar recursos
+            </a>
+          </div>
 
-<br><br>Link para o formulário de avaliação dos recursos: <a href="https://forms.gle/P9j7JNMTzRxNfiDh8">https://forms.gle/P9j7JNMTzRxNfiDh8</a>
+          <div class="metrics" aria-label="Resumo dos recursos">
+            <div class="metric">
+              <strong data-total-count>37</strong>
+              <span>recursos disponíveis</span>
+            </div>
+            <div class="metric">
+              <strong>4</strong>
+              <span>formatos de recurso</span>
+            </div>
+            <div class="metric">
+              <strong>CCI</strong>
+              <span>competências destacadas</span>
+            </div>
+          </div>
+        </div>
 
-  <ul>
-    <li>
-      <details>
-        <summary>Infográficos</summary>
-        Recurso destinado a apresentar conceitos e estratégias de forma expositiva. <br>
-        A versão 1 apresenta uma maior quantidade de texto.<br>
-        Já na versão 2 houve uma redução do texto e adição de algumas animações.
-        <ul>
-          <li><a href="Testes/Infograficos/cci01_decomposicao.html">CCI01 - Decomposição</a></li>
-          <li><a href="Testes/Infograficos/cci02_Fluxo_EPS.html">CCI02 - Fluxo EPS</a></li>
-          <li><a href="Testes/Infograficos/cci03_estado_programa.html">CCI03 - Estado do programa</a></li>
-          <li><a href="Testes/Infograficos/cci03_variavel_constante_atribuicao.html">CCI03 - Variável, constante e atribuição</a></li>
-          <li><a href="Testes/Infograficos/cci05_qual_laco_usar.html">CCI05 - Qual laço usar</a></li>
-          <li><a href="Testes/Infograficos/cci07_funcao_ou_procedimento.html">CCI07 - Função ou procedimento</a></li>
-          <li><a href="Testes/Infograficos/cci13_ciclo_arquivo.html">CCI13 - Ciclo de arquivo</a></li>
-          <li><a href="Testes/Infograficos/cci13_ciclo_arquivo_c.html">CCI13 - Ciclo de arquivo em C</a></li>
-          <li><a href="Testes/Infograficos/cci01/index.html">CCI01 - Decomposição (v2 do infográfico)</a></li>
-          <li><a href="Testes/Infograficos/cci02/index.html">CCI02 - Fluxo EPS (v2 do infografico)</a></li>
-          <li><a href="Testes/Infograficos/cci03/index.html">CCI03 - Variável, constante e atribuição (v2 do infográfico)</a></li>
-          <li><a href="Testes/Infograficos/CCI07_funcao_ou_procedimento_v2.html">CCI07 - Função ou procedimento (v2 do infográfico)</a></li>
-          <li><a href="Testes/Infograficos/CCI07_escopo_variaveis_v2.html">CCI07 - Escopo de variáveis (v2 do infográfico)</a></li>
-          <li><a href="Testes/Infograficos/cci08/index.html">CCI08 - Justificativa técnica (v2 do infográfico)</a></li>
-          
-        </ul>
-      </details>
-    </li>
-    <li>
-      <details>
-        <summary>Roteiros de resolução</summary>
-        Recurso destinado a guiar o aluno pelas etapas do raciocínio necessário para resolver um problema. <br>
-        A versão 1 apresenta questionamentos discursivos, o que dificultou que algumas pessoas respondessem.<br>
-        Na versão dois, retiraram-se questões mais discursivas, deixando questões numéricas, de variável e múltipla escolha.<br>
-        Na versão 2.1, utilizou-se um problema (questão) para direcionar o aluno a responder questões mais especificas direcionando a construção do código.
-        <ul>
-          <li><a href="Testes/roteiroresolucao/cci02_teste_de_mesa.html">CCI02 - Teste de mesa</a></li>
-          <li><a href="Testes/roteiroresolucao/cci03_tipos_variaveis.html">CCI03 - Tipos de variaveis</a></li>
-          <li><a href="Testes/roteiroresolucao/cci05_laco_contador.html">CCI05 - Laco contador</a></li>
-          <li><a href="Testes/roteiroresolucao/cci06_vetores.html">CCI06 - Vetores</a></li>
-          <li><a href="Testes/roteiroresolucao/cci02_teste_de_mesa_v2.html">CCI02 - Teste de mesa (v2 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci05_laco_contador_v2.html">CCI05 - Laco contador (v2 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci06_vetores_v2.html">CCI06 - Vetores (v2 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci02_anos_de_vida_v2.1.html">CCI02 - Anos de vida (v2.1 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci05_soma_serie_v2.1.html">CCI05 - Soma de serie (v2.1 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci05_altura_v2.1.html">CCI05 - Altura (v2.1 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci06_media_turma_v2.1.html">CCI06 - Media da turma (v2.1 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci07_maior_tres_v2.1.html">CCI07 - Maior de três números (v2.1 do roteiro)</a></li>
-          <li><a href="Testes/roteiroresolucao/cci07_multiplos_v2.1.html">CCI07 - M.M.C. por múltiplos (v2.1 do roteiro)</a></li>
-        </ul>
-      </details>
-    </li>
-    <li>
-      <details>
-        <summary>Cards de erros comuns</summary>
-        Recurso destinado a apresentar erros comuns e suas correções. <br>
-        A versão 1 apresenta o que é o erro, compara a forma errada com a correta e explica o raciocinio correto.<br>
-        Na versão 2, é apresentado um codigo com erro logo apos o enunciado, além de exemplos de entrada com suas respectivas saídas.
-        Força o aluno tentar identificar o erro antes de apresentar a explicação e a correção.
-        <ul>
-          <li><a href="Testes/carderro/cci01_enunciado.html">CCI01 - Enunciado</a></li>
-          <li><a href="Testes/carderro/CCI04_condicao_invertida.html">CCI04 - Condicao invertida</a></li>
-          <li><a href="Testes/carderro/CCI10_correcao_local.html">CCI10 - Correcao local</a></li>
-          <li><a href="Testes/carderro/CCI12_recursao_sem_reducao.html">CCI12 - Recursão sem redução</a></li>
-          <li><a href="Testes/carderro/cci01_enunciado_v2.html">CCI01 - Enunciado (v2 do card)</a></li>
-          <li><a href="Testes/carderro/CCI04_condicao_invertida_v2.html">CCI04 - Condicao invertida (v2 do card)</a></li>
-          <li><a href="Testes/carderro/cci07_parametros_insuficientes_v2.html">CCI07 - Parâmetros insuficientes ou desnecessários (v2 do card)</a></li>
-          <li><a href="Testes/carderro/CCI10_correcao_local_v2.html">CCI10 - Correcao local (v2 do card)</a></li>
-          <li><a href="Testes/carderro/CCI12_recursao_sem_reducao_v2.html">CCI12 - Recursão sem redução (v2 do card)</a></li>
-        </ul>
-      </details>
-    </li>
-    <li><a href="https://marcosbiao.github.io/desafio-guiado/">Desafios guiados</a></li> 
-    O desafio guiado é um recurso que apresenta um problema a ser resolvido, juntamente com dicas e orientações para 
-    ajudar o aluno a chegar à solução. O aluno desenvolve o código do problema e a IA (Gemini) identifica o que está correto 
-    e quais são os próximos passos que o aluno deve seguir para concluir o desafio.
-  </ul>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-card">
+            <div class="window-bar">
+              <span class="window-dot"></span>
+              <span class="window-dot"></span>
+              <span class="window-dot"></span>
+            </div>
+            <div class="code-layout">
+              <div class="code-lines">
+                <span class="code-line" style="width: 96%;"></span>
+                <span class="code-line"></span>
+                <span class="code-line"></span>
+                <span class="code-line"></span>
+                <span class="code-line"></span>
+                <span class="code-line" style="width: 54%;"></span>
+              </div>
+              <div class="code-panel">
+                <span class="panel-title"></span>
+                <span class="panel-row"></span>
+                <span class="panel-row"></span>
+                <span class="panel-row" style="width: 68%;"></span>
+              </div>
+            </div>
+          </div>
+          <div class="floating-chip chip-code">
+            <svg width="31" height="31" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m8 9-4 3 4 3"></path>
+              <path d="m16 9 4 3-4 3"></path>
+            </svg>
+          </div>
+          <div class="floating-chip chip-cap">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m22 10-10-5-10 5 10 5 10-5Z"></path>
+              <path d="M6 12v5c3 2 9 2 12 0v-5"></path>
+            </svg>
+          </div>
+          <div class="book-stack">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sobre" aria-labelledby="sobre-titulo">
+      <div class="info-panel">
+        <span class="info-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4"></path>
+            <path d="M12 8h.01"></path>
+          </svg>
+        </span>
+        <div>
+          <h2 id="sobre-titulo">Sobre o projeto</h2>
+          <p>Estes recursos educacionais estão sendo desenvolvidos como parte do meu projeto de doutorado, que investiga o uso de recursos educacionais no apoio à aprendizagem em Introdução à Programação. Nesta etapa, o foco da avaliação está no formato dos recursos. O conteúdo poderá ser ajustado e validado em etapas posteriores da pesquisa.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="recursos" aria-labelledby="recursos-titulo">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Recursos disponíveis
+          </span>
+          <h2 id="recursos-titulo">Escolha uma categoria para explorar</h2>
+          <p>Os links foram reorganizados por formato, mantendo as versões e competências CCI indicadas nos títulos originais.</p>
+        </div>
+        <div class="resource-summary">
+          <span><strong data-total-count>37</strong> recursos disponíveis</span>
+          <button class="btn btn-ghost" type="button" data-open-all>
+            Ver todos
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="category-grid">
+        <details class="category-card" data-category="infograficos">
+          <summary>
+            <div class="category-head">
+              <span class="category-icon" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19V5"></path>
+                  <path d="M9 19V9"></path>
+                  <path d="M14 19v-6"></path>
+                  <path d="M19 19V4"></path>
+                </svg>
+              </span>
+              <span class="category-count" data-category-count>14 recursos</span>
+            </div>
+            <h3>Infográficos</h3>
+            <p>Recursos visuais para apresentar conceitos, estratégias e estruturas de programação de forma clara e objetiva.</p>
+            <div class="tag-list" aria-label="Características dos infográficos">
+              <span class="tag accent">Visual</span>
+              <span class="tag">Conceitual</span>
+              <span class="tag">Em validação</span>
+            </div>
+            <span class="card-action">
+              Ver infográficos
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </summary>
+          <div class="category-body">
+            <p class="version-note">Recurso destinado a apresentar conceitos e estratégias de forma expositiva. A versão 1 apresenta uma maior quantidade de texto. Já na versão 2 houve uma redução do texto e adição de algumas animações.</p>
+            <div class="resource-list">
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci01_decomposicao.html">
+                <span class="resource-marker">CCI01</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI01</span> - Decomposição</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci02_Fluxo_EPS.html">
+                <span class="resource-marker">CCI02</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI02</span> - Fluxo EPS</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci03_estado_programa.html">
+                <span class="resource-marker">CCI03</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI03</span> - Estado do programa</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci03_variavel_constante_atribuicao.html">
+                <span class="resource-marker">CCI03</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI03</span> - Variável, constante e atribuição</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci05_qual_laco_usar.html">
+                <span class="resource-marker">CCI05</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI05</span> - Qual laço usar</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci07_funcao_ou_procedimento.html">
+                <span class="resource-marker">CCI07</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI07</span> - Função ou procedimento</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci13_ciclo_arquivo.html">
+                <span class="resource-marker">CCI13</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI13</span> - Ciclo de arquivo</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/Infograficos/cci13_ciclo_arquivo_c.html">
+                <span class="resource-marker">CCI13</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI13</span> - Ciclo de arquivo em C</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci01/index.html">
+                <span class="resource-marker">CCI01</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI01</span> - Decomposição</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci02/index.html">
+                <span class="resource-marker">CCI02</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI02</span> - Fluxo EPS</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infografico</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci03/index.html">
+                <span class="resource-marker">CCI03</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI03</span> - Variável, constante e atribuição</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/CCI07_funcao_ou_procedimento_v2.html">
+                <span class="resource-marker">CCI07</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI07</span> - Função ou procedimento</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/CCI07_escopo_variaveis_v2.html">
+                <span class="resource-marker">CCI07</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI07</span> - Escopo de variáveis</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci08/index.html">
+                <span class="resource-marker">CCI08</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI08</span> - Justificativa técnica</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+            </div>
+          </div>
+        </details>
+
+        <details class="category-card" data-category="roteiros">
+          <summary>
+            <div class="category-head">
+              <span class="category-icon" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path>
+                  <path d="M14 2v6h6"></path>
+                  <path d="M8 13h8"></path>
+                  <path d="M8 17h5"></path>
+                </svg>
+              </span>
+              <span class="category-count" data-category-count>13 recursos</span>
+            </div>
+            <h3>Roteiros de resolução</h3>
+            <p>Materiais guiados que conduzem o aluno passo a passo no raciocínio necessário para resolver problemas de programação.</p>
+            <div class="tag-list" aria-label="Características dos roteiros">
+              <span class="tag accent">Guiado</span>
+              <span class="tag">Passo a passo</span>
+              <span class="tag">Resolução de problemas</span>
+            </div>
+            <span class="card-action">
+              Ver roteiros
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </summary>
+          <div class="category-body">
+            <p class="version-note">Recurso destinado a guiar o aluno pelas etapas do raciocínio necessário para resolver um problema. A versão 1 apresenta questionamentos discursivos, o que dificultou que algumas pessoas respondessem. Na versão dois, retiraram-se questões mais discursivas, deixando questões numéricas, de variável e múltipla escolha. Na versão 2.1, utilizou-se um problema para direcionar o aluno a responder questões mais especificas direcionando a construção do código.</p>
+            <div class="resource-list">
+              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci02_teste_de_mesa.html">
+                <span class="resource-marker">CCI02</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI02</span> - Teste de mesa</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci03_tipos_variaveis.html">
+                <span class="resource-marker">CCI03</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI03</span> - Tipos de variaveis</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci05_laco_contador.html">
+                <span class="resource-marker">CCI05</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI05</span> - Laco contador</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci06_vetores.html">
+                <span class="resource-marker">CCI06</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI06</span> - Vetores</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci02_teste_de_mesa_v2.html">
+                <span class="resource-marker">CCI02</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI02</span> - Teste de mesa</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci05_laco_contador_v2.html">
+                <span class="resource-marker">CCI05</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI05</span> - Laco contador</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci06_vetores_v2.html">
+                <span class="resource-marker">CCI06</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI06</span> - Vetores</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci02_anos_de_vida_v2.1.html">
+                <span class="resource-marker">CCI02</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI02</span> - Anos de vida</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2.1 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci05_soma_serie_v2.1.html">
+                <span class="resource-marker">CCI05</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI05</span> - Soma de serie</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2.1 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci05_altura_v2.1.html">
+                <span class="resource-marker">CCI05</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI05</span> - Altura</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2.1 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci06_media_turma_v2.1.html">
+                <span class="resource-marker">CCI06</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI06</span> - Media da turma</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2.1 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci07_maior_tres_v2.1.html">
+                <span class="resource-marker">CCI07</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI07</span> - Maior de três números</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2.1 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci07_multiplos_v2.1.html">
+                <span class="resource-marker">CCI07</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI07</span> - M.M.C. por múltiplos</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Roteiro</span><span class="meta-pill version">Versão: v2.1 do roteiro</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+            </div>
+          </div>
+        </details>
+
+        <details class="category-card" data-category="erros">
+          <summary>
+            <div class="category-head">
+              <span class="category-icon" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+                  <path d="M12 9v4"></path>
+                  <path d="M12 17h.01"></path>
+                </svg>
+              </span>
+              <span class="category-count" data-category-count>9 recursos</span>
+            </div>
+            <h3>Cards de erros comuns</h3>
+            <p>Recursos de diagnóstico para ajudar o aluno a reconhecer, compreender e corrigir erros recorrentes em programação.</p>
+            <div class="tag-list" aria-label="Características dos cards de erros">
+              <span class="tag accent">Diagnóstico</span>
+              <span class="tag">Erros comuns</span>
+              <span class="tag">Remediação</span>
+            </div>
+            <span class="card-action">
+              Ver cards de erros
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </summary>
+          <div class="category-body">
+            <p class="version-note">Recurso destinado a apresentar erros comuns e suas correções. A versão 1 apresenta o que é o erro, compara a forma errada com a correta e explica o raciocinio correto. Na versão 2, é apresentado um codigo com erro logo apos o enunciado, além de exemplos de entrada com suas respectivas saídas. Força o aluno tentar identificar o erro antes de apresentar a explicação e a correção.</p>
+            <div class="resource-list">
+              <a class="resource-item resource-link" href="Testes/carderro/cci01_enunciado.html">
+                <span class="resource-marker">CCI01</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI01</span> - Enunciado</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/carderro/CCI04_condicao_invertida.html">
+                <span class="resource-marker">CCI04</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI04</span> - Condicao invertida</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/carderro/CCI10_correcao_local.html">
+                <span class="resource-marker">CCI10</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI10</span> - Correcao local</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link" href="Testes/carderro/CCI12_recursao_sem_reducao.html">
+                <span class="resource-marker">CCI12</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI12</span> - Recursão sem redução</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/carderro/cci01_enunciado_v2.html">
+                <span class="resource-marker">CCI01</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI01</span> - Enunciado</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/carderro/CCI04_condicao_invertida_v2.html">
+                <span class="resource-marker">CCI04</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI04</span> - Condicao invertida</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/carderro/cci07_parametros_insuficientes_v2.html">
+                <span class="resource-marker">CCI07</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI07</span> - Parâmetros insuficientes ou desnecessários</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/carderro/CCI10_correcao_local_v2.html">
+                <span class="resource-marker">CCI10</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI10</span> - Correcao local</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+              <a class="resource-item resource-link is-updated" href="Testes/carderro/CCI12_recursao_sem_reducao_v2.html">
+                <span class="resource-marker">CCI12</span>
+                <span>
+                  <span class="resource-title"><span class="cci">CCI12</span> - Recursão sem redução</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+            </div>
+          </div>
+        </details>
+
+        <details class="category-card" data-category="desafios">
+          <summary>
+            <div class="category-head">
+              <span class="category-icon" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15.5 7.5 12 4 8.5 7.5 12 11l3.5-3.5Z"></path>
+                  <path d="M19.5 11.5 16 8l-3.5 3.5L16 15l3.5-3.5Z"></path>
+                  <path d="M11.5 15.5 8 12l-3.5 3.5L8 19l3.5-3.5Z"></path>
+                  <path d="m12 11-3.5 3.5"></path>
+                </svg>
+              </span>
+              <span class="category-count" data-category-count>1 recurso</span>
+            </div>
+            <h3>Desafios guiados</h3>
+            <p>Problemas interativos com dicas, orientações progressivas e feedback automatizado por IA.</p>
+            <div class="tag-list" aria-label="Características dos desafios guiados">
+              <span class="tag accent">Interativo</span>
+              <span class="tag">IA</span>
+              <span class="tag">Programação</span>
+            </div>
+            <span class="card-action">
+              Acessar desafios
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </summary>
+          <div class="category-body">
+            <p class="version-note">O desafio guiado é um recurso que apresenta um problema a ser resolvido, juntamente com dicas e orientações para ajudar o aluno a chegar à solução. O aluno desenvolve o código do problema e a IA (Gemini) identifica o que está correto e quais são os próximos passos que o aluno deve seguir para concluir o desafio.</p>
+            <div class="resource-list">
+              <a class="resource-item resource-link" href="https://marcosbiao.github.io/desafio-guiado/" target="_blank" rel="noopener noreferrer">
+                <span class="resource-marker">IA</span>
+                <span>
+                  <span class="resource-title">Desafios guiados</span>
+                  <span class="resource-meta"><span class="meta-pill">Tipo: Desafio guiado</span><span class="meta-pill version">Estado: em desenvolvimento</span></span>
+                </span>
+                <span class="access-pill">Acessar</span>
+              </a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="section" id="avaliacao" aria-labelledby="avaliacao-titulo">
+      <div class="evaluation-grid">
+        <div class="callout">
+          <span class="section-kicker">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m12 2 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 16.2 6.4 19.2l1.1-6.2L3 8.6l6.2-.9L12 2Z"></path>
+            </svg>
+            Avalie os recursos
+          </span>
+          <h2 id="avaliacao-titulo">Sua avaliação contribui para o aprimoramento dos materiais</h2>
+          <p>Sua avaliação contribui para o aprimoramento dos materiais desenvolvidos na pesquisa. Observe o formato, a clareza, a organização e a experiência de uso dos recursos.</p>
+          <div class="callout-actions">
+            <a class="btn btn-primary" href="https://forms.gle/P9j7JNMTzRxNfiDh8" target="_blank" rel="noopener noreferrer">
+              Responder formulário de avaliação
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17 17 7"></path>
+                <path d="M7 7h10v10"></path>
+              </svg>
+            </a>
+            <button class="btn btn-ghost" type="button" data-copy-form>
+              Copiar link do formulário
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+          <span class="copy-feedback" data-copy-feedback aria-live="polite"></span>
+        </div>
+
+        <div class="steps-panel" id="como-avaliar">
+          <span class="section-kicker">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.1 9a3 3 0 1 1 5.8 1c-.6 1.1-2.1 1.5-2.6 2.7"></path>
+              <path d="M12 17h.01"></path>
+            </svg>
+            Como avaliar
+          </span>
+          <h2>Observe o formato dos materiais</h2>
+          <p>O foco atual da avaliação está no formato dos recursos; o conteúdo poderá ser ajustado e validado em etapas posteriores.</p>
+          <ol class="step-list">
+            <li>Acesse um ou mais recursos disponíveis.</li>
+            <li>Observe o formato, a clareza e a organização do material.</li>
+            <li>Verifique se o recurso favorece a compreensão do conteúdo.</li>
+            <li>Responda ao formulário de avaliação com sua opinião.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-item">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+        </svg>
+        Projeto de Doutorado
+      </span>
+      <span class="footer-item">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path>
+        </svg>
+        Introdução à Programação
+      </span>
+      <span class="footer-item">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="14" rx="2"></rect>
+          <path d="M8 22h8"></path>
+          <path d="M12 18v4"></path>
+        </svg>
+        Recursos educacionais digitais
+      </span>
+      <span class="footer-item">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 20h9"></path>
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+        </svg>
+        Materiais em desenvolvimento
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const FORM_URL = "https://forms.gle/P9j7JNMTzRxNfiDh8";
+    const resourceLinks = document.querySelectorAll(".resource-link");
+
+    document.querySelectorAll("[data-total-count]").forEach((counter) => {
+      counter.textContent = String(resourceLinks.length);
+    });
+
+    document.querySelectorAll(".category-card").forEach((card) => {
+      const count = card.querySelectorAll(".resource-link").length;
+      const label = count === 1 ? "1 recurso" : `${count} recursos`;
+      const counter = card.querySelector("[data-category-count]");
+      if (counter) {
+        counter.textContent = label;
+      }
+    });
+
+    document.querySelector("[data-open-all]")?.addEventListener("click", () => {
+      document.querySelectorAll(".category-card").forEach((card) => {
+        card.open = true;
+      });
+      document.querySelector("#recursos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    async function copyFormLink() {
+      const feedback = document.querySelector("[data-copy-feedback]");
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(FORM_URL);
+        } else {
+          const textArea = document.createElement("textarea");
+          textArea.value = FORM_URL;
+          textArea.setAttribute("readonly", "");
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999px";
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          textArea.remove();
+        }
+
+        if (feedback) {
+          feedback.textContent = "Link do formulário copiado.";
+        }
+      } catch (error) {
+        if (feedback) {
+          feedback.textContent = "Não foi possível copiar automaticamente. Link: " + FORM_URL;
+        }
+      }
+    }
+
+    document.querySelector("[data-copy-form]")?.addEventListener("click", copyFormLink);
+  </script>
 </body>
 </html>
