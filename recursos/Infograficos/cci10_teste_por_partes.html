@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste primeiro as partes, depois o todo</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .test-icon svg, .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 510px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+    .test-pipeline { display: grid; gap: 8px; }
+    .pipeline-row { display: grid; grid-template-columns: 34px 1fr 28px; align-items: center; gap: 9px; }
+    .pipeline-number { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; }
+    .pipeline-block { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 9px 11px; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); font-size: .82rem; font-weight: 800; }
+    .pipeline-check { color: var(--cor-primaria); font-size: 1.12rem; text-align: center; font-weight: 900; }
+    .pipeline-final { margin-top: 10px; padding: 12px 14px; border-radius: 15px; background: var(--cor-primaria-escura); color: white; text-align: center; font-weight: 900; }
+    .pipeline-final small { display: block; color: #E0E7FF; font-weight: 400; margin-top: 3px; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-dos-testes { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 720px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .29); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 250px;
+      min-height: 190px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .map-button {
+      position: absolute;
+      width: 238px;
+      min-height: 148px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .78rem; font-weight: 900; }
+    .button-function { left: 38px; top: 38px; }
+    .button-loop { right: 38px; top: 38px; }
+    .button-query { left: 38px; bottom: 38px; }
+    .button-output { right: 38px; bottom: 38px; }
+    .button-integration { left: 50%; top: 34px; transform: translateX(-50%); }
+    .button-integration:hover, .button-integration:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .test-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 13px; }
+    .test-step { border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie); padding: 17px; position: relative; }
+    .test-step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 44%; color: var(--cor-primaria); font-weight: 900; z-index: 2; }
+    .step-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .test-step p { font-size: .89rem; }
+    .test-step code { color: var(--cor-primaria-escura); font-weight: 800; }
+
+    .case-board { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; align-items: stretch; }
+    .program-card { border: 1px solid var(--cor-borda); border-radius: 20px; background: var(--cor-superficie-suave); padding: 20px; }
+    .program-card h3 { color: var(--cor-primaria-escura); }
+    .program-data { display: flex; gap: 9px; flex-wrap: wrap; margin: 14px 0; }
+    .data-chip { border: 1px solid rgba(79,70,229,.2); background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); border-radius: 12px; padding: 8px 10px; font-family: Consolas, monospace; font-weight: 900; }
+    .program-goal { border-left: 4px solid var(--cor-destaque-pontual); background: #FFFBEB; border-radius: 13px; padding: 12px 13px; color: var(--cor-texto-principal); font-size: .9rem; }
+    .test-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .test-card { border: 1px solid var(--cor-borda); border-radius: 17px; background: var(--cor-superficie); padding: 15px; }
+    .test-card-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+    .test-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .test-card strong { color: var(--cor-texto-principal); }
+    .test-card p { font-size: .87rem; }
+    .expected { display: block; margin-top: 8px; padding: 7px 9px; border-radius: 9px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+
+    .mini-table-wrap { overflow-x: auto; border: 1px solid var(--cor-borda); border-radius: 18px; }
+    .mini-table { width: 100%; border-collapse: collapse; min-width: 740px; }
+    .mini-table th, .mini-table td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--cor-borda); vertical-align: top; }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table tr:last-child td { border-bottom: 0; }
+    .mini-table td { color: var(--cor-texto-secundario); font-size: .9rem; }
+    .mini-table code { color: var(--cor-primaria-escura); font-weight: 800; }
+
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 17px; }
+    .tab-label { display: flex; align-items: center; justify-content: center; min-height: 50px; padding: 10px 13px; border: 1px solid var(--cor-borda); border-radius: 14px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); cursor: pointer; font-size: .9rem; font-weight: 800; text-align: center; transition: .17s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); border-color: var(--cor-primaria); color: white; }
+    .tab-panel { display: none; animation: panelIn .3s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+    .example-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .example-head span { display: block; color: var(--cor-texto-secundario); font-size: .87rem; }
+    .example-layout { display: grid; grid-template-columns: .88fr 1.12fr; gap: 17px; align-items: start; }
+    .example-info { display: grid; gap: 11px; }
+    .info-card { border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie-suave); padding: 14px; }
+    .info-card strong { display: block; color: var(--cor-texto-principal); margin-bottom: 5px; }
+    .info-card p { font-size: .89rem; }
+    .test-plan { display: grid; gap: 8px; margin-top: 5px; }
+    .test-plan-row { display: grid; grid-template-columns: 92px 1fr; gap: 8px; border: 1px solid var(--cor-borda); border-radius: 11px; overflow: hidden; }
+    .test-plan-row strong { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); padding: 8px 9px; font-size: .8rem; margin: 0; }
+    .test-plan-row span { padding: 8px 9px; color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #253146; }
+    .code-head { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #0B1220; border-bottom: 1px solid #293548; color: #CBD5E1; font-size: .78rem; font-weight: 800; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-head span:last-child { margin-left: 2px; }
+    pre { overflow-x: auto; padding: 18px; color: var(--codigo-texto); font: .86rem/1.62 Consolas, Monaco, "Courier New", monospace; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 17px; padding: 16px; }
+    .error-card p { font-size: .88rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+    .question-list { display: grid; gap: 11px; }
+    details { border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie-suave); padding: 14px 16px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 11px; border: 1px solid var(--cor-borda); border-radius: 12px; background: var(--cor-superficie); padding: 12px; color: var(--cor-texto-principal); }
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.03rem; }
+
+    .modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 18px; }
+    .modal:target { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .72); backdrop-filter: blur(5px); }
+    .modal-card { position: relative; z-index: 1; width: min(760px, 100%); max-height: min(86vh, 820px); overflow-y: auto; border-radius: 24px; background: var(--cor-superficie); border: 1px solid rgba(255,255,255,.35); padding: 25px; box-shadow: 0 30px 80px rgba(15,23,42,.35); animation: modalIn .28s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-close { position: absolute; right: 17px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); text-decoration: none; font-size: 1.3rem; font-weight: 900; }
+    .modal-close:hover, .modal-close:focus-visible { background: var(--cor-superficie-destacada); outline: none; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 48px; margin-bottom: 14px; }
+    .modal-icon { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 14px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-example { margin-top: 16px; border: 1px solid var(--cor-borda); border-radius: 17px; background: var(--cor-superficie-suave); padding: 15px; }
+    .modal-example > strong { color: var(--cor-primaria-escura); }
+    .modal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+    .modal-box { border: 1px solid var(--cor-borda); border-radius: 12px; background: var(--cor-superficie); padding: 11px; color: var(--cor-texto-secundario); font-size: .88rem; }
+    .modal-box strong { display: block; color: var(--cor-texto-principal); margin-bottom: 4px; }
+    .modal-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-rule { margin-top: 13px; border-left: 4px solid var(--cor-destaque-pontual); border-radius: 12px; background: #FFFBEB; padding: 11px 13px; color: var(--cor-texto-principal); font-size: .9rem; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .case-board, .example-layout { grid-template-columns: 1fr; }
+      .hero-panel { margin-top: 5px; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .choice-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; transform: none; width: auto; min-height: auto; }
+      .map-center { grid-column: 1 / -1; order: -1; }
+      .button-integration:hover, .button-integration:focus-visible { transform: translateY(-4px); }
+      .test-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .test-step:not(:last-child)::after { display: none; }
+      .test-grid { grid-template-columns: 1fr; }
+      .error-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      body { padding: 15px 10px; }
+      .hero, .section, .closing { padding: 21px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .meta-grid, .choice-map, .test-steps, .error-grid, .modal-grid { grid-template-columns: 1fr; }
+      .meta-card { min-height: auto; }
+      .tab-labels { grid-template-columns: 1fr; }
+      .test-plan-row { grid-template-columns: 1fr; }
+      .test-plan-row strong { border-bottom: 1px solid var(--cor-borda); }
+      .modal-card { padding: 21px; border-radius: 20px; }
+      pre { font-size: .78rem; padding: 15px; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12 9 16 19 6"></path><path d="M4 4h16v16H4z"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Teste primeiro as partes, depois o todo</h1>
+          <p class="subtitle">Aprenda a verificar funções, laços, consultas e saídas separadamente para localizar erros antes de integrar o programa completo.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Visão geral do teste incremental">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M5 12 9 16 19 6"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+            <div><strong>Teste incremental</strong><span>Uma parte confiável de cada vez</span></div>
+          </div>
+          <div class="test-pipeline">
+            <div class="pipeline-row"><span class="pipeline-number">1</span><div class="pipeline-block">Função isolada</div><span class="pipeline-check">✓</span></div>
+            <div class="pipeline-row"><span class="pipeline-number">2</span><div class="pipeline-block">Laço com poucos valores</div><span class="pipeline-check">✓</span></div>
+            <div class="pipeline-row"><span class="pipeline-number">3</span><div class="pipeline-block">Consulta encontrada e ausente</div><span class="pipeline-check">✓</span></div>
+            <div class="pipeline-row"><span class="pipeline-number">4</span><div class="pipeline-block">Saída comparada com o esperado</div><span class="pipeline-check">✓</span></div>
+          </div>
+          <div class="pipeline-final">Programa integrado<small>O todo é testado depois que as partes já foram verificadas.</small></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI10</div><p>Testar e integrar partes de programas com múltiplas responsabilidades.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI02 e CCI07</div><p>Usar valores simples e verificar funções de forma controlada.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Teste por partes</div><p>Verificar componentes antes do programa completo.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Exploração do mapa, estudo do caso e comparação dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Teste incremental</div><p>Isolamento, previsão, comparação e integração.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M8 5h8M8 12h8M8 19h5"></path></svg>Funções e parâmetros</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"></path></svg>Laços e vetores</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>Busca simples</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>Entrada e saída</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Um erro é mais fácil de localizar quando o teste é pequeno</h3>
+          <p>Se o programa inteiro falhar, várias partes podem ser responsáveis. Ao testar cada bloco com <strong>entradas controladas</strong> e um <strong>resultado esperado</strong>, você reduz o espaço de investigação.</p>
+          <div class="concept-note"><strong>Princípio:</strong> uma parte só deve ser integrada quando produzir o resultado previsto nos casos escolhidos.</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Isole</h3><p>Execute uma função, um laço ou uma consulta sem depender do restante do sistema.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Preveja</h3><p>Defina o resultado correto antes de executar. Sem previsão, não há comparação confiável.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Integre</h3><p>Una partes já verificadas e teste também a comunicação entre elas.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-dos-testes">
+      <div class="section-title"><span class="marker"></span><h2>Mapa dos testes</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 21h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação com um exemplo de teste.
+      </div>
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 720" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="360" x2="160" y2="135"></line>
+          <line x1="500" y1="360" x2="840" y2="135"></line>
+          <line x1="500" y1="360" x2="160" y2="585"></line>
+          <line x1="500" y1="360" x2="840" y2="585"></line>
+          <line x1="500" y1="360" x2="500" y2="120"></line>
+        </svg>
+
+        <div class="map-center">
+          <div><strong>Teste em camadas</strong><code>parte → comparação → integração</code><span>Cada camada responde a uma pergunta diferente.</span></div>
+        </div>
+
+        <a class="map-button button-function" href="#modal-funcao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 3 2-3h6"></path><path d="M6 17h12"></path><path d="M9 13h6"></path></svg></span>
+          <h3>Função</h3><p>Recebe valores conhecidos e deve devolver um resultado previsível.</p><span class="map-code">entrada → retorno</span>
+        </a>
+
+        <a class="map-button button-loop" href="#modal-laco">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M6 8a7 7 0 0 1 12 1"></path><path d="m18 5 .5 4-4-.5"></path><path d="M18 16a7 7 0 0 1-12-1"></path><path d="m6 19-.5-4 4 .5"></path></svg></span>
+          <h3>Laço</h3><p>Poucos elementos permitem acompanhar índice, condição e atualização.</p><span class="map-code">i + estado</span>
+        </a>
+
+        <a class="map-button button-query" href="#modal-consulta">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path><path d="M7 10h6"></path></svg></span>
+          <h3>Consulta</h3><p>Teste pelo menos um caso encontrado e outro inexistente.</p><span class="map-code">posição ou -1</span>
+        </a>
+
+        <a class="map-button button-output" href="#modal-saida">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"></path><path d="M8 21h8M12 17v4"></path><path d="M8 8h8M8 12h5"></path></svg></span>
+          <h3>Saída final</h3><p>Compare texto, valores, casas decimais e ordem das informações.</p><span class="map-code">observado == esperado</span>
+        </a>
+
+        <a class="map-button button-integration" href="#modal-integracao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="7" height="6" rx="2"></rect><rect x="14" y="13" width="7" height="6" rx="2"></rect><path d="m10 8 4 4"></path><path d="m10 16 4-4"></path></svg></span>
+          <h3>Integração</h3><p>Confirma se partes corretas trocam dados corretamente quando conectadas.</p><span class="map-code">parte A + parte B</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Roteiro de teste por partes</h2></div>
+      <div class="test-steps">
+        <article class="test-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg></span><h3>1. Escolha a parte</h3><p>Defina exatamente qual função, laço, consulta ou saída será observada.</p></article>
+        <article class="test-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="m15 7 5 5-5 5"></path><circle cx="6" cy="12" r="2"></circle></svg></span><h3>2. Fixe a entrada</h3><p>Use valores pequenos, como <code>{3, 5, 2}</code>, fáceis de calcular manualmente.</p></article>
+        <article class="test-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M7 4h10v16H7z"></path><path d="m9 12 2 2 4-5"></path></svg></span><h3>3. Preveja</h3><p>Escreva o resultado esperado antes da execução.</p></article>
+        <article class="test-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 12 9 16 19 6"></path><circle cx="12" cy="12" r="9"></circle></svg></span><h3>4. Execute e compare</h3><p>Registre o resultado observado e identifique qualquer diferença.</p></article>
+        <article class="test-step"><span class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="7" height="6" rx="2"></rect><rect x="14" y="13" width="7" height="6" rx="2"></rect><path d="m10 8 4 4"></path></svg></span><h3>5. Integre</h3><p>Conecte a parte aprovada ao restante e teste o fluxo completo.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Um mesmo programa, quatro verificações</h2></div>
+      <div class="case-board">
+        <article class="program-card">
+          <h3>Programa de estoque</h3>
+          <p>Um vetor armazena as quantidades de três produtos. O programa calcula o total, procura um código e apresenta um resumo.</p>
+          <div class="program-data"><span class="data-chip">estoque = {3, 5, 2}</span><span class="data-chip">códigos = {10, 20, 30}</span></div>
+          <div class="program-goal"><strong>Antes de executar o todo:</strong> cada resultado abaixo pode ser previsto manualmente.</div>
+        </article>
+        <div class="test-grid">
+          <article class="test-card"><div class="test-card-head"><span class="test-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 3 2-3h6"></path><path d="M6 17h12"></path></svg></span><strong>Função de soma</strong></div><p>Entrada fixa: <code>{3, 5, 2}</code>.</p><span class="expected">esperado: 10</span></article>
+          <article class="test-card"><div class="test-card-head"><span class="test-icon"><svg viewBox="0 0 24 24"><path d="M6 8a7 7 0 0 1 12 1"></path><path d="m18 5 .5 4-4-.5"></path></svg></span><strong>Laço</strong></div><p>O índice deve assumir <code>0, 1, 2</code> e parar antes de 3.</p><span class="expected">esperado: 3 iterações</span></article>
+          <article class="test-card"><div class="test-card-head"><span class="test-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg></span><strong>Consulta</strong></div><p>Buscar código 20 e depois código 99.</p><span class="expected">esperado: 1 e -1</span></article>
+          <article class="test-card"><div class="test-card-head"><span class="test-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"></path><path d="M8 8h8M8 12h5"></path></svg></span><strong>Saída</strong></div><p>Comparar o texto e o valor exibido.</p><span class="expected">Total em estoque: 10</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Registro do teste</h2></div>
+      <div class="mini-table-wrap">
+        <table class="mini-table">
+          <thead><tr><th>Parte testada</th><th>Entrada controlada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Decisão</th></tr></thead>
+          <tbody>
+            <tr><td><code>somarEstoque</code></td><td><code>{3, 5, 2}</code></td><td><code>10</code></td><td><code>10</code></td><td>Parte aprovada</td></tr>
+            <tr><td>Laço da soma</td><td><code>n = 3</code></td><td>Índices 0, 1 e 2</td><td>Índices 0, 1 e 2</td><td>Limites corretos</td></tr>
+            <tr><td><code>buscarCodigo</code></td><td><code>20</code></td><td><code>1</code></td><td><code>1</code></td><td>Caso encontrado aprovado</td></tr>
+            <tr><td><code>buscarCodigo</code></td><td><code>99</code></td><td><code>-1</code></td><td><code>-1</code></td><td>Caso ausente aprovado</td></tr>
+            <tr><td>Relatório</td><td>Total calculado</td><td><code>Total em estoque: 10</code></td><td><code>Total em estoque: 10</code></td><td>Pronto para integração</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="examples" id="tab1" checked>
+        <input type="radio" name="examples" id="tab2">
+        <input type="radio" name="examples" id="tab3">
+        <div class="tab-labels">
+          <label class="tab-label" for="tab1">1. Função isolada</label>
+          <label class="tab-label" for="tab2">2. Consulta com dois casos</label>
+          <label class="tab-label" for="tab3">3. Integração do estoque</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 3 2-3h6"></path><path d="M6 17h12"></path></svg></span><div><h3>Exemplo 1: testar uma função sem usar <code>scanf</code></h3><span>Nível básico</span></div></div>
+            <div class="example-layout">
+              <div class="example-info">
+                <div class="info-card"><strong>Objetivo</strong><p>Verificar se a função <code>dobro</code> devolve o valor correto para entradas simples.</p></div>
+                <div class="info-card"><strong>Plano de teste</strong><div class="test-plan"><div class="test-plan-row"><strong>Entrada 1</strong><span>4 → esperado 8</span></div><div class="test-plan-row"><strong>Entrada 2</strong><span>0 → esperado 0</span></div><div class="test-plan-row"><strong>Entrada 3</strong><span>-3 → esperado -6</span></div></div></div>
+                <div class="info-card"><strong>Por que funciona?</strong><p>Os valores são escritos diretamente no código. Assim, problemas de leitura não interferem no teste da função.</p></div>
+              </div>
+              <div class="code-window">
+                <div class="code-head"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span>teste_dobro.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">dobro</span>(<span class="syn-type">int</span> <span class="syn-variable">valor</span>) {
+    <span class="syn-keyword">return</span> <span class="syn-variable">valor</span> <span class="syn-operator">*</span> <span class="syn-number">2</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-function">dobro</span>(<span class="syn-number">4</span>));
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-function">dobro</span>(<span class="syn-number">0</span>));
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-function">dobro</span>(<span class="syn-operator">-</span><span class="syn-number">3</span>));
+
+    <span class="syn-comment">// Saída esperada: 8, 0 e -6</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg></span><div><h3>Exemplo 2: testar uma consulta encontrada e ausente</h3><span>Nível intermediário</span></div></div>
+            <div class="example-layout">
+              <div class="example-info">
+                <div class="info-card"><strong>Objetivo</strong><p>Confirmar que a busca devolve a posição correta e também sinaliza quando o código não existe.</p></div>
+                <div class="info-card"><strong>Plano de teste</strong><div class="test-plan"><div class="test-plan-row"><strong>Caso A</strong><span>Buscar 20 → esperado índice 1</span></div><div class="test-plan-row"><strong>Caso B</strong><span>Buscar 99 → esperado -1</span></div><div class="test-plan-row"><strong>Limite</strong><span>Buscar 30 → esperado índice 2</span></div></div></div>
+                <div class="info-card"><strong>Evidência</strong><p>Uma única busca bem-sucedida não demonstra o comportamento do caso ausente.</p></div>
+              </div>
+              <div class="code-window">
+                <div class="code-head"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span>teste_busca.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">buscarCodigo</span>(<span class="syn-type">int</span> <span class="syn-variable">codigos</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>, <span class="syn-type">int</span> <span class="syn-variable">alvo</span>) {
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-variable">codigos</span>[<span class="syn-variable">i</span>] <span class="syn-operator">==</span> <span class="syn-variable">alvo</span>) {
+            <span class="syn-keyword">return</span> <span class="syn-variable">i</span>;
+        }
+    }
+    <span class="syn-keyword">return</span> <span class="syn-operator">-</span><span class="syn-number">1</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">codigos</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {<span class="syn-number">10</span>, <span class="syn-number">20</span>, <span class="syn-number">30</span>};
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-function">buscarCodigo</span>(<span class="syn-variable">codigos</span>, <span class="syn-number">3</span>, <span class="syn-number">20</span>));
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-function">buscarCodigo</span>(<span class="syn-variable">codigos</span>, <span class="syn-number">3</span>, <span class="syn-number">99</span>));
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-function">buscarCodigo</span>(<span class="syn-variable">codigos</span>, <span class="syn-number">3</span>, <span class="syn-number">30</span>));
+
+    <span class="syn-comment">// Saída esperada: 1, -1 e 2</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="7" height="6" rx="2"></rect><rect x="14" y="13" width="7" height="6" rx="2"></rect><path d="m10 8 4 4"></path></svg></span><div><h3>Exemplo 3: integrar soma, busca e saída</h3><span>Nível intermediário</span></div></div>
+            <div class="example-layout">
+              <div class="example-info">
+                <div class="info-card"><strong>Partes já verificadas</strong><p><code>somarEstoque</code> devolve 10 e <code>buscarCodigo</code> devolve 1 para o código 20.</p></div>
+                <div class="info-card"><strong>Teste da integração</strong><div class="test-plan"><div class="test-plan-row"><strong>Dados</strong><span>estoque {3,5,2}, códigos {10,20,30}</span></div><div class="test-plan-row"><strong>Consulta</strong><span>código 20</span></div><div class="test-plan-row"><strong>Saída</strong><span>Total: 10 | Estoque do código 20: 5</span></div></div></div>
+                <div class="info-card"><strong>O que está sendo testado agora?</strong><p>Não apenas as funções isoladas, mas o envio dos dados e o uso correto dos retornos no <code>main</code>.</p></div>
+              </div>
+              <div class="code-window">
+                <div class="code-head"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span>teste_integracao.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">somarEstoque</span>(<span class="syn-type">int</span> <span class="syn-variable">v</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>) {
+    <span class="syn-type">int</span> <span class="syn-variable">total</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-variable">total</span> <span class="syn-operator">+=</span> <span class="syn-variable">v</span>[<span class="syn-variable">i</span>];
+    }
+    <span class="syn-keyword">return</span> <span class="syn-variable">total</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">buscarCodigo</span>(<span class="syn-type">int</span> <span class="syn-variable">v</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>, <span class="syn-type">int</span> <span class="syn-variable">alvo</span>) {
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-variable">v</span>[<span class="syn-variable">i</span>] <span class="syn-operator">==</span> <span class="syn-variable">alvo</span>) <span class="syn-keyword">return</span> <span class="syn-variable">i</span>;
+    }
+    <span class="syn-keyword">return</span> <span class="syn-operator">-</span><span class="syn-number">1</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">codigos</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {<span class="syn-number">10</span>, <span class="syn-number">20</span>, <span class="syn-number">30</span>};
+    <span class="syn-type">int</span> <span class="syn-variable">estoque</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {<span class="syn-number">3</span>, <span class="syn-number">5</span>, <span class="syn-number">2</span>};
+    <span class="syn-type">int</span> <span class="syn-variable">pos</span> <span class="syn-operator">=</span> <span class="syn-function">buscarCodigo</span>(<span class="syn-variable">codigos</span>, <span class="syn-number">3</span>, <span class="syn-number">20</span>);
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Total: %d\n"</span>, <span class="syn-function">somarEstoque</span>(<span class="syn-variable">estoque</span>, <span class="syn-number">3</span>));
+    <span class="syn-keyword">if</span> (<span class="syn-variable">pos</span> <span class="syn-operator">!=</span> <span class="syn-operator">-</span><span class="syn-number">1</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Estoque do codigo 20: %d\n"</span>, <span class="syn-variable">estoque</span>[<span class="syn-variable">pos</span>]);
+    }
+
+    <span class="syn-comment">// Esperado: Total 10 e estoque 5</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Testar somente o programa inteiro</h3><p><strong>Por que acontece:</strong> parece mais rápido executar tudo de uma vez.</p><p><strong>Como evitar:</strong> verifique primeiro os blocos que produzem resultados próprios.</p></article>
+        <article class="error-card"><h3>Não definir o esperado</h3><p><strong>Por que acontece:</strong> o aluno olha a saída e decide intuitivamente se parece correta.</p><p><strong>Como evitar:</strong> calcule manualmente o resultado antes da execução.</p></article>
+        <article class="error-card"><h3>Usar apenas um caso comum</h3><p><strong>Por que acontece:</strong> um resultado correto gera confiança excessiva.</p><p><strong>Como evitar:</strong> inclua zero, limites, ausência e valores contrastantes.</p></article>
+        <article class="error-card"><h3>Alterar várias partes ao mesmo tempo</h3><p><strong>Por que acontece:</strong> várias hipóteses são corrigidas em uma única tentativa.</p><p><strong>Como evitar:</strong> mude uma parte, execute novamente e registre o efeito.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Por que usar valores pequenos ao testar um laço?</summary><p>Porque eles permitem acompanhar manualmente cada iteração, o índice e a mudança das variáveis.</p></details>
+        <details><summary>Uma consulta foi testada apenas com um código existente. O teste está completo?</summary><p>Não. Também é necessário testar um código ausente para verificar o valor usado para indicar que nada foi encontrado.</p></details>
+        <details><summary>Quando as partes devem ser integradas?</summary><p>Depois que cada parte produzir o resultado esperado nos casos escolhidos. Em seguida, testa-se a comunicação entre elas e o fluxo completo.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir planejar testes pequenos para funções, laços, consultas e saídas, registrar resultados e integrar somente as partes que já foram verificadas.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-funcao" role="dialog" aria-modal="true" aria-labelledby="titulo-funcao">
+    <a class="modal-backdrop" href="#mapa-dos-testes" aria-label="Fechar alerta"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-dos-testes" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 3 2-3h6"></path><path d="M6 17h12"></path></svg></span><h2 id="titulo-funcao">Teste de função</h2></div>
+      <p>Uma função pode ser verificada com argumentos fixos, sem depender da leitura do teclado ou da saída final do programa.</p>
+      <div class="modal-example"><strong>Mesmo exemplo: programa de estoque</strong><div class="modal-grid"><div class="modal-box"><strong>Chamada</strong><code>somarEstoque({3,5,2}, 3)</code></div><div class="modal-box"><strong>Retorno esperado</strong><code>10</code></div></div></div>
+      <div class="modal-rule"><strong>Regra prática:</strong> escolha entradas cujo resultado você consiga calcular manualmente. Compare diretamente o retorno da função.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-laco" role="dialog" aria-modal="true" aria-labelledby="titulo-laco">
+    <a class="modal-backdrop" href="#mapa-dos-testes" aria-label="Fechar alerta"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-dos-testes" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M6 8a7 7 0 0 1 12 1"></path><path d="m18 5 .5 4-4-.5"></path><path d="M18 16a7 7 0 0 1-12-1"></path></svg></span><h2 id="titulo-laco">Teste de laço</h2></div>
+      <p>O teste deve observar o valor inicial, a condição, a atualização e o estado produzido em cada repetição.</p>
+      <div class="modal-example"><strong>Mesmo exemplo: programa de estoque</strong><div class="modal-grid"><div class="modal-box"><strong>Índices esperados</strong><code>0, 1 e 2</code></div><div class="modal-box"><strong>Totais parciais</strong><code>3 → 8 → 10</code></div></div></div>
+      <div class="modal-rule"><strong>Regra prática:</strong> use uma coleção curta e anote uma linha para cada iteração. Isso revela limites incorretos e atualizações ausentes.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-consulta" role="dialog" aria-modal="true" aria-labelledby="titulo-consulta">
+    <a class="modal-backdrop" href="#mapa-dos-testes" aria-label="Fechar alerta"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-dos-testes" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg></span><h2 id="titulo-consulta">Teste de consulta</h2></div>
+      <p>Uma consulta precisa demonstrar tanto o caminho em que encontra um elemento quanto o caminho em que percorre os dados sem encontrar.</p>
+      <div class="modal-example"><strong>Mesmo exemplo: programa de estoque</strong><div class="modal-grid"><div class="modal-box"><strong>Caso encontrado</strong><code>buscar 20 → posição 1</code></div><div class="modal-box"><strong>Caso ausente</strong><code>buscar 99 → -1</code></div></div></div>
+      <div class="modal-rule"><strong>Regra prática:</strong> teste o primeiro elemento, o último, um elemento intermediário e um valor inexistente quando a consulta for importante.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-saida" role="dialog" aria-modal="true" aria-labelledby="titulo-saida">
+    <a class="modal-backdrop" href="#mapa-dos-testes" aria-label="Fechar alerta"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-dos-testes" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"></path><path d="M8 21h8M12 17v4"></path><path d="M8 8h8M8 12h5"></path></svg></span><h2 id="titulo-saida">Teste da saída</h2></div>
+      <p>A lógica pode estar correta, mas a apresentação ainda pode ter valor, ordem, rótulo ou formatação incorretos.</p>
+      <div class="modal-example"><strong>Mesmo exemplo: programa de estoque</strong><div class="modal-grid"><div class="modal-box"><strong>Esperado</strong><code>Total em estoque: 10</code></div><div class="modal-box"><strong>Comparar</strong>texto, espaço, valor e quebra de linha</div></div></div>
+      <div class="modal-rule"><strong>Regra prática:</strong> trate a saída esperada como uma especificação. Não avalie apenas se o número “parece certo”.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-integracao" role="dialog" aria-modal="true" aria-labelledby="titulo-integracao">
+    <a class="modal-backdrop" href="#mapa-dos-testes" aria-label="Fechar alerta"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-dos-testes" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="7" height="6" rx="2"></rect><rect x="14" y="13" width="7" height="6" rx="2"></rect><path d="m10 8 4 4"></path><path d="m10 16 4-4"></path></svg></span><h2 id="titulo-integracao">Teste de integração</h2></div>
+      <p>Mesmo partes corretas podem falhar quando um retorno é ignorado, um tamanho errado é enviado ou os dados são ligados na ordem incorreta.</p>
+      <div class="modal-example"><strong>Mesmo exemplo: programa de estoque</strong><div class="modal-grid"><div class="modal-box"><strong>Fluxo</strong><code>buscar posição → acessar estoque[pos]</code></div><div class="modal-box"><strong>Saída esperada</strong><code>Total 10 | código 20: 5</code></div></div></div>
+      <div class="modal-rule"><strong>Regra prática:</strong> no teste do todo, concentre-se primeiro nas fronteiras entre as partes: argumentos, retornos, índices e ordem das chamadas.</div>
+    </div>
+  </section>
+</body>
+</html>

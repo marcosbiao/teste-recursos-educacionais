@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como evitar laço infinito</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 160px; height: 160px; right: 280px; bottom: -112px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .concept-icon svg,
+    .modal-icon svg, .interaction-note svg, .phase-icon svg,
+    .example-icon svg, .insight-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 770px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 735px; }
+
+    .hero-console {
+      width: min(100%, 450px);
+      margin-inline: auto;
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.14);
+    }
+
+    .console-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .console-title { display: flex; align-items: center; gap: 10px; color: var(--cor-primaria-escura); font-weight: 900; }
+    .hero-icon { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .console-chip { color: var(--cor-texto-secundario); font-size: .78rem; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-weight: 800; }
+
+    .loop-preview {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .preview-node {
+      min-height: 86px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie-suave);
+    }
+
+    .preview-node strong { color: var(--cor-primaria-escura); font-size: .88rem; }
+    .preview-node span { color: var(--cor-texto-secundario); font-family: Consolas, monospace; font-size: .84rem; }
+    .preview-arrow { color: var(--cor-primaria); font-weight: 900; font-size: 1.25rem; }
+
+    .stop-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: #FFFBEB;
+      border: 1px solid rgba(245, 158, 11, .34);
+      color: var(--cor-texto-principal);
+      font-size: .88rem;
+      font-weight: 800;
+    }
+
+    .stop-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--cor-destaque-pontual);
+      box-shadow: 0 0 0 5px rgba(245, 158, 11, .14);
+      flex: 0 0 auto;
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .stop-map {
+      min-height: 535px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 205px;
+      min-height: 154px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.12rem; }
+    .map-center span { color: #E0E7FF; font-size: .9rem; }
+
+    .phase-button {
+      position: absolute;
+      width: 270px;
+      min-height: 174px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.97);
+      padding: 18px;
+      text-align: left;
+      color: var(--cor-texto-principal);
+      text-decoration: none;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .07);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+
+    .phase-button:hover, .phase-button:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px rgba(49, 46, 129, .14);
+      border-color: rgba(79, 70, 229, .36);
+      outline: none;
+    }
+
+    .phase-button:nth-of-type(1) { left: 28px; top: 27px; }
+    .phase-button:nth-of-type(2) { right: 28px; top: 27px; }
+    .phase-button:nth-of-type(3) { left: 28px; bottom: 27px; }
+    .phase-button:nth-of-type(4) { right: 28px; bottom: 27px; }
+
+    .phase-icon {
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--cor-primaria);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, .14);
+      margin-bottom: 12px;
+    }
+
+    .phase-button h3 { margin-bottom: 6px; }
+    .phase-button p { font-size: .92rem; }
+    .phase-code { display: inline-block; margin-top: 9px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .84rem; font-weight: 800; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+
+    .modal:target { visibility: visible; opacity: 1; }
+
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, .64);
+      backdrop-filter: blur(6px);
+      cursor: default;
+    }
+
+    .modal-card {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 720px);
+      max-height: 88vh;
+      overflow-y: auto;
+      margin: 6vh auto 0;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 28px 80px rgba(15, 23, 42, .28);
+      transform: translateY(22px) scale(.97);
+      transition: transform .24s ease;
+    }
+
+    .modal:target .modal-card { transform: translateY(0) scale(1); }
+
+    .modal-close {
+      position: absolute;
+      right: 16px;
+      top: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-principal);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 48px; margin-bottom: 15px; }
+    .modal-icon { width: 47px; height: 47px; border-radius: 15px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.3rem; margin: 0; }
+    .modal-example { margin-top: 16px; border-radius: 18px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); padding: 16px; }
+    .modal-example strong { color: var(--cor-primaria-escura); }
+
+    .inline-code {
+      display: block;
+      margin-top: 10px;
+      background: var(--codigo-fundo);
+      color: var(--codigo-texto);
+      padding: 13px 14px;
+      border-radius: 13px;
+      overflow-x: auto;
+      font-family: Consolas, monospace;
+      font-size: .89rem;
+      white-space: pre;
+    }
+
+    .cycle-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .cycle-card { position: relative; border: 1px solid var(--cor-borda); border-radius: 19px; padding: 18px; background: var(--cor-superficie); min-height: 170px; }
+    .cycle-card:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: white; background: var(--cor-primaria); z-index: 2; font-weight: 900; }
+    .cycle-label { display: inline-flex; align-items: center; gap: 7px; color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+    .cycle-card p { font-size: .91rem; }
+    .cycle-card code { display: block; margin-top: 10px; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); padding: 8px 9px; border-radius: 10px; font-size: .84rem; }
+
+    .trace-wrap { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; align-items: start; }
+    .trace-card, .safety-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 19px; background: var(--cor-superficie-suave); }
+
+    .mini-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .91rem; }
+    .mini-table th, .mini-table td { border: 1px solid var(--cor-borda); padding: 10px; text-align: left; vertical-align: top; }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .mini-table td { background: var(--cor-superficie); color: var(--cor-texto-secundario); }
+    .mini-table code { color: var(--cor-texto-principal); }
+
+    .safety-list { display: grid; gap: 10px; margin-top: 12px; }
+    .safety-item { display: flex; align-items: flex-start; gap: 10px; border: 1px solid var(--cor-borda); background: var(--cor-superficie); border-radius: 14px; padding: 12px; }
+    .safety-number { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--cor-primaria); color: white; font-weight: 900; flex: 0 0 auto; }
+    .safety-item strong { color: var(--cor-texto-principal); display: block; font-size: .93rem; }
+    .safety-item p { font-size: .88rem; }
+
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .example-tabs { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 16px; }
+    .example-tabs label { cursor: pointer; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; transition: .16s ease; }
+    #example-1:checked ~ .example-tabs label[for="example-1"],
+    #example-2:checked ~ .example-tabs label[for="example-2"],
+    #example-3:checked ~ .example-tabs label[for="example-3"] {
+      background: var(--cor-primaria);
+      color: white;
+      border-color: var(--cor-primaria);
+    }
+
+    .example-panel { display: none; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    #example-1:checked ~ .example-panels .panel-1,
+    #example-2:checked ~ .example-panels .panel-2,
+    #example-3:checked ~ .example-panels .panel-3 { display: grid; animation: panelIn .26s ease; }
+
+    @keyframes panelIn { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-info { border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 19px; padding: 19px; background: #FFFBEB; }
+    .example-kicker { display: inline-flex; align-items: center; gap: 7px; color: var(--cor-primaria-escura); font-weight: 900; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+    .example-info ul { padding-left: 19px; margin-top: 11px; color: var(--cor-texto-secundario); }
+    .example-info li + li { margin-top: 6px; }
+    .stop-answer { margin-top: 13px; padding: 11px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid rgba(245, 158, 11, .32); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .code-card { background: var(--codigo-fundo); border-radius: 19px; overflow: hidden; border: 1px solid #1F2937; }
+    .code-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #273449; color: #CBD5E1; font-size: .82rem; }
+    .code-dots { display: flex; gap: 6px; }
+    .code-dot { width: 9px; height: 9px; border-radius: 50%; background: #64748B; }
+    pre { overflow-x: auto; padding: 17px; color: var(--codigo-texto); font-size: .89rem; line-height: 1.55; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .trace-wrap { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points, .error-grid { grid-template-columns: 1fr; }
+      .cycle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cycle-card::after { display: none !important; }
+
+      .stop-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center { position: static; transform: none; width: auto; min-height: 120px; grid-column: 1 / -1; }
+      .phase-button, .phase-button:nth-of-type(1), .phase-button:nth-of-type(2), .phase-button:nth-of-type(3), .phase-button:nth-of-type(4) { position: static; width: auto; min-height: 168px; }
+      .example-panel { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 11px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-grid { gap: 22px; }
+      .loop-preview { grid-template-columns: 1fr; }
+      .preview-arrow { transform: rotate(90deg); justify-self: center; }
+      .meta-grid, .cycle-grid, .stop-map { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .example-tabs { display: grid; }
+      .example-tabs label { text-align: center; }
+      .modal-card { padding: 21px; margin-top: 3vh; max-height: 94vh; }
+      .mini-table { display: block; overflow-x: auto; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Como evitar laço infinito</h1>
+          <p class="subtitle">Entenda como inicialização, teste, atualização e parada segura trabalham juntas para garantir que uma repetição termine.</p>
+        </div>
+
+        <div class="hero-console" aria-label="Visão resumida de um laço seguro">
+          <div class="console-head">
+            <div class="console-title">
+              <span class="hero-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v5h5M19 20v-5h-5M6.7 16.7A7 7 0 0 0 18 14M17.3 7.3A7 7 0 0 0 6 10"/></svg></span>
+              Laço com progresso
+            </div>
+            <span class="console-chip">i de 1 até 5</span>
+          </div>
+
+          <div class="loop-preview">
+            <div class="preview-node"><div><strong>Começa</strong><br><span>i = 1</span></div></div>
+            <span class="preview-arrow">→</span>
+            <div class="preview-node"><div><strong>Repete</strong><br><span>i &lt;= 5</span></div></div>
+            <span class="preview-arrow">→</span>
+            <div class="preview-node"><div><strong>Avança</strong><br><span>i++</span></div></div>
+          </div>
+
+          <div class="stop-strip"><span class="stop-dot"></span>Quando i passa de 5, o teste se torna falso e o laço termina.</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI05</div><p>Construir e controlar estruturas de repetição.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI03</div><p>Acompanhar a mudança de estado das variáveis.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Condição de parada</div><p>Planejar quando e por que o laço termina.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Leitura, exploração visual e exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e diagnóstico</div><p>Rastreamento do estado e análise de falhas.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg>Variáveis e atribuição</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10M7 12h6M7 17h10"/></svg>Operadores relacionais</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2-5.3L4 9M4 4v5h5"/></svg>Noção de repetição</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8l5-5 5 5"/></svg>Mudança de estado</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Um laço termina quando seu estado caminha para uma condição falsa</h3>
+          <p>Não basta escrever uma condição. Alguma variável usada no teste precisa mudar de forma previsível até que a repetição deixe de ser necessária.</p>
+          <div class="central-rule"><span>Regra:</span> <code>estado inicial + teste + progresso = parada possível</code></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina o começo</h3><p>A variável de controle precisa receber um valor conhecido antes do primeiro teste.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Garanta progresso</h3><p>Cada repetição deve aproximar o estado da condição que encerra o laço.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Preveja a saída</h3><p>É preciso explicar qual valor ou evento fará o teste se tornar falso.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-parada">
+      <div class="section-title"><span class="marker"></span><h2>Mapa de uma repetição segura</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg>
+        Clique em cada bloco para abrir uma explicação com o mesmo exemplo: imprimir os números de 1 a 5.
+      </div>
+
+      <div class="stop-map">
+        <svg class="map-lines" viewBox="0 0 1000 535" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="385" y1="226" x2="285" y2="135"></line>
+          <line x1="615" y1="226" x2="715" y2="135"></line>
+          <line x1="385" y1="309" x2="285" y2="400"></line>
+          <line x1="615" y1="309" x2="715" y2="400"></line>
+        </svg>
+
+        <div class="map-center"><div><strong>Laço que termina</strong><br><span>o teste muda de verdadeiro para falso</span></div></div>
+
+        <a class="phase-button" href="#modal-inicializacao">
+          <span class="phase-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></span>
+          <h3>Inicialização</h3>
+          <p>Define o estado antes da primeira verificação.</p>
+          <span class="phase-code">int i = 1;</span>
+        </a>
+
+        <a class="phase-button" href="#modal-teste">
+          <span class="phase-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l4 4L20 4"/></svg></span>
+          <h3>Teste</h3>
+          <p>Decide se outra repetição ainda deve acontecer.</p>
+          <span class="phase-code">i &lt;= 5</span>
+        </a>
+
+        <a class="phase-button" href="#modal-atualizacao">
+          <span class="phase-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h12M13 8l4 4-4 4"/></svg></span>
+          <h3>Atualização</h3>
+          <p>Altera a variável usada na condição.</p>
+          <span class="phase-code">i++;</span>
+        </a>
+
+        <a class="phase-button" href="#modal-parada">
+          <span class="phase-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="3"/></svg></span>
+          <h3>Parada segura</h3>
+          <p>Identifica exatamente o estado que encerra o ciclo.</p>
+          <span class="phase-code">i == 6</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="modal" id="modal-inicializacao" role="dialog" aria-modal="true" aria-labelledby="titulo-inicializacao">
+      <a class="modal-overlay" href="#mapa-parada" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <a class="modal-close" href="#mapa-parada" aria-label="Fechar">×</a>
+        <div class="modal-head">
+          <span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></span>
+          <h3 id="titulo-inicializacao">Inicialização: de onde o laço começa?</h3>
+        </div>
+        <p>A inicialização estabelece o primeiro estado da variável de controle. Sem um valor inicial conhecido, não é possível prever o primeiro teste nem quantas vezes o laço será executado.</p>
+        <div class="modal-example"><strong>No mesmo exemplo:</strong><span class="inline-code">int i = 1;</span><p>O valor 1 corresponde ao primeiro número que deve ser exibido.</p></div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-teste" role="dialog" aria-modal="true" aria-labelledby="titulo-teste">
+      <a class="modal-overlay" href="#mapa-parada" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <a class="modal-close" href="#mapa-parada" aria-label="Fechar">×</a>
+        <div class="modal-head">
+          <span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l4 4L20 4"/></svg></span>
+          <h3 id="titulo-teste">Teste: ainda é necessário repetir?</h3>
+        </div>
+        <p>O teste deve expressar a regra de permanência no laço. Enquanto ele for verdadeiro, o bloco será executado novamente.</p>
+        <div class="modal-example"><strong>No mesmo exemplo:</strong><span class="inline-code">i &lt;= 5</span><p>O laço continua enquanto o número atual ainda pertence ao intervalo de 1 a 5.</p></div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-atualizacao" role="dialog" aria-modal="true" aria-labelledby="titulo-atualizacao">
+      <a class="modal-overlay" href="#mapa-parada" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <a class="modal-close" href="#mapa-parada" aria-label="Fechar">×</a>
+        <div class="modal-head">
+          <span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h12M13 8l4 4-4 4"/></svg></span>
+          <h3 id="titulo-atualizacao">Atualização: o que muda a cada volta?</h3>
+        </div>
+        <p>A atualização precisa modificar uma variável que participa da condição. Além disso, a direção da mudança deve aproximar o estado da saída.</p>
+        <div class="modal-example"><strong>No mesmo exemplo:</strong><span class="inline-code">i++;</span><p>Depois de imprimir um número, i aumenta uma unidade: 1, 2, 3, 4, 5 e 6.</p></div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-parada" role="dialog" aria-modal="true" aria-labelledby="titulo-parada">
+      <a class="modal-overlay" href="#mapa-parada" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <a class="modal-close" href="#mapa-parada" aria-label="Fechar">×</a>
+        <div class="modal-head">
+          <span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="3"/></svg></span>
+          <h3 id="titulo-parada">Parada segura: quando o ciclo deixa de continuar?</h3>
+        </div>
+        <p>Uma parada é segura quando pode ser prevista a partir da inicialização e das atualizações. Também pode incluir um limite adicional para impedir repetições indefinidas diante de entradas inesperadas.</p>
+        <div class="modal-example"><strong>No mesmo exemplo:</strong><span class="inline-code">quando i recebe 6, i &lt;= 5 é falso</span><p>O sexto teste encerra o laço antes que o bloco seja executado novamente.</p></div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>O ciclo completo</h2></div>
+      <div class="cycle-grid">
+        <article class="cycle-card"><span class="cycle-label">1. Antes do laço</span><h3>Inicialize</h3><p>Escolha um valor coerente com o primeiro estado do problema.</p><code>i = 1</code></article>
+        <article class="cycle-card"><span class="cycle-label">2. Antes de repetir</span><h3>Teste</h3><p>Verifique se o estado atual ainda exige nova execução.</p><code>i &lt;= 5</code></article>
+        <article class="cycle-card"><span class="cycle-label">3. Dentro do laço</span><h3>Atualize</h3><p>Modifique a variável de controle na direção da saída.</p><code>i = i + 1</code></article>
+        <article class="cycle-card"><span class="cycle-label">4. Depois do avanço</span><h3>Encerre</h3><p>Quando a condição se torna falsa, o fluxo segue após o laço.</p><code>i = 6</code></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreie antes de executar</h2></div>
+      <div class="trace-wrap">
+        <article class="trace-card">
+          <h3>Simulação de <code>i &lt;= 5</code></h3>
+          <p>A tabela mostra por que a repetição termina.</p>
+          <table class="mini-table">
+            <thead><tr><th>Teste</th><th>Valor de i</th><th>Condição</th><th>Ação</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>1</td><td>Verdadeira</td><td>Imprime 1 e atualiza</td></tr>
+              <tr><td>2</td><td>2</td><td>Verdadeira</td><td>Imprime 2 e atualiza</td></tr>
+              <tr><td>3 a 5</td><td>3, 4 e 5</td><td>Verdadeira</td><td>Imprime e atualiza</td></tr>
+              <tr><td>6</td><td>6</td><td>Falsa</td><td>Encerra o laço</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="safety-card">
+          <h3>Três perguntas de segurança</h3>
+          <div class="safety-list">
+            <div class="safety-item"><span class="safety-number">1</span><div><strong>O estado inicial é conhecido?</strong><p>Sem inicialização, o primeiro teste pode ser imprevisível.</p></div></div>
+            <div class="safety-item"><span class="safety-number">2</span><div><strong>A variável do teste muda?</strong><p>Se nada relevante for atualizado, o resultado da condição pode nunca mudar.</p></div></div>
+            <div class="safety-item"><span class="safety-number">3</span><div><strong>A mudança aponta para a saída?</strong><p>Incrementar quando seria necessário decrementar pode afastar o estado da parada.</p></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+
+      <input class="tab-input" type="radio" name="examples" id="example-1" checked>
+      <input class="tab-input" type="radio" name="examples" id="example-2">
+      <input class="tab-input" type="radio" name="examples" id="example-3">
+
+      <div class="example-tabs" role="tablist" aria-label="Escolha um exemplo">
+        <label for="example-1">1. Contagem conhecida</label>
+        <label for="example-2">2. Sentinela de entrada</label>
+        <label for="example-3">3. Dupla condição de saída</label>
+      </div>
+
+      <div class="example-panels">
+        <article class="example-panel panel-1">
+          <div class="example-info">
+            <span class="example-kicker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M15 8l4 4-4 4"/></svg>Nível básico</span>
+            <h3>Exibir os números de 1 a 5</h3>
+            <p>A quantidade de repetições é conhecida antes do início.</p>
+            <ul>
+              <li><strong>Inicialização:</strong> <code>i = 1</code></li>
+              <li><strong>Teste:</strong> <code>i &lt;= 5</code></li>
+              <li><strong>Atualização:</strong> <code>i++</code></li>
+              <li><strong>Estado de saída:</strong> <code>i = 6</code></li>
+            </ul>
+            <div class="stop-answer">O laço termina porque i aumenta em todas as repetições e inevitavelmente ultrapassa 5.</div>
+          </div>
+
+          <div class="code-card">
+            <div class="code-head"><span>contagem.c</span><span class="code-dots"><i class="code-dot"></i><i class="code-dot"></i><i class="code-dot"></i></span></div>
+            <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-keyword">for</span> <span class="syn-operator">(</span><span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span><span class="syn-operator">;</span> <span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">5</span><span class="syn-operator">;</span> <span class="syn-variable">i</span><span class="syn-operator">++</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"%d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">i</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+          </div>
+        </article>
+
+        <article class="example-panel panel-2">
+          <div class="example-info">
+            <span class="example-kicker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16"/></svg>Nível intermediário</span>
+            <h3>Somar números até o usuário digitar zero</h3>
+            <p>A repetição depende de um valor sentinela informado durante a execução.</p>
+            <ul>
+              <li><strong>Inicialização:</strong> ler o primeiro número antes do laço</li>
+              <li><strong>Teste:</strong> <code>numero != 0</code></li>
+              <li><strong>Atualização:</strong> ler um novo número dentro do laço</li>
+              <li><strong>Estado de saída:</strong> <code>numero = 0</code></li>
+            </ul>
+            <div class="stop-answer">A nova leitura é indispensável. Sem ela, o mesmo número seria testado para sempre.</div>
+          </div>
+
+          <div class="code-card">
+            <div class="code-head"><span>sentinela.c</span><span class="code-dots"><i class="code-dot"></i><i class="code-dot"></i><i class="code-dot"></i></span></div>
+            <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">numero</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">numero</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">while</span> <span class="syn-operator">(</span><span class="syn-variable">numero</span> <span class="syn-operator">!=</span> <span class="syn-number">0</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">numero</span><span class="syn-operator">;</span>
+        <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">numero</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Soma: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+          </div>
+        </article>
+
+        <article class="example-panel panel-3">
+          <div class="example-info">
+            <span class="example-kicker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 12l3 3 7-7M5 4h14v16H5z"/></svg>Nível intermediário</span>
+            <h3>Validar uma senha com limite de tentativas</h3>
+            <p>O laço possui duas saídas possíveis: acerto da senha ou uso das três tentativas.</p>
+            <ul>
+              <li><strong>Inicialização:</strong> <code>erros = 0</code></li>
+              <li><strong>Teste:</strong> senha incorreta e erros menores que 3</li>
+              <li><strong>Atualização:</strong> incrementar erros após tentativa incorreta</li>
+              <li><strong>Parada segura:</strong> acerto ou limite alcançado</li>
+            </ul>
+            <div class="stop-answer">O limite funciona como proteção adicional. Mesmo que a senha nunca seja correta, o programa não repete indefinidamente.</div>
+          </div>
+
+          <div class="code-card">
+            <div class="code-head"><span>senha.c</span><span class="code-dots"><i class="code-dot"></i><i class="code-dot"></i><i class="code-dot"></i></span></div>
+            <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-keyword">const</span> <span class="syn-type">int</span> <span class="syn-variable">SENHA</span> <span class="syn-operator">=</span> <span class="syn-number">1234</span><span class="syn-operator">;</span>
+    <span class="syn-type">int</span> <span class="syn-variable">tentativa</span><span class="syn-operator">,</span> <span class="syn-variable">erros</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">do</span> <span class="syn-operator">{</span>
+        <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">tentativa</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+
+        <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">tentativa</span> <span class="syn-operator">!=</span> <span class="syn-variable">SENHA</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+            <span class="syn-variable">erros</span><span class="syn-operator">++</span><span class="syn-operator">;</span>
+        <span class="syn-operator">}</span>
+    <span class="syn-operator">}</span> <span class="syn-keyword">while</span> <span class="syn-operator">(</span><span class="syn-variable">tentativa</span> <span class="syn-operator">!=</span> <span class="syn-variable">SENHA</span> <span class="syn-operator">&amp;&amp;</span> <span class="syn-variable">erros</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">tentativa</span> <span class="syn-operator">==</span> <span class="syn-variable">SENHA</span><span class="syn-operator">)</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Acesso permitido\n"</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+    <span class="syn-keyword">else</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Tentativas encerradas\n"</span><span class="syn-operator">)</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Esquecer a atualização</h3><p><strong>Por que acontece:</strong> a condição depende de uma variável que nunca muda dentro do laço.</p><p><strong>Como evitar:</strong> marque no código qual comando altera cada variável usada no teste.</p></article>
+        <article class="error-card"><h3>Atualizar na direção errada</h3><p><strong>Por que acontece:</strong> o estado se afasta do valor que tornaria a condição falsa.</p><p><strong>Como evitar:</strong> simule duas ou três repetições e verifique se a distância até a saída diminui.</p></article>
+        <article class="error-card"><h3>Não renovar a entrada</h3><p><strong>Por que acontece:</strong> um laço com sentinela testa sempre o mesmo valor lido antes da repetição.</p><p><strong>Como evitar:</strong> faça uma nova leitura em toda volta antes do próximo teste.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Uma condição correta garante, sozinha, que o laço termine?</summary><p>Não. Também é necessário que alguma variável usada na condição seja atualizada de modo a tornar o teste falso em algum momento.</p></details>
+        <details><summary>Por que <code>i--</code> pode causar laço infinito em <code>while (i &lt;= 5)</code> quando i começa em 1?</summary><p>Porque i fica cada vez menor e continua satisfazendo a condição. A atualização afasta o estado da saída.</p></details>
+        <details><summary>Qual é a função de um limite máximo de tentativas?</summary><p>Ele cria uma segunda condição de encerramento e impede que o programa permaneça repetindo indefinidamente quando o evento esperado não ocorre.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir identificar a variável de controle, prever como ela muda e justificar qual estado fará um laço terminar com segurança.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

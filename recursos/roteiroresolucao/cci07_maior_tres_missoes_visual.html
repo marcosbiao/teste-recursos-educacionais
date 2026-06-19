@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encontrando o maior de três números — missões</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <style>
+
+    :root {
+      --emerald-950: #022c22;
+      --emerald-900: #064e3b;
+      --emerald-800: #065f46;
+      --emerald-700: #047857;
+      --emerald-600: #059669;
+      --emerald-100: #d1fae5;
+      --emerald-50: #ecfdf5;
+      --teal-700: #0f766e;
+      --teal-100: #ccfbf1;
+      --lime-600: #65a30d;
+      --lime-100: #ecfccb;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --amber-50: #fffbeb;
+      --red-700: #b91c1c;
+      --red-100: #fee2e2;
+      --red-50: #fef2f2;
+      --blue-700: #1d4ed8;
+      --blue-100: #dbeafe;
+      --slate-950: #0f172a;
+      --slate-900: #172033;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
+      --shadow-md: 0 20px 55px rgba(15, 23, 42, .11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-950);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(5, 150, 105, .11), transparent 30rem),
+        radial-gradient(circle at 94% 13%, rgba(101, 163, 13, .08), transparent 28rem),
+        var(--slate-50);
+      padding: 24px 16px 46px;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(5, 150, 105, .32);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 26px;
+      align-items: center;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 84% 15%, rgba(255,255,255,.11), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900) 58%, var(--emerald-700));
+      box-shadow: 0 24px 60px rgba(2, 44, 34, .23);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #34d399, #a3e635, #2dd4bf);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.11);
+      color: #ecfdf5;
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      color: var(--white);
+      font-size: clamp(2rem, 4.8vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .hero-description { max-width: 760px; color: #d1fae5; font-size: 1.02rem; }
+
+    .hero-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.35fr;
+      gap: 12px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(9px);
+    }
+
+    .flow-chip {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,.10);
+      text-align: center;
+    }
+    .flow-chip strong { display: block; color: white; font-size: 1.05rem; }
+    .flow-chip small { color: #a7f3d0; font-weight: 700; }
+    .flow-arrow { color: #bef264; font-size: 1.35rem; text-align: center; }
+    .flow-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .context-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kicker {
+      margin-bottom: 6px;
+      color: var(--emerald-700);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    h2 { color: var(--slate-950); font-size: 1.35rem; line-height: 1.2; letter-spacing: -.02em; }
+    h3 { color: var(--slate-900); font-size: 1.02rem; line-height: 1.25; }
+    p { color: var(--slate-600); }
+
+    .problem-statement {
+      margin-top: 13px;
+      padding: 16px 17px;
+      border: 1px solid var(--emerald-100);
+      border-left: 5px solid var(--emerald-600);
+      border-radius: var(--radius-md);
+      background: var(--emerald-50);
+      color: var(--slate-950);
+      font-weight: 780;
+    }
+
+    .problem-statement small { display: block; margin-top: 7px; color: var(--slate-600); font-weight: 600; }
+
+    .meta-stack { display: grid; gap: 9px; }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+    }
+    .meta-icon {
+      width: 31px; height: 31px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      font-weight: 900;
+    }
+    .meta-row strong { display: block; color: var(--slate-900); font-size: .86rem; }
+    .meta-row span { color: var(--slate-600); font-size: .83rem; }
+
+    .mission-map {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      padding: 15px 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .map-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .map-top strong { color: var(--slate-900); font-size: .93rem; }
+    .map-top span { color: var(--slate-500); font-size: .83rem; }
+    .map-line { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: center; }
+    .map-connector { height: 3px; border-radius: 999px; background: var(--slate-200); transition: background .3s ease; }
+    .map-connector.done { background: linear-gradient(90deg, var(--emerald-600), #84cc16); }
+    .map-node {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      transition: .25s ease;
+    }
+    .map-node-number {
+      width: 30px; height: 30px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border: 2px solid var(--slate-300);
+      border-radius: 50%;
+      background: var(--white);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .map-node strong { display: block; color: inherit; font-size: .83rem; line-height: 1.12; }
+    .map-node small { display: block; margin-top: 2px; color: inherit; font-size: .68rem; text-transform: uppercase; font-weight: 850; letter-spacing: .04em; }
+    .map-node.active { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); box-shadow: 0 0 0 3px rgba(5,150,105,.07); }
+    .map-node.active .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.done { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); }
+    .map-node.done .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.locked { opacity: .62; }
+
+    .mission {
+      --mission-color: var(--emerald-600);
+      --mission-soft: var(--emerald-50);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--mission-color);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+    }
+    .mission[data-mission="2"] { --mission-color: var(--teal-700); --mission-soft: #f0fdfa; }
+    .mission[data-mission="3"] { --mission-color: var(--lime-600); --mission-soft: #f7fee7; }
+    .mission.locked { opacity: .72; }
+    .mission.active { box-shadow: var(--shadow-md); }
+    .mission.completed { border-color: var(--emerald-100); }
+
+    .mission-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 20px 22px;
+      background: var(--white);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mission.locked .mission-toggle { cursor: not-allowed; }
+    .mission-icon {
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 17px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 24%, transparent);
+      font-size: 1.25rem;
+      font-weight: 950;
+    }
+    .mission-heading small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--mission-color);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mission-heading h2 { margin: 0; font-size: 1.35rem; }
+    .mission-heading p { margin-top: 4px; font-size: .9rem; }
+    .mission-side { display: flex; align-items: center; gap: 10px; }
+    .mission-meta {
+      display: grid;
+      gap: 3px;
+      justify-items: end;
+      color: var(--slate-500);
+      font-size: .77rem;
+      white-space: nowrap;
+    }
+    .mission-meta strong { color: var(--slate-800); font-size: .82rem; }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .mission.active .state-pill { background: var(--mission-soft); color: var(--mission-color); }
+    .mission.completed .state-pill { background: var(--emerald-50); color: var(--emerald-800); }
+    .chevron { color: var(--slate-400); font-size: 1.15rem; transition: transform .22s ease; }
+    .mission.open .chevron { transform: rotate(180deg); }
+
+    .mission-content { display: none; padding: 0 22px 24px; }
+    .mission.open .mission-content { display: grid; gap: 22px; }
+
+    .mission-objective {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: var(--mission-soft);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 20%, transparent);
+    }
+    .objective-icon {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 11px; background: white; color: var(--mission-color); font-weight: 950;
+    }
+    .mission-objective strong { display: block; color: var(--slate-900); font-size: .88rem; }
+    .mission-objective p { font-size: .84rem; }
+    .seal-preview { color: var(--mission-color); font-size: .76rem; font-weight: 900; text-align: right; }
+
+    .task-block { display: grid; gap: 12px; padding-top: 2px; }
+    .task-head { display: flex; gap: 11px; align-items: flex-start; }
+    .task-index {
+      width: 29px; height: 29px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+    .task-head h3 { margin-bottom: 3px; }
+    .task-head p { font-size: .88rem; }
+
+    .choice-grid { display: grid; gap: 9px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) 22px;
+      gap: 11px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: var(--slate-300); box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-letter {
+      width: 33px; height: 33px; display: grid; place-items: center;
+      border: 1px solid var(--slate-300); border-radius: 10px;
+      color: var(--slate-600); background: var(--slate-50); font-size: .8rem; font-weight: 900;
+    }
+    .choice-copy strong { display: block; margin-bottom: 2px; color: var(--slate-900); font-size: .91rem; }
+    .choice-copy span { display: block; color: var(--slate-600); font-size: .84rem; }
+    .radio-mark {
+      width: 21px; height: 21px; margin-top: 5px;
+      border: 2px solid var(--slate-300); border-radius: 50%; background: white; position: relative;
+    }
+    .choice:has(input:checked) { border-color: var(--mission-color); background: var(--mission-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 9%, transparent); }
+    .choice:has(input:checked) .choice-letter { border-color: var(--mission-color); background: var(--mission-color); color: white; }
+    .choice:has(input:checked) .radio-mark { border-color: var(--mission-color); }
+    .choice:has(input:checked) .radio-mark::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--mission-color); }
+
+    .eps-flow { display: grid; grid-template-columns: 1fr auto 1.25fr auto 1fr; gap: 10px; align-items: stretch; }
+    .eps-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .eps-card strong { color: var(--slate-900); font-size: .83rem; letter-spacing: .04em; text-transform: uppercase; }
+    .eps-card small { color: var(--slate-500); font-size: .75rem; }
+    .eps-arrow { display: grid; place-items: center; color: var(--emerald-600); font-size: 1.35rem; font-weight: 900; }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 34px 9px 10px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    select:focus { border-color: var(--mission-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent); }
+
+    .expression-builder {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+    .ide-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #263244;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    .ide-dots { display: flex; gap: 6px; }
+    .ide-dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; }
+    .expression-lines { display: grid; gap: 11px; padding: 16px; }
+    .expression-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .expression-label { color: #a7f3d0; font: 700 .86rem Consolas, Monaco, monospace; white-space: nowrap; }
+    .expression-line select { min-height: 42px; border-color: #334155; background: #172033; color: #f8fafc; font-family: Consolas, Monaco, monospace; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .test-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .test-input { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .test-input strong { color: var(--slate-900); font-size: .86rem; }
+    .test-input span { padding: 4px 8px; border-radius: 8px; background: var(--white); color: var(--emerald-800); font: 800 .8rem Consolas, monospace; border: 1px solid var(--slate-200); }
+
+    .branch {
+      display: none;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .87rem;
+    }
+    .branch.show { display: block; animation: reveal .18s ease; }
+    .branch strong { display: block; color: var(--amber-700); margin-bottom: 3px; }
+
+    .help-row { display: flex; justify-content: flex-start; }
+    .hint-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 999px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      cursor: pointer;
+      font-size: .84rem;
+      font-weight: 850;
+      transition: .16s ease;
+    }
+    .hint-btn:hover { transform: translateY(-1px); background: #dcfce7; }
+    .hint-btn:disabled { cursor: default; opacity: .62; transform: none; }
+    .hint-drawer {
+      display: none;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 14px;
+      background: var(--emerald-50);
+    }
+    .hint-drawer.show { display: grid; animation: reveal .18s ease; }
+    .hint-number { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: var(--emerald-700); color: white; font-size: .75rem; font-weight: 900; }
+    .hint-drawer strong { display: block; color: var(--emerald-900); font-size: .85rem; }
+    .hint-drawer p { margin-top: 2px; font-size: .84rem; }
+
+    .mission-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 3px; }
+    .primary-btn, .secondary-btn {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .primary-btn { background: var(--mission-color); color: white; box-shadow: 0 8px 20px color-mix(in srgb, var(--mission-color) 22%, transparent); }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(.94); }
+    .primary-btn:disabled { cursor: default; opacity: .62; transform: none; box-shadow: none; }
+    .secondary-btn { border: 1px solid var(--slate-300); background: white; color: var(--slate-700); }
+    .secondary-btn:hover { background: var(--slate-50); transform: translateY(-1px); }
+
+    .feedback { display: none; flex: 1 1 310px; padding: 11px 13px; border-radius: 12px; font-size: .86rem; font-weight: 750; }
+    .feedback.show { display: block; }
+    .feedback.warn { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-100); }
+    .feedback.bad { background: var(--red-50); color: var(--red-700); border: 1px solid var(--red-100); }
+    .feedback.ok { background: var(--emerald-50); color: var(--emerald-800); border: 1px solid var(--emerald-100); }
+
+    .mission-result {
+      display: none;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--emerald-50), #f7fee7);
+    }
+    .mission-result.show { display: grid; animation: reveal .24s ease; }
+    .result-check { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--emerald-600); color: white; font-size: 1.15rem; font-weight: 950; }
+    .mission-result strong { display: block; color: var(--emerald-900); margin-bottom: 3px; }
+    .mission-result p { font-size: .84rem; }
+    .seal {
+      min-width: 142px;
+      padding: 9px 11px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 12px;
+      background: white;
+      color: var(--emerald-800);
+      text-align: center;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+    .code-body { padding: 12px 0; overflow-x: auto; }
+    .code-line {
+      display: grid;
+      grid-template-columns: 43px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      color: #e2e8f0;
+      font: .84rem/1.55 Consolas, Monaco, "Courier New", monospace;
+      white-space: pre;
+    }
+    .line-number { padding-right: 12px; color: #64748b; text-align: right; user-select: none; }
+    .line-code { padding-right: 18px; }
+    .code-line.entry { background: rgba(29,78,216,.13); border-left: 4px solid #60a5fa; }
+    .code-line.process { background: rgba(5,150,105,.13); border-left: 4px solid #34d399; }
+    .code-line.output { background: rgba(101,163,13,.13); border-left: 4px solid #a3e635; }
+    .tok-pre { color: #c084fc; }
+    .tok-type { color: #67e8f9; }
+    .tok-fn { color: #fde68a; }
+    .tok-str { color: #86efac; }
+    .tok-num { color: #fca5a5; }
+    .tok-var { color: #e2e8f0; }
+    .tok-comment { color: #94a3b8; font-style: italic; }
+    .code-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-top: 1px solid #263244; background: #172033; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #cbd5e1; font-size: .73rem; font-weight: 800; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-dot { background: #60a5fa; }
+    .process-dot { background: #34d399; }
+    .output-dot { background: #a3e635; }
+
+    .completion {
+      display: none;
+      padding: 27px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 92% 10%, rgba(163,230,53,.15), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+    .completion.show { display: block; animation: reveal .3s ease; }
+    .completion-label { color: #bef264; font-size: .75rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .completion h2 { margin-top: 5px; color: white; font-size: 1.65rem; }
+    .completion > p { margin-top: 7px; color: #d1fae5; }
+    .completion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 17px; }
+    .completion-item { padding: 13px; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: rgba(255,255,255,.07); }
+    .completion-item strong { display: block; color: white; font-size: .86rem; }
+    .completion-item span { display: block; margin-top: 3px; color: #d1fae5; font-size: .79rem; }
+    .completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    .completion .secondary-btn { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.10); color: white; }
+    .completion .secondary-btn:hover { background: rgba(255,255,255,.16); }
+
+    .resource-credit { padding: 16px 10px 0; text-align: center; color: var(--slate-500); font-size: .82rem; }
+    .resource-credit a { color: var(--emerald-700); font-weight: 800; text-decoration: none; }
+    .resource-credit a:hover { text-decoration: underline; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 920px) {
+      .hero, .context-card { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 560px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .eps-flow { grid-template-columns: 1fr; }
+      .eps-arrow { transform: rotate(90deg); }
+      .map-line { grid-template-columns: 1fr 28px 1fr 28px 1fr; }
+      .map-node { align-items: center; justify-content: center; padding: 8px; }
+      .map-node-copy { display: none; }
+      .completion-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      body { padding: 12px 10px 30px; }
+      .shell { gap: 12px; }
+      .hero { padding: 22px 18px; border-radius: 21px; }
+      .hero-flow { grid-template-columns: 1fr auto 1fr; padding: 14px; gap: 8px; }
+      .hero-flow > .flow-arrow:last-of-type { display: none; }
+      .flow-results { grid-column: 1 / -1; }
+      .flow-chip { padding: 10px 7px; }
+      .flow-chip strong { font-size: .86rem; }
+      .flow-chip small { font-size: .68rem; }
+      .context-card { padding: 17px; border-radius: 18px; }
+      .mission-map { top: 4px; padding: 11px; border-radius: 15px; }
+      .map-top { margin-bottom: 9px; }
+      .map-top span { display: none; }
+      .mission { border-radius: 20px; }
+      .mission-toggle { grid-template-columns: auto 1fr; padding: 16px; }
+      .mission-icon { width: 44px; height: 44px; border-radius: 14px; }
+      .mission-side { grid-column: 1 / -1; justify-content: space-between; padding-left: 59px; }
+      .mission-meta { justify-items: start; display: flex; gap: 8px; align-items: center; }
+      .mission-content { padding: 0 16px 18px; }
+      .mission-objective { grid-template-columns: auto 1fr; }
+      .seal-preview { grid-column: 1 / -1; text-align: left; padding-left: 45px; }
+      .choice { grid-template-columns: 32px 1fr 20px; padding: 11px; gap: 9px; }
+      .choice-letter { width: 29px; height: 29px; }
+      .mission-result { grid-template-columns: auto 1fr; }
+      .seal { grid-column: 1 / -1; margin-left: 56px; text-align: left; }
+      .mission-actions { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .feedback { flex-basis: auto; }
+      .completion { padding: 21px 18px; border-radius: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  
+
+    input[type="number"] {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 11px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    input[type="number"]:focus {
+      border-color: var(--mission-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr);
+      gap: 12px;
+    }
+
+    .setup-card {
+      display: grid;
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .setup-card label {
+      color: var(--slate-900);
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .setup-card small {
+      color: var(--slate-500);
+      font-size: .75rem;
+    }
+
+    .trace-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trace-card {
+      position: relative;
+      display: grid;
+      gap: 11px;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+
+    .trace-card::after {
+      content: "→";
+      position: absolute;
+      right: -17px;
+      top: 50%;
+      z-index: 2;
+      color: var(--mission-color);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+
+    .trace-card:last-child::after { display: none; }
+
+    .trace-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trace-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .trace-step strong {
+      color: var(--slate-900);
+      font-size: .82rem;
+    }
+
+    .trace-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .7rem;
+    }
+
+    .trace-fields {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trace-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .trace-field label {
+      color: var(--slate-600);
+      font-size: .72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .case-level {
+      display: inline-flex;
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .diagnosis-box {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .output-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 9px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .output-box {
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+      text-align: center;
+    }
+
+    .output-box small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .output-box strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 900 1.05rem Consolas, Monaco, monospace;
+    }
+
+    .comparison-arrow {
+      color: var(--mission-color);
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+
+    .summary-state {
+      padding: 11px;
+      border-radius: 12px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .summary-state small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .summary-state strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 800 .78rem/1.45 Consolas, Monaco, monospace;
+    }
+
+    @media (max-width: 920px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr 1fr; }
+      .trace-card:nth-child(2)::after { display: none; }
+      .diagnosis-box, .setup-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr; }
+      .trace-card::after { display: none; }
+      .output-comparison { grid-template-columns: 1fr; }
+      .comparison-arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .hero-flow.hero-trace {
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .hero-trace .flow-chip {
+      min-height: 78px;
+      display: grid;
+      align-content: center;
+    }
+
+    .hero-trace .flow-chip small {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .hero-trace .flow-chip strong {
+      font-size: .94rem;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 660px) {
+      .hero-flow.hero-trace {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-trace .flow-chip {
+        min-height: 68px;
+      }
+    }
+
+  
+
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .architecture-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      background: var(--surface);
+    }
+
+    .architecture-card small {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .architecture-card strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 5px;
+    }
+
+    .architecture-card p {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .architecture-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .role-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .role-card code {
+      width: fit-content;
+      border-radius: 8px;
+      padding: 3px 7px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .variable-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .variable-token {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font: 800 .83rem/1.2 Consolas, monospace;
+    }
+
+    .logic-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .logic-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 15px;
+    }
+
+    .logic-panel h4 {
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .logic-selects {
+      display: grid;
+      gap: 10px;
+    }
+
+    .logic-row {
+      display: grid;
+      grid-template-columns: minmax(145px, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logic-row label {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .signature-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .signature-card.full { grid-column: 1 / -1; }
+
+    .code-section-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font: 800 .68rem/1.3 system-ui, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #D1FAE5;
+      border: 1px solid rgba(209,250,229,.24);
+      background: rgba(16,185,129,.16);
+      margin-right: 8px;
+    }
+
+    .final-code[hidden] { display: none; }
+
+    @media (max-width: 860px) {
+      .architecture-flow,
+      .role-grid,
+      .logic-grid,
+      .signature-grid { grid-template-columns: 1fr; }
+      .architecture-arrow { transform: rotate(90deg); }
+      .logic-row { grid-template-columns: 1fr; gap: 5px; }
+      .signature-card.full { grid-column: auto; }
+    }
+</style>
+</head>
+<body>
+
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="badge-row">
+          <span class="badge">Roteiro por missões</span>
+          <span class="badge">CCI07</span>
+          <span class="badge">Funções e procedimentos</span>
+        </div>
+        <h1>Encontrando o maior de três números</h1>
+        <p class="hero-description">Organize a leitura no escopo principal, use uma função para determinar o maior valor e um procedimento para comunicar o resultado.</p>
+      </div>
+
+      <div class="hero-flow" aria-label="Arquitetura resumida da solução">
+        <div class="flow-chip"><small>1 · main</small><strong>Lê 3 números</strong></div>
+        <div class="flow-chip"><small>2 · função</small><strong>Retorna o maior</strong></div>
+        <div class="flow-chip"><small>3 · procedimento</small><strong>Mostra o resultado</strong></div>
+      </div>
+    </header>
+
+    <section class="context-card" aria-label="Contexto da atividade">
+      <article>
+        <p class="kicker">Problema a resolver</p>
+        <h2>Maior de três números inteiros com responsabilidades separadas</h2>
+        <div class="problem-statement">
+          Leia três números inteiros no escopo principal. Use uma função para determinar o maior valor e um procedimento para informar esse valor ao usuário.
+          <small>O foco não é apenas obter a resposta correta, mas organizar cada responsabilidade no módulo adequado.</small>
+        </div>
+
+        <div class="architecture-flow" aria-label="Fluxo modular da solução">
+          <article class="architecture-card"><small>Escopo principal</small><strong>main</strong><p>Lê os dados e coordena as chamadas.</p></article>
+          <span class="architecture-arrow">→</span>
+          <article class="architecture-card"><small>Cálculo</small><strong>encontrarMaior</strong><p>Compara e retorna um inteiro.</p></article>
+          <span class="architecture-arrow">→</span>
+          <article class="architecture-card"><small>Comunicação</small><strong>mostrarMaior</strong><p>Recebe e exibe o resultado.</p></article>
+        </div>
+      </article>
+
+      <aside class="meta-stack">
+        <p class="kicker">Resumo pedagógico</p>
+        <h2>Competência trabalhada</h2>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI07</strong><p>Modularizar soluções por funções ou procedimentos com interfaces coerentes.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões curtas, liberadas em sequência.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Variáveis inteiras, if, parâmetros, retorno e saída formatada.</p></div></div>
+        <div class="variable-strip" aria-label="Variáveis principais">
+          <span class="variable-token">numero1</span><span class="variable-token">numero2</span><span class="variable-token">numero3</span><span class="variable-token">maiorValor</span>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="mission-map" aria-label="Mapa das missões">
+      <div class="map-top">
+        <strong id="progressText">Missão atual: 1 de 3</strong>
+        <span>Conclua a missão ativa para desbloquear a próxima.</span>
+      </div>
+      <div class="map-line">
+        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Organizar</strong><small>Em andamento</small></span></div>
+        <div class="map-connector" data-connector="1"></div>
+        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Comparar</strong><small>Bloqueada</small></span></div>
+        <div class="map-connector" data-connector="2"></div>
+        <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Validar</strong><small>Bloqueada</small></span></div>
+      </div>
+    </nav>
+
+    <section class="mission active open" data-mission="1">
+      <button class="mission-toggle" type="button" aria-expanded="true">
+        <span class="mission-icon">1</span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Organizar as responsabilidades</h2><p>Reconheça o objetivo, o fluxo EPS e o papel de cada módulo.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Separar leitura, cálculo e apresentação antes de construir a lógica.</p></div><span class="seal-preview">Selo: Arquitetura definida</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Identifique a tarefa central</h3><p>O resultado principal é um único valor.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Objetivo do algoritmo">
+            <label class="choice"><input type="radio" name="m1_goal" value="sum"><span class="choice-letter">A</span><span class="choice-copy"><strong>Somar os valores</strong><span>Produzir o total dos três números.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_goal" value="largest"><span class="choice-letter">B</span><span class="choice-copy"><strong>Encontrar o maior</strong><span>Manter e devolver o maior valor encontrado.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_goal" value="sort"><span class="choice-letter">C</span><span class="choice-copy"><strong>Ordenar os três</strong><span>Produzir uma sequência crescente completa.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m1_goal_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Reconstrua o fluxo EPS</h3><p>Defina os dados recebidos e a saída produzida.</p></div></div>
+          <div class="eps-flow">
+            <div class="eps-card"><strong>Entrada</strong><small>Quantidade</small><select id="m1_count"><option value="">Selecione</option><option value="2">2 números</option><option value="3">3 números</option><option value="4">4 números</option></select></div>
+            <div class="eps-arrow">→</div>
+            <div class="eps-card"><strong>Tipo</strong><small>Dados informados</small><select id="m1_type"><option value="">Selecione</option><option value="int">int</option><option value="float">float</option><option value="char">char</option></select></div>
+            <div class="eps-arrow">→</div>
+            <div class="eps-card"><strong>Saída</strong><small>Resultado final</small><select id="m1_output"><option value="">Selecione</option><option value="largest">Maior valor</option><option value="sum">Soma</option><option value="average">Média</option></select></div>
+          </div>
+          <div class="branch" id="m1_eps_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Distribua as responsabilidades</h3><p>Cada parte deve fazer apenas o trabalho que lhe pertence.</p></div></div>
+          <div class="role-grid">
+            <div class="role-card"><code>main</code><label for="m1_main" class="sr-only">Responsabilidade do main</label><select id="m1_main"><option value="">Selecione</option><option value="coordinate">Ler e coordenar chamadas</option><option value="calculate">Comparar e retornar</option><option value="show">Apenas exibir</option></select></div>
+            <div class="role-card"><code>encontrarMaior</code><label for="m1_func" class="sr-only">Responsabilidade da função</label><select id="m1_func"><option value="">Selecione</option><option value="show">Apenas exibir</option><option value="calculate">Comparar e retornar</option><option value="coordinate">Ler e coordenar chamadas</option></select></div>
+            <div class="role-card"><code>mostrarMaior</code><label for="m1_proc" class="sr-only">Responsabilidade do procedimento</label><select id="m1_proc"><option value="">Selecione</option><option value="calculate">Comparar e retornar</option><option value="show">Receber e exibir</option><option value="coordinate">Ler os três números</option></select></div>
+          </div>
+          <div class="branch" id="m1_roles_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
+
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você separou leitura, cálculo e apresentação em módulos coerentes.</p></div><span class="seal">Selo conquistado<br>Arquitetura definida</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="2">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">2</span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Construir a comparação</h2><p>Monte a estratégia e acompanhe como o maior valor evolui.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>2 comparações</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Usar uma variável de estado para preservar o maior valor encontrado até o momento.</p></div><span class="seal-preview">Selo: Comparação construída</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Monte a regra progressiva</h3><p>Comece com um valor válido e atualize apenas quando necessário.</p></div></div>
+          <div class="logic-grid">
+            <article class="logic-panel">
+              <h4>Escolhas da estratégia</h4>
+              <div class="logic-selects">
+                <div class="logic-row"><label for="m2_initial">Inicialização</label><select id="m2_initial"><option value="">Selecione</option><option value="zero">maiorValor = 0</option><option value="n1">maiorValor = numero1</option><option value="n2">maiorValor = numero2</option></select></div>
+                <div class="logic-row"><label for="m2_cond2">Teste de numero2</label><select id="m2_cond2"><option value="">Selecione</option><option value="gt">numero2 &gt; maiorValor</option><option value="lt">numero2 &lt; maiorValor</option><option value="eq">numero2 == maiorValor</option></select></div>
+                <div class="logic-row"><label for="m2_update2">Atualização</label><select id="m2_update2"><option value="">Selecione</option><option value="set2">maiorValor = numero2</option><option value="reverse2">numero2 = maiorValor</option><option value="inc">maiorValor++</option></select></div>
+                <div class="logic-row"><label for="m2_cond3">Teste de numero3</label><select id="m2_cond3"><option value="">Selecione</option><option value="gt">numero3 &gt; maiorValor</option><option value="lt">numero3 &lt; maiorValor</option><option value="eq">numero3 == maiorValor</option></select></div>
+                <div class="logic-row"><label for="m2_update3">Atualização</label><select id="m2_update3"><option value="">Selecione</option><option value="set3">maiorValor = numero3</option><option value="reverse3">numero3 = maiorValor</option><option value="reset">maiorValor = numero1</option></select></div>
+              </div>
+            </article>
+
+            <article class="logic-panel">
+              <h4>Estrutura que está sendo formada</h4>
+              <div class="code-window">
+                <div class="ide-bar"><span>encontrarMaior.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+                <div class="code-body">
+                  <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">encontrarMaior</span>(<span class="tok-type">int</span> numero1, <span class="tok-type">int</span> numero2, <span class="tok-type">int</span> numero3) {</span></div>
+                  <div class="code-line process"><span class="line-number">2</span><span class="line-code">    <span class="tok-type">int</span> maiorValor = numero1;</span></div>
+                  <div class="code-line process"><span class="line-number">3</span><span class="line-code">    <span class="tok-pre">if</span> (numero2 &gt; maiorValor) maiorValor = numero2;</span></div>
+                  <div class="code-line process"><span class="line-number">4</span><span class="line-code">    <span class="tok-pre">if</span> (numero3 &gt; maiorValor) maiorValor = numero3;</span></div>
+                  <div class="code-line output"><span class="line-number">5</span><span class="line-code">    <span class="tok-pre">return</span> maiorValor;</span></div>
+                  <div class="code-line"><span class="line-number">6</span><span class="line-code">}</span></div>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="branch" id="m2_logic_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Simule a atualização</h3><p>Use numero1 = 8, numero2 = 15 e numero3 = 10.</p></div></div>
+          <div class="trace-grid">
+            <article class="trace-card"><div class="trace-step"><span class="trace-number">1</span><div><strong>Inicialização</strong><small>maiorValor recebe numero1</small></div></div><div class="trace-fields"><div class="trace-field"><label for="m2_v1">maiorValor</label><input id="m2_v1" type="number" placeholder="8"></div><div class="trace-field"><label for="m2_a1">Ação</label><select id="m2_a1"><option value="">Selecione</option><option value="n1">Recebe numero1</option><option value="n2">Recebe numero2</option><option value="stay">Sem mudança</option></select></div></div></article>
+            <article class="trace-card"><div class="trace-step"><span class="trace-number">2</span><div><strong>Comparação com 15</strong><small>15 é maior que o estado atual</small></div></div><div class="trace-fields"><div class="trace-field"><label for="m2_v2">maiorValor</label><input id="m2_v2" type="number" placeholder="15"></div><div class="trace-field"><label for="m2_a2">Ação</label><select id="m2_a2"><option value="">Selecione</option><option value="n2">Recebe numero2</option><option value="n3">Recebe numero3</option><option value="stay">Sem mudança</option></select></div></div></article>
+            <article class="trace-card"><div class="trace-step"><span class="trace-number">3</span><div><strong>Comparação com 10</strong><small>10 não supera o maior atual</small></div></div><div class="trace-fields"><div class="trace-field"><label for="m2_v3">maiorValor</label><input id="m2_v3" type="number" placeholder="15"></div><div class="trace-field"><label for="m2_a3">Ação</label><select id="m2_a3"><option value="">Selecione</option><option value="n3">Recebe numero3</option><option value="n1">Recebe numero1</option><option value="stay">Sem mudança</option></select></div></div></article>
+          </div>
+          <div class="branch" id="m2_trace_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
+
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você construiu a comparação progressiva e preservou o maior valor encontrado.</p></div><span class="seal">Selo conquistado<br>Comparação construída</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="3">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">3</span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Validar a modularização</h2><p>Confira interfaces, chamadas e comportamento em casos diferentes.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>3 casos</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Verificar se os módulos trocam dados corretamente e funcionam em casos comuns e limites.</p></div><span class="seal-preview">Selo: Solução modular validada</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Confira as interfaces</h3><p>A função retorna um inteiro; o procedimento apenas apresenta.</p></div></div>
+          <div class="signature-grid">
+            <div class="signature-card"><label for="m3_func">Assinatura da função</label><select id="m3_func"><option value="">Selecione</option><option value="correct">int encontrarMaior(int numero1, int numero2, int numero3)</option><option value="void">void encontrarMaior(int numero1, int numero2, int numero3)</option><option value="none">int encontrarMaior()</option></select></div>
+            <div class="signature-card"><label for="m3_proc">Assinatura do procedimento</label><select id="m3_proc"><option value="">Selecione</option><option value="correct">void mostrarMaior(int maiorValor)</option><option value="int">int mostrarMaior(int maiorValor)</option><option value="none">void mostrarMaior()</option></select></div>
+            <div class="signature-card full"><label for="m3_call">Uso no main</label><select id="m3_call"><option value="">Selecione</option><option value="correct">maiorValor = encontrarMaior(numero1, numero2, numero3); mostrarMaior(maiorValor);</option><option value="lost">encontrarMaior(numero1, numero2, numero3); mostrarMaior(maiorValor);</option><option value="wrong">mostrarMaior(numero1, numero2, numero3);</option></select></div>
+          </div>
+          <div class="branch" id="m3_interfaces_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Teste a solução em três níveis</h3><p>Os casos negativos verificam se a inicialização não depende de zero.</p></div></div>
+          <div class="test-grid">
+            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>Entradas</strong><span>8, 15, 10</span></div><label class="sr-only" for="m3_case1">Maior valor no primeiro caso</label><select id="m3_case1"><option value="">Qual é o maior?</option><option value="15">15</option><option value="10">10</option><option value="8">8</option></select></article>
+            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Entradas</strong><span>-4, -9, -2</span></div><label class="sr-only" for="m3_case2">Maior valor no caso negativo</label><select id="m3_case2"><option value="">Qual é o maior?</option><option value="0">0</option><option value="-2">-2</option><option value="-9">-9</option></select></article>
+            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Entradas</strong><span>7, 7, 3</span></div><label class="sr-only" for="m3_case3">Comportamento com valores iguais</label><select id="m3_case3"><option value="">O que acontece?</option><option value="remain">maiorValor permanece 7</option><option value="error">A igualdade gera erro</option><option value="three">O resultado passa a ser 3</option></select></article>
+          </div>
+          <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
+
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir missão</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você validou parâmetros, retorno, chamada e comportamento em diferentes entradas.</p></div><span class="seal">Selo conquistado<br>Solução modular validada</span></div>
+      </div>
+    </section>
+
+    <section class="final-code" id="finalCodeBlock" hidden>
+      <div class="task-block">
+        <div class="task-head"><span class="task-index">✓</span><div><h3>Código final organizado por responsabilidade</h3><p>Compare a solução completa com as decisões tomadas nas três missões.</p></div></div>
+        <div class="code-window" aria-label="Código final em C">
+          <div class="ide-bar"><span>maior_de_tres.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+          <div class="code-body">
+            <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;stdio.h&gt;</span></span></div>
+            <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+            <div class="code-line process"><span class="line-number">3</span><span class="line-code"><span class="code-section-label">Função</span><span class="tok-type">int</span> <span class="tok-fn">encontrarMaior</span>(<span class="tok-type">int</span> numero1, <span class="tok-type">int</span> numero2, <span class="tok-type">int</span> numero3) {</span></div>
+            <div class="code-line process"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">int</span> maiorValor = numero1;</span></div>
+            <div class="code-line process"><span class="line-number">5</span><span class="line-code">    <span class="tok-pre">if</span> (numero2 &gt; maiorValor) maiorValor = numero2;</span></div>
+            <div class="code-line process"><span class="line-number">6</span><span class="line-code">    <span class="tok-pre">if</span> (numero3 &gt; maiorValor) maiorValor = numero3;</span></div>
+            <div class="code-line process"><span class="line-number">7</span><span class="line-code">    <span class="tok-pre">return</span> maiorValor;</span></div>
+            <div class="code-line process"><span class="line-number">8</span><span class="line-code">}</span></div>
+            <div class="code-line"><span class="line-number">9</span><span class="line-code"></span></div>
+            <div class="code-line output"><span class="line-number">10</span><span class="line-code"><span class="code-section-label">Procedimento</span><span class="tok-type">void</span> <span class="tok-fn">mostrarMaior</span>(<span class="tok-type">int</span> maiorValor) {</span></div>
+            <div class="code-line output"><span class="line-number">11</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Maior valor: %d\n"</span>, maiorValor);</span></div>
+            <div class="code-line output"><span class="line-number">12</span><span class="line-code">}</span></div>
+            <div class="code-line"><span class="line-number">13</span><span class="line-code"></span></div>
+            <div class="code-line entry"><span class="line-number">14</span><span class="line-code"><span class="code-section-label">Principal</span><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
+            <div class="code-line entry"><span class="line-number">15</span><span class="line-code">    <span class="tok-type">int</span> numero1, numero2, numero3, maiorValor;</span></div>
+            <div class="code-line entry"><span class="line-number">16</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">"%d %d %d"</span>, &amp;numero1, &amp;numero2, &amp;numero3);</span></div>
+            <div class="code-line entry"><span class="line-number">17</span><span class="line-code">    maiorValor = <span class="tok-fn">encontrarMaior</span>(numero1, numero2, numero3);</span></div>
+            <div class="code-line entry"><span class="line-number">18</span><span class="line-code">    <span class="tok-fn">mostrarMaior</span>(maiorValor);</span></div>
+            <div class="code-line"><span class="line-number">19</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
+            <div class="code-line"><span class="line-number">20</span><span class="line-code">}</span></div>
+          </div>
+        </div>
+        <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Escopo principal</span><span class="legend-item"><i class="legend-dot process-dot"></i>Função de cálculo</span><span class="legend-item"><i class="legend-dot output-dot"></i>Procedimento de saída</span></div>
+      </div>
+    </section>
+
+    <section class="completion" id="completionPanel" aria-live="polite">
+      <span class="completion-label">Percurso concluído</span>
+      <h2>Uma solução, três responsabilidades coerentes</h2>
+      <p>A leitura permaneceu no escopo principal, o cálculo foi isolado em uma função e a comunicação ficou em um procedimento.</p>
+      <div class="completion-grid">
+        <article class="completion-item"><strong>Arquitetura definida</strong><span>main, função e procedimento receberam responsabilidades distintas.</span></article>
+        <article class="completion-item"><strong>Comparação construída</strong><span>maiorValor preservou o maior elemento durante as comparações.</span></article>
+        <article class="completion-item"><strong>Solução validada</strong><span>Interfaces e casos positivos, negativos e de igualdade foram verificados.</span></article>
+      </div>
+      <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer o roteiro</button></div>
+    </section>
+
+    <footer class="resource-credit"><p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p></footer>
+  </main>
+
+
+  <script>
+    const completed = new Set();
+    const hintState = { 1: 0, 2: 0, 3: 0 };
+    const hints = {
+      1: [
+        ["Pista", "A leitura deve permanecer no main, conforme o enunciado."],
+        ["Pergunta guia", "Qual parte precisa devolver um valor calculado e qual parte apenas imprime?"],
+        ["Começo da resposta", "main lê e coordena; encontrarMaior compara e retorna; mostrarMaior recebe e exibe."]
+      ],
+      2: [
+        ["Pista", "Inicie o maior atual com um dos valores realmente informados pelo usuário."],
+        ["Pergunta guia", "Quando numero2 ou numero3 deve substituir maiorValor?"],
+        ["Começo da resposta", "maiorValor = numero1; se o próximo número for maior, atualize maiorValor."]
+      ],
+      3: [
+        ["Pista", "A função retorna int; o procedimento que apenas mostra usa void."],
+        ["Pergunta guia", "O que acontece com todos os números negativos se maiorValor começar artificialmente em zero?"],
+        ["Começo da resposta", "Guarde o retorno da função e depois passe maiorValor ao procedimento."]
+      ]
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+    function value(id) { return document.getElementById(id)?.value.trim() || ""; }
+    function selected(name) { return document.querySelector(`input[name="${name}"]:checked`); }
+    function numberValue(id) {
+      const raw = value(id);
+      return raw === "" ? NaN : Number(raw.replace(",", "."));
+    }
+
+    function setBranch(id, title = "", text = "", type = "warn") {
+      const box = document.getElementById(id);
+      if (!title) { box.className = "branch"; box.innerHTML = ""; return; }
+      box.className = `branch show ${type}`;
+      box.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+    }
+
+    function showFeedback(number, text, type = "warn") {
+      const box = document.getElementById(`m${number}_feedback`);
+      box.className = `feedback show ${type}`;
+      box.textContent = text;
+    }
+
+    function validateMission1(live = false) {
+      const goal = selected("m1_goal")?.value || "";
+      const count = value("m1_count");
+      const type = value("m1_type");
+      const output = value("m1_output");
+      const main = value("m1_main");
+      const func = value("m1_func");
+      const proc = value("m1_proc");
+
+      if (goal && goal !== "largest") setBranch("m1_goal_branch", goal === "sum" ? "Objetivo diferente" : "Trabalho além do necessário", goal === "sum" ? "Somar não identifica qual valor é o maior." : "Ordenar resolve um problema maior do que o enunciado solicita.");
+      else setBranch("m1_goal_branch");
+
+      if ((count || type || output) && !(count === "3" && type === "int" && output === "largest")) setBranch("m1_eps_branch", "Revise o fluxo", "A entrada contém três inteiros e a saída é um único maior valor.");
+      else setBranch("m1_eps_branch");
+
+      if ((main || func || proc) && !(main === "coordinate" && func === "calculate" && proc === "show")) setBranch("m1_roles_branch", "Responsabilidades misturadas", "Mantenha a leitura no main, o cálculo na função e a exibição no procedimento.");
+      else setBranch("m1_roles_branch");
+
+      const complete = goal === "largest" && count === "3" && type === "int" && output === "largest" && main === "coordinate" && func === "calculate" && proc === "show";
+      if (!live && !complete) showFeedback(1, "Complete as três decisões ou use as pistas antes de concluir.");
+      return complete;
+    }
+
+    function validateMission2(live = false) {
+      const logicOk = value("m2_initial") === "n1" && value("m2_cond2") === "gt" && value("m2_update2") === "set2" && value("m2_cond3") === "gt" && value("m2_update3") === "set3";
+      const initial = value("m2_initial");
+      if (initial === "zero") setBranch("m2_logic_branch", "Inicialização frágil", "Começar em zero falha quando todos os números são negativos. Use um valor real da entrada.");
+      else if ([value("m2_update2"), value("m2_update3")].some(v => v.startsWith("reverse"))) setBranch("m2_logic_branch", "Atribuição invertida", "maiorValor deve receber o novo candidato; os números de entrada não devem ser sobrescritos.");
+      else if ((initial || value("m2_cond2") || value("m2_update2") || value("m2_cond3") || value("m2_update3")) && !logicOk) setBranch("m2_logic_branch", "Regra incompleta", "Compare cada candidato com o maior atual usando > e atualize maiorValor quando a condição for verdadeira.");
+      else setBranch("m2_logic_branch");
+
+      const traceOk = numberValue("m2_v1") === 8 && value("m2_a1") === "n1" && numberValue("m2_v2") === 15 && value("m2_a2") === "n2" && numberValue("m2_v3") === 15 && value("m2_a3") === "stay";
+      if (["m2_v1","m2_v2","m2_v3","m2_a1","m2_a2","m2_a3"].some(id => value(id)) && !traceOk) setBranch("m2_trace_branch", "Rastreamento inconsistente", "A sequência correta é 8 → 15 → 15. O terceiro valor não supera o maior atual.");
+      else setBranch("m2_trace_branch");
+
+      const complete = logicOk && traceOk;
+      if (!live && !complete) showFeedback(2, "Finalize a regra de comparação e o rastreamento do caso 8, 15 e 10.");
+      return complete;
+    }
+
+    function validateMission3(live = false) {
+      const interfacesOk = value("m3_func") === "correct" && value("m3_proc") === "correct" && value("m3_call") === "correct";
+      if ((value("m3_func") || value("m3_proc") || value("m3_call")) && !interfacesOk) {
+        if (value("m3_func") === "void") setBranch("m3_interfaces_branch", "Retorno ausente", "encontrarMaior precisa devolver o inteiro calculado, portanto não pode usar void.");
+        else if (value("m3_call") === "lost") setBranch("m3_interfaces_branch", "Retorno descartado", "O valor retornado precisa ser armazenado em maiorValor antes da chamada do procedimento.");
+        else setBranch("m3_interfaces_branch", "Interface incoerente", "A função recebe três inteiros e retorna int; o procedimento recebe um inteiro e usa void.");
+      } else setBranch("m3_interfaces_branch");
+
+      const casesOk = value("m3_case1") === "15" && value("m3_case2") === "-2" && value("m3_case3") === "remain";
+      if ((value("m3_case1") || value("m3_case2") || value("m3_case3")) && !casesOk) {
+        if (value("m3_case2") === "0") setBranch("m3_cases_branch", "Zero não pertence à entrada", "Esse resultado revela a inicialização inadequada em zero. Entre números negativos, -2 é o maior.");
+        else setBranch("m3_cases_branch", "Revise os casos", "O maior de 8, 15 e 10 é 15; o maior de -4, -9 e -2 é -2; valores iguais não exigem atualização.");
+      } else setBranch("m3_cases_branch");
+
+      const complete = interfacesOk && casesOk;
+      if (!live && !complete) showFeedback(3, "Confira as interfaces e resolva os três casos de validação.");
+      return complete;
+    }
+
+    const validators = { 1: validateMission1, 2: validateMission2, 3: validateMission3 };
+
+    function unlockMission(number) {
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.remove("locked");
+      mission.classList.add("active");
+      const toggle = $(".mission-toggle", mission);
+      toggle.disabled = false;
+      $("[data-state]", mission).textContent = "Disponível";
+    }
+
+    function openMission(number, scroll = false) {
+      $$(".mission").forEach(mission => {
+        const current = Number(mission.dataset.mission);
+        const shouldOpen = current === number;
+        mission.classList.toggle("open", shouldOpen);
+        $(".mission-toggle", mission).setAttribute("aria-expanded", String(shouldOpen));
+      });
+      const mission = $(`.mission[data-mission="${number}"]`);
+      if (scroll) mission.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateMap(activeNumber) {
+      for (let i = 1; i <= 3; i++) {
+        const node = $(`[data-map="${i}"]`);
+        const small = $("small", node);
+        node.classList.remove("active", "locked", "done");
+        if (completed.has(i)) { node.classList.add("done"); small.textContent = "Concluída"; }
+        else if (i === activeNumber) { node.classList.add("active"); small.textContent = "Em andamento"; }
+        else { node.classList.add("locked"); small.textContent = "Bloqueada"; }
+        if (i < 3) $(`[data-connector="${i}"]`).classList.toggle("done", completed.has(i));
+      }
+      document.getElementById("progressText").textContent = activeNumber ? `Missão atual: ${activeNumber} de 3` : "3 de 3 missões concluídas";
+    }
+
+    function completeMission(number, button) {
+      if (completed.has(number)) return;
+      completed.add(number);
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.add("completed");
+      mission.classList.remove("active");
+      $("[data-state]", mission).textContent = "Concluída";
+      document.getElementById(`m${number}_result`).classList.add("show");
+      button.textContent = "Missão concluída";
+      button.disabled = true;
+      showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
+
+      if (number < 3) {
+        unlockMission(number + 1);
+        updateMap(number + 1);
+        setTimeout(() => {
+          mission.classList.remove("open");
+          $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
+          openMission(number + 1, true);
+        }, 700);
+      } else {
+        updateMap(null);
+        document.getElementById("finalCodeBlock").hidden = false;
+        document.getElementById("completionPanel").classList.add("show");
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 300);
+      }
+    }
+
+    $$('[data-check]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.check);
+      if (validators[number](false)) completeMission(number, button);
+    }));
+
+    $$('input, select').forEach(field => field.addEventListener('change', () => {
+      const mission = field.closest('.mission');
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+    $$('input[type="number"]').forEach(field => field.addEventListener('input', () => {
+      const mission = field.closest('.mission');
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+
+    $$('.mission-toggle').forEach(toggle => toggle.addEventListener('click', () => {
+      const mission = toggle.closest('.mission');
+      if (mission.classList.contains('locked')) return;
+      const isOpen = mission.classList.contains('open');
+      $$('.mission').forEach(item => {
+        if (item !== mission) { item.classList.remove('open'); $('.mission-toggle', item).setAttribute('aria-expanded', 'false'); }
+      });
+      mission.classList.toggle('open', !isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    }));
+
+    $$('[data-hint]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.hint);
+      const next = Math.min(hintState[number], hints[number].length - 1);
+      const [title, text] = hints[number][next];
+      hintState[number] = Math.min(hintState[number] + 1, hints[number].length);
+      const drawer = document.getElementById(`hintDrawer${number}`);
+      drawer.classList.add('show');
+      $('.hint-number', drawer).textContent = `${next + 1}/${hints[number].length}`;
+      document.getElementById(`hintTitle${number}`).textContent = title;
+      document.getElementById(`hintText${number}`).textContent = text;
+      button.textContent = next + 1 < hints[number].length ? 'Ver próxima pista' : 'Pistas exibidas';
+      if (next + 1 >= hints[number].length) button.disabled = true;
+    }));
+
+    document.getElementById('reviewButton').addEventListener('click', () => {
+      openMission(1, true);
+    });
+    document.getElementById('restartButton').addEventListener('click', () => location.reload());
+  </script>
+
+</body>
+</html>

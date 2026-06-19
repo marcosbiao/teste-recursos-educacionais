@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como organizar um cadastro em C</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(350px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .record-icon svg,
+    .step-icon svg, .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-records { display: grid; gap: 9px; }
+    .hero-record {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: var(--cor-superficie-suave);
+    }
+    .hero-record-index { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: var(--cor-primaria); color: white; font-family: Consolas, monospace; font-size: .82rem; font-weight: 900; }
+    .hero-fields { display: flex; flex-wrap: wrap; gap: 6px; }
+    .hero-field { padding: 4px 7px; border-radius: 8px; background: white; border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .77rem; }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    #mapa-do-cadastro { scroll-margin-top: 18px; }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 710px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 190px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 235px;
+      min-height: 145px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+
+    .button-record { left: 38px; top: 38px; }
+    .button-fields { right: 38px; top: 38px; }
+    .button-array { left: 38px; bottom: 42px; }
+    .button-count { right: 38px; bottom: 42px; }
+    .button-operations { left: 50%; bottom: 18px; transform: translateX(-50%); }
+    .button-operations:hover, .button-operations:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .records-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; align-items: stretch; }
+    .record-definition, .records-collection { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .record-head { display: flex; gap: 11px; align-items: center; margin-bottom: 14px; }
+    .record-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .record-schema { display: grid; gap: 9px; margin-top: 13px; }
+    .schema-field { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; align-items: center; border: 1px solid var(--cor-borda); background: white; border-radius: 13px; padding: 10px 12px; }
+    .schema-field code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .schema-field span { font-size: .86rem; color: var(--cor-texto-secundario); }
+
+    .record-strip { display: grid; gap: 10px; margin-top: 13px; }
+    .record-row { display: grid; grid-template-columns: 68px repeat(3, minmax(0, 1fr)); gap: 8px; align-items: stretch; }
+    .record-index, .record-cell { border: 1px solid var(--cor-borda); border-radius: 12px; padding: 10px; background: white; }
+    .record-index { display: grid; place-items: center; background: var(--cor-primaria); color: white; font-family: Consolas, monospace; font-weight: 900; }
+    .record-cell strong { display: block; color: var(--cor-primaria-escura); font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
+    .record-cell span { color: var(--cor-texto-principal); font-size: .88rem; }
+    .access-note { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.18); color: var(--cor-texto-principal); }
+    .access-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .process-flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .process-step { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie-suave); padding: 17px; min-height: 155px; }
+    .process-step:not(:last-child)::after { content: "→"; position: absolute; right: -18px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-size: 1.45rem; font-weight: 900; z-index: 2; }
+    .step-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 10px; }
+    .process-step p { font-size: .88rem; }
+    .process-step code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .comparison-wrap { overflow-x: auto; }
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; font-size: .92rem; }
+    .comparison-table th, .comparison-table td { padding: 13px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .comparison-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; text-transform: uppercase; letter-spacing: .04em; }
+    .comparison-table tr:last-child td { border-bottom: 0; }
+    .comparison-table td:first-child { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; white-space: nowrap; }
+
+    .example-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 17px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-level { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 11px; border-radius: 999px; padding: 6px 10px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); border: 1px solid rgba(79,70,229,.18); font-size: .78rem; font-weight: 900; }
+    .example-list { margin: 13px 0 0 18px; color: var(--cor-texto-secundario); font-size: .91rem; }
+    .example-list li { margin-bottom: 6px; }
+    .structure-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .structure-tag { padding: 5px 8px; border-radius: 8px; background: white; border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .78rem; font-weight: 900; }
+    .example-note { margin-top: 14px; padding: 12px 14px; border-radius: 14px; border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #263244; box-shadow: 0 13px 30px rgba(15,23,42,.12); }
+    .code-toolbar { display: flex; align-items: center; gap: 7px; min-height: 39px; padding: 0 14px; background: #1F2937; color: #CBD5E1; font-family: Consolas, monospace; font-size: .78rem; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .88rem; line-height: 1.58; tab-size: 2; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .tabs { position: relative; }
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; padding: 10px 15px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; font-size: .9rem; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .error-card { border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 17px; padding: 17px; background: var(--cor-superficie); }
+    .error-card p { font-size: .9rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 11px; }
+    details { border: 1px solid var(--cor-borda); border-radius: 17px; padding: 15px 17px; background: var(--cor-superficie-suave); }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 900; }
+    details p { margin-top: 12px; padding: 13px 14px; border-radius: 13px; background: white; border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .2s ease, visibility .2s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      position: relative;
+      width: min(680px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow-y: auto;
+      border-radius: 24px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      padding: 25px;
+      box-shadow: 0 26px 70px rgba(15,23,42,.28);
+      transform: translateY(18px) scale(.97);
+      opacity: 0;
+    }
+    .modal:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.75,.25,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; font-weight: 700; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 46px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-head h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 16px; border-radius: 17px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); }
+    .modal-rule { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); }
+    .modal-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+    .modal-box { padding: 13px; border-radius: 14px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .modal-box strong { color: var(--cor-primaria-escura); display: block; margin-bottom: 5px; }
+    .modal-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .records-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .choice-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; width: auto; min-height: 0; transform: none; }
+      .map-center { grid-column: 1 / -1; min-height: 155px; }
+      .button-operations { transform: none; grid-column: 1 / -1; }
+      .button-operations:hover, .button-operations:focus-visible { transform: translateY(-4px); }
+      .process-flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .process-step:not(:last-child)::after { display: none; }
+      .error-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 21px; border-radius: 21px; }
+      .meta-grid, .concept-points, .choice-map, .process-flow, .error-grid { grid-template-columns: 1fr; }
+      .map-center, .button-operations { grid-column: auto; }
+      .record-row { grid-template-columns: 58px 1fr; }
+      .record-cell { grid-column: 2; }
+      .schema-field { grid-template-columns: 1fr; }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .comparison-table th, .comparison-table td { padding: 10px; font-size: .83rem; }
+      pre { font-size: .78rem; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Como organizar um cadastro em C</h1>
+          <p class="subtitle">Aprenda a agrupar os dados de cada pessoa, produto ou livro em um registro e a armazenar vários registros de forma organizada.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Representação resumida de um cadastro">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>
+            <div><strong>Um cadastro reúne registros do mesmo tipo</strong><span>Cada posição guarda todos os campos de um elemento.</span></div>
+          </div>
+          <div class="hero-records">
+            <div class="hero-record"><span class="hero-record-index">[0]</span><div class="hero-fields"><span class="hero-field">matrícula: 101</span><span class="hero-field">nome: Ana</span><span class="hero-field">nota: 8.5</span></div></div>
+            <div class="hero-record"><span class="hero-record-index">[1]</span><div class="hero-fields"><span class="hero-field">matrícula: 102</span><span class="hero-field">nome: Bruno</span><span class="hero-field">nota: 7.0</span></div></div>
+            <div class="hero-record"><span class="hero-record-index">[2]</span><div class="hero-fields"><span class="hero-field">matrícula: 103</span><span class="hero-field">nome: Carla</span><span class="hero-field">nota: 9.1</span></div></div>
+          </div>
+          <p class="hero-caption"><strong>Ideia-chave:</strong> em vez de manter vários vetores separados, use um vetor de registros para preservar a relação entre os campos.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI09</div><p>Representar e manipular registros simples em programas introdutórios.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI02, CCI06 e CCI07</div><p>Implementação em C, vetores e organização em funções.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Cadastro simples</div><p>Vários registros com campos relacionados.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Exploração visual, leitura e comparação de exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Modelagem de dados</div><p>Estrutura, coleção, acesso e operações.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg>Variáveis e tipos</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 6h4v12H4zM10 6h4v12h-4zM16 6h4v12h-4z"></path></svg>Vetores</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-5"></path><path d="M18 3v5h-5"></path><path d="M20 13a8 8 0 0 1-14 5"></path></svg>Laço for</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M7 4h10v16H7z"></path><path d="M10 8h4M10 12h4M10 16h3"></path></svg>Leitura e saída</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <article class="concept-main">
+          <h3>Um cadastro é uma coleção de registros</h3>
+          <p>Um <strong>registro</strong> agrupa campos que descrevem um único elemento. Um cadastro com vários elementos pode ser representado por um <strong>vetor desse tipo de registro</strong>.</p>
+          <p class="concept-note">Pense assim: <code>um registro = uma ficha</code> e <code>um vetor de registros = um conjunto de fichas</code>.</p>
+        </article>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina os campos</h3><p>Escolha apenas os dados necessários para descrever cada elemento.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Crie o tipo</h3><p>Use <code>struct</code> para manter os campos reunidos sob uma mesma estrutura.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Guarde vários</h3><p>Declare um vetor de registros e percorra suas posições com um laço.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-do-cadastro">
+      <div class="section-title"><span class="marker"></span><h2>Mapa do cadastro</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação com o mesmo exemplo de cadastro de alunos.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 710" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="355" x2="160" y2="125"></line>
+          <line x1="500" y1="355" x2="840" y2="125"></line>
+          <line x1="500" y1="355" x2="160" y2="570"></line>
+          <line x1="500" y1="355" x2="840" y2="570"></line>
+          <line x1="500" y1="355" x2="500" y2="650"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Cadastro com vários elementos</strong>
+            <code>tipo + vetor + quantidade</code>
+            <span>Os campos de cada elemento permanecem unidos.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-record" href="#modal-registro">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span>
+          <h3>Registro</h3>
+          <p>Representa um elemento completo do cadastro.</p>
+          <span class="map-code">struct Aluno</span>
+        </a>
+
+        <a class="map-button button-fields" href="#modal-campos">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path><path d="M8 4v4M13 10v4M17 16v4"></path></svg></span>
+          <h3>Campos</h3>
+          <p>Guardam as características relacionadas ao elemento.</p>
+          <span class="map-code">matricula, nome, nota</span>
+        </a>
+
+        <a class="map-button button-array" href="#modal-vetor">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM10 7h5v10h-5zM17 7h4v10h-4z"></path></svg></span>
+          <h3>Vetor de registros</h3>
+          <p>Armazena vários elementos do mesmo tipo.</p>
+          <span class="map-code">Aluno alunos[30]</span>
+        </a>
+
+        <a class="map-button button-count" href="#modal-quantidade">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5"></path><circle cx="16" cy="16" r="2"></circle></svg></span>
+          <h3>Quantidade</h3>
+          <p>Indica quantas posições do vetor já estão ocupadas.</p>
+          <span class="map-code">quantidade</span>
+        </a>
+
+        <a class="map-button button-operations" href="#modal-operacoes">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"></path><path d="M18 16v6M15 19h6"></path></svg></span>
+          <h3>Operações</h3>
+          <p>Cadastrar, listar, buscar ou atualizar registros.</p>
+          <span class="map-code">alunos[i].nome</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>De uma ficha para vários registros</h2></div>
+      <div class="records-layout">
+        <article class="record-definition">
+          <div class="record-head"><span class="record-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span><div><h3>Modelo de um aluno</h3><p>Todos os alunos seguem a mesma estrutura.</p></div></div>
+          <div class="record-schema">
+            <div class="schema-field"><code>int matricula</code><span>Identificador numérico</span></div>
+            <div class="schema-field"><code>char nome[40]</code><span>Texto que identifica o aluno</span></div>
+            <div class="schema-field"><code>float nota</code><span>Valor associado ao desempenho</span></div>
+          </div>
+        </article>
+
+        <article class="records-collection">
+          <div class="record-head"><span class="record-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM10 7h5v10h-5zM17 7h4v10h-4z"></path></svg></span><div><h3>Vetor de alunos</h3><p>Cada índice aponta para uma ficha completa.</p></div></div>
+          <div class="record-strip">
+            <div class="record-row"><div class="record-index">[0]</div><div class="record-cell"><strong>matrícula</strong><span>101</span></div><div class="record-cell"><strong>nome</strong><span>Ana</span></div><div class="record-cell"><strong>nota</strong><span>8.5</span></div></div>
+            <div class="record-row"><div class="record-index">[1]</div><div class="record-cell"><strong>matrícula</strong><span>102</span></div><div class="record-cell"><strong>nome</strong><span>Bruno</span></div><div class="record-cell"><strong>nota</strong><span>7.0</span></div></div>
+            <div class="record-row"><div class="record-index">[2]</div><div class="record-cell"><strong>matrícula</strong><span>103</span></div><div class="record-cell"><strong>nome</strong><span>Carla</span></div><div class="record-cell"><strong>nota</strong><span>9.1</span></div></div>
+          </div>
+          <p class="access-note">Para acessar a nota do segundo registro: <code>alunos[1].nota</code>. Primeiro escolha a posição, depois o campo.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Fluxo para montar um cadastro</h2></div>
+      <div class="process-flow">
+        <article class="process-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5"></path></svg></span><h3>1. Identifique</h3><p>Liste os campos necessários para cada elemento.</p></article>
+        <article class="process-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 10h10M9 14h6M11 18h2"></path></svg></span><h3>2. Defina</h3><p>Crie a <code>struct</code> com tipos coerentes.</p></article>
+        <article class="process-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM10 7h5v10h-5zM17 7h4v10h-4z"></path></svg></span><h3>3. Declare</h3><p>Crie um vetor do tipo do registro.</p></article>
+        <article class="process-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-5"></path><path d="M18 3v5h-5"></path></svg></span><h3>4. Percorra</h3><p>Use um índice para ler ou mostrar cada ficha.</p></article>
+        <article class="process-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><h3>5. Acesse</h3><p>Use <code>vetor[i].campo</code> nas operações.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>O que cada parte resolve</h2></div>
+      <div class="comparison-wrap">
+        <table class="comparison-table">
+          <thead><tr><th>Elemento</th><th>Pergunta respondida</th><th>Exemplo</th><th>Cuidado principal</th></tr></thead>
+          <tbody>
+            <tr><td>struct</td><td>Quais campos formam um registro?</td><td><code>typedef struct { ... } Aluno;</code></td><td>Escolher tipos compatíveis com os dados.</td></tr>
+            <tr><td>vetor</td><td>Onde ficam os vários registros?</td><td><code>Aluno alunos[30];</code></td><td>Não acessar além do limite.</td></tr>
+            <tr><td>índice</td><td>Qual registro está sendo manipulado?</td><td><code>alunos[i]</code></td><td>Separar posição de conteúdo.</td></tr>
+            <tr><td>campo</td><td>Qual informação do registro será usada?</td><td><code>alunos[i].nota</code></td><td>Usar o nome exato declarado na estrutura.</td></tr>
+            <tr><td>quantidade</td><td>Quantos registros são válidos?</td><td><code>i &lt; quantidade</code></td><td>Distinguir capacidade máxima de quantidade usada.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="tabs" id="tab1" checked>
+        <input type="radio" name="tabs" id="tab2">
+        <input type="radio" name="tabs" id="tab3">
+        <div class="tab-labels">
+          <label class="tab-label" for="tab1">1. Cadastrar produtos</label>
+          <label class="tab-label" for="tab2">2. Buscar um livro</label>
+          <label class="tab-label" for="tab3">3. Situação dos alunos</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <article class="example-card">
+                <span class="example-level">Exemplo básico</span>
+                <h3>Leia e liste três produtos</h3>
+                <p>Cada produto possui código, nome e preço. O laço percorre o vetor e mantém os três campos unidos.</p>
+                <ul class="example-list"><li>Um tipo descreve o formato de cada produto.</li><li>O vetor guarda três registros completos.</li><li>O acesso usa <code>produtos[i].campo</code>.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">struct</span><span class="structure-tag">vetor</span><span class="structure-tag">for</span></div>
+                <p class="example-note"><strong>Observe:</strong> a posição <code>i</code> seleciona o produto. O ponto seleciona um campo desse produto.</p>
+              </article>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>produtos.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">typedef</span> <span class="syn-keyword">struct</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span>[<span class="syn-number">30</span>];
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span>;
+} <span class="syn-type">Produto</span>;
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">Produto</span> <span class="syn-variable">produtos</span>[<span class="syn-number">3</span>];
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span>);
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%29s"</span>, <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">nome</span>);
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">preco</span>);
+    }
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"%d | %s | R$ %.2f\n"</span>,
+               <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span>,
+               <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">nome</span>,
+               <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">preco</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <article class="example-card">
+                <span class="example-level">Exemplo intermediário</span>
+                <h3>Busque um livro pelo código</h3>
+                <p>O cadastro guarda código, título e disponibilidade. Um laço procura o registro cujo código corresponde ao valor informado.</p>
+                <ul class="example-list"><li>A variável <code>encontrado</code> registra o resultado da busca.</li><li>O código identifica o livro.</li><li>Os demais campos são recuperados do mesmo registro.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">struct</span><span class="structure-tag">busca linear</span><span class="structure-tag">if</span></div>
+                <p class="example-note"><strong>Vantagem:</strong> título e disponibilidade não precisam ser sincronizados manualmente com vetores separados.</p>
+              </article>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>livros.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">typedef</span> <span class="syn-keyword">struct</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+    <span class="syn-type">char</span> <span class="syn-variable">titulo</span>[<span class="syn-number">40</span>];
+    <span class="syn-type">int</span> <span class="syn-variable">disponivel</span>;
+} <span class="syn-type">Livro</span>;
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">Livro</span> <span class="syn-variable">livros</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-number">10</span>, <span class="syn-string">"Algoritmos"</span>, <span class="syn-number">1</span>},
+        {<span class="syn-number">20</span>, <span class="syn-string">"Redes"</span>, <span class="syn-number">0</span>},
+        {<span class="syn-number">30</span>, <span class="syn-string">"BancoDados"</span>, <span class="syn-number">1</span>}
+    };
+    <span class="syn-type">int</span> <span class="syn-variable">buscado</span>, <span class="syn-variable">encontrado</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">buscado</span>);
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-variable">livros</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span> <span class="syn-operator">==</span> <span class="syn-variable">buscado</span>) {
+            <span class="syn-function">printf</span>(<span class="syn-string">"%s | %s\n"</span>,
+                   <span class="syn-variable">livros</span>[<span class="syn-variable">i</span>].<span class="syn-variable">titulo</span>,
+                   <span class="syn-variable">livros</span>[<span class="syn-variable">i</span>].<span class="syn-variable">disponivel</span> <span class="syn-operator">?</span> <span class="syn-string">"disponivel"</span> <span class="syn-operator">:</span> <span class="syn-string">"emprestado"</span>);
+            <span class="syn-variable">encontrado</span> <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+        }
+    }
+
+    <span class="syn-keyword">if</span> (<span class="syn-operator">!</span><span class="syn-variable">encontrado</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Livro nao encontrado.\n"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <article class="example-card">
+                <span class="example-level">Exemplo intermediário</span>
+                <h3>Calcule a média e mostre a situação</h3>
+                <p>Cada aluno possui nome e duas notas. O programa percorre os registros, calcula a média de cada aluno e apresenta sua situação.</p>
+                <ul class="example-list"><li>As notas pertencem ao mesmo aluno.</li><li>A média é calculada a partir do registro atual.</li><li>Uma função separa o cálculo da apresentação.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">struct</span><span class="structure-tag">função</span><span class="structure-tag">for</span><span class="structure-tag">if</span></div>
+                <p class="example-note"><strong>Observe:</strong> o cadastro organiza os dados; a função organiza uma operação realizada sobre esses dados.</p>
+              </article>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>alunos.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">typedef</span> <span class="syn-keyword">struct</span> {
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span>[<span class="syn-number">30</span>];
+    <span class="syn-type">float</span> <span class="syn-variable">nota1</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">nota2</span>;
+} <span class="syn-type">Aluno</span>;
+
+<span class="syn-type">float</span> <span class="syn-function">calcularMedia</span>(<span class="syn-type">Aluno</span> <span class="syn-variable">aluno</span>) {
+    <span class="syn-keyword">return</span> (<span class="syn-variable">aluno</span>.<span class="syn-variable">nota1</span> <span class="syn-operator">+</span> <span class="syn-variable">aluno</span>.<span class="syn-variable">nota2</span>) <span class="syn-operator">/</span> <span class="syn-number">2.0</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">Aluno</span> <span class="syn-variable">alunos</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-string">"Ana"</span>, <span class="syn-number">8.0</span>, <span class="syn-number">9.0</span>},
+        {<span class="syn-string">"Bruno"</span>, <span class="syn-number">5.0</span>, <span class="syn-number">6.0</span>},
+        {<span class="syn-string">"Carla"</span>, <span class="syn-number">7.0</span>, <span class="syn-number">7.5</span>}
+    };
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-type">float</span> <span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-function">calcularMedia</span>(<span class="syn-variable">alunos</span>[<span class="syn-variable">i</span>]);
+        <span class="syn-function">printf</span>(<span class="syn-string">"%s: %.1f | %s\n"</span>,
+               <span class="syn-variable">alunos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">nome</span>, <span class="syn-variable">media</span>,
+               <span class="syn-variable">media</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7.0</span> <span class="syn-operator">?</span> <span class="syn-string">"aprovado"</span> <span class="syn-operator">:</span> <span class="syn-string">"reprovado"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar vetores separados</h3><p><strong>Por que acontece:</strong> cria-se um vetor para nomes, outro para códigos e outro para notas.</p><p><strong>Como evitar:</strong> agrupe os campos de cada elemento em uma <code>struct</code>.</p></article>
+        <article class="error-card"><h3>Confundir capacidade e quantidade</h3><p><strong>Por que acontece:</strong> o programa percorre todas as posições, mesmo as não preenchidas.</p><p><strong>Como evitar:</strong> mantenha uma variável com o número de registros válidos.</p></article>
+        <article class="error-card"><h3>Acessar o campo sem posição</h3><p><strong>Por que acontece:</strong> tenta-se usar <code>alunos.nota</code> quando <code>alunos</code> é um vetor.</p><p><strong>Como evitar:</strong> selecione primeiro o registro: <code>alunos[i].nota</code>.</p></article>
+        <article class="error-card"><h3>Ultrapassar o vetor</h3><p><strong>Por que acontece:</strong> novos registros são inseridos sem verificar o limite.</p><p><strong>Como evitar:</strong> valide se <code>quantidade &lt; capacidade</code> antes de cadastrar.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual é a diferença entre um registro e um vetor de registros?</summary><p>Um registro representa um único elemento com seus campos. Um vetor de registros armazena vários elementos que seguem essa mesma estrutura.</p></details>
+        <details><summary>O que significa <code>alunos[2].nota</code>?</summary><p>Significa acessar o campo <code>nota</code> do registro armazenado no índice 2 do vetor <code>alunos</code>.</p></details>
+        <details><summary>Por que guardar a quantidade de registros cadastrados?</summary><p>Porque a capacidade do vetor pode ser maior que a quantidade de posições realmente preenchidas. O laço deve percorrer apenas os registros válidos.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir definir um registro, armazenar vários registros em um vetor e acessar os campos corretos para cadastrar, listar ou buscar elementos.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-registro" role="dialog" aria-modal="true" aria-labelledby="titulo-registro">
+    <a class="modal-backdrop" href="#mapa-do-cadastro" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-cadastro" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span><div><h2 id="titulo-registro">O registro representa uma ficha completa</h2><p>Ele mantém, no mesmo valor estruturado, os campos que pertencem ao mesmo elemento.</p></div></div>
+      <div class="modal-example"><h3>Exemplo: um aluno</h3><div class="modal-grid"><div class="modal-box"><strong>Identificação</strong><code>matricula = 101</code></div><div class="modal-box"><strong>Dados associados</strong><code>nome = "Ana"</code><br><code>nota = 8.5</code></div></div></div>
+      <p class="modal-rule"><strong>Regra:</strong> os campos do registro devem descrever uma única entidade. Dados de alunos diferentes não podem ocupar a mesma ficha.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-campos" role="dialog" aria-modal="true" aria-labelledby="titulo-campos">
+    <a class="modal-backdrop" href="#mapa-do-cadastro" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-cadastro" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path><path d="M8 4v4M13 10v4M17 16v4"></path></svg></span><div><h2 id="titulo-campos">Cada campo tem nome, tipo e significado</h2><p>Os tipos devem ser escolhidos de acordo com os valores armazenados.</p></div></div>
+      <div class="modal-example"><h3>Campos do aluno</h3><div class="modal-grid"><div class="modal-box"><strong><code>int matricula</code></strong><span>Número inteiro usado como identificador.</span></div><div class="modal-box"><strong><code>char nome[40]</code></strong><span>Sequência de caracteres para o nome.</span></div><div class="modal-box"><strong><code>float nota</code></strong><span>Valor que pode possuir parte decimal.</span></div><div class="modal-box"><strong>Acesso</strong><code>aluno.nota</code></div></div></div>
+      <p class="modal-rule"><strong>Cuidado:</strong> o nome do campo deve comunicar o dado. Evite campos genéricos como <code>x</code>, <code>valor1</code> ou <code>dado</code>.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-vetor" role="dialog" aria-modal="true" aria-labelledby="titulo-vetor">
+    <a class="modal-backdrop" href="#mapa-do-cadastro" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-cadastro" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM10 7h5v10h-5zM17 7h4v10h-4z"></path></svg></span><div><h2 id="titulo-vetor">O vetor reúne vários registros do mesmo tipo</h2><p>Cada índice seleciona uma ficha completa, não apenas um campo isolado.</p></div></div>
+      <div class="modal-example"><h3>Três posições</h3><div class="modal-grid"><div class="modal-box"><strong><code>alunos[0]</code></strong><span>Ficha completa de Ana.</span></div><div class="modal-box"><strong><code>alunos[1]</code></strong><span>Ficha completa de Bruno.</span></div><div class="modal-box"><strong><code>alunos[2]</code></strong><span>Ficha completa de Carla.</span></div><div class="modal-box"><strong>Campo específico</strong><code>alunos[2].nome</code></div></div></div>
+      <p class="modal-rule"><strong>Regra:</strong> o índice escolhe o registro e o operador ponto escolhe um campo dentro desse registro.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-quantidade" role="dialog" aria-modal="true" aria-labelledby="titulo-quantidade">
+    <a class="modal-backdrop" href="#mapa-do-cadastro" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-cadastro" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5"></path><circle cx="16" cy="16" r="2"></circle></svg></span><div><h2 id="titulo-quantidade">Capacidade máxima não é quantidade cadastrada</h2><p>Um vetor pode ter espaço para 30 alunos, mas somente 8 posições podem estar preenchidas.</p></div></div>
+      <div class="modal-example"><h3>Controle seguro</h3><div class="modal-grid"><div class="modal-box"><strong>Capacidade</strong><code>Aluno alunos[30]</code></div><div class="modal-box"><strong>Quantidade atual</strong><code>int quantidade = 8</code></div><div class="modal-box"><strong>Percurso</strong><code>i &lt; quantidade</code></div><div class="modal-box"><strong>Inserção</strong><code>quantidade &lt; 30</code></div></div></div>
+      <p class="modal-rule"><strong>Cuidado:</strong> percorrer até a capacidade pode usar posições sem dados válidos. Inserir sem testar a capacidade pode ultrapassar o vetor.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-operacoes" role="dialog" aria-modal="true" aria-labelledby="titulo-operacoes">
+    <a class="modal-backdrop" href="#mapa-do-cadastro" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-cadastro" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"></path><path d="M18 16v6M15 19h6"></path></svg></span><div><h2 id="titulo-operacoes">As operações manipulam registros inteiros ou campos</h2><p>O cadastro ganha utilidade quando o programa consegue inserir, listar, buscar e atualizar seus elementos.</p></div></div>
+      <div class="modal-example"><h3>Mesmo cadastro, ações diferentes</h3><div class="modal-grid"><div class="modal-box"><strong>Cadastrar</strong><code>alunos[quantidade]</code></div><div class="modal-box"><strong>Listar</strong><code>printf("%s", alunos[i].nome)</code></div><div class="modal-box"><strong>Buscar</strong><code>alunos[i].matricula == buscada</code></div><div class="modal-box"><strong>Atualizar</strong><code>alunos[i].nota = novaNota</code></div></div></div>
+      <p class="modal-rule"><strong>Regra:</strong> cada operação deve respeitar a quantidade de registros válidos e selecionar corretamente o índice e o campo.</p>
+    </article>
+  </section>
+</body>
+</html>

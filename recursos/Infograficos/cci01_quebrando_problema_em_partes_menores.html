@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quebrando um problema em partes menores</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero,
+    .section,
+    .closing {
+      border-radius: 26px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 230px;
+      height: 230px;
+      right: -84px;
+      top: -92px;
+    }
+
+    .hero::after {
+      width: 120px;
+      height: 120px;
+      right: 130px;
+      bottom: -70px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+      gap: 28px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.08;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.08rem;
+      max-width: 730px;
+    }
+
+    .hero-map {
+      position: relative;
+      min-height: 250px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-map svg.connections {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-map line {
+      stroke: rgba(79, 70, 229, 0.28);
+      stroke-width: 2;
+      stroke-dasharray: 5 7;
+    }
+
+    .hero-core,
+    .hero-node {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07);
+    }
+
+    .hero-core {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: var(--cor-primaria-escura);
+      color: white;
+      border-color: var(--cor-primaria-escura);
+      font-size: 0.92rem;
+      font-weight: 800;
+      padding: 12px;
+    }
+
+    .hero-node {
+      width: 92px;
+      min-height: 62px;
+      border-radius: 16px;
+      color: var(--cor-primaria-escura);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 9px;
+    }
+
+    .hero-node:nth-of-type(2) { top: 8px; left: 50%; transform: translateX(-50%); }
+    .hero-node:nth-of-type(3) { top: 50%; right: 2px; transform: translateY(-50%); }
+    .hero-node:nth-of-type(4) { bottom: 7px; left: 50%; transform: translateX(-50%); }
+    .hero-node:nth-of-type(5) { top: 50%; left: 2px; transform: translateY(-50%); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 21px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 33px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.47rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.04rem;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 150px;
+    }
+
+    .meta-icon,
+    .diagram-icon,
+    .step-icon,
+    .example-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cor-primaria);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+    }
+
+    .meta-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .meta-icon svg,
+    .diagram-icon svg,
+    .step-icon svg,
+    .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.065em;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.98rem;
+      margin-bottom: 5px;
+    }
+
+    .meta-card p {
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cor-primaria);
+    }
+
+    .concept-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 22px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .concept-main strong,
+    .keyword {
+      color: var(--cor-primaria-escura);
+      font-weight: 800;
+    }
+
+    .concept-callout {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .radial-map {
+      position: relative;
+      min-height: 470px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at center, rgba(79, 70, 229, 0.07), transparent 38%),
+        var(--cor-superficie-suave);
+      overflow: hidden;
+    }
+
+    .radial-map > svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .radial-map path {
+      fill: none;
+      stroke: rgba(79, 70, 229, 0.27);
+      stroke-width: 2.2;
+      stroke-dasharray: 7 8;
+    }
+
+    .map-center,
+    .map-card {
+      position: absolute;
+      border: 1px solid var(--cor-borda);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+    }
+
+    .map-center {
+      width: 170px;
+      min-height: 132px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 26px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      padding: 20px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .map-center p {
+      color: #EEF2FF;
+      font-size: 0.89rem;
+    }
+
+    .map-center strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 1.05rem;
+    }
+
+    .map-card {
+      width: 190px;
+      min-height: 130px;
+      background: var(--cor-superficie);
+      border-radius: 19px;
+      padding: 16px;
+    }
+
+    .map-card:nth-of-type(1) { top: 25px; left: 28px; }
+    .map-card:nth-of-type(2) { top: 25px; right: 28px; }
+    .map-card:nth-of-type(3) { bottom: 25px; left: 28px; }
+    .map-card:nth-of-type(4) { bottom: 25px; right: 28px; }
+
+    .diagram-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      margin-bottom: 10px;
+    }
+
+    .map-card p {
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .visual-path {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 28px;
+      align-items: stretch;
+      margin-top: 8px;
+    }
+
+    .visual-path::before {
+      content: "";
+      position: absolute;
+      left: 7%;
+      right: 7%;
+      top: 44px;
+      height: 3px;
+      background: var(--cor-borda);
+      z-index: 0;
+    }
+
+    .path-card {
+      position: relative;
+      z-index: 1;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 19px;
+      padding: 17px;
+      min-height: 202px;
+    }
+
+    .step-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 17px;
+      margin-bottom: 13px;
+      background: var(--cor-superficie);
+      border: 3px solid var(--cor-superficie-destacada);
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.18);
+    }
+
+    .step-number {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--cor-primaria);
+      font-size: 0.77rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .path-card p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .validation-loop {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border: 1px dashed rgba(79, 70, 229, 0.34);
+      border-radius: 17px;
+      background: var(--cor-superficie-destacada);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .validation-loop .loop-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .validation-loop strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .loop-arrow {
+      color: var(--cor-primaria);
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .tabs {
+      position: relative;
+    }
+
+    .tab-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tab-labels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 8px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      margin-bottom: 18px;
+    }
+
+    .tab-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 10px 13px;
+      border-radius: 13px;
+      cursor: pointer;
+      color: var(--cor-texto-secundario);
+      font-weight: 800;
+      transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .tab-label small {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      opacity: 0.75;
+    }
+
+    .example-icon {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      border-radius: 11px;
+      background: var(--cor-superficie);
+    }
+
+    #exemplo-1:checked ~ .tab-labels label[for="exemplo-1"],
+    #exemplo-2:checked ~ .tab-labels label[for="exemplo-2"],
+    #exemplo-3:checked ~ .tab-labels label[for="exemplo-3"] {
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07);
+    }
+
+    .tab-panel {
+      display: none;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      animation: panel-in 0.2s ease;
+    }
+
+    #exemplo-1:checked ~ .tab-panels .panel-1,
+    #exemplo-2:checked ~ .tab-panels .panel-2,
+    #exemplo-3:checked ~ .tab-panels .panel-3 {
+      display: grid;
+    }
+
+    @keyframes panel-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .example-card {
+      min-width: 0;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 19px;
+      padding: 20px;
+    }
+
+    .problem-card {
+      border-left: 5px solid var(--cor-destaque-pontual);
+    }
+
+    .difficulty {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 12px;
+      color: var(--cor-primaria-escura);
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.055em;
+    }
+
+    .difficulty::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cor-destaque-pontual);
+    }
+
+    .mini-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 8px;
+      align-items: stretch;
+      margin: 16px 0;
+    }
+
+    .mini-node {
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      border-radius: 14px;
+      padding: 11px;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--cor-texto-secundario);
+    }
+
+    .mini-node strong {
+      display: block;
+      color: var(--cor-primaria-escura);
+      margin-bottom: 3px;
+    }
+
+    .mini-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--cor-primaria);
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      border: 1px solid var(--cor-borda);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+    }
+
+    pre {
+      max-width: 100%;
+      background: #0B1020;
+      color: #E2E8F0;
+      padding: 20px;
+      border: 1px solid #1E293B;
+      border-radius: 17px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.62;
+      tab-size: 4;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .syntax-preprocessor {
+      color: #C4B5FD;
+      font-weight: 700;
+    }
+
+    .syntax-header {
+      color: #86EFAC;
+    }
+
+    .syntax-keyword {
+      color: #F9A8D4;
+      font-weight: 700;
+    }
+
+    .syntax-type {
+      color: #67E8F9;
+      font-weight: 700;
+    }
+
+    .syntax-function {
+      color: #FCD34D;
+    }
+
+    .syntax-string {
+      color: #86EFAC;
+    }
+
+    .syntax-number {
+      color: #C4B5FD;
+    }
+
+    .syntax-operator,
+    .syntax-punctuation {
+      color: #CBD5E1;
+    }
+
+    .syntax-variable {
+      color: #E2E8F0;
+    }
+
+    .syntax-comment {
+      color: #94A3B8;
+      font-style: italic;
+    }
+
+    .code-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 11px;
+    }
+
+    .code-caption span {
+      color: var(--cor-texto-secundario);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 16px 18px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+
+    details[open] {
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79, 70, 229, 0.22);
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 13px;
+      padding: 14px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      padding: 29px;
+      margin-bottom: 12px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .closing p {
+      color: var(--cor-superficie-destacada);
+      font-size: 1.05rem;
+      max-width: 900px;
+    }
+
+    @media (max-width: 1020px) {
+      .meta-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .meta-card:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .concept-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .visual-path {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .visual-path::before {
+        display: none;
+      }
+
+      .path-card:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-map {
+        min-height: 230px;
+        max-width: 430px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .radial-map {
+        min-height: auto;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 13px;
+        padding: 16px;
+        background: var(--cor-superficie-suave);
+      }
+
+      .radial-map > svg {
+        display: none;
+      }
+
+      .map-center,
+      .map-card {
+        position: static;
+        width: auto;
+        min-height: 0;
+        transform: none;
+      }
+
+      .map-center {
+        grid-column: 1 / -1;
+        min-height: 120px;
+      }
+
+      .tab-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .error-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 11px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 21px;
+      }
+
+      .meta-grid,
+      .visual-path,
+      .radial-map {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-card:last-child,
+      .path-card:last-child,
+      .map-center {
+        grid-column: auto;
+      }
+
+      .tab-labels {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-arrow {
+        transform: rotate(90deg);
+      }
+
+      .validation-loop {
+        grid-template-columns: auto 1fr;
+      }
+
+      .loop-arrow {
+        display: none;
+      }
+
+      .mini-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true">
+              <path d="M12 3v18M3 12h18"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Quebrando um problema em partes menores</h1>
+          <p class="subtitle">Explore diferentes caminhos para transformar um problema grande em partes menores, claras e programáveis antes de escrever o código em C.</p>
+        </div>
+
+        <div class="hero-map" aria-label="Mapa visual da decomposição">
+          <svg class="connections" viewBox="0 0 320 250" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="160" y1="125" x2="160" y2="36"></line>
+            <line x1="160" y1="125" x2="275" y2="125"></line>
+            <line x1="160" y1="125" x2="160" y2="216"></line>
+            <line x1="160" y1="125" x2="45" y2="125"></line>
+          </svg>
+          <div class="hero-core">Problema completo</div>
+          <div class="hero-node">Entradas</div>
+          <div class="hero-node">Ações</div>
+          <div class="hero-node">Saídas</div>
+          <div class="hero-node">Regras</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <span class="meta-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="m9 12 2 2 4-4"></path></svg>
+          </span>
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI01</div>
+          <p>Representar problemas por soluções algorítmicas claras.</p>
+        </article>
+
+        <article class="meta-card">
+          <span class="meta-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 7h6v6H4zM14 11h6v6h-6z"></path><path d="M10 10h4M7 13v4h7"></path></svg>
+          </span>
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI02 e CCI08</div>
+          <p>Organizar fluxo simples e selecionar estratégias coerentes.</p>
+        </article>
+
+        <article class="meta-card">
+          <span class="meta-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h7"></path><circle cx="18" cy="12" r="2"></circle><circle cx="15" cy="19" r="2"></circle></svg>
+          </span>
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Decomposição</div>
+          <p>Separar uma tarefa em partes menores e relacionadas.</p>
+        </article>
+
+        <article class="meta-card">
+          <span class="meta-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg>
+          </span>
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">12 a 18 minutos</div>
+          <p>Consulta visual antes ou durante a resolução de exercícios.</p>
+        </article>
+
+        <article class="meta-card">
+          <span class="meta-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 18V6l8-3 8 3v12l-8 3z"></path><path d="m4 6 8 3 8-3M12 9v12"></path></svg>
+          </span>
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e exploratório</div>
+          <p>Leitura por mapas, fluxos, relações e exemplos graduados.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">Noção de algoritmo</span>
+        <span class="pill">Entrada, processamento e saída</span>
+        <span class="pill">Variáveis simples</span>
+        <span class="pill">Leitura de enunciados</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-layout">
+        <div class="concept-main">
+          <h3>Decompor é tornar visível o raciocínio</h3>
+          <p>Um problema grande pode ser explorado por diferentes pontos de entrada. Você pode começar pelos <strong>dados</strong>, pelas <strong>ações</strong>, pelas <strong>regras</strong> ou pelo <strong>resultado esperado</strong>. Depois, conecte essas partes em uma sequência coerente.</p>
+          <div class="concept-callout">Não existe apenas um ponto de partida.</div>
+        </div>
+
+        <div class="radial-map" aria-label="Mapa não linear das partes de um problema">
+          <svg viewBox="0 0 700 470" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M350 235 C280 165, 225 115, 130 95"></path>
+            <path d="M350 235 C420 165, 480 115, 570 95"></path>
+            <path d="M350 235 C280 305, 220 355, 130 375"></path>
+            <path d="M350 235 C420 305, 480 355, 570 375"></path>
+          </svg>
+
+          <div class="map-center">
+            <div>
+              <strong>Problema completo</strong>
+              <p>O que precisa ser resolvido?</p>
+            </div>
+          </div>
+
+          <article class="map-card">
+            <span class="diagram-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 6h16v12H4z"></path><path d="M8 10h8M8 14h5"></path></svg>
+            </span>
+            <h3>Dados de entrada</h3>
+            <p>Quais valores, textos ou informações o programa precisa receber?</p>
+          </article>
+
+          <article class="map-card">
+            <span class="diagram-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M6 4h12v5H6zM4 15h7v5H4zM13 15h7v5h-7z"></path><path d="M12 9v3M7 12h10M7 12v3M17 12v3"></path></svg>
+            </span>
+            <h3>Ações necessárias</h3>
+            <p>Quais cálculos, comparações ou transformações precisam ocorrer?</p>
+          </article>
+
+          <article class="map-card">
+            <span class="diagram-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M5 5h14v14H5z"></path><path d="m8 12 3 3 5-6"></path></svg>
+            </span>
+            <h3>Regras e condições</h3>
+            <p>Há limites, critérios ou decisões que mudam o caminho da solução?</p>
+          </article>
+
+          <article class="map-card">
+            <span class="diagram-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 5h16v10H4z"></path><path d="M8 19h8M12 15v4"></path></svg>
+            </span>
+            <h3>Resultado esperado</h3>
+            <p>O que deve ser mostrado, armazenado ou informado ao final?</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Fluxo para transformar partes em solução</h2>
+      </div>
+
+      <div class="visual-path">
+        <article class="path-card">
+          <span class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+          </span>
+          <span class="step-number">Movimento 1</span>
+          <h3>Ler e marcar</h3>
+          <p>Destaque verbos, dados, restrições e o resultado solicitado no enunciado.</p>
+        </article>
+
+        <article class="path-card">
+          <span class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 7h6v6H4zM14 7h6v6h-6zM9 16h6v5H9z"></path></svg>
+          </span>
+          <span class="step-number">Movimento 2</span>
+          <h3>Agrupar partes</h3>
+          <p>Separe os elementos em entrada, processamento, regras e saída.</p>
+        </article>
+
+        <article class="path-card">
+          <span class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 6h5v5H4zM15 6h5v5h-5zM10 15h5v5h-5z"></path><path d="M9 8.5h6M17.5 11v2.5L12.5 15M6.5 11v2.5l5 1.5"></path></svg>
+          </span>
+          <span class="step-number">Movimento 3</span>
+          <h3>Conectar relações</h3>
+          <p>Verifique qual dado alimenta cada ação e qual ação produz cada resultado.</p>
+        </article>
+
+        <article class="path-card">
+          <span class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M5 5h14M5 12h14M5 19h14"></path><path d="m16 9 3 3-3 3"></path></svg>
+          </span>
+          <span class="step-number">Movimento 4</span>
+          <h3>Ordenar ações</h3>
+          <p>Coloque os passos em uma sequência que possa ser executada sem lacunas.</p>
+        </article>
+
+        <article class="path-card">
+          <span class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="m8.5 12 2.3 2.3L16 9"></path></svg>
+          </span>
+          <span class="step-number">Movimento 5</span>
+          <h3>Validar</h3>
+          <p>Teste mentalmente se as partes usam todos os dados e produzem a saída pedida.</p>
+        </article>
+      </div>
+
+      <div class="validation-loop">
+        <div class="loop-icon">↻</div>
+        <p><strong>O fluxo pode voltar.</strong> Se uma etapa estiver vaga, retorne ao mapa, divida essa etapa novamente e torne a ação mais específica.</p>
+        <span class="loop-arrow">←</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplos por nível de complexidade</h2>
+      </div>
+
+      <div class="tabs">
+        <input class="tab-input" type="radio" name="exemplos" id="exemplo-1" checked>
+        <input class="tab-input" type="radio" name="exemplos" id="exemplo-2">
+        <input class="tab-input" type="radio" name="exemplos" id="exemplo-3">
+
+        <div class="tab-labels" role="tablist" aria-label="Seleção de exemplos">
+          <label class="tab-label" for="exemplo-1" role="tab">
+            <span class="example-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+            </span>
+            <span>Exemplo 1<small>Média de duas notas</small></span>
+          </label>
+
+          <label class="tab-label" for="exemplo-2" role="tab">
+            <span class="example-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5h4"></path></svg>
+            </span>
+            <span>Exemplo 2<small>Converter minutos</small></span>
+          </label>
+
+          <label class="tab-label" for="exemplo-3" role="tab">
+            <span class="example-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4 19h16M6 16l4-5 3 3 5-7"></path></svg>
+            </span>
+            <span>Exemplo 3<small>Média e situação</small></span>
+          </label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel-1" role="tabpanel">
+            <div class="example-card problem-card">
+              <span class="difficulty">Nível inicial</span>
+              <h3>Calcular a média de duas notas</h3>
+              <p>O programa recebe duas notas, calcula a média aritmética e apresenta o resultado.</p>
+
+              <div class="mini-flow" aria-label="Fluxo do exemplo 1">
+                <div class="mini-node"><strong>Entrada</strong>nota1, nota2</div>
+                <div class="mini-arrow">→</div>
+                <div class="mini-node"><strong>Processamento</strong>(nota1 + nota2) / 2</div>
+                <div class="mini-arrow">→</div>
+                <div class="mini-node"><strong>Saída</strong>média</div>
+              </div>
+
+              <table class="mini-table">
+                <thead><tr><th>Parte</th><th>Aplicação</th></tr></thead>
+                <tbody>
+                  <tr><td>Entrada</td><td>Duas notas reais</td></tr>
+                  <tr><td>Ação</td><td>Somar as notas e dividir por 2</td></tr>
+                  <tr><td>Saída</td><td>Média com duas casas decimais</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="example-card">
+              <div class="code-caption"><h3>Código curto em C</h3><span>Uma sequência linear</span></div>
+              <pre aria-label="Código em C com realce de sintaxe"><code><span class="syntax-preprocessor">#include</span> <span class="syntax-header">&lt;stdio.h&gt;</span>
+
+<span class="syntax-type">int</span> <span class="syntax-function">main</span><span class="syntax-punctuation">()</span> <span class="syntax-punctuation">{</span>
+    <span class="syntax-type">float</span> <span class="syntax-variable">nota1</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">nota2</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">media</span><span class="syntax-punctuation">;</span>
+
+    <span class="syntax-function">scanf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"%f"</span><span class="syntax-punctuation">,</span> <span class="syntax-operator">&amp;</span><span class="syntax-variable">nota1</span><span class="syntax-punctuation">);</span>
+    <span class="syntax-function">scanf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"%f"</span><span class="syntax-punctuation">,</span> <span class="syntax-operator">&amp;</span><span class="syntax-variable">nota2</span><span class="syntax-punctuation">);</span>
+
+    <span class="syntax-variable">media</span> <span class="syntax-operator">=</span> <span class="syntax-punctuation">(</span><span class="syntax-variable">nota1</span> <span class="syntax-operator">+</span> <span class="syntax-variable">nota2</span><span class="syntax-punctuation">)</span> <span class="syntax-operator">/</span> <span class="syntax-number">2</span><span class="syntax-punctuation">;</span>
+
+    <span class="syntax-function">printf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"Media: %.2f\n"</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">media</span><span class="syntax-punctuation">);</span>
+    <span class="syntax-keyword">return</span> <span class="syntax-number">0</span><span class="syntax-punctuation">;</span>
+<span class="syntax-punctuation">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-2" role="tabpanel">
+            <div class="example-card problem-card">
+              <span class="difficulty">Nível intermediário</span>
+              <h3>Converter minutos em horas e minutos</h3>
+              <p>O programa recebe uma duração total em minutos e a reorganiza em duas partes: horas completas e minutos restantes.</p>
+
+              <div class="mini-flow" aria-label="Fluxo do exemplo 2">
+                <div class="mini-node"><strong>Entrada</strong>totalMinutos</div>
+                <div class="mini-arrow">→</div>
+                <div class="mini-node"><strong>Duas ações</strong>divisão e resto</div>
+                <div class="mini-arrow">→</div>
+                <div class="mini-node"><strong>Saída</strong>horas e minutos</div>
+              </div>
+
+              <table class="mini-table">
+                <thead><tr><th>Parte</th><th>Aplicação</th></tr></thead>
+                <tbody>
+                  <tr><td>Entrada</td><td>Total de minutos</td></tr>
+                  <tr><td>Ação 1</td><td>Calcular horas com divisão inteira por 60</td></tr>
+                  <tr><td>Ação 2</td><td>Calcular minutos restantes com módulo 60</td></tr>
+                  <tr><td>Saída</td><td>Duração no formato horas e minutos</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="example-card">
+              <div class="code-caption"><h3>Código curto em C</h3><span>Uma entrada, duas transformações</span></div>
+              <pre aria-label="Código em C com realce de sintaxe"><code><span class="syntax-preprocessor">#include</span> <span class="syntax-header">&lt;stdio.h&gt;</span>
+
+<span class="syntax-type">int</span> <span class="syntax-function">main</span><span class="syntax-punctuation">()</span> <span class="syntax-punctuation">{</span>
+    <span class="syntax-type">int</span> <span class="syntax-variable">totalMinutos</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">horas</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">minutos</span><span class="syntax-punctuation">;</span>
+
+    <span class="syntax-function">scanf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"%d"</span><span class="syntax-punctuation">,</span> <span class="syntax-operator">&amp;</span><span class="syntax-variable">totalMinutos</span><span class="syntax-punctuation">);</span>
+
+    <span class="syntax-variable">horas</span> <span class="syntax-operator">=</span> <span class="syntax-variable">totalMinutos</span> <span class="syntax-operator">/</span> <span class="syntax-number">60</span><span class="syntax-punctuation">;</span>
+    <span class="syntax-variable">minutos</span> <span class="syntax-operator">=</span> <span class="syntax-variable">totalMinutos</span> <span class="syntax-operator">%</span> <span class="syntax-number">60</span><span class="syntax-punctuation">;</span>
+
+    <span class="syntax-function">printf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"%d h e %d min\n"</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">horas</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">minutos</span><span class="syntax-punctuation">);</span>
+    <span class="syntax-keyword">return</span> <span class="syntax-number">0</span><span class="syntax-punctuation">;</span>
+<span class="syntax-punctuation">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-3" role="tabpanel">
+            <div class="example-card problem-card">
+              <span class="difficulty">Nível intermediário</span>
+              <h3>Calcular média e informar a situação</h3>
+              <p>O programa recebe três notas, calcula a média e usa uma regra para decidir se o estudante está aprovado ou em recuperação.</p>
+
+              <div class="mini-flow" aria-label="Fluxo do exemplo 3">
+                <div class="mini-node"><strong>Entrada</strong>três notas</div>
+                <div class="mini-arrow">→</div>
+                <div class="mini-node"><strong>Processamento</strong>calcular média</div>
+                <div class="mini-arrow">→</div>
+                <div class="mini-node"><strong>Regra</strong>média ≥ 7?</div>
+              </div>
+
+              <table class="mini-table">
+                <thead><tr><th>Parte</th><th>Aplicação</th></tr></thead>
+                <tbody>
+                  <tr><td>Entrada</td><td>Três notas reais</td></tr>
+                  <tr><td>Processamento</td><td>Somar as notas e dividir por 3</td></tr>
+                  <tr><td>Regra</td><td>Comparar a média com 7</td></tr>
+                  <tr><td>Saída</td><td>Média e situação do estudante</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="example-card">
+              <div class="code-caption"><h3>Código curto em C</h3><span>Fluxo com decisão</span></div>
+              <pre aria-label="Código em C com realce de sintaxe"><code><span class="syntax-preprocessor">#include</span> <span class="syntax-header">&lt;stdio.h&gt;</span>
+
+<span class="syntax-type">int</span> <span class="syntax-function">main</span><span class="syntax-punctuation">()</span> <span class="syntax-punctuation">{</span>
+    <span class="syntax-type">float</span> <span class="syntax-variable">n1</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">n2</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">n3</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">media</span><span class="syntax-punctuation">;</span>
+
+    <span class="syntax-function">scanf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"%f %f %f"</span><span class="syntax-punctuation">,</span> <span class="syntax-operator">&amp;</span><span class="syntax-variable">n1</span><span class="syntax-punctuation">,</span> <span class="syntax-operator">&amp;</span><span class="syntax-variable">n2</span><span class="syntax-punctuation">,</span> <span class="syntax-operator">&amp;</span><span class="syntax-variable">n3</span><span class="syntax-punctuation">);</span>
+    <span class="syntax-variable">media</span> <span class="syntax-operator">=</span> <span class="syntax-punctuation">(</span><span class="syntax-variable">n1</span> <span class="syntax-operator">+</span> <span class="syntax-variable">n2</span> <span class="syntax-operator">+</span> <span class="syntax-variable">n3</span><span class="syntax-punctuation">)</span> <span class="syntax-operator">/</span> <span class="syntax-number">3</span><span class="syntax-punctuation">;</span>
+
+    <span class="syntax-function">printf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"Media: %.2f\n"</span><span class="syntax-punctuation">,</span> <span class="syntax-variable">media</span><span class="syntax-punctuation">);</span>
+
+    <span class="syntax-keyword">if</span> <span class="syntax-punctuation">(</span><span class="syntax-variable">media</span> <span class="syntax-operator">&gt;=</span> <span class="syntax-number">7</span><span class="syntax-punctuation">)</span>
+        <span class="syntax-function">printf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"Aprovado\n"</span><span class="syntax-punctuation">);</span>
+    <span class="syntax-keyword">else</span>
+        <span class="syntax-function">printf</span><span class="syntax-punctuation">(</span><span class="syntax-string">"Recuperacao\n"</span><span class="syntax-punctuation">);</span>
+
+    <span class="syntax-keyword">return</span> <span class="syntax-number">0</span><span class="syntax-punctuation">;</span>
+<span class="syntax-punctuation">}</span></code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Começar pelo código</h3>
+          <p><strong>Por que acontece:</strong> o aluno tenta resolver digitando comandos antes de compreender as partes do problema.</p>
+          <p><strong>Como evitar:</strong> represente primeiro dados, ações, regras e saída.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Criar etapas muito amplas</h3>
+          <p><strong>Por que acontece:</strong> expressões como “resolver o cálculo” escondem várias ações menores.</p>
+          <p><strong>Como evitar:</strong> use verbos específicos, como ler, somar, dividir, comparar e mostrar.</p>
+        </article>
+
+        <article class="error-card">
+          <h3>Esquecer as relações</h3>
+          <p><strong>Por que acontece:</strong> as partes são listadas, mas não fica claro qual dado alimenta cada operação.</p>
+          <p><strong>Como evitar:</strong> conecte cada entrada à ação que a utiliza e cada ação ao resultado produzido.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>É obrigatório começar a decomposição pelas entradas?</summary>
+          <p>Não. Você pode começar pelo resultado esperado, pelas regras ou pelas ações. O importante é identificar todas as partes e conectá-las de forma coerente.</p>
+        </details>
+
+        <details>
+          <summary>Como saber se uma etapa ainda está grande demais?</summary>
+          <p>Se a etapa contém várias ações ou usa um verbo genérico, ela provavelmente pode ser dividida em passos mais específicos.</p>
+        </details>
+
+        <details>
+          <summary>Qual é a diferença entre decompor e apenas listar comandos?</summary>
+          <p>Decompor organiza o problema conceitualmente. A lista de comandos aparece depois, quando as partes já estão relacionadas e ordenadas.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir explorar um problema por diferentes pontos de entrada, separar seus componentes e conectá-los em uma solução algorítmica clara antes da implementação em C.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

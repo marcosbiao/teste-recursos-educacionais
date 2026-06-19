@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Recursos Educacionais — Livro e conexões</title>
+  <desc id="desc">Livro aberto branco com três nós conectados e um nó central amarelo sobre fundo índigo.</desc>
+
+  <rect width="512" height="512" rx="112" fill="#4F46E5"/>
+
+  <!-- Conexões -->
+  <path d="M165 175 L256 236 L347 175" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 236 L256 286" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round"/>
+
+  <!-- Nós -->
+  <circle cx="165" cy="175" r="34" fill="#FFFFFF"/>
+  <circle cx="347" cy="175" r="34" fill="#FFFFFF"/>
+  <circle cx="256" cy="236" r="36" fill="#F59E0B"/>
+  <circle cx="256" cy="286" r="22" fill="#FFFFFF"/>
+
+  <!-- Livro aberto -->
+  <path d="M112 242
+           C164 242 208 258 256 300
+           C304 258 348 242 400 242
+           L400 374
+           C349 374 305 390 256 430
+           C207 390 163 374 112 374 Z"
+        fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linejoin="round"/>
+
+  <!-- Vinco central -->
+  <path d="M256 300 L256 430" fill="none" stroke="#FFFFFF" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Linhas internas das páginas -->
+  <path d="M148 295 C181 296 211 307 231 324" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" opacity="0.95"/>
+  <path d="M364 295 C331 296 301 307 281 324" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" opacity="0.95"/>
+</svg>

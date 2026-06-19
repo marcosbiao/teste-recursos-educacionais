@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anatomia de um programa em C</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input,
+    button {
+      font: inherit;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero,
+    .section,
+    .closing {
+      border-radius: 26px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 245px;
+      height: 245px;
+      right: -90px;
+      top: -100px;
+    }
+
+    .hero::after {
+      width: 128px;
+      height: 128px;
+      right: 155px;
+      bottom: -78px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.28fr) minmax(280px, 0.72fr);
+      gap: 30px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.08rem, 5vw, 3.55rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.08rem;
+      max-width: 720px;
+    }
+
+    .hero-anatomy {
+      position: relative;
+      min-height: 270px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-anatomy svg.connections {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-anatomy line {
+      stroke: rgba(79, 70, 229, 0.29);
+      stroke-width: 2;
+      stroke-dasharray: 5 7;
+    }
+
+    .hero-core,
+    .hero-node {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.075);
+    }
+
+    .hero-core {
+      width: 118px;
+      height: 118px;
+      border-radius: 30px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 800;
+      padding: 14px;
+      transform: rotate(2deg);
+    }
+
+    .hero-node {
+      width: 104px;
+      min-height: 58px;
+      border-radius: 16px;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 9px;
+    }
+
+    .hero-node:nth-of-type(2) { top: 2px; left: 50%; transform: translateX(-50%); }
+    .hero-node:nth-of-type(3) { top: 30%; right: 0; }
+    .hero-node:nth-of-type(4) { bottom: 2px; right: 13%; }
+    .hero-node:nth-of-type(5) { bottom: 2px; left: 13%; }
+    .hero-node:nth-of-type(6) { top: 30%; left: 0; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 21px;
+    }
+
+    .marker {
+      width: 12px;
+      height: 33px;
+      background: var(--cor-primaria);
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.47rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      color: var(--cor-texto-principal);
+      font-size: 1.05rem;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .meta-card {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 145px;
+    }
+
+    .meta-label {
+      color: var(--cor-texto-secundario);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.065em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+      font-size: 0.98rem;
+      margin-bottom: 5px;
+    }
+
+    .meta-card p {
+      font-size: 0.9rem;
+      line-height: 1.48;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.17);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .pill svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .concept-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 22px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .concept-main::after {
+      content: "{ }";
+      position: absolute;
+      right: 18px;
+      bottom: -14px;
+      font-size: 5.1rem;
+      line-height: 1;
+      color: rgba(79, 70, 229, 0.09);
+      font-family: Consolas, Monaco, monospace;
+      font-weight: 900;
+    }
+
+    .concept-main h3 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .concept-main p {
+      position: relative;
+      z-index: 1;
+    }
+
+    .concept-main strong {
+      color: var(--cor-primaria-escura);
+    }
+
+    .concept-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .concept-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 17px;
+    }
+
+    .concept-number {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      background: var(--cor-primaria);
+      color: white;
+      border-radius: 11px;
+      font-weight: 900;
+      margin-bottom: 11px;
+    }
+
+    .concept-card p {
+      font-size: 0.92rem;
+    }
+
+    .anatomy-shell {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .anatomy-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .anatomy-intro p {
+      max-width: 735px;
+      font-size: 0.95rem;
+    }
+
+    .interaction-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 8px 12px;
+      white-space: nowrap;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .interaction-note svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+
+    .anatomy-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .anatomy-map {
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .anatomy-choice {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .anatomy-label {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .anatomy-label:hover,
+    .anatomy-label:focus-visible {
+      transform: translateX(4px);
+      border-color: rgba(79, 70, 229, 0.38);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.07);
+      outline: none;
+    }
+
+    .anatomy-label-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+    }
+
+    .anatomy-label-icon svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+    }
+
+    .anatomy-label strong {
+      display: block;
+      color: var(--cor-texto-principal);
+      font-size: 0.96rem;
+    }
+
+    .anatomy-label small {
+      display: block;
+      color: var(--cor-texto-secundario);
+      font-size: 0.79rem;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .anatomy-label-arrow {
+      color: var(--cor-primaria);
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .anatomy-code-card {
+      background: var(--codigo-fundo);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 21px;
+      overflow: hidden;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+      min-width: 0;
+    }
+
+    .code-toolbar {
+      min-height: 46px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #0B1220;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .window-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #64748B;
+    }
+
+    .window-dots span:nth-child(2) { opacity: 0.72; }
+    .window-dots span:nth-child(3) { opacity: 0.48; }
+
+    .code-file {
+      color: #CBD5E1;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.82rem;
+    }
+
+    pre {
+      margin: 0;
+      padding: 21px;
+      overflow-x: auto;
+      color: var(--codigo-texto);
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.91rem;
+      line-height: 1.72;
+      tab-size: 4;
+    }
+
+    code {
+      font-family: inherit;
+    }
+
+    .code-line {
+      display: block;
+      min-width: max-content;
+      border-left: 3px solid transparent;
+      padding-left: 10px;
+      margin-left: -10px;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .code-line.library { border-left-color: #C084FC; background: rgba(192, 132, 252, 0.06); }
+    .code-line.main-part { border-left-color: #67E8F9; background: rgba(103, 232, 249, 0.05); }
+    .code-line.variables-part { border-left-color: #FDE68A; background: rgba(253, 230, 138, 0.05); }
+    .code-line.commands-part { border-left-color: #86EFAC; background: rgba(134, 239, 172, 0.05); }
+    .code-line.return-part { border-left-color: #FDBA74; background: rgba(253, 186, 116, 0.06); }
+
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .anatomy-alert {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      place-items: center;
+      padding: 18px;
+    }
+
+    #part-library:checked ~ .anatomy-alert,
+    #part-main:checked ~ .anatomy-alert,
+    #part-variables:checked ~ .anatomy-alert,
+    #part-commands:checked ~ .anatomy-alert,
+    #part-return:checked ~ .anatomy-alert {
+      display: grid;
+    }
+
+    .anatomy-alert-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.69);
+      backdrop-filter: blur(5px);
+      animation: alert-backdrop-in 0.28s ease both;
+      cursor: pointer;
+    }
+
+    .anatomy-alert-dialog {
+      position: relative;
+      z-index: 1;
+      width: min(720px, 100%);
+      max-height: min(84vh, 720px);
+      overflow: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255, 255, 255, 0.56);
+      border-radius: 24px;
+      box-shadow: 0 26px 80px rgba(15, 23, 42, 0.33);
+      animation: alert-dialog-in 0.34s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .anatomy-alert-toolbar {
+      min-height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 13px 16px 13px 21px;
+      border-bottom: 1px solid var(--cor-borda);
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .anatomy-alert-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--cor-primaria-escura);
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .anatomy-alert-kicker::before {
+      content: "";
+      width: 10px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--cor-primaria);
+    }
+
+    .anatomy-alert-close {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      color: var(--cor-texto-principal);
+      font-size: 1.45rem;
+      line-height: 1;
+      font-weight: 400;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .anatomy-alert-close:hover,
+    .anatomy-alert-close:focus-visible {
+      transform: scale(1.04);
+      background: var(--cor-superficie-suave);
+      outline: 3px solid rgba(79, 70, 229, 0.16);
+    }
+
+    .part-panel {
+      display: none;
+      padding: 24px;
+    }
+
+    #part-library:checked ~ .anatomy-alert .panel-library,
+    #part-main:checked ~ .anatomy-alert .panel-main,
+    #part-variables:checked ~ .anatomy-alert .panel-variables,
+    #part-commands:checked ~ .anatomy-alert .panel-commands,
+    #part-return:checked ~ .anatomy-alert .panel-return {
+      display: block;
+      animation: alert-content-in 0.36s 0.06s ease both;
+    }
+
+    .part-panel-head {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 17px;
+    }
+
+    .part-panel-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--cor-primaria);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+    }
+
+    .part-panel-icon svg {
+      width: 27px;
+      height: 27px;
+      stroke: currentColor;
+    }
+
+    .part-panel h3 {
+      color: var(--cor-primaria-escura);
+      font-size: 1.35rem;
+      margin-bottom: 3px;
+    }
+
+    .part-panel-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .part-explanation,
+    .part-code {
+      border-radius: 17px;
+      border: 1px solid var(--cor-borda);
+      padding: 17px;
+    }
+
+    .part-explanation {
+      background: var(--cor-superficie-suave);
+    }
+
+    .part-explanation strong {
+      color: var(--cor-texto-principal);
+    }
+
+    .part-explanation p + p {
+      margin-top: 10px;
+    }
+
+    .part-code {
+      background: var(--codigo-fundo);
+      color: var(--codigo-texto);
+      overflow-x: auto;
+    }
+
+    .part-code code {
+      display: block;
+      min-width: max-content;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    @keyframes alert-backdrop-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes alert-dialog-in {
+      from { opacity: 0; transform: translateY(24px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes alert-content-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .flow-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .flow-step {
+      position: relative;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 17px 15px;
+      min-height: 155px;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "›";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      z-index: 2;
+      color: var(--cor-primaria);
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 999px;
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .flow-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+      margin-bottom: 11px;
+    }
+
+    .flow-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+    }
+
+    .flow-step p {
+      font-size: 0.88rem;
+      line-height: 1.47;
+    }
+
+    .examples-intro {
+      margin: -6px 0 17px;
+      max-width: 780px;
+      font-size: 0.95rem;
+    }
+
+    .example-tabs {
+      position: relative;
+    }
+
+    .example-tabs > input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .example-tab-labels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 7px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      margin-bottom: 15px;
+    }
+
+    .example-tab-labels label {
+      flex: 1 1 180px;
+      cursor: pointer;
+      text-align: center;
+      padding: 10px 13px;
+      border-radius: 12px;
+      color: var(--cor-texto-secundario);
+      font-size: 0.9rem;
+      font-weight: 800;
+      transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    #example-1:checked ~ .example-tab-labels label[for="example-1"],
+    #example-2:checked ~ .example-tab-labels label[for="example-2"],
+    #example-3:checked ~ .example-tab-labels label[for="example-3"] {
+      background: var(--cor-superficie);
+      color: var(--cor-primaria-escura);
+      box-shadow: 0 7px 17px rgba(15, 23, 42, 0.075);
+    }
+
+    .example-panels {
+      min-height: 430px;
+    }
+
+    .example-panel {
+      display: none;
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+      gap: 18px;
+      animation: tab-in 0.34s ease both;
+    }
+
+    #example-1:checked ~ .example-panels .panel-example-1,
+    #example-2:checked ~ .example-panels .panel-example-2,
+    #example-3:checked ~ .example-panels .panel-example-3 {
+      display: grid;
+    }
+
+    @keyframes tab-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .example-problem,
+    .example-code {
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .example-problem {
+      padding: 20px;
+      background: var(--cor-superficie-suave);
+      border-left: 5px solid var(--cor-destaque-pontual);
+    }
+
+    .example-level {
+      display: inline-flex;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .anatomy-mini-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .anatomy-mini-item {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: 10px;
+      align-items: start;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 13px;
+      padding: 10px 11px;
+    }
+
+    .anatomy-mini-item span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 6px;
+      background: var(--cor-primaria);
+    }
+
+    .anatomy-mini-item strong {
+      display: block;
+      color: var(--cor-texto-principal);
+      font-size: 0.88rem;
+    }
+
+    .anatomy-mini-item p {
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .example-code {
+      background: var(--codigo-fundo);
+      border-color: rgba(148, 163, 184, 0.2);
+      min-width: 0;
+    }
+
+    .example-code pre {
+      font-size: 0.88rem;
+      line-height: 1.68;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .error-card {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-left: 5px solid var(--cor-destaque-pontual);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .error-card p {
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    details {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 15px 17px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+
+    details[open] {
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79, 70, 229, 0.2);
+    }
+
+    details p {
+      margin-top: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 13px;
+      padding: 13px;
+      color: var(--cor-texto-principal);
+    }
+
+    .closing {
+      background: var(--cor-primaria-escura);
+      color: white;
+      padding: 29px;
+      margin-bottom: 10px;
+      box-shadow: 0 17px 38px rgba(49, 46, 129, 0.18);
+    }
+
+    .closing h2 {
+      color: white;
+      margin-bottom: 9px;
+    }
+
+    .closing p {
+      color: #E0E7FF;
+      font-size: 1.04rem;
+      max-width: 920px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .hero-grid,
+      .concept-layout,
+      .anatomy-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-anatomy {
+        min-height: 280px;
+        max-width: 440px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .concept-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .flow-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow-step:not(:last-child)::after {
+        display: none;
+      }
+
+      .example-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .example-panels {
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 18px 11px;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        padding: 22px;
+        border-radius: 22px;
+      }
+
+      .meta-grid,
+      .concept-cards,
+      .flow-strip,
+      .error-grid,
+      .part-panel-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .anatomy-intro {
+        flex-direction: column;
+      }
+
+      .interaction-note {
+        white-space: normal;
+      }
+
+      .anatomy-shell {
+        padding: 15px;
+      }
+
+      .anatomy-label {
+        grid-template-columns: 38px 1fr auto;
+        padding: 11px;
+      }
+
+      .anatomy-label-icon {
+        width: 37px;
+        height: 37px;
+      }
+
+      .anatomy-alert {
+        padding: 10px;
+      }
+
+      .anatomy-alert-dialog {
+        border-radius: 20px;
+        max-height: 91vh;
+      }
+
+      .part-panel {
+        padding: 19px;
+      }
+
+      .part-panel-head {
+        grid-template-columns: 44px 1fr;
+      }
+
+      .part-panel-icon {
+        width: 44px;
+        height: 44px;
+      }
+
+      .example-tab-labels {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      pre {
+        padding: 17px;
+        font-size: 0.82rem;
+      }
+    }
+
+    @media (max-width: 470px) {
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-anatomy {
+        min-height: 250px;
+      }
+
+      .hero-core {
+        width: 102px;
+        height: 102px;
+        border-radius: 25px;
+        font-size: 0.84rem;
+      }
+
+      .hero-node {
+        width: 89px;
+        min-height: 52px;
+        font-size: 0.68rem;
+      }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true">
+              <path d="M8 4 3 12l5 8M16 4l5 8-5 8M14 3l-4 18"></path>
+            </svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Anatomia de um programa em C</h1>
+          <p class="subtitle">Reconheça como biblioteca, função <strong>main</strong>, variáveis, comandos e retorno se organizam para formar um programa executável.</p>
+        </div>
+
+        <div class="hero-anatomy" aria-label="Mapa das partes de um programa em C">
+          <svg class="connections" viewBox="0 0 360 270" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="180" y1="135" x2="180" y2="30"></line>
+            <line x1="180" y1="135" x2="315" y2="86"></line>
+            <line x1="180" y1="135" x2="270" y2="234"></line>
+            <line x1="180" y1="135" x2="90" y2="234"></line>
+            <line x1="180" y1="135" x2="45" y2="86"></line>
+          </svg>
+          <div class="hero-core">Programa<br>em C</div>
+          <div class="hero-node">Biblioteca</div>
+          <div class="hero-node">main</div>
+          <div class="hero-node">Variáveis</div>
+          <div class="hero-node">Comandos</div>
+          <div class="hero-node">Retorno</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Identificação pedagógica</h2>
+      </div>
+
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI02</div>
+          <p>Implementar algoritmos simples em uma linguagem de programação.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">Sem destaque neste recorte</div>
+          <p>O foco está na estrutura mínima usada para iniciar a implementação em C.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Estrutura básica de um programa em C</div>
+          <p>Organização dos elementos essenciais do código-fonte.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">12 a 18 minutos</div>
+          <p>Leitura visual, exploração dos componentes e comparação de exemplos.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e estrutural</div>
+          <p>Análise de código por partes, relações e função de cada elemento.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Pré requisitos mínimos</h2>
+      </div>
+
+      <div class="pill-list">
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>
+          Noção de algoritmo
+        </span>
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M7 4v16M17 4v16M4 17h16"></path></svg>
+          Entrada, processamento e saída
+        </span>
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M8 4 3 12l5 8M16 4l5 8-5 8"></path></svg>
+          Comandos simples
+        </span>
+        <span class="pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M4 18h16M6 14l4-4 3 3 5-7"></path></svg>
+          Variáveis básicas
+        </span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Ideia central</h2>
+      </div>
+
+      <div class="concept-layout">
+        <div class="concept-main">
+          <h3>Um programa não é um bloco único</h3>
+          <p>Em C, cada parte tem uma função. A biblioteca disponibiliza recursos, a função <strong>main</strong> marca o início da execução, as variáveis guardam dados, os comandos realizam ações e o retorno encerra a função principal.</p>
+        </div>
+
+        <div class="concept-cards">
+          <article class="concept-card">
+            <span class="concept-number">1</span>
+            <h3>Reconheça</h3>
+            <p>Localize cada parte no código antes de tentar modificá-lo.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-number">2</span>
+            <h3>Relacione</h3>
+            <p>Associe cada elemento à função que cumpre no programa.</p>
+          </article>
+          <article class="concept-card">
+            <span class="concept-number">3</span>
+            <h3>Organize</h3>
+            <p>Mantenha as instruções dentro do bloco correto e em ordem lógica.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Explore a anatomia do código</h2>
+      </div>
+
+      <div class="anatomy-shell">
+        <div class="anatomy-intro">
+          <p>O código ao lado reúne as cinco partes essenciais. Selecione um componente para abrir uma explicação em primeiro plano e observar exatamente o trecho ao qual ele corresponde.</p>
+          <span class="interaction-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M9 11V6a2 2 0 1 1 4 0v4M13 9a2 2 0 1 1 4 0v3M17 11a2 2 0 1 1 4 0v4c0 4-3 7-7 7h-1c-3 0-5-1-7-4l-3-5a2 2 0 0 1 3-2l3 3"></path></svg>
+            Clique em uma parte
+          </span>
+        </div>
+
+        <div class="anatomy-grid">
+          <div class="anatomy-map">
+            <label class="anatomy-label" for="part-library" tabindex="0">
+              <span class="anatomy-label-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M4 5h7v14H4zM13 5h7v14h-7zM7 8h1M16 8h1M7 12h1M16 12h1"></path></svg>
+              </span>
+              <span><strong>1. Biblioteca</strong><small>Disponibiliza funções prontas.</small></span>
+              <span class="anatomy-label-arrow">›</span>
+            </label>
+
+            <label class="anatomy-label" for="part-main" tabindex="0">
+              <span class="anatomy-label-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M8 4 3 12l5 8M16 4l5 8-5 8M10 8h4v8h-4"></path></svg>
+              </span>
+              <span><strong>2. Função main</strong><small>Define o ponto inicial da execução.</small></span>
+              <span class="anatomy-label-arrow">›</span>
+            </label>
+
+            <label class="anatomy-label" for="part-variables" tabindex="0">
+              <span class="anatomy-label-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M5 5h14v14H5zM8 9h8M8 13h5"></path></svg>
+              </span>
+              <span><strong>3. Variáveis</strong><small>Reservam espaço para os dados.</small></span>
+              <span class="anatomy-label-arrow">›</span>
+            </label>
+
+            <label class="anatomy-label" for="part-commands" tabindex="0">
+              <span class="anatomy-label-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="m5 7 4 4-4 4M11 16h8M15 4v5M12.5 6.5h5"></path></svg>
+              </span>
+              <span><strong>4. Comandos</strong><small>Leem, calculam, decidem ou mostram.</small></span>
+              <span class="anatomy-label-arrow">›</span>
+            </label>
+
+            <label class="anatomy-label" for="part-return" tabindex="0">
+              <span class="anatomy-label-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M10 7 5 12l5 5M5 12h10a4 4 0 0 0 4-4V5"></path></svg>
+              </span>
+              <span><strong>5. Retorno</strong><small>Indica o encerramento da função.</small></span>
+              <span class="anatomy-label-arrow">›</span>
+            </label>
+          </div>
+
+          <article class="anatomy-code-card" aria-label="Código em C com as partes destacadas">
+            <div class="code-toolbar">
+              <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+              <span class="code-file">programa.c</span>
+            </div>
+            <pre><code><span class="code-line library"><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></span>
+<span class="code-line"> </span>
+<span class="code-line main-part"><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span></span>
+<span class="code-line variables-part">    <span class="syn-type">float</span> <span class="syn-variable">nota1</span><span class="syn-operator">,</span> <span class="syn-variable">nota2</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">;</span></span>
+<span class="code-line"> </span>
+<span class="code-line commands-part">    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota1</span><span class="syn-operator">);</span></span>
+<span class="code-line commands-part">    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota2</span><span class="syn-operator">);</span></span>
+<span class="code-line commands-part">    <span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-operator">(</span><span class="syn-variable">nota1</span> <span class="syn-operator">+</span> <span class="syn-variable">nota2</span><span class="syn-operator">)</span> <span class="syn-operator">/</span> <span class="syn-number">2.0</span><span class="syn-operator">;</span></span>
+<span class="code-line commands-part">    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Media: %.2f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">);</span></span>
+<span class="code-line"> </span>
+<span class="code-line return-part">    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="code-line main-part"><span class="syn-operator">}</span></span></code></pre>
+          </article>
+        </div>
+
+        <input class="anatomy-choice" type="radio" name="anatomy-part" id="part-close" checked>
+        <input class="anatomy-choice" type="radio" name="anatomy-part" id="part-library">
+        <input class="anatomy-choice" type="radio" name="anatomy-part" id="part-main">
+        <input class="anatomy-choice" type="radio" name="anatomy-part" id="part-variables">
+        <input class="anatomy-choice" type="radio" name="anatomy-part" id="part-commands">
+        <input class="anatomy-choice" type="radio" name="anatomy-part" id="part-return">
+
+        <div class="anatomy-alert" aria-live="polite">
+          <label class="anatomy-alert-backdrop" for="part-close" aria-label="Fechar a explicação"></label>
+          <div class="anatomy-alert-dialog" role="dialog" aria-modal="true" aria-label="Explicação da parte selecionada">
+            <div class="anatomy-alert-toolbar">
+              <span class="anatomy-alert-kicker">Parte essencial do programa</span>
+              <label class="anatomy-alert-close" for="part-close" role="button" tabindex="0" aria-label="Fechar explicação">×</label>
+            </div>
+
+            <article class="part-panel panel-library">
+              <div class="part-panel-head">
+                <span class="part-panel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M4 5h7v14H4zM13 5h7v14h-7zM7 8h1M16 8h1M7 12h1M16 12h1"></path></svg>
+                </span>
+                <div><h3>Biblioteca</h3><p>Disponibiliza declarações de funções que o programa pretende utilizar.</p></div>
+              </div>
+              <div class="part-panel-grid">
+                <div class="part-explanation">
+                  <p><strong>Neste exemplo:</strong> <code>stdio.h</code> permite usar <code>scanf</code> e <code>printf</code>.</p>
+                  <p>A diretiva começa com <code>#include</code> e aparece antes da função <code>main</code>.</p>
+                </div>
+                <div class="part-code"><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></code></div>
+              </div>
+            </article>
+
+            <article class="part-panel panel-main">
+              <div class="part-panel-head">
+                <span class="part-panel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M8 4 3 12l5 8M16 4l5 8-5 8M10 8h4v8h-4"></path></svg>
+                </span>
+                <div><h3>Função main</h3><p>É o ponto a partir do qual a execução do programa começa.</p></div>
+              </div>
+              <div class="part-panel-grid">
+                <div class="part-explanation">
+                  <p><strong>Observe:</strong> o tipo <code>int</code> informa que a função retorna um valor inteiro.</p>
+                  <p>As chaves delimitam o bloco em que ficam variáveis, comandos e retorno.</p>
+                </div>
+                <div class="part-code"><code><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-comment">// instruções</span>
+<span class="syn-operator">}</span></code></div>
+              </div>
+            </article>
+
+            <article class="part-panel panel-variables">
+              <div class="part-panel-head">
+                <span class="part-panel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M5 5h14v14H5zM8 9h8M8 13h5"></path></svg>
+                </span>
+                <div><h3>Declaração de variáveis</h3><p>Define os nomes e os tipos dos dados que serão armazenados.</p></div>
+              </div>
+              <div class="part-panel-grid">
+                <div class="part-explanation">
+                  <p><strong>Neste exemplo:</strong> as três variáveis são do tipo <code>float</code> porque podem guardar valores com parte decimal.</p>
+                  <p>A declaração deve acontecer antes do uso das variáveis.</p>
+                </div>
+                <div class="part-code"><code><span class="syn-type">float</span> <span class="syn-variable">nota1</span><span class="syn-operator">,</span> <span class="syn-variable">nota2</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">;</span></code></div>
+              </div>
+            </article>
+
+            <article class="part-panel panel-commands">
+              <div class="part-panel-head">
+                <span class="part-panel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="m5 7 4 4-4 4M11 16h8M15 4v5M12.5 6.5h5"></path></svg>
+                </span>
+                <div><h3>Comandos</h3><p>Realizam as ações necessárias para resolver o problema.</p></div>
+              </div>
+              <div class="part-panel-grid">
+                <div class="part-explanation">
+                  <p><strong>Entrada:</strong> <code>scanf</code> lê as notas.</p>
+                  <p><strong>Processamento:</strong> a atribuição calcula a média.</p>
+                  <p><strong>Saída:</strong> <code>printf</code> apresenta o resultado.</p>
+                </div>
+                <div class="part-code"><code><span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota1</span><span class="syn-operator">);</span>
+<span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-operator">(</span><span class="syn-variable">nota1</span> <span class="syn-operator">+</span> <span class="syn-variable">nota2</span><span class="syn-operator">)</span> <span class="syn-operator">/</span> <span class="syn-number">2.0</span><span class="syn-operator">;</span>
+<span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Media: %.2f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">);</span></code></div>
+              </div>
+            </article>
+
+            <article class="part-panel panel-return">
+              <div class="part-panel-head">
+                <span class="part-panel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M10 7 5 12l5 5M5 12h10a4 4 0 0 0 4-4V5"></path></svg>
+                </span>
+                <div><h3>Retorno</h3><p>Devolve ao sistema um valor que indica como a função terminou.</p></div>
+              </div>
+              <div class="part-panel-grid">
+                <div class="part-explanation">
+                  <p><strong>Uso comum:</strong> <code>return 0;</code> indica que a função <code>main</code> terminou normalmente.</p>
+                  <p>O retorno aparece antes da chave que fecha o bloco da função.</p>
+                </div>
+                <div class="part-code"><code><span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></code></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Como as partes se conectam</h2>
+      </div>
+
+      <div class="flow-strip">
+        <article class="flow-step">
+          <span class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M4 5h7v14H4zM13 5h7v14h-7z"></path></svg></span>
+          <h3>Biblioteca</h3>
+          <p>Prepara o acesso às funções que serão chamadas no código.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M8 4 3 12l5 8M16 4l5 8-5 8"></path></svg></span>
+          <h3>main</h3>
+          <p>Abre o bloco principal e recebe as instruções executadas.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M5 5h14v14H5zM8 9h8"></path></svg></span>
+          <h3>Variáveis</h3>
+          <p>Definem onde os valores necessários ficarão armazenados.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="m5 7 4 4-4 4M11 16h8"></path></svg></span>
+          <h3>Comandos</h3>
+          <p>Executam leitura, cálculo, decisão, repetição ou saída.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M10 7 5 12l5 5M5 12h10a4 4 0 0 0 4-4"></path></svg></span>
+          <h3>Retorno</h3>
+          <p>Finaliza a função principal e informa o término da execução.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Exemplos em C</h2>
+      </div>
+      <p class="examples-intro">Troque as abas para observar como a mesma estrutura básica permanece presente quando o programa passa de uma saída simples para problemas com entrada, cálculo e decisão.</p>
+
+      <div class="example-tabs">
+        <input type="radio" name="example-tab" id="example-1" checked>
+        <input type="radio" name="example-tab" id="example-2">
+        <input type="radio" name="example-tab" id="example-3">
+
+        <div class="example-tab-labels" role="tablist" aria-label="Exemplos de programas em C">
+          <label for="example-1" role="tab">1. Mensagem simples</label>
+          <label for="example-2" role="tab">2. Soma de dois números</label>
+          <label for="example-3" role="tab">3. Média e decisão</label>
+        </div>
+
+        <div class="example-panels">
+          <article class="example-panel panel-example-1">
+            <div class="example-problem">
+              <span class="example-level">Nível inicial</span>
+              <h3>Mostrar uma mensagem</h3>
+              <p>O programa apenas escreve uma frase na tela. Mesmo sendo curto, ele já apresenta biblioteca, função principal, comando e retorno.</p>
+              <div class="anatomy-mini-list">
+                <div class="anatomy-mini-item"><span></span><div><strong>Biblioteca</strong><p>Libera o uso de <code>printf</code>.</p></div></div>
+                <div class="anatomy-mini-item"><span></span><div><strong>main</strong><p>Contém a instrução executada.</p></div></div>
+                <div class="anatomy-mini-item"><span></span><div><strong>Comando e retorno</strong><p>Mostra a mensagem e encerra a função.</p></div></div>
+              </div>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div><span class="code-file">mensagem.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Ola, mundo!\n"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-example-2">
+            <div class="example-problem">
+              <span class="example-level">Nível intermediário</span>
+              <h3>Somar dois números inteiros</h3>
+              <p>O programa recebe dois valores, calcula a soma e mostra o resultado. A estrutura passa a incluir declaração de variáveis e comandos de entrada.</p>
+              <div class="anatomy-mini-list">
+                <div class="anatomy-mini-item"><span></span><div><strong>Variáveis</strong><p><code>a</code>, <code>b</code> e <code>soma</code> guardam os dados.</p></div></div>
+                <div class="anatomy-mini-item"><span></span><div><strong>Entrada</strong><p><code>scanf</code> recebe os dois números.</p></div></div>
+                <div class="anatomy-mini-item"><span></span><div><strong>Processamento e saída</strong><p>A atribuição soma os valores e <code>printf</code> mostra o resultado.</p></div></div>
+              </div>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div><span class="code-file">soma.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">a</span><span class="syn-operator">,</span> <span class="syn-variable">b</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">a</span><span class="syn-operator">);</span>
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">b</span><span class="syn-operator">);</span>
+
+    <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-variable">a</span> <span class="syn-operator">+</span> <span class="syn-variable">b</span><span class="syn-operator">;</span>
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Soma: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-example-3">
+            <div class="example-problem">
+              <span class="example-level">Nível intermediário</span>
+              <h3>Calcular a média e decidir a situação</h3>
+              <p>Além de entrada, cálculo e saída, o programa usa uma estrutura de decisão para escolher qual mensagem deve ser exibida.</p>
+              <div class="anatomy-mini-list">
+                <div class="anatomy-mini-item"><span></span><div><strong>Biblioteca e main</strong><p>Mantêm a mesma função estrutural dos exemplos anteriores.</p></div></div>
+                <div class="anatomy-mini-item"><span></span><div><strong>Variáveis e cálculo</strong><p>As notas são armazenadas e usadas para obter a média.</p></div></div>
+                <div class="anatomy-mini-item"><span></span><div><strong>Decisão</strong><p><code>if</code> e <code>else</code> selecionam a saída de acordo com o resultado.</p></div></div>
+              </div>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div><span class="code-file">situacao.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">float</span> <span class="syn-variable">nota1</span><span class="syn-operator">,</span> <span class="syn-variable">nota2</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota1</span><span class="syn-operator">);</span>
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota2</span><span class="syn-operator">);</span>
+
+    <span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-operator">(</span><span class="syn-variable">nota1</span> <span class="syn-operator">+</span> <span class="syn-variable">nota2</span><span class="syn-operator">)</span> <span class="syn-operator">/</span> <span class="syn-number">2.0</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">media</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7.0</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Aprovado\n"</span><span class="syn-operator">);</span>
+    <span class="syn-operator">}</span> <span class="syn-keyword">else</span> <span class="syn-operator">{</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Reprovado\n"</span><span class="syn-operator">);</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Erros comuns</h2>
+      </div>
+
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Esquecer a biblioteca</h3>
+          <p><strong>Por que acontece:</strong> o aluno usa <code>printf</code> ou <code>scanf</code> sem incluir <code>stdio.h</code>.</p>
+          <p><strong>Como evitar:</strong> identifique quais funções prontas serão utilizadas antes de escrever a <code>main</code>.</p>
+        </article>
+        <article class="error-card">
+          <h3>Escrever comandos fora da main</h3>
+          <p><strong>Por que acontece:</strong> as chaves são posicionadas sem atenção ao bloco da função.</p>
+          <p><strong>Como evitar:</strong> confira se variáveis e comandos estão entre a chave de abertura e a chave de fechamento.</p>
+        </article>
+        <article class="error-card">
+          <h3>Usar variável antes de declarar</h3>
+          <p><strong>Por que acontece:</strong> o aluno começa pela leitura ou pelo cálculo e esquece de reservar os dados.</p>
+          <p><strong>Como evitar:</strong> liste os valores necessários e declare cada variável antes do primeiro uso.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <span class="marker"></span>
+        <h2>Perguntas rápidas</h2>
+      </div>
+
+      <div class="question-list">
+        <details>
+          <summary>Qual parte indica onde a execução de um programa em C começa?</summary>
+          <p>A função <code>main</code>. As instruções do programa são executadas a partir do bloco dessa função.</p>
+        </details>
+        <details>
+          <summary>Por que o arquivo <code>stdio.h</code> aparece antes da função main?</summary>
+          <p>Porque ele declara recursos de entrada e saída, como <code>scanf</code> e <code>printf</code>, que serão usados dentro do programa.</p>
+        </details>
+        <details>
+          <summary>Em que ordem variáveis, comandos e retorno costumam aparecer dentro da main?</summary>
+          <p>Primeiro são declaradas as variáveis, depois aparecem os comandos que resolvem o problema e, ao final, o retorno da função.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir localizar, explicar e organizar as partes essenciais de um programa simples em C antes de ampliar sua lógica.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

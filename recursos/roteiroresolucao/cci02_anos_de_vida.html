@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missões de programação: tempo vivido</title>
+  <meta name="description" content="Roteiro visual por missões para interpretar, planejar e validar um programa em C que estima o tempo vivido.">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <style>
+    :root {
+      --emerald-950: #022c22;
+      --emerald-900: #064e3b;
+      --emerald-800: #065f46;
+      --emerald-700: #047857;
+      --emerald-600: #059669;
+      --emerald-100: #d1fae5;
+      --emerald-50: #ecfdf5;
+      --teal-700: #0f766e;
+      --teal-100: #ccfbf1;
+      --lime-600: #65a30d;
+      --lime-100: #ecfccb;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --amber-50: #fffbeb;
+      --red-700: #b91c1c;
+      --red-100: #fee2e2;
+      --red-50: #fef2f2;
+      --blue-700: #1d4ed8;
+      --blue-100: #dbeafe;
+      --slate-950: #0f172a;
+      --slate-900: #172033;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
+      --shadow-md: 0 20px 55px rgba(15, 23, 42, .11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-950);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(5, 150, 105, .11), transparent 30rem),
+        radial-gradient(circle at 94% 13%, rgba(101, 163, 13, .08), transparent 28rem),
+        var(--slate-50);
+      padding: 24px 16px 46px;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(5, 150, 105, .32);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 26px;
+      align-items: center;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 84% 15%, rgba(255,255,255,.11), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900) 58%, var(--emerald-700));
+      box-shadow: 0 24px 60px rgba(2, 44, 34, .23);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #34d399, #a3e635, #2dd4bf);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.11);
+      color: #ecfdf5;
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      color: var(--white);
+      font-size: clamp(2rem, 4.8vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .hero-description { max-width: 760px; color: #d1fae5; font-size: 1.02rem; }
+
+    .hero-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.35fr;
+      gap: 12px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(9px);
+    }
+
+    .flow-chip {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,.10);
+      text-align: center;
+    }
+    .flow-chip strong { display: block; color: white; font-size: 1.05rem; }
+    .flow-chip small { color: #a7f3d0; font-weight: 700; }
+    .flow-arrow { color: #bef264; font-size: 1.35rem; text-align: center; }
+    .flow-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .context-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kicker {
+      margin-bottom: 6px;
+      color: var(--emerald-700);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    h2 { color: var(--slate-950); font-size: 1.35rem; line-height: 1.2; letter-spacing: -.02em; }
+    h3 { color: var(--slate-900); font-size: 1.02rem; line-height: 1.25; }
+    p { color: var(--slate-600); }
+
+    .problem-statement {
+      margin-top: 13px;
+      padding: 16px 17px;
+      border: 1px solid var(--emerald-100);
+      border-left: 5px solid var(--emerald-600);
+      border-radius: var(--radius-md);
+      background: var(--emerald-50);
+      color: var(--slate-950);
+      font-weight: 780;
+    }
+
+    .problem-statement small { display: block; margin-top: 7px; color: var(--slate-600); font-weight: 600; }
+
+    .meta-stack { display: grid; gap: 9px; }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+    }
+    .meta-icon {
+      width: 31px; height: 31px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      font-weight: 900;
+    }
+    .meta-row strong { display: block; color: var(--slate-900); font-size: .86rem; }
+    .meta-row span { color: var(--slate-600); font-size: .83rem; }
+
+    .mission-map {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      padding: 15px 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .map-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .map-top strong { color: var(--slate-900); font-size: .93rem; }
+    .map-top span { color: var(--slate-500); font-size: .83rem; }
+    .map-line { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: center; }
+    .map-connector { height: 3px; border-radius: 999px; background: var(--slate-200); transition: background .3s ease; }
+    .map-connector.done { background: linear-gradient(90deg, var(--emerald-600), #84cc16); }
+    .map-node {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      transition: .25s ease;
+    }
+    .map-node-number {
+      width: 30px; height: 30px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border: 2px solid var(--slate-300);
+      border-radius: 50%;
+      background: var(--white);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .map-node strong { display: block; color: inherit; font-size: .83rem; line-height: 1.12; }
+    .map-node small { display: block; margin-top: 2px; color: inherit; font-size: .68rem; text-transform: uppercase; font-weight: 850; letter-spacing: .04em; }
+    .map-node.active { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); box-shadow: 0 0 0 3px rgba(5,150,105,.07); }
+    .map-node.active .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.done { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); }
+    .map-node.done .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.locked { opacity: .62; }
+
+    .mission {
+      --mission-color: var(--emerald-600);
+      --mission-soft: var(--emerald-50);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--mission-color);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+    }
+    .mission[data-mission="2"] { --mission-color: var(--teal-700); --mission-soft: #f0fdfa; }
+    .mission[data-mission="3"] { --mission-color: var(--lime-600); --mission-soft: #f7fee7; }
+    .mission.locked { opacity: .72; }
+    .mission.active { box-shadow: var(--shadow-md); }
+    .mission.completed { border-color: var(--emerald-100); }
+
+    .mission-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 20px 22px;
+      background: var(--white);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mission.locked .mission-toggle { cursor: not-allowed; }
+    .mission-icon {
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 17px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 24%, transparent);
+      font-size: 1.25rem;
+      font-weight: 950;
+    }
+    .mission-heading small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--mission-color);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mission-heading h2 { margin: 0; font-size: 1.35rem; }
+    .mission-heading p { margin-top: 4px; font-size: .9rem; }
+    .mission-side { display: flex; align-items: center; gap: 10px; }
+    .mission-meta {
+      display: grid;
+      gap: 3px;
+      justify-items: end;
+      color: var(--slate-500);
+      font-size: .77rem;
+      white-space: nowrap;
+    }
+    .mission-meta strong { color: var(--slate-800); font-size: .82rem; }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .mission.active .state-pill { background: var(--mission-soft); color: var(--mission-color); }
+    .mission.completed .state-pill { background: var(--emerald-50); color: var(--emerald-800); }
+    .chevron { color: var(--slate-400); font-size: 1.15rem; transition: transform .22s ease; }
+    .mission.open .chevron { transform: rotate(180deg); }
+
+    .mission-content { display: none; padding: 0 22px 24px; }
+    .mission.open .mission-content { display: grid; gap: 22px; }
+
+    .mission-objective {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: var(--mission-soft);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 20%, transparent);
+    }
+    .objective-icon {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 11px; background: white; color: var(--mission-color); font-weight: 950;
+    }
+    .mission-objective strong { display: block; color: var(--slate-900); font-size: .88rem; }
+    .mission-objective p { font-size: .84rem; }
+    .seal-preview { color: var(--mission-color); font-size: .76rem; font-weight: 900; text-align: right; }
+
+    .task-block { display: grid; gap: 12px; padding-top: 2px; }
+    .task-head { display: flex; gap: 11px; align-items: flex-start; }
+    .task-index {
+      width: 29px; height: 29px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+    .task-head h3 { margin-bottom: 3px; }
+    .task-head p { font-size: .88rem; }
+
+    .choice-grid { display: grid; gap: 9px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) 22px;
+      gap: 11px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: var(--slate-300); box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-letter {
+      width: 33px; height: 33px; display: grid; place-items: center;
+      border: 1px solid var(--slate-300); border-radius: 10px;
+      color: var(--slate-600); background: var(--slate-50); font-size: .8rem; font-weight: 900;
+    }
+    .choice-copy strong { display: block; margin-bottom: 2px; color: var(--slate-900); font-size: .91rem; }
+    .choice-copy span { display: block; color: var(--slate-600); font-size: .84rem; }
+    .radio-mark {
+      width: 21px; height: 21px; margin-top: 5px;
+      border: 2px solid var(--slate-300); border-radius: 50%; background: white; position: relative;
+    }
+    .choice:has(input:checked) { border-color: var(--mission-color); background: var(--mission-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 9%, transparent); }
+    .choice:has(input:checked) .choice-letter { border-color: var(--mission-color); background: var(--mission-color); color: white; }
+    .choice:has(input:checked) .radio-mark { border-color: var(--mission-color); }
+    .choice:has(input:checked) .radio-mark::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--mission-color); }
+
+    .eps-flow { display: grid; grid-template-columns: 1fr auto 1.25fr auto 1fr; gap: 10px; align-items: stretch; }
+    .eps-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .eps-card strong { color: var(--slate-900); font-size: .83rem; letter-spacing: .04em; text-transform: uppercase; }
+    .eps-card small { color: var(--slate-500); font-size: .75rem; }
+    .eps-arrow { display: grid; place-items: center; color: var(--emerald-600); font-size: 1.35rem; font-weight: 900; }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 34px 9px 10px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    select:focus { border-color: var(--mission-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent); }
+
+    .expression-builder {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+    .ide-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #263244;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    .ide-dots { display: flex; gap: 6px; }
+    .ide-dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; }
+    .expression-lines { display: grid; gap: 11px; padding: 16px; }
+    .expression-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .expression-label { color: #a7f3d0; font: 700 .86rem Consolas, Monaco, monospace; white-space: nowrap; }
+    .expression-line select { min-height: 42px; border-color: #334155; background: #172033; color: #f8fafc; font-family: Consolas, Monaco, monospace; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .test-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .test-input { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .test-input strong { color: var(--slate-900); font-size: .86rem; }
+    .test-input span { padding: 4px 8px; border-radius: 8px; background: var(--white); color: var(--emerald-800); font: 800 .8rem Consolas, monospace; border: 1px solid var(--slate-200); }
+
+    .branch {
+      display: none;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .87rem;
+    }
+    .branch.show { display: block; animation: reveal .18s ease; }
+    .branch strong { display: block; color: var(--amber-700); margin-bottom: 3px; }
+
+    .help-row { display: flex; justify-content: flex-start; }
+    .hint-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 999px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      cursor: pointer;
+      font-size: .84rem;
+      font-weight: 850;
+      transition: .16s ease;
+    }
+    .hint-btn:hover { transform: translateY(-1px); background: #dcfce7; }
+    .hint-btn:disabled { cursor: default; opacity: .62; transform: none; }
+    .hint-drawer {
+      display: none;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 14px;
+      background: var(--emerald-50);
+    }
+    .hint-drawer.show { display: grid; animation: reveal .18s ease; }
+    .hint-number { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: var(--emerald-700); color: white; font-size: .75rem; font-weight: 900; }
+    .hint-drawer strong { display: block; color: var(--emerald-900); font-size: .85rem; }
+    .hint-drawer p { margin-top: 2px; font-size: .84rem; }
+
+    .mission-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 3px; }
+    .primary-btn, .secondary-btn {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .primary-btn { background: var(--mission-color); color: white; box-shadow: 0 8px 20px color-mix(in srgb, var(--mission-color) 22%, transparent); }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(.94); }
+    .primary-btn:disabled { cursor: default; opacity: .62; transform: none; box-shadow: none; }
+    .secondary-btn { border: 1px solid var(--slate-300); background: white; color: var(--slate-700); }
+    .secondary-btn:hover { background: var(--slate-50); transform: translateY(-1px); }
+
+    .feedback { display: none; flex: 1 1 310px; padding: 11px 13px; border-radius: 12px; font-size: .86rem; font-weight: 750; }
+    .feedback.show { display: block; }
+    .feedback.warn { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-100); }
+    .feedback.bad { background: var(--red-50); color: var(--red-700); border: 1px solid var(--red-100); }
+    .feedback.ok { background: var(--emerald-50); color: var(--emerald-800); border: 1px solid var(--emerald-100); }
+
+    .mission-result {
+      display: none;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--emerald-50), #f7fee7);
+    }
+    .mission-result.show { display: grid; animation: reveal .24s ease; }
+    .result-check { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--emerald-600); color: white; font-size: 1.15rem; font-weight: 950; }
+    .mission-result strong { display: block; color: var(--emerald-900); margin-bottom: 3px; }
+    .mission-result p { font-size: .84rem; }
+    .seal {
+      min-width: 142px;
+      padding: 9px 11px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 12px;
+      background: white;
+      color: var(--emerald-800);
+      text-align: center;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+    .code-body { padding: 12px 0; overflow-x: auto; }
+    .code-line {
+      display: grid;
+      grid-template-columns: 43px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      color: #e2e8f0;
+      font: .84rem/1.55 Consolas, Monaco, "Courier New", monospace;
+      white-space: pre;
+    }
+    .line-number { padding-right: 12px; color: #64748b; text-align: right; user-select: none; }
+    .line-code { padding-right: 18px; }
+    .code-line.entry { background: rgba(29,78,216,.13); border-left: 4px solid #60a5fa; }
+    .code-line.process { background: rgba(5,150,105,.13); border-left: 4px solid #34d399; }
+    .code-line.output { background: rgba(101,163,13,.13); border-left: 4px solid #a3e635; }
+    .tok-pre { color: #c084fc; }
+    .tok-type { color: #67e8f9; }
+    .tok-fn { color: #fde68a; }
+    .tok-str { color: #86efac; }
+    .tok-num { color: #fca5a5; }
+    .tok-var { color: #e2e8f0; }
+    .tok-comment { color: #94a3b8; font-style: italic; }
+    .code-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-top: 1px solid #263244; background: #172033; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #cbd5e1; font-size: .73rem; font-weight: 800; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-dot { background: #60a5fa; }
+    .process-dot { background: #34d399; }
+    .output-dot { background: #a3e635; }
+
+    .completion {
+      display: none;
+      padding: 27px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 92% 10%, rgba(163,230,53,.15), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+    .completion.show { display: block; animation: reveal .3s ease; }
+    .completion-label { color: #bef264; font-size: .75rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .completion h2 { margin-top: 5px; color: white; font-size: 1.65rem; }
+    .completion > p { margin-top: 7px; color: #d1fae5; }
+    .completion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 17px; }
+    .completion-item { padding: 13px; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: rgba(255,255,255,.07); }
+    .completion-item strong { display: block; color: white; font-size: .86rem; }
+    .completion-item span { display: block; margin-top: 3px; color: #d1fae5; font-size: .79rem; }
+    .completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    .completion .secondary-btn { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.10); color: white; }
+    .completion .secondary-btn:hover { background: rgba(255,255,255,.16); }
+
+    .resource-credit { padding: 16px 10px 0; text-align: center; color: var(--slate-500); font-size: .82rem; }
+    .resource-credit a { color: var(--emerald-700); font-weight: 800; text-decoration: none; }
+    .resource-credit a:hover { text-decoration: underline; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 920px) {
+      .hero, .context-card { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 560px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .eps-flow { grid-template-columns: 1fr; }
+      .eps-arrow { transform: rotate(90deg); }
+      .map-line { grid-template-columns: 1fr 28px 1fr 28px 1fr; }
+      .map-node { align-items: center; justify-content: center; padding: 8px; }
+      .map-node-copy { display: none; }
+      .completion-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      body { padding: 12px 10px 30px; }
+      .shell { gap: 12px; }
+      .hero { padding: 22px 18px; border-radius: 21px; }
+      .hero-flow { grid-template-columns: 1fr auto 1fr; padding: 14px; gap: 8px; }
+      .hero-flow > .flow-arrow:last-of-type { display: none; }
+      .flow-results { grid-column: 1 / -1; }
+      .flow-chip { padding: 10px 7px; }
+      .flow-chip strong { font-size: .86rem; }
+      .flow-chip small { font-size: .68rem; }
+      .context-card { padding: 17px; border-radius: 18px; }
+      .mission-map { top: 4px; padding: 11px; border-radius: 15px; }
+      .map-top { margin-bottom: 9px; }
+      .map-top span { display: none; }
+      .mission { border-radius: 20px; }
+      .mission-toggle { grid-template-columns: auto 1fr; padding: 16px; }
+      .mission-icon { width: 44px; height: 44px; border-radius: 14px; }
+      .mission-side { grid-column: 1 / -1; justify-content: space-between; padding-left: 59px; }
+      .mission-meta { justify-items: start; display: flex; gap: 8px; align-items: center; }
+      .mission-content { padding: 0 16px 18px; }
+      .mission-objective { grid-template-columns: auto 1fr; }
+      .seal-preview { grid-column: 1 / -1; text-align: left; padding-left: 45px; }
+      .choice { grid-template-columns: 32px 1fr 20px; padding: 11px; gap: 9px; }
+      .choice-letter { width: 29px; height: 29px; }
+      .mission-result { grid-template-columns: auto 1fr; }
+      .seal { grid-column: 1 / -1; margin-left: 56px; text-align: left; }
+      .mission-actions { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .feedback { flex-basis: auto; }
+      .completion { padding: 21px 18px; border-radius: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="badge-row">
+          <span class="badge">Roteiro por missões</span>
+          <span class="badge">CCI02</span>
+          <span class="badge">Linguagem C</span>
+        </div>
+        <h1>Do ano de nascimento ao tempo vivido</h1>
+        <p class="hero-description">Interprete o enunciado, construa a estratégia e valide a solução sem percorrer uma longa sequência de etapas isoladas.</p>
+      </div>
+
+      <div class="hero-flow" aria-label="Exemplo do fluxo de transformação">
+        <div class="flow-chip"><small>Entrada</small><strong>2021</strong></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-chip"><small>Diferença</small><strong>5 anos</strong></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-results">
+          <div class="flow-chip"><small>Conversão</small><strong>60 meses</strong></div>
+          <div class="flow-chip"><small>Conversão</small><strong>1825 dias</strong></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="context-card" aria-label="Contexto da atividade">
+      <article>
+        <p class="kicker">Problema a resolver</p>
+        <h2>Calcular quanto tempo uma pessoa já viveu</h2>
+        <div class="problem-statement">
+          Faça um algoritmo que leia o ano em que uma pessoa nasceu e imprima quantos anos, meses e dias essa pessoa já viveu. Considere ano com 365 dias e mês com 30 dias.
+          <small>Como o enunciado informa apenas o ano de nascimento, o cálculo será uma aproximação por anos completos.</small>
+        </div>
+      </article>
+
+      <aside class="meta-stack" aria-label="Resumo pedagógico">
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>Competência</strong><span>CCI02 · Fluxo verificável de entrada, processamento e saída</span></div></div>
+        <div class="meta-row"><span class="meta-icon">3</span><div><strong>Percurso</strong><span>Três missões curtas e progressivas</span></div></div>
+        <div class="meta-row"><span class="meta-icon">≈</span><div><strong>Resultado</strong><span>Estimativa em anos, meses e dias totais</span></div></div>
+      </aside>
+    </section>
+
+    <nav class="mission-map" aria-label="Mapa das missões">
+      <div class="map-top">
+        <strong id="progressText">Missão atual: 1 de 3</strong>
+        <span>Conclua a missão ativa para desbloquear a próxima.</span>
+      </div>
+      <div class="map-line">
+        <div class="map-node active" data-map="1">
+          <span class="map-node-number">1</span>
+          <span class="map-node-copy"><strong>Interpretar</strong><small>Em andamento</small></span>
+        </div>
+        <div class="map-connector" data-connector="1"></div>
+        <div class="map-node locked" data-map="2">
+          <span class="map-node-number">2</span>
+          <span class="map-node-copy"><strong>Planejar</strong><small>Bloqueada</small></span>
+        </div>
+        <div class="map-connector" data-connector="2"></div>
+        <div class="map-node locked" data-map="3">
+          <span class="map-node-number">3</span>
+          <span class="map-node-copy"><strong>Validar</strong><small>Bloqueada</small></span>
+        </div>
+      </div>
+    </nav>
+
+    <section class="mission active open" data-mission="1">
+      <button class="mission-toggle" type="button" aria-expanded="true">
+        <span class="mission-icon">1</span>
+        <span class="mission-heading">
+          <small>Missão 1 de 3</small>
+          <h2>Ler como programador</h2>
+          <p>Descubra o que entra, o que precisa ser calculado e o que deve aparecer.</p>
+        </span>
+        <span class="mission-side">
+          <span class="mission-meta"><strong>3 min</strong><span>1 decisão central</span></span>
+          <span class="state-pill" data-state>Atual</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective">
+          <span class="objective-icon">◎</span>
+          <div><strong>Objetivo da missão</strong><p>Construir um modelo coerente de entrada, processamento e saída.</p></div>
+          <span class="seal-preview">Selo: Problema decifrado</span>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Escolha a interpretação mais coerente</h3><p>Observe quais dados realmente estão disponíveis no enunciado.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Interpretação do problema">
+            <label class="choice">
+              <input type="radio" name="m1_interpretation" value="exact">
+              <span class="choice-letter">A</span>
+              <span class="choice-copy"><strong>Cálculo exato da idade</strong><span>Determinar meses e dias restantes sem pedir a data completa.</span></span>
+              <span class="radio-mark"></span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="m1_interpretation" value="approx">
+              <span class="choice-letter">B</span>
+              <span class="choice-copy"><strong>Aproximação por anos completos</strong><span>Calcular os anos e convertê-los em totais aproximados de meses e dias.</span></span>
+              <span class="radio-mark"></span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="m1_interpretation" value="loop">
+              <span class="choice-letter">C</span>
+              <span class="choice-copy"><strong>Contagem por repetição</strong><span>Acrescentar um dia a cada repetição até alcançar o ano atual.</span></span>
+              <span class="radio-mark"></span>
+            </label>
+          </div>
+          <div class="branch" id="m1_interpretation_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Monte o fluxo EPS</h3><p>As três partes aparecem juntas para representar o problema visualmente.</p></div></div>
+          <div class="eps-flow">
+            <div class="eps-card"><strong>Entrada</strong><small>Dado fornecido pelo usuário</small><select id="m1_input"><option value="">Selecione</option><option value="birthYear">Ano de nascimento</option><option value="currentYear">Ano atual</option><option value="fullDate">Dia, mês e ano</option></select></div>
+            <div class="eps-arrow">→</div>
+            <div class="eps-card"><strong>Processamento</strong><small>Transformação aplicada</small><select id="m1_process"><option value="">Selecione</option><option value="correct">Subtrair os anos e converter</option><option value="sum">Somar os dois anos</option><option value="repeat">Repetir uma contagem</option></select></div>
+            <div class="eps-arrow">→</div>
+            <div class="eps-card"><strong>Saída</strong><small>Resultado apresentado</small><select id="m1_output"><option value="">Selecione</option><option value="elapsed">Anos, meses e dias vividos</option><option value="current">Somente o ano atual</option><option value="birth">Somente o nascimento</option></select></div>
+          </div>
+          <div class="branch" id="m1_eps_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
+
+        <div class="mission-actions">
+          <button class="primary-btn" type="button" data-check="1">Concluir missão</button>
+          <p class="feedback" id="m1_feedback" aria-live="polite"></p>
+        </div>
+
+        <div class="mission-result" id="m1_result">
+          <span class="result-check">✓</span>
+          <div><strong>Missão concluída</strong><p>Você identificou a entrada, o processamento e as três saídas aproximadas.</p></div>
+          <span class="seal">Selo conquistado<br>Problema decifrado</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="2">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">2</span>
+        <span class="mission-heading">
+          <small>Missão 2 de 3</small>
+          <h2>Montar a estratégia</h2>
+          <p>Escolha a arquitetura da solução e construa as expressões principais.</p>
+        </span>
+        <span class="mission-side">
+          <span class="mission-meta"><strong>4 min</strong><span>3 expressões</span></span>
+          <span class="state-pill" data-state>Bloqueada</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective">
+          <span class="objective-icon">◇</span>
+          <div><strong>Objetivo da missão</strong><p>Selecionar o fluxo mais simples e manter as unidades coerentes.</p></div>
+          <span class="seal-preview">Selo: Estratégia construída</span>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Escolha a arquitetura da solução</h3><p>Decida quais estruturas são realmente necessárias.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Estratégia da solução">
+            <label class="choice"><input type="radio" name="m2_strategy" value="a"><span class="choice-letter">A</span><span class="choice-copy"><strong>Fluxo sequencial</strong><span>Ler o nascimento, adotar 2026 como referência, executar três atribuições e imprimir.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_strategy" value="b"><span class="choice-letter">B</span><span class="choice-copy"><strong>Decisão com if</strong><span>Escolher apenas uma unidade para mostrar conforme o caso.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_strategy" value="c"><span class="choice-letter">C</span><span class="choice-copy"><strong>Contagem com laço</strong><span>Acrescentar valores até alcançar a quantidade vivida.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_strategy" value="d"><span class="choice-letter">D</span><span class="choice-copy"><strong>Papéis invertidos</strong><span>Ler o ano atual e produzir o ano de nascimento como resultado.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m2_strategy_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Complete o núcleo do processamento</h3><p>Três expressões substituem as antigas etapas separadas de variáveis e pseudocódigo.</p></div></div>
+          <div class="expression-builder">
+            <div class="ide-bar"><span class="ide-dots"><span class="ide-dot"></span><span class="ide-dot"></span><span class="ide-dot"></span></span><span>processamento.c</span></div>
+            <div class="expression-lines">
+              <div class="expression-line"><span class="expression-label">anosVividos =</span><select id="m2_years"><option value="">selecione a expressão</option><option value="correct">anoAtual - anoNascimento</option><option value="inverse">anoNascimento - anoAtual</option><option value="sum">anoAtual + anoNascimento</option></select></div>
+              <div class="expression-line"><span class="expression-label">mesesVividos =</span><select id="m2_months"><option value="">selecione a expressão</option><option value="correct">anosVividos * 12</option><option value="thirty">anosVividos * 30</option><option value="current">anoAtual * 12</option></select></div>
+              <div class="expression-line"><span class="expression-label">diasVividos =</span><select id="m2_days"><option value="">selecione a expressão</option><option value="correct">anosVividos * 365</option><option value="monthDays">mesesVividos * 365</option><option value="birthDays">anoNascimento * 365</option></select></div>
+            </div>
+          </div>
+          <div class="branch" id="m2_expression_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
+
+        <div class="mission-actions">
+          <button class="primary-btn" type="button" data-check="2">Concluir missão</button>
+          <p class="feedback" id="m2_feedback" aria-live="polite"></p>
+        </div>
+
+        <div class="mission-result" id="m2_result">
+          <span class="result-check">✓</span>
+          <div><strong>Missão concluída</strong><p>Você construiu um fluxo sequencial e preservou a coerência das três unidades.</p></div>
+          <span class="seal">Selo conquistado<br>Estratégia construída</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="3">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">3</span>
+        <span class="mission-heading">
+          <small>Missão 3 de 3</small>
+          <h2>Testar e validar</h2>
+          <p>Confira casos de teste e relacione a estratégia com o código em C.</p>
+        </span>
+        <span class="mission-side">
+          <span class="mission-meta"><strong>5 min</strong><span>3 testes</span></span>
+          <span class="state-pill" data-state>Bloqueada</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective">
+          <span class="objective-icon">✓</span>
+          <div><strong>Objetivo da missão</strong><p>Verificar o comportamento antes de aceitar a implementação final.</p></div>
+          <span class="seal-preview">Selo: Solução validada</span>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Confira três casos de teste</h3><p>Cada cartão reúne a entrada e a saída completa.</p></div></div>
+          <div class="test-grid">
+            <div class="test-card"><div class="test-input"><strong>Reconheça</strong><span>2021</span></div><select id="m3_case1"><option value="">Selecione a saída</option><option value="correct">5 anos · 60 meses · 1825 dias</option><option value="wrong1">5 anos · 150 meses · 1825 dias</option><option value="wrong2">-5 anos · -60 meses · -1825 dias</option></select></div>
+            <div class="test-card"><div class="test-input"><strong>Aplique</strong><span>2006</span></div><select id="m3_case2"><option value="">Selecione a saída</option><option value="wrong1">20 anos · 600 meses · 7300 dias</option><option value="correct">20 anos · 240 meses · 7300 dias</option><option value="wrong2">4032 anos · 48384 meses · 1471680 dias</option></select></div>
+            <div class="test-card"><div class="test-input"><strong>Analise</strong><span>2026</span></div><select id="m3_case3"><option value="">Selecione a saída</option><option value="wrong1">1 ano · 12 meses · 365 dias</option><option value="wrong2">2026 anos · 24312 meses · 739490 dias</option><option value="correct">0 anos · 0 meses · 0 dias</option></select></div>
+          </div>
+          <div class="branch" id="m3_test_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Escolha a entrada e a saída corretas em C</h3><p>O trecho deve ler um inteiro e apresentar os três resultados.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Entrada e saída em C">
+            <label class="choice"><input type="radio" name="m3_io" value="a"><span class="choice-letter">A</span><span class="choice-copy"><strong>Leitura e exibição coerentes</strong><span><code>scanf("%d", &amp;anoNascimento);</code> e <code>printf</code> com anos, meses e dias.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_io" value="b"><span class="choice-letter">B</span><span class="choice-copy"><strong>Formato e endereço incorretos</strong><span><code>scanf("%f", anoNascimento);</code> seguido da impressão de apenas um valor.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_io" value="c"><span class="choice-letter">C</span><span class="choice-copy"><strong>Comandos trocados</strong><span>Usar <code>printf</code> para ler e <code>scanf</code> para mostrar.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m3_io_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
+
+        <div class="mission-actions">
+          <button class="primary-btn" type="button" data-check="3">Concluir missão</button>
+          <p class="feedback" id="m3_feedback" aria-live="polite"></p>
+        </div>
+
+        <div class="mission-result" id="m3_result">
+          <span class="result-check">✓</span>
+          <div><strong>Missão concluída</strong><p>Você validou os cálculos e reconheceu a estrutura correta de entrada e saída.</p></div>
+          <span class="seal">Selo conquistado<br>Solução validada</span>
+        </div>
+
+        <div class="task-block" id="finalCodeBlock" hidden>
+          <div class="task-head"><span class="task-index">C</span><div><h3>Código final organizado por função pedagógica</h3><p>As linhas destacadas mostram entrada, processamento e saída.</p></div></div>
+          <div class="code-window" role="region" aria-label="Código final em C" tabindex="0">
+            <div class="ide-bar"><span class="ide-dots"><span class="ide-dot"></span><span class="ide-dot"></span><span class="ide-dot"></span></span><span>tempo_vivido.c</span></div>
+            <div class="code-body">
+              <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;stdio.h&gt;</span></span></div>
+              <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+              <div class="code-line"><span class="line-number">3</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
+              <div class="code-line"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">anoNascimento</span>;</span></div>
+              <div class="code-line"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">anoAtual</span> = <span class="tok-num">2026</span>;</span></div>
+              <div class="code-line"><span class="line-number">6</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">anosVividos</span>, <span class="tok-var">mesesVividos</span>, <span class="tok-var">diasVividos</span>;</span></div>
+              <div class="code-line"><span class="line-number">7</span><span class="line-code"></span></div>
+              <div class="code-line entry"><span class="line-number">8</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Digite o ano de nascimento: "</span>);</span></div>
+              <div class="code-line entry"><span class="line-number">9</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">"%d"</span>, &amp;<span class="tok-var">anoNascimento</span>);</span></div>
+              <div class="code-line"><span class="line-number">10</span><span class="line-code"></span></div>
+              <div class="code-line process"><span class="line-number">11</span><span class="line-code">    <span class="tok-var">anosVividos</span> = <span class="tok-var">anoAtual</span> - <span class="tok-var">anoNascimento</span>;</span></div>
+              <div class="code-line process"><span class="line-number">12</span><span class="line-code">    <span class="tok-var">mesesVividos</span> = <span class="tok-var">anosVividos</span> * <span class="tok-num">12</span>;</span></div>
+              <div class="code-line process"><span class="line-number">13</span><span class="line-code">    <span class="tok-var">diasVividos</span> = <span class="tok-var">anosVividos</span> * <span class="tok-num">365</span>;</span></div>
+              <div class="code-line"><span class="line-number">14</span><span class="line-code"></span></div>
+              <div class="code-line output"><span class="line-number">15</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Tempo aproximado: %d anos, %d meses e %d dias.\n"</span>,</span></div>
+              <div class="code-line output"><span class="line-number">16</span><span class="line-code">           <span class="tok-var">anosVividos</span>, <span class="tok-var">mesesVividos</span>, <span class="tok-var">diasVividos</span>);</span></div>
+              <div class="code-line"><span class="line-number">17</span><span class="line-code"></span></div>
+              <div class="code-line"><span class="line-number">18</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
+              <div class="code-line"><span class="line-number">19</span><span class="line-code">}</span></div>
+            </div>
+            <div class="code-legend"><span class="legend-item"><span class="legend-dot entry-dot"></span>Entrada</span><span class="legend-item"><span class="legend-dot process-dot"></span>Processamento</span><span class="legend-item"><span class="legend-dot output-dot"></span>Saída</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="completion" id="completionPanel" aria-live="polite">
+      <span class="completion-label">Percurso concluído</span>
+      <h2>Do enunciado ao programa em C</h2>
+      <p>Você concluiu as três missões e reuniu evidências da competência CCI02.</p>
+      <div class="completion-grid">
+        <div class="completion-item"><strong>✓ Problema decifrado</strong><span>Entrada, processamento e saída identificados.</span></div>
+        <div class="completion-item"><strong>✓ Estratégia construída</strong><span>Fluxo sequencial e expressões coerentes.</span></div>
+        <div class="completion-item"><strong>✓ Solução validada</strong><span>Casos de teste e implementação conferidos.</span></div>
+      </div>
+      <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer percurso</button></div>
+    </section>
+
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <script>
+    const completed = new Set();
+    const hintState = { 1: 0, 2: 0, 3: 0 };
+    const hints = {
+      1: [
+        ["Pista", "O usuário fornece apenas o ano de nascimento."],
+        ["Pergunta guia", "Sem mês e dia, é possível descobrir uma duração exata ou apenas uma aproximação por anos completos?"],
+        ["Começo da resposta", "Entra o ano de nascimento; calcula-se a diferença para 2026; saem anos, meses e dias aproximados."]
+      ],
+      2: [
+        ["Pista", "Primeiro descubra os anos vividos. Os outros resultados dependem desse valor."],
+        ["Pergunta guia", "Quantos meses há em um ano e quantos dias o enunciado manda considerar em cada ano?"],
+        ["Começo da resposta", "anosVividos = 2026 - anoNascimento; mesesVividos = anosVividos × 12; diasVividos = anosVividos × 365."]
+      ],
+      3: [
+        ["Pista", "Aplique sempre as mesmas três expressões aos anos de nascimento apresentados."],
+        ["Pergunta guia", "Para ler um inteiro com scanf, qual especificador e qual símbolo antes da variável são necessários?"],
+        ["Começo da resposta", "Use %d e &anoNascimento; depois mostre as três variáveis calculadas."]
+      ]
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+    const value = (id) => document.getElementById(id).value;
+    const selected = (name) => document.querySelector(`input[name="${name}"]:checked`);
+
+    function setBranch(id, title = "", text = "") {
+      const box = document.getElementById(id);
+      if (!title) {
+        box.classList.remove("show");
+        box.innerHTML = "";
+        return;
+      }
+      box.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+      box.classList.add("show");
+    }
+
+    function setFeedback(mission, text, type) {
+      const box = document.getElementById(`m${mission}_feedback`);
+      box.textContent = text;
+      box.className = `feedback show ${type}`;
+    }
+
+    function openMission(number, scroll = true) {
+      const target = $(`.mission[data-mission="${number}"]`);
+      if (!target || target.classList.contains("locked")) return;
+      $$(".mission").forEach((mission) => {
+        const isTarget = Number(mission.dataset.mission) === number;
+        mission.classList.toggle("open", isTarget);
+        mission.classList.toggle("active", isTarget && !mission.classList.contains("completed"));
+        $(".mission-toggle", mission).setAttribute("aria-expanded", String(isTarget));
+      });
+      updateMap(number);
+      if (scroll) setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    }
+
+    function unlockMission(number) {
+      const mission = $(`.mission[data-mission="${number}"]`);
+      if (!mission) return;
+      mission.classList.remove("locked");
+      const toggle = $(".mission-toggle", mission);
+      toggle.disabled = false;
+      $("[data-state]", mission).textContent = "Disponível";
+    }
+
+    function updateMap(activeMission = null) {
+      for (let i = 1; i <= 3; i++) {
+        const node = $(`[data-map="${i}"]`);
+        const label = $("small", node);
+        node.classList.remove("active", "done", "locked");
+        if (completed.has(i)) {
+          node.classList.add("done");
+          $(".map-node-number", node).textContent = "✓";
+          label.textContent = "Concluída";
+        } else if (i === activeMission) {
+          node.classList.add("active");
+          $(".map-node-number", node).textContent = i;
+          label.textContent = "Em andamento";
+        } else if (i > completed.size + 1) {
+          node.classList.add("locked");
+          $(".map-node-number", node).textContent = i;
+          label.textContent = "Bloqueada";
+        } else {
+          $(".map-node-number", node).textContent = i;
+          label.textContent = "Disponível";
+        }
+      }
+      for (let i = 1; i <= 2; i++) $(`[data-connector="${i}"]`).classList.toggle("done", completed.has(i));
+      const next = activeMission || Math.min(completed.size + 1, 3);
+      document.getElementById("progressText").textContent = completed.size === 3 ? "Percurso concluído: 3 de 3" : `Missão atual: ${next} de 3`;
+    }
+
+    function completeMission(number, button) {
+      if (completed.has(number)) return;
+      completed.add(number);
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.add("completed");
+      mission.classList.remove("active");
+      $("[data-state]", mission).textContent = "Concluída";
+      document.getElementById(`m${number}_result`).classList.add("show");
+      button.textContent = "Missão concluída";
+      button.disabled = true;
+
+      if (number < 3) {
+        unlockMission(number + 1);
+        updateMap(number + 1);
+        setTimeout(() => {
+          mission.classList.remove("open");
+          $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
+          openMission(number + 1, true);
+        }, 850);
+      } else {
+        document.getElementById("finalCodeBlock").hidden = false;
+        document.getElementById("completionPanel").classList.add("show");
+        updateMap(null);
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 350);
+      }
+    }
+
+    function branchMission1Interpretation() {
+      const option = selected("m1_interpretation");
+      if (!option || option.value === "approx") return setBranch("m1_interpretation_branch");
+      if (option.value === "exact") return setBranch("m1_interpretation_branch", "Essa precisão exige mais dados", "Sem mês e dia, o programa não sabe se a pessoa já fez aniversário nem calcula meses e dias restantes de forma exata.");
+      setBranch("m1_interpretation_branch", "A estrutura é desnecessária", "Subtração e multiplicações resolvem diretamente o problema. Um laço aumentaria a complexidade sem melhorar a precisão.");
+    }
+
+    function branchMission1EPS() {
+      const input = value("m1_input"), process = value("m1_process"), output = value("m1_output");
+      if (input === "currentYear") return setBranch("m1_eps_branch", "Entrada trocada", "O ano atual é uma referência do programa. O usuário informa o ano de nascimento.");
+      if (input === "fullDate") return setBranch("m1_eps_branch", "Entrada além do enunciado", "Uma data completa permitiria mais precisão, mas não é o dado solicitado neste problema.");
+      if (process === "sum") return setBranch("m1_eps_branch", "Operação sem significado", "A idade é uma diferença entre anos, não a soma deles.");
+      if (process === "repeat") return setBranch("m1_eps_branch", "Processamento excessivo", "O cálculo pode ser representado por três expressões sequenciais.");
+      if (output === "current" || output === "birth") return setBranch("m1_eps_branch", "Saída incompleta", "O problema pede o tempo vivido em três unidades, não apenas um dos anos usados no cálculo.");
+      setBranch("m1_eps_branch");
+    }
+
+    function branchMission2Strategy() {
+      const option = selected("m2_strategy");
+      if (!option || option.value === "a") return setBranch("m2_strategy_branch");
+      const messages = {
+        b: ["Decisão sem necessidade", "As três unidades devem ser calculadas sempre. Não existem caminhos alternativos que justifiquem um if."],
+        c: ["Repetição sem necessidade", "Multiplicações diretas realizam as conversões de modo mais simples e claro."],
+        d: ["Papéis invertidos", "anoNascimento é entrada; anoAtual é referência; os valores vividos são resultados."]
+      };
+      setBranch("m2_strategy_branch", ...messages[option.value]);
+    }
+
+    function branchMission2Expressions() {
+      const years = value("m2_years"), months = value("m2_months"), days = value("m2_days");
+      if (years === "inverse") return setBranch("m2_expression_branch", "Subtração invertida", "anoNascimento - anoAtual produz um valor negativo para quem nasceu antes de 2026.");
+      if (years === "sum") return setBranch("m2_expression_branch", "Anos somados", "A idade representa a distância entre os anos, não a soma.");
+      if (months === "thirty") return setBranch("m2_expression_branch", "Mês confundido com dias", "O valor 30 representa dias por mês; a conversão de anos para meses usa 12.");
+      if (months === "current") return setBranch("m2_expression_branch", "Base de cálculo incorreta", "Os meses vividos dependem de anosVividos, não do valor 2026.");
+      if (days === "monthDays") return setBranch("m2_expression_branch", "Unidade incompatível", "O enunciado define 365 dias para cada ano, não para cada mês.");
+      if (days === "birthDays") return setBranch("m2_expression_branch", "Valor de origem incorreto", "O ano de nascimento não representa uma quantidade vivida.");
+      setBranch("m2_expression_branch");
+    }
+
+    function branchMission3Tests() {
+      const c1 = value("m3_case1"), c2 = value("m3_case2"), c3 = value("m3_case3");
+      if (c1 && c1 !== "correct") return setBranch("m3_test_branch", "Revise o caso 2021", "2026 − 2021 = 5; depois, 5 × 12 = 60 e 5 × 365 = 1825.");
+      if (c2 && c2 !== "correct") return setBranch("m3_test_branch", "Revise o caso 2006", "A diferença é 20 anos; portanto, 240 meses e 7300 dias.");
+      if (c3 && c3 !== "correct") return setBranch("m3_test_branch", "Observe o teste de limite", "Quando o nascimento e a referência são iguais, todas as expressões resultam em zero.");
+      setBranch("m3_test_branch");
+    }
+
+    function branchMission3IO() {
+      const option = selected("m3_io");
+      if (!option || option.value === "a") return setBranch("m3_io_branch");
+      if (option.value === "b") return setBranch("m3_io_branch", "Leitura incompatível", "anoNascimento é int. O scanf deve usar %d e receber o endereço da variável com &.");
+      setBranch("m3_io_branch", "Comandos trocados", "scanf realiza a leitura; printf apresenta os resultados.");
+    }
+
+    function checkMission1(button) {
+      branchMission1Interpretation(); branchMission1EPS();
+      const interpretation = selected("m1_interpretation");
+      if (!interpretation || !value("m1_input") || !value("m1_process") || !value("m1_output")) return setFeedback(1, "Complete a decisão e os três componentes do EPS.", "warn");
+      const valid = interpretation.value === "approx" && value("m1_input") === "birthYear" && value("m1_process") === "correct" && value("m1_output") === "elapsed";
+      if (!valid) return setFeedback(1, "Ainda existe uma divergência. Observe a orientação apresentada junto à sua escolha.", "bad");
+      setFeedback(1, "Leitura coerente. A primeira missão foi concluída.", "ok");
+      completeMission(1, button);
+    }
+
+    function checkMission2(button) {
+      branchMission2Strategy(); branchMission2Expressions();
+      const strategy = selected("m2_strategy");
+      if (!strategy || !value("m2_years") || !value("m2_months") || !value("m2_days")) return setFeedback(2, "Escolha a estratégia e complete as três expressões.", "warn");
+      const valid = strategy.value === "a" && value("m2_years") === "correct" && value("m2_months") === "correct" && value("m2_days") === "correct";
+      if (!valid) return setFeedback(2, "A estratégia ainda contém uma estrutura ou expressão incompatível.", "bad");
+      setFeedback(2, "Estratégia coerente. A segunda missão foi concluída.", "ok");
+      completeMission(2, button);
+    }
+
+    function checkMission3(button) {
+      branchMission3Tests(); branchMission3IO();
+      const io = selected("m3_io");
+      if (!value("m3_case1") || !value("m3_case2") || !value("m3_case3") || !io) return setFeedback(3, "Complete os três testes e escolha o trecho de entrada e saída.", "warn");
+      const valid = value("m3_case1") === "correct" && value("m3_case2") === "correct" && value("m3_case3") === "correct" && io.value === "a";
+      if (!valid) return setFeedback(3, "A validação ainda apresenta uma divergência. Consulte o feedback contextual.", "bad");
+      setFeedback(3, "Solução validada. O percurso foi concluído.", "ok");
+      completeMission(3, button);
+    }
+
+    $$(".mission-toggle").forEach((toggle) => toggle.addEventListener("click", () => {
+      const mission = toggle.closest(".mission");
+      if (mission.classList.contains("locked")) return;
+      const number = Number(mission.dataset.mission);
+      const shouldOpen = !mission.classList.contains("open");
+      $$(".mission").forEach((item) => { item.classList.remove("open"); $(".mission-toggle", item).setAttribute("aria-expanded", "false"); });
+      if (shouldOpen) { mission.classList.add("open"); toggle.setAttribute("aria-expanded", "true"); updateMap(completed.has(number) ? null : number); }
+    }));
+
+    $$("[data-hint]").forEach((button) => button.addEventListener("click", () => {
+      const mission = Number(button.dataset.hint);
+      hintState[mission] = Math.min(hintState[mission] + 1, 3);
+      const index = hintState[mission] - 1;
+      const drawer = document.getElementById(`hintDrawer${mission}`);
+      $(".hint-number", drawer).textContent = `${hintState[mission]}/3`;
+      document.getElementById(`hintTitle${mission}`).textContent = hints[mission][index][0];
+      document.getElementById(`hintText${mission}`).textContent = hints[mission][index][1];
+      drawer.classList.add("show");
+      button.textContent = hintState[mission] < 3 ? "💡 Ver próxima pista" : "Pistas exibidas";
+      if (hintState[mission] === 3) button.disabled = true;
+    }));
+
+    $$("[data-check]").forEach((button) => button.addEventListener("click", () => {
+      const mission = Number(button.dataset.check);
+      if (mission === 1) checkMission1(button);
+      if (mission === 2) checkMission2(button);
+      if (mission === 3) checkMission3(button);
+    }));
+
+    $$('input[name="m1_interpretation"]').forEach((el) => el.addEventListener("change", branchMission1Interpretation));
+    ["m1_input", "m1_process", "m1_output"].forEach((id) => document.getElementById(id).addEventListener("change", branchMission1EPS));
+    $$('input[name="m2_strategy"]').forEach((el) => el.addEventListener("change", branchMission2Strategy));
+    ["m2_years", "m2_months", "m2_days"].forEach((id) => document.getElementById(id).addEventListener("change", branchMission2Expressions));
+    ["m3_case1", "m3_case2", "m3_case3"].forEach((id) => document.getElementById(id).addEventListener("change", branchMission3Tests));
+    $$('input[name="m3_io"]').forEach((el) => el.addEventListener("change", branchMission3IO));
+
+    document.getElementById("reviewButton").addEventListener("click", () => {
+      $$(".mission").forEach((mission) => { mission.classList.add("open"); $(".mission-toggle", mission).setAttribute("aria-expanded", "true"); });
+      document.querySelector('.mission[data-mission="1"]').scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.getElementById("restartButton").addEventListener("click", () => window.location.reload());
+
+    updateMap(1);
+  </script>
+</body>
+</html>

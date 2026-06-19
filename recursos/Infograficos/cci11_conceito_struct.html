@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Struct: quando várias informações formam uma entidade</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(350px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .example-icon svg, .compare-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .entity-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--cor-superficie);
+    }
+    .entity-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--cor-primaria-escura);
+      color: white;
+    }
+    .entity-head strong { font-family: Consolas, monospace; }
+    .entity-head span { font-size: .78rem; color: #E0E7FF; }
+    .entity-fields { display: grid; gap: 8px; padding: 13px; }
+    .entity-field {
+      display: grid;
+      grid-template-columns: 94px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie-suave);
+      border-radius: 12px;
+      padding: 9px 11px;
+    }
+    .entity-field code { color: var(--cor-primaria-escura); font-weight: 900; font-size: .82rem; }
+    .entity-field span { color: var(--cor-texto-principal); font-size: .84rem; }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-da-struct { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 710px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 190px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .map-button {
+      position: absolute;
+      width: 235px;
+      min-height: 145px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-entity { left: 38px; top: 38px; }
+    .button-fields { right: 38px; top: 38px; }
+    .button-types { left: 38px; bottom: 42px; }
+    .button-instance { right: 38px; bottom: 42px; }
+    .button-access { left: 50%; bottom: 18px; transform: translateX(-50%); }
+    .button-access:hover, .button-access:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .compare-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .compare-card.good { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.2); }
+    .compare-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .compare-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: white; border: 1px solid var(--cor-borda); }
+    .loose-data { display: grid; gap: 8px; margin-top: 13px; }
+    .loose-item { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--cor-borda); border-radius: 12px; background: white; }
+    .loose-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .loose-item span { color: var(--cor-texto-secundario); font-size: .88rem; }
+
+    .anatomy-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .code-window { border-radius: 20px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #263244; }
+    .code-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #0B1220; border-bottom: 1px solid #2B374A; color: #CBD5E1; font-size: .82rem; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .9rem; line-height: 1.6; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+    .anatomy-list { display: grid; gap: 11px; }
+    .anatomy-item { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 11px; align-items: start; border: 1px solid var(--cor-borda); border-radius: 15px; padding: 13px; background: var(--cor-superficie-suave); }
+    .anatomy-number { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .anatomy-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .anatomy-item p { font-size: .89rem; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .step-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); position: relative; }
+    .step-card:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-weight: 900; z-index: 2; }
+    .step-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .step-label { display: inline-flex; margin-bottom: 9px; padding: 4px 8px; border-radius: 999px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+    .step-card p { font-size: .9rem; }
+
+    .tabs { position: relative; }
+    .tabs input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 16px; }
+    .tab-label { cursor: pointer; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .9rem; font-weight: 800; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panels { min-height: 440px; }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .example-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .example-info { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; gap: 11px; align-items: center; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: white; border: 1px solid var(--cor-borda); }
+    .example-badge { display: inline-flex; margin-bottom: 10px; border-radius: 999px; padding: 4px 9px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; font-weight: 900; }
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; margin-top: 13px; border: 1px solid var(--cor-borda); border-radius: 14px; font-size: .88rem; }
+    .mini-table th, .mini-table td { padding: 10px 11px; text-align: left; border-bottom: 1px solid var(--cor-borda); vertical-align: top; }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table tr:last-child td { border-bottom: none; }
+    .mini-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .72); backdrop-filter: blur(4px); }
+    .modal-card {
+      position: relative;
+      width: min(680px, 100%);
+      max-height: min(84vh, 760px);
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 28px 70px rgba(15,23,42,.35);
+      transform: translateY(18px) scale(.97);
+      animation: none;
+      z-index: 2;
+    }
+    .modal:target .modal-card { animation: modalIn .32s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: 1.35rem; line-height: 1; font-weight: 700; }
+    .modal-heading { display: flex; align-items: center; gap: 12px; padding-right: 45px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-heading h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 15px; border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie-suave); }
+    .modal-example code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-list { margin: 12px 0 0 20px; color: var(--cor-texto-secundario); }
+    .modal-list li { margin-bottom: 7px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .anatomy-layout, .example-grid, .compare-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .step-card:nth-child(2)::after { display: none; }
+      .choice-map { min-height: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 18px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; width: auto; transform: none; min-height: 145px; }
+      .map-center { grid-column: 1 / -1; order: -1; }
+      .button-access { transform: none; }
+      .button-access:hover, .button-access:focus-visible { transform: translateY(-4px); }
+      .error-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .meta-grid, .steps-grid, .choice-map { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .step-card::after { display: none !important; }
+      .entity-field { grid-template-columns: 82px minmax(0,1fr); }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 22px 18px; border-radius: 20px; }
+      .mini-table { display: block; overflow-x: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Struct: quando várias informações formam uma entidade</h1>
+          <p class="subtitle">Entenda como a linguagem C agrupa dados relacionados em um único tipo composto e por que isso torna o programa mais organizado.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Representação visual de uma struct Aluno">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span>
+            <div><strong>Uma entidade, vários campos</strong><span>Exemplo visual de um dado composto</span></div>
+          </div>
+          <div class="entity-card">
+            <div class="entity-head"><strong>struct Aluno</strong><span>tipo composto</span></div>
+            <div class="entity-fields">
+              <div class="entity-field"><code>nome</code><span>"Lia"</span></div>
+              <div class="entity-field"><code>matricula</code><span>202601</span></div>
+              <div class="entity-field"><code>media</code><span>8.4</span></div>
+            </div>
+          </div>
+          <p class="hero-caption"><strong>Ideia-chave:</strong> os campos continuam tendo tipos próprios, mas passam a representar juntos uma única entidade.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI11</div><p>Representar e manipular dados compostos por meio de estruturas.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI03 e CCI06</div><p>Usar variáveis e relacionar registros com coleções indexadas.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Conceito de struct</div><p>Entidade, campos, tipos, instâncias e acesso com ponto.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Leitura visual, exploração do mapa e comparação de exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e relacional</div><p>Organização por entidades, campos e vínculos entre dados.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"></path><path d="M9 8h6M9 12h6"></path></svg>Variáveis e tipos básicos</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>Atribuição</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>Leitura e escrita em C</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M9 12h6"></path></svg>Noção de entidade</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Uma <code>struct</code> cria um tipo composto</h3>
+          <p>Quando várias informações descrevem a mesma coisa, elas podem ser agrupadas em uma <strong>estrutura</strong>. Assim, nome, matrícula e média deixam de ser dados soltos e passam a formar um <strong>Aluno</strong>.</p>
+          <div class="concept-note">Pense na <code>struct</code> como o <strong>molde</strong> e em cada variável desse tipo como uma <strong>entidade concreta</strong>.</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina o molde</h3><p>Escolha o nome da estrutura e os campos que descrevem a entidade.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Crie uma instância</h3><p>Declare uma variável usando o novo tipo composto.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Acesse os campos</h3><p>Use o operador ponto para ler ou alterar cada informação.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-da-struct">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da struct</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 20h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação usando a mesma entidade: <strong>Aluno</strong>.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 710" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="355" x2="160" y2="120"></line>
+          <line x1="500" y1="355" x2="840" y2="120"></line>
+          <line x1="500" y1="355" x2="160" y2="590"></line>
+          <line x1="500" y1="355" x2="840" y2="590"></line>
+          <line x1="500" y1="355" x2="500" y2="630"></line>
+        </svg>
+
+        <div class="map-center"><div><strong>struct Aluno</strong><code>nome + matrícula + média</code><span>Um único tipo representa a entidade completa.</span></div></div>
+
+        <a class="map-button button-entity" href="#modal-entidade">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg></span>
+          <h3>Entidade</h3><p>A coisa do mundo do problema que precisa ser representada.</p><span class="map-code">Aluno</span>
+        </a>
+
+        <a class="map-button button-fields" href="#modal-campos">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M5 10h14M10 5v14"></path></svg></span>
+          <h3>Campos</h3><p>As características que pertencem à entidade.</p><span class="map-code">nome, matrícula, média</span>
+        </a>
+
+        <a class="map-button button-types" href="#modal-tipos">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M7 4v6M13 4v6M5 14h5v5H5zM14 14h5v5h-5z"></path></svg></span>
+          <h3>Tipos dos campos</h3><p>Cada campo mantém seu próprio tipo de dado.</p><span class="map-code">char, int, float</span>
+        </a>
+
+        <a class="map-button button-instance" href="#modal-instancia">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="M8 10h8M8 14h5"></path></svg></span>
+          <h3>Instância</h3><p>Uma variável concreta criada a partir do molde.</p><span class="map-code">struct Aluno a1;</span>
+        </a>
+
+        <a class="map-button button-access" href="#modal-acesso">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m14 7 5 5-5 5"></path><circle cx="7" cy="12" r="2"></circle></svg></span>
+          <h3>Acesso com ponto</h3><p>Seleciona um campo específico da instância.</p><span class="map-code">a1.media</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>De dados soltos a uma entidade</h2></div>
+      <div class="compare-grid">
+        <article class="compare-card">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"></path></svg></span><div><h3>Sem struct</h3><p>As relações dependem apenas de nomes e da disciplina do programador.</p></div></div>
+          <div class="loose-data">
+            <div class="loose-item"><code>char nome[40]</code><span>nome do aluno</span></div>
+            <div class="loose-item"><code>int matricula</code><span>matrícula do aluno</span></div>
+            <div class="loose-item"><code>float media</code><span>média do aluno</span></div>
+          </div>
+        </article>
+
+        <article class="compare-card good">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><div><h3>Com struct</h3><p>O vínculo entre os campos passa a fazer parte do próprio tipo.</p></div></div>
+          <div class="entity-card">
+            <div class="entity-head"><strong>aluno1</strong><span>struct Aluno</span></div>
+            <div class="entity-fields">
+              <div class="entity-field"><code>.nome</code><span>"Lia"</span></div>
+              <div class="entity-field"><code>.matricula</code><span>202601</span></div>
+              <div class="entity-field"><code>.media</code><span>8.4</span></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Anatomia de uma struct</h2></div>
+      <div class="anatomy-layout">
+        <div class="code-window">
+          <div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>aluno.c</strong></div>
+          <pre><code><span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> {
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span>[<span class="syn-number">40</span>];
+    <span class="syn-type">int</span> <span class="syn-variable">matricula</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">media</span>;
+};
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> <span class="syn-variable">aluno1</span>;
+
+<span class="syn-variable">aluno1</span>.<span class="syn-variable">matricula</span> <span class="syn-operator">=</span> <span class="syn-number">202601</span>;
+<span class="syn-variable">aluno1</span>.<span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-number">8.4</span>;</code></pre>
+        </div>
+
+        <div class="anatomy-list">
+          <article class="anatomy-item"><span class="anatomy-number">1</span><div><h3><code>struct Aluno</code></h3><p>Inicia a definição de um novo tipo composto chamado <strong>Aluno</strong>.</p></div></article>
+          <article class="anatomy-item"><span class="anatomy-number">2</span><div><h3>Campos internos</h3><p>Cada declaração representa uma característica da entidade e possui tipo próprio.</p></div></article>
+          <article class="anatomy-item"><span class="anatomy-number">3</span><div><h3><code>aluno1</code></h3><p>É uma instância concreta. Ela reserva espaço para todos os campos do molde.</p></div></article>
+          <article class="anatomy-item"><span class="anatomy-number">4</span><div><h3>Operador ponto</h3><p>Em <code>aluno1.media</code>, o ponto seleciona o campo <code>media</code> da variável <code>aluno1</code>.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Do molde ao uso</h2></div>
+      <div class="steps-grid">
+        <article class="step-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><span class="step-label">Etapa 1</span><h3>Definir</h3><p>Descreva quais campos formam a entidade e qual é o tipo de cada um.</p></article>
+        <article class="step-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"></path><path d="M9 8h6M9 12h6"></path></svg></span><span class="step-label">Etapa 2</span><h3>Declarar</h3><p>Crie uma variável usando o tipo composto recém-definido.</p></article>
+        <article class="step-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></span><span class="step-label">Etapa 3</span><h3>Preencher</h3><p>Atribua ou leia os valores de cada campo da instância.</p></article>
+        <article class="step-card"><span class="step-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg></span><span class="step-label">Etapa 4</span><h3>Usar</h3><p>Acesse os campos para calcular, comparar, exibir ou armazenar dados.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos em progressão</h2></div>
+      <div class="tabs">
+        <input type="radio" name="tabs" id="tab1" checked>
+        <input type="radio" name="tabs" id="tab2">
+        <input type="radio" name="tabs" id="tab3">
+
+        <div class="tab-labels" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">1. Aluno único</label>
+          <label class="tab-label" for="tab2">2. Produto e valor em estoque</label>
+          <label class="tab-label" for="tab3">3. Vetor de livros</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <div class="example-info">
+                <span class="example-badge">Nível básico</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg></span><div><h3>Representar um aluno</h3><p>Uma variável reúne matrícula e média da mesma pessoa.</p></div></div>
+                <table class="mini-table"><thead><tr><th>Elemento</th><th>Papel</th></tr></thead><tbody><tr><td><code>struct Aluno</code></td><td>Molde da entidade</td></tr><tr><td><code>a1</code></td><td>Instância concreta</td></tr><tr><td><code>a1.media</code></td><td>Acesso a um campo</td></tr></tbody></table>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>exemplo_aluno.c</strong></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">matricula</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">media</span>;
+};
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> <span class="syn-variable">a1</span>;
+
+    <span class="syn-variable">a1</span>.<span class="syn-variable">matricula</span> <span class="syn-operator">=</span> <span class="syn-number">202601</span>;
+    <span class="syn-variable">a1</span>.<span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-number">8.4</span>;
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Matricula: %d\n"</span>, <span class="syn-variable">a1</span>.<span class="syn-variable">matricula</span>);
+    <span class="syn-function">printf</span>(<span class="syn-string">"Media: %.1f\n"</span>, <span class="syn-variable">a1</span>.<span class="syn-variable">media</span>);
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <div class="example-info">
+                <span class="example-badge">Nível intermediário</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"></path><path d="M8 7V5h8v2M8 12h8"></path></svg></span><div><h3>Calcular o valor do estoque</h3><p>Os campos preço e quantidade pertencem ao mesmo produto.</p></div></div>
+                <table class="mini-table"><thead><tr><th>Campo</th><th>Valor</th></tr></thead><tbody><tr><td><code>codigo</code></td><td>15</td></tr><tr><td><code>preco</code></td><td>12,50</td></tr><tr><td><code>quantidade</code></td><td>8</td></tr><tr><td>Resultado</td><td>R$ 100,00</td></tr></tbody></table>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>produto.c</strong></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span>;
+    <span class="syn-type">int</span> <span class="syn-variable">quantidade</span>;
+};
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> <span class="syn-variable">p</span> <span class="syn-operator">=</span> {<span class="syn-number">15</span>, <span class="syn-number">12.50</span>, <span class="syn-number">8</span>};
+    <span class="syn-type">float</span> <span class="syn-variable">total</span>;
+
+    <span class="syn-variable">total</span> <span class="syn-operator">=</span> <span class="syn-variable">p</span>.<span class="syn-variable">preco</span> <span class="syn-operator">*</span> <span class="syn-variable">p</span>.<span class="syn-variable">quantidade</span>;
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Valor em estoque: R$ %.2f\n"</span>, <span class="syn-variable">total</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <div class="example-info">
+                <span class="example-badge">Nível intermediário</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"></path><path d="M8 4v16"></path></svg></span><div><h3>Percorrer vários livros</h3><p>Um vetor armazena várias instâncias do mesmo tipo composto.</p></div></div>
+                <table class="mini-table"><thead><tr><th>Estrutura</th><th>Significado</th></tr></thead><tbody><tr><td><code>livros[3]</code></td><td>Três entidades Livro</td></tr><tr><td><code>livros[i]</code></td><td>Livro da posição atual</td></tr><tr><td><code>livros[i].disponivel</code></td><td>Campo consultado no laço</td></tr></tbody></table>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>livros.c</strong></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Livro</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+    <span class="syn-type">int</span> <span class="syn-variable">disponivel</span>;
+};
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">struct</span> <span class="syn-type">Livro</span> <span class="syn-variable">livros</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-number">101</span>, <span class="syn-number">1</span>}, {<span class="syn-number">102</span>, <span class="syn-number">0</span>}, {<span class="syn-number">103</span>, <span class="syn-number">1</span>}
+    };
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-variable">livros</span>[<span class="syn-variable">i</span>].<span class="syn-variable">disponivel</span> <span class="syn-operator">==</span> <span class="syn-number">1</span>) {
+            <span class="syn-function">printf</span>(<span class="syn-string">"Livro %d disponivel\n"</span>,
+                   <span class="syn-variable">livros</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span>);
+        }
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Confundir molde com variável</h3><p><strong>Por que acontece:</strong> o aluno pensa que definir <code>struct Aluno</code> já criou um aluno.</p><p><strong>Como evitar:</strong> depois do molde, declare uma instância como <code>struct Aluno a1;</code>.</p></article>
+        <article class="error-card"><h3>Esquecer o operador ponto</h3><p><strong>Por que acontece:</strong> tenta-se usar <code>media</code> sem indicar a qual entidade o campo pertence.</p><p><strong>Como evitar:</strong> escreva sempre a instância e o campo, como <code>a1.media</code>.</p></article>
+        <article class="error-card"><h3>Agrupar dados sem relação</h3><p><strong>Por que acontece:</strong> a struct vira apenas um recipiente genérico.</p><p><strong>Como evitar:</strong> inclua apenas campos que descrevem uma mesma entidade ou conceito.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Uma struct substitui os tipos básicos?</summary><p>Não. Ela combina campos que continuam sendo <code>int</code>, <code>float</code>, <code>char</code> ou outros tipos.</p></details>
+        <details><summary>Qual é a diferença entre <code>struct Aluno</code> e <code>aluno1</code>?</summary><p><code>struct Aluno</code> é o molde do tipo composto. <code>aluno1</code> é uma variável concreta criada a partir desse molde.</p></details>
+        <details><summary>Como acessar a média armazenada em <code>aluno1</code>?</summary><p>Use o operador ponto: <code>aluno1.media</code>.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir reconhecer quando vários dados descrevem a mesma entidade, definir uma <code>struct</code>, criar instâncias e acessar seus campos de forma organizada.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <div id="modal-entidade" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-entidade">
+    <a class="modal-backdrop" href="#mapa-da-struct" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-struct" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg></span><div><h2 id="titulo-entidade">Entidade</h2><p>O elemento do problema que precisa ser descrito.</p></div></div>
+      <p>No exemplo, o programa precisa representar um <strong>aluno</strong>. Nome, matrícula e média não são entidades separadas. São características da mesma entidade.</p>
+      <div class="modal-example"><strong>Pergunta útil:</strong> quais informações precisam permanecer juntas para representar corretamente um aluno?</div>
+    </article>
+  </div>
+
+  <div id="modal-campos" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-campos">
+    <a class="modal-backdrop" href="#mapa-da-struct" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-struct" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M5 10h14M10 5v14"></path></svg></span><div><h2 id="titulo-campos">Campos</h2><p>As partes que compõem a entidade.</p></div></div>
+      <p>Cada campo recebe um nome que indica seu papel dentro da estrutura. No tipo <code>Aluno</code>, os campos podem ser <code>nome</code>, <code>matricula</code> e <code>media</code>.</p>
+      <div class="modal-example"><code>aluno1.media</code> significa: selecione o campo <strong>media</strong> da entidade armazenada em <strong>aluno1</strong>.</div>
+    </article>
+  </div>
+
+  <div id="modal-tipos" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-tipos">
+    <a class="modal-backdrop" href="#mapa-da-struct" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-struct" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M7 4v6M13 4v6M5 14h5v5H5zM14 14h5v5h-5z"></path></svg></span><div><h2 id="titulo-tipos">Tipos dos campos</h2><p>Uma struct pode reunir tipos diferentes.</p></div></div>
+      <p>O campo <code>nome</code> pode ser um vetor de caracteres, <code>matricula</code> pode ser inteiro e <code>media</code> pode ser real. A struct não apaga essas diferenças. Ela apenas organiza os campos sob uma mesma entidade.</p>
+      <ul class="modal-list"><li><code>char nome[40]</code>: texto</li><li><code>int matricula</code>: número inteiro</li><li><code>float media</code>: número real</li></ul>
+    </article>
+  </div>
+
+  <div id="modal-instancia" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-instancia">
+    <a class="modal-backdrop" href="#mapa-da-struct" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-struct" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="M8 10h8M8 14h5"></path></svg></span><div><h2 id="titulo-instancia">Instância</h2><p>Uma variável concreta criada a partir do molde.</p></div></div>
+      <p>A definição da struct descreve como um aluno será organizado. A declaração abaixo cria um aluno concreto na memória:</p>
+      <div class="modal-example"><code>struct Aluno aluno1;</code></div>
+      <p style="margin-top:12px;">Também é possível criar <code>aluno2</code>, <code>aluno3</code> ou um vetor de alunos. Todos seguem o mesmo molde, mas guardam valores próprios.</p>
+    </article>
+  </div>
+
+  <div id="modal-acesso" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-acesso">
+    <a class="modal-backdrop" href="#mapa-da-struct" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-struct" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m14 7 5 5-5 5"></path><circle cx="7" cy="12" r="2"></circle></svg></span><div><h2 id="titulo-acesso">Acesso com ponto</h2><p>O ponto liga uma instância a um de seus campos.</p></div></div>
+      <p>Para atribuir ou consultar um dado, indique primeiro a variável da struct e depois o campo desejado.</p>
+      <div class="modal-example"><code>aluno1.media = 8.4;</code><br><code>printf("%.1f", aluno1.media);</code></div>
+      <p style="margin-top:12px;">O campo <code>media</code> existe dentro da variável <code>aluno1</code>. Outro aluno terá seu próprio campo <code>media</code>.</p>
+    </article>
+  </div>
+</body>
+</html>

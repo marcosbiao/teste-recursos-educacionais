@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como visitar todos os elementos de um vetor</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 280px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 470px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .mini-vector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
+    .mini-cell { text-align: center; }
+    .mini-index { display: block; color: var(--cor-texto-secundario); font-size: .72rem; font-weight: 800; margin-bottom: 4px; }
+    .mini-value { display: grid; place-items: center; min-height: 48px; border: 1px solid var(--cor-borda); border-radius: 13px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-weight: 900; }
+    .hero-loop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .hero-loop-item { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px; text-align: center; }
+    .hero-loop-item small { display: block; color: var(--cor-texto-secundario); font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 800; }
+    .hero-loop-item strong { color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .88rem; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .vector-map {
+      min-height: 590px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .27); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px;
+      min-height: 160px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.18rem; }
+    .map-center span { color: #E0E7FF; font-size: .9rem; }
+
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 150px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .map-button p { font-size: .91rem; }
+    .map-code { display: inline-flex; margin-top: 8px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-vector { left: 32px; top: 40px; }
+    .button-index { right: 32px; top: 40px; }
+    .button-size { left: 32px; bottom: 40px; }
+    .button-for { right: 32px; bottom: 40px; }
+
+    .loop-anatomy { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .loop-step { position: relative; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 17px; padding: 17px; min-height: 160px; }
+    .loop-step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); z-index: 2; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .step-badge { display: inline-flex; padding: 5px 9px; margin-bottom: 10px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .75rem; font-weight: 900; }
+    .loop-step p { font-size: .89rem; }
+    .loop-step code { display: inline-block; margin-top: 8px; color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .memory-layout { display: grid; grid-template-columns: .74fr 1.26fr; gap: 18px; align-items: start; }
+    .memory-intro { background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.16); border-radius: 20px; padding: 21px; }
+    .memory-rule { margin-top: 13px; padding: 11px 13px; border-radius: 13px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); font-size: .9rem; }
+    .vector-board { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 18px; background: var(--cor-superficie-suave); overflow-x: auto; }
+    .vector-row { min-width: 620px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .vector-cell { text-align: center; position: relative; }
+    .vector-index { color: var(--cor-texto-secundario); font-size: .75rem; font-weight: 800; margin-bottom: 6px; }
+    .vector-value { min-height: 64px; display: grid; place-items: center; border: 2px solid var(--cor-borda); background: var(--cor-superficie); border-radius: 14px; color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: 1.15rem; font-weight: 900; }
+    .pointer { margin-top: 9px; color: var(--cor-primaria); font-size: .8rem; font-weight: 900; }
+    .pointer::before { content: "↑"; display: block; font-size: 1.15rem; line-height: 1; }
+
+    .trace-list { display: grid; gap: 10px; margin-top: 17px; }
+    .trace-item { display: grid; grid-template-columns: 85px 1fr 100px; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--cor-borda); border-radius: 14px; background: var(--cor-superficie); }
+    .trace-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .trace-access { color: var(--cor-texto-principal); font-size: .9rem; }
+    .trace-result { justify-self: end; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); border-radius: 999px; padding: 4px 9px; font-weight: 900; font-size: .8rem; }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--cor-borda); border-radius: 19px; }
+    .state-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    .state-table th, .state-table td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--cor-borda); vertical-align: top; }
+    .state-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .state-table tr:last-child td { border-bottom: none; }
+    .state-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); border-radius: 999px; padding: 9px 14px; font-weight: 800; transition: all .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.32); color: var(--cor-primaria-escura); }
+    .tab-panel { display: none; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); border-color: var(--cor-primaria); color: white; }
+    #tab1:checked ~ .tab-panels .panel-1,
+    #tab2:checked ~ .tab-panels .panel-2,
+    #tab3:checked ~ .tab-panels .panel-3 { display: block; animation: panel-in .28s ease both; }
+    @keyframes panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; background: var(--cor-superficie-suave); padding: 20px; }
+    .example-title { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .example-icon { width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .example-card ul { margin: 12px 0 0 18px; color: var(--cor-texto-secundario); }
+    .example-card li { margin-bottom: 5px; }
+    .example-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .9rem; }
+    .example-table th, .example-table td { padding: 9px 10px; border: 1px solid var(--cor-borda); text-align: left; }
+    .example-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+
+    .code-window { border: 1px solid #273449; border-radius: 20px; overflow: hidden; background: var(--codigo-fundo); box-shadow: 0 16px 34px rgba(15,23,42,.16); }
+    .code-bar { min-height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 15px; background: #1F2937; border-bottom: 1px solid #334155; }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dots span { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-name { color: #CBD5E1; font-size: .78rem; font-family: Consolas, monospace; }
+    pre { margin: 0; overflow-x: auto; padding: 18px; color: var(--codigo-texto); font-size: .87rem; line-height: 1.6; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 8px; }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, .72);
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal-overlay:target { opacity: 1; visibility: visible; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      width: min(720px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 2;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 28px 70px rgba(15,23,42,.28);
+      transform: translateY(18px) scale(.97);
+      transition: transform .24s ease;
+    }
+    .modal-overlay:target .modal-card { transform: translateY(0) scale(1); animation: modal-in .32s ease both; }
+    @keyframes modal-in { 0% { opacity: 0; transform: translateY(26px) scale(.94); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); text-decoration: none; font-size: 1.3rem; font-weight: 900; }
+    .modal-close:hover { background: var(--cor-superficie-destacada); }
+    .modal-title-wrap { display: flex; align-items: center; gap: 12px; padding-right: 44px; margin-bottom: 16px; }
+    .modal-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-kicker { color: var(--cor-primaria); font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 900; }
+    .modal-card h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 15px; border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie-suave); }
+    .modal-example code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-list { margin: 13px 0 0 20px; color: var(--cor-texto-secundario); }
+    .modal-list li { margin-bottom: 6px; }
+
+    @media (max-width: 960px) {
+      .hero-grid, .concept-summary, .memory-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .vector-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; width: auto; transform: none; min-height: auto; }
+      .map-center { grid-column: 1 / -1; order: -1; }
+      .map-button:hover, .map-button:focus-visible { transform: translateY(-3px); }
+      .loop-anatomy { grid-template-columns: repeat(2, 1fr); }
+      .loop-step:nth-child(2)::after { display: none; }
+      .error-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 12px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-grid { gap: 22px; }
+      .meta-grid, .concept-points, .vector-map, .loop-anatomy { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .loop-step::after { display: none !important; }
+      .tab-labels { display: grid; }
+      .tab-label { text-align: center; }
+      .trace-item { grid-template-columns: 1fr; }
+      .trace-result { justify-self: start; }
+      .mini-vector { gap: 5px; }
+      .mini-value { min-height: 42px; }
+      .hero-loop { grid-template-columns: 1fr; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Como visitar todos os elementos de um vetor</h1>
+          <p class="subtitle">Entenda como o laço <code>for</code>, o índice e o tamanho do vetor trabalham juntos para acessar cada posição uma única vez.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Resumo visual do percurso">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v10H4z"/><path d="M8 7v10M12 7v10M16 7v10"/></svg></span>
+            <div><strong>Um vetor, vários acessos</strong><span>O índice muda. O vetor continua o mesmo.</span></div>
+          </div>
+          <div class="mini-vector">
+            <div class="mini-cell"><span class="mini-index">0</span><span class="mini-value">12</span></div>
+            <div class="mini-cell"><span class="mini-index">1</span><span class="mini-value">7</span></div>
+            <div class="mini-cell"><span class="mini-index">2</span><span class="mini-value">20</span></div>
+            <div class="mini-cell"><span class="mini-index">3</span><span class="mini-value">5</span></div>
+            <div class="mini-cell"><span class="mini-index">4</span><span class="mini-value">9</span></div>
+          </div>
+          <div class="hero-loop">
+            <div class="hero-loop-item"><small>Início</small><strong>i = 0</strong></div>
+            <div class="hero-loop-item"><small>Teste</small><strong>i &lt; 5</strong></div>
+            <div class="hero-loop-item"><small>Acesso</small><strong>vetor[i]</strong></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI06</div><p>Representar, percorrer e processar coleções indexadas simples.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI05</div><p>Usar repetição controlada para executar ações sobre vários elementos.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Percorrer vetor com laço</div><p>Relacionar <code>for</code>, índice, tamanho e acesso.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Leitura rápida, exploração visual e comparação de exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e sequencial</div><p>Mapa de relações, memória indexada e rastreamento passo a passo.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg>Laço <code>for</code></span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M12 7v10M16 7v10"/></svg>Declaração de vetor</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z"/><path d="M9 9h6M9 13h6"/></svg>Variável inteira</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M15 8l4 4-4 4"/></svg>Condição de repetição</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Percorrer é visitar uma posição por vez</h3>
+          <p>O vetor guarda vários valores sob um único nome. Para acessar todos, o programa usa um <strong>índice</strong> que começa na primeira posição, avança uma unidade e para antes de alcançar o tamanho do vetor.</p>
+          <div class="central-rule"><code>para i de 0 até tamanho - 1, usar vetor[i]</code></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Comece em zero</h3><p>Em C, a primeira posição de um vetor tem índice <code>0</code>.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Respeite o tamanho</h3><p>Se o tamanho é <code>5</code>, os índices válidos vão de <code>0</code> a <code>4</code>.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Acesse com o índice</h3><p>Dentro do laço, <code>vetor[i]</code> representa o elemento visitado naquele momento.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-vetor">
+      <div class="section-title"><span class="marker"></span><h2>Mapa do percurso completo</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2"/></svg>
+        Clique em cada bloco para abrir uma explicação usando o mesmo vetor de cinco valores.
+      </div>
+      <div class="vector-map">
+        <svg class="map-lines" viewBox="0 0 1000 590" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="295" x2="190" y2="120"/>
+          <line x1="500" y1="295" x2="810" y2="120"/>
+          <line x1="500" y1="295" x2="190" y2="470"/>
+          <line x1="500" y1="295" x2="810" y2="470"/>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Percurso completo</strong>
+            <span>Visitar todos os elementos sem repetir nem ultrapassar posições.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-vector" href="#modal-vetor">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M12 7v10M16 7v10"/></svg></span>
+          <h3>Vetor</h3>
+          <p>É a coleção de valores armazenados em posições consecutivas.</p>
+          <span class="map-code">int numeros[5]</span>
+        </a>
+
+        <a class="map-button button-index" href="#modal-indice">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+          <h3>Índice</h3>
+          <p>Indica qual posição está sendo visitada naquele instante.</p>
+          <span class="map-code">i = 0, 1, 2, 3, 4</span>
+        </a>
+
+        <a class="map-button button-size" href="#modal-tamanho">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16"/><path d="M7 9l-3 3 3 3M17 9l3 3-3 3"/></svg></span>
+          <h3>Tamanho</h3>
+          <p>Define quantas posições existem e onde o percurso deve parar.</p>
+          <span class="map-code">tamanho = 5</span>
+        </a>
+
+        <a class="map-button button-for" href="#modal-for">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M8 5h8M8 19h8"/><path d="M6 8a6 6 0 0 1 12 0M18 16a6 6 0 0 1-12 0"/><path d="M18 5v4h-4M6 19v-4h4"/></svg></span>
+          <h3>Laço <code>for</code></h3>
+          <p>Controla o início, o teste e o avanço do índice.</p>
+          <span class="map-code">for (i = 0; i &lt; 5; i++)</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Anatomia do percurso</h2></div>
+      <div class="loop-anatomy">
+        <article class="loop-step"><span class="step-badge">1. Inicializar</span><h3>Escolher a primeira posição</h3><p>O índice começa em zero para apontar para o primeiro elemento.</p><code>i = 0</code></article>
+        <article class="loop-step"><span class="step-badge">2. Testar</span><h3>Verificar se a posição existe</h3><p>O percurso continua enquanto o índice for menor que o tamanho.</p><code>i &lt; tamanho</code></article>
+        <article class="loop-step"><span class="step-badge">3. Acessar</span><h3>Usar o elemento atual</h3><p>O valor da posição atual é acessado pelo nome do vetor e pelo índice.</p><code>numeros[i]</code></article>
+        <article class="loop-step"><span class="step-badge">4. Atualizar</span><h3>Avançar para a próxima posição</h3><p>Depois de usar o elemento, o índice aumenta uma unidade.</p><code>i++</code></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Índice, posição e valor</h2></div>
+      <div class="memory-layout">
+        <article class="memory-intro">
+          <h3>Três ideias que não são iguais</h3>
+          <p><strong>Posição</strong> é a ordem usada na linguagem cotidiana. <strong>Índice</strong> é o número usado pelo programa. <strong>Valor</strong> é o conteúdo guardado.</p>
+          <div class="memory-rule">A 1ª posição usa índice <code>0</code>. A 5ª posição usa índice <code>4</code>.</div>
+          <div class="trace-list">
+            <div class="trace-item"><code>i = 0</code><span class="trace-access">Acessa <code>numeros[0]</code></span><span class="trace-result">12</span></div>
+            <div class="trace-item"><code>i = 1</code><span class="trace-access">Acessa <code>numeros[1]</code></span><span class="trace-result">7</span></div>
+            <div class="trace-item"><code>i = 2</code><span class="trace-access">Acessa <code>numeros[2]</code></span><span class="trace-result">20</span></div>
+          </div>
+        </article>
+
+        <div class="vector-board" aria-label="Vetor de cinco elementos">
+          <div class="vector-row">
+            <div class="vector-cell"><div class="vector-index">índice 0</div><div class="vector-value">12</div><div class="pointer">i = 0</div></div>
+            <div class="vector-cell"><div class="vector-index">índice 1</div><div class="vector-value">7</div><div class="pointer">i = 1</div></div>
+            <div class="vector-cell"><div class="vector-index">índice 2</div><div class="vector-value">20</div><div class="pointer">i = 2</div></div>
+            <div class="vector-cell"><div class="vector-index">índice 3</div><div class="vector-value">5</div><div class="pointer">i = 3</div></div>
+            <div class="vector-cell"><div class="vector-index">índice 4</div><div class="vector-value">9</div><div class="pointer">i = 4</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Quando o laço deve parar?</h2></div>
+      <div class="table-wrap">
+        <table class="state-table">
+          <thead><tr><th>Valor de i</th><th>Teste i &lt; 5</th><th>Acesso</th><th>O que acontece</th></tr></thead>
+          <tbody>
+            <tr><td><code>0</code></td><td>Verdadeiro</td><td><code>numeros[0]</code></td><td>Visita o primeiro elemento.</td></tr>
+            <tr><td><code>1</code></td><td>Verdadeiro</td><td><code>numeros[1]</code></td><td>Visita o segundo elemento.</td></tr>
+            <tr><td><code>2</code></td><td>Verdadeiro</td><td><code>numeros[2]</code></td><td>Visita o terceiro elemento.</td></tr>
+            <tr><td><code>3</code></td><td>Verdadeiro</td><td><code>numeros[3]</code></td><td>Visita o quarto elemento.</td></tr>
+            <tr><td><code>4</code></td><td>Verdadeiro</td><td><code>numeros[4]</code></td><td>Visita o quinto elemento.</td></tr>
+            <tr><td><code>5</code></td><td>Falso</td><td>Nenhum</td><td>O laço termina antes de tentar acessar <code>numeros[5]</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+
+        <div class="tab-labels" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">1. Exibir todos</label>
+          <label class="tab-label" for="tab2">2. Somar elementos</label>
+          <label class="tab-label" for="tab3">3. Maior valor e posição</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel-1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M12 7v10M16 7v10"/></svg></span><div><h3>Exibir todos os elementos</h3><p>Nível básico</p></div></div>
+                <p>O programa percorre o vetor e mostra o valor armazenado em cada posição.</p>
+                <table class="example-table">
+                  <tr><th>Índice</th><th>Valor exibido</th></tr>
+                  <tr><td>0</td><td>12</td></tr>
+                  <tr><td>1</td><td>7</td></tr>
+                  <tr><td>2</td><td>20</td></tr>
+                  <tr><td>3</td><td>5</td></tr>
+                  <tr><td>4</td><td>9</td></tr>
+                </table>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-name">exibir_vetor.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-number">5</span><span class="syn-operator">]</span> <span class="syn-operator">=</span> <span class="syn-operator">{</span><span class="syn-number">12</span><span class="syn-operator">,</span> <span class="syn-number">7</span><span class="syn-operator">,</span> <span class="syn-number">20</span><span class="syn-operator">,</span> <span class="syn-number">5</span><span class="syn-operator">,</span> <span class="syn-number">9</span><span class="syn-operator">};</span>
+    <span class="syn-type">int</span> <span class="syn-variable">i</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">for</span> <span class="syn-operator">(</span><span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span> <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span><span class="syn-operator">;</span> <span class="syn-variable">i</span><span class="syn-operator">++)</span> <span class="syn-operator">{</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"%d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-variable">i</span><span class="syn-operator">]);</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></span><div><h3>Somar todos os elementos</h3><p>Nível intermediário</p></div></div>
+                <p>Além de visitar cada posição, o programa usa um acumulador para guardar a soma parcial.</p>
+                <table class="example-table">
+                  <tr><th>i</th><th>numeros[i]</th><th>soma após a visita</th></tr>
+                  <tr><td>0</td><td>12</td><td>12</td></tr>
+                  <tr><td>1</td><td>7</td><td>19</td></tr>
+                  <tr><td>2</td><td>20</td><td>39</td></tr>
+                  <tr><td>3</td><td>5</td><td>44</td></tr>
+                  <tr><td>4</td><td>9</td><td>53</td></tr>
+                </table>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-name">somar_vetor.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-number">5</span><span class="syn-operator">]</span> <span class="syn-operator">=</span> <span class="syn-operator">{</span><span class="syn-number">12</span><span class="syn-operator">,</span> <span class="syn-number">7</span><span class="syn-operator">,</span> <span class="syn-number">20</span><span class="syn-operator">,</span> <span class="syn-number">5</span><span class="syn-operator">,</span> <span class="syn-number">9</span><span class="syn-operator">};</span>
+    <span class="syn-type">int</span> <span class="syn-variable">i</span><span class="syn-operator">;</span>
+    <span class="syn-type">int</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">for</span> <span class="syn-operator">(</span><span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span> <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span><span class="syn-operator">;</span> <span class="syn-variable">i</span><span class="syn-operator">++)</span> <span class="syn-operator">{</span>
+        <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-variable">soma</span> <span class="syn-operator">+</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-variable">i</span><span class="syn-operator">];</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Soma: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 17l5-5 3 3 6-8"/><path d="M15 7h4v4"/></svg></span><div><h3>Encontrar o maior valor e sua posição</h3><p>Nível intermediário</p></div></div>
+                <p>O índice permite saber não apenas qual é o maior valor, mas também em qual posição ele foi encontrado.</p>
+                <ul>
+                  <li>Inicialize o maior com o primeiro elemento.</li>
+                  <li>Comece a comparação no índice <code>1</code>.</li>
+                  <li>Atualize o maior e a posição quando encontrar um valor superior.</li>
+                </ul>
+                <table class="example-table">
+                  <tr><th>Resultado</th><th>Valor</th></tr>
+                  <tr><td>Maior elemento</td><td>20</td></tr>
+                  <tr><td>Índice</td><td>2</td></tr>
+                  <tr><td>Posição humana</td><td>3ª posição</td></tr>
+                </table>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-name">maior_e_posicao.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-number">5</span><span class="syn-operator">]</span> <span class="syn-operator">=</span> <span class="syn-operator">{</span><span class="syn-number">12</span><span class="syn-operator">,</span> <span class="syn-number">7</span><span class="syn-operator">,</span> <span class="syn-number">20</span><span class="syn-operator">,</span> <span class="syn-number">5</span><span class="syn-operator">,</span> <span class="syn-number">9</span><span class="syn-operator">};</span>
+    <span class="syn-type">int</span> <span class="syn-variable">i</span><span class="syn-operator">;</span>
+    <span class="syn-type">int</span> <span class="syn-variable">maior</span> <span class="syn-operator">=</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-number">0</span><span class="syn-operator">];</span>
+    <span class="syn-type">int</span> <span class="syn-variable">indiceMaior</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">for</span> <span class="syn-operator">(</span><span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span><span class="syn-operator">;</span> <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span><span class="syn-operator">;</span> <span class="syn-variable">i</span><span class="syn-operator">++)</span> <span class="syn-operator">{</span>
+        <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-variable">i</span><span class="syn-operator">]</span> <span class="syn-operator">&gt;</span> <span class="syn-variable">maior</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+            <span class="syn-variable">maior</span> <span class="syn-operator">=</span> <span class="syn-variable">numeros</span><span class="syn-operator">[</span><span class="syn-variable">i</span><span class="syn-operator">];</span>
+            <span class="syn-variable">indiceMaior</span> <span class="syn-operator">=</span> <span class="syn-variable">i</span><span class="syn-operator">;</span>
+        <span class="syn-operator">}</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Maior: %d, indice: %d\n"</span><span class="syn-operator">,</span>
+           <span class="syn-variable">maior</span><span class="syn-operator">,</span> <span class="syn-variable">indiceMaior</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar <code>i &lt;= tamanho</code></h3><p><strong>Por que acontece:</strong> o aluno confunde o tamanho do vetor com o último índice válido.</p><p><strong>Como evitar:</strong> use <code>i &lt; tamanho</code>. Para tamanho 5, o último índice é 4.</p></article>
+        <article class="error-card"><h3>Começar em <code>i = 1</code></h3><p><strong>Por que acontece:</strong> a contagem cotidiana começa em um, mas os índices em C começam em zero.</p><p><strong>Como evitar:</strong> em um percurso completo, inicie em <code>i = 0</code>.</p></article>
+        <article class="error-card"><h3>Usar uma posição fixa</h3><p><strong>Por que acontece:</strong> o aluno escreve <code>numeros[0]</code> dentro do laço e repete sempre o primeiro valor.</p><p><strong>Como evitar:</strong> use <code>numeros[i]</code> para que o acesso acompanhe o índice.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Quais índices são válidos em um vetor de tamanho 8?</summary><p>Os índices válidos vão de <code>0</code> a <code>7</code>.</p></details>
+        <details><summary>Por que a condição costuma ser <code>i &lt; tamanho</code>?</summary><p>Porque o índice igual ao tamanho já estaria fora do vetor. A condição interrompe o laço antes desse acesso inválido.</p></details>
+        <details><summary>O que <code>vetor[i]</code> representa dentro do laço?</summary><p>Representa o valor armazenado na posição indicada pelo índice atual <code>i</code>.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir construir um laço que percorra todas as posições válidas de um vetor, acesse cada elemento por meio do índice e pare antes de ultrapassar o tamanho da coleção.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <div class="modal-overlay" id="modal-vetor" role="dialog" aria-modal="true" aria-labelledby="titulo-vetor">
+    <a class="modal-backdrop" href="#mapa-vetor" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-vetor" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M12 7v10M16 7v10"/></svg></span><div><div class="modal-kicker">Coleção indexada</div><h2 id="titulo-vetor">O vetor</h2></div></div>
+      <p>O vetor reúne vários valores do mesmo tipo sob um único nome. Cada valor ocupa uma posição identificada por um índice.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> <code>int numeros[5] = {12, 7, 20, 5, 9};</code></div>
+      <ul class="modal-list"><li>O nome da coleção é <code>numeros</code>.</li><li>O tamanho é <code>5</code>.</li><li>Os índices válidos são <code>0, 1, 2, 3 e 4</code>.</li></ul>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-indice" role="dialog" aria-modal="true" aria-labelledby="titulo-indice">
+    <a class="modal-backdrop" href="#mapa-vetor" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-vetor" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z"/><path d="M9 9h6M9 13h6"/></svg></span><div><div class="modal-kicker">Localização</div><h2 id="titulo-indice">O índice</h2></div></div>
+      <p>O índice funciona como um endereço dentro do vetor. Quando <code>i</code> muda, o acesso <code>numeros[i]</code> passa a apontar para outra posição.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> quando <code>i = 2</code>, a expressão <code>numeros[i]</code> acessa o valor <code>20</code>.</div>
+      <ul class="modal-list"><li>Índice não é o valor armazenado.</li><li>Índice 2 corresponde à terceira posição humana.</li><li>O índice deve permanecer dentro dos limites do vetor.</li></ul>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-tamanho" role="dialog" aria-modal="true" aria-labelledby="titulo-tamanho">
+    <a class="modal-backdrop" href="#mapa-vetor" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-vetor" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16"/><path d="M7 9l-3 3 3 3M17 9l3 3-3 3"/></svg></span><div><div class="modal-kicker">Limite do percurso</div><h2 id="titulo-tamanho">O tamanho</h2></div></div>
+      <p>O tamanho informa quantos elementos o vetor possui. Como o primeiro índice é zero, o último índice válido sempre será <code>tamanho - 1</code>.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> tamanho <code>5</code> significa índices de <code>0</code> até <code>4</code>.</div>
+      <ul class="modal-list"><li><code>numeros[4]</code> é válido.</li><li><code>numeros[5]</code> está fora do vetor.</li><li>A condição segura é <code>i &lt; 5</code>.</li></ul>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-for" role="dialog" aria-modal="true" aria-labelledby="titulo-for">
+    <a class="modal-backdrop" href="#mapa-vetor" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-vetor" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M8 5h8M8 19h8"/><path d="M6 8a6 6 0 0 1 12 0M18 16a6 6 0 0 1-12 0"/><path d="M18 5v4h-4M6 19v-4h4"/></svg></span><div><div class="modal-kicker">Controle da repetição</div><h2 id="titulo-for">O laço for</h2></div></div>
+      <p>O <code>for</code> reúne os três controles do percurso: valor inicial do índice, condição de continuidade e atualização.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> <code>for (i = 0; i &lt; 5; i++)</code></div>
+      <ul class="modal-list"><li><code>i = 0</code> aponta para a primeira posição.</li><li><code>i &lt; 5</code> impede acesso fora do vetor.</li><li><code>i++</code> avança para o próximo elemento.</li></ul>
+    </article>
+  </div>
+</body>
+</html>

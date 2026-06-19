@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Processamento incompleto</title>
+<meta content="Card diagnóstico interativo sobre processamento incompleto no fluxo de entrada, processamento e saída em C." name="description"/>
+<style>
+    :root {
+      --red-700: #B42318;
+      --red-600: #D92D20;
+      --red-100: #FEE4E2;
+      --red-50: #FEF3F2;
+      --green-700: #067647;
+      --green-600: #079455;
+      --green-100: #D1FADF;
+      --green-50: #ECFDF3;
+      --amber-700: #B54708;
+      --amber-100: #FEF0C7;
+      --amber-50: #FFFAEB;
+      --blue-700: #175CD3;
+      --blue-100: #D1E9FF;
+      --blue-50: #EFF8FF;
+      --slate-950: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-400: #94A3B8;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+      --code: #111827;
+      --code-line: #1F2937;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 18px 48px rgba(15, 23, 42, 0.10);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(23, 92, 211, 0.07), transparent 28rem),
+        radial-gradient(circle at 94% 12%, rgba(217, 45, 32, 0.06), transparent 25rem),
+        var(--slate-50);
+      color: var(--slate-950);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      padding: 24px 16px 40px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(23, 92, 211, 0.35);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 88% 18%, rgba(248, 113, 113, 0.22), transparent 18rem),
+        linear-gradient(135deg, #450A0A 0%, #7F1D1D 56%, #991B1B 100%);
+      border: 1px solid rgba(254, 202, 202, 0.20);
+      border-radius: var(--radius-xl);
+      padding: 26px;
+      box-shadow: 0 18px 44px rgba(69, 10, 10, 0.22);
+    }
+
+    .topbar::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #F04438, #FB7185 55%, #F97316);
+      z-index: -1;
+    }
+
+    .topbar::after {
+      content: "!";
+      position: absolute;
+      right: 22px;
+      top: -54px;
+      color: rgba(255, 255, 255, 0.055);
+      font-size: 210px;
+      line-height: 1;
+      font-weight: 950;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .topbar-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .bug-mark {
+      width: 56px;
+      height: 56px;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #FECACA;
+      background: rgba(248, 113, 113, 0.17);
+      border: 1px solid rgba(254, 202, 202, 0.28);
+      box-shadow: 0 12px 30px rgba(69, 10, 10, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .bug-mark svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .eyebrow-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFF7F7;
+      backdrop-filter: blur(8px);
+    }
+
+    .pill.red {
+      color: #FFF1F2;
+      background: rgba(248, 113, 113, 0.22);
+      border-color: rgba(254, 202, 202, 0.32);
+    }
+
+    .pill.amber {
+      color: #FFF7ED;
+      background: rgba(249, 115, 22, 0.20);
+      border-color: rgba(254, 215, 170, 0.32);
+    }
+
+    h1 {
+      font-size: clamp(1.7rem, 4vw, 2.7rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      color: var(--slate-950);
+      margin-bottom: 8px;
+    }
+
+    .topbar h1 {
+      color: var(--white);
+      text-shadow: 0 2px 14px rgba(69, 10, 10, 0.24);
+    }
+
+    .subtitle {
+      color: var(--slate-600);
+      max-width: 830px;
+      font-size: 1rem;
+    }
+
+    .topbar .subtitle {
+      color: #FEE2E2;
+    }
+
+    .indicator-strip {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .indicator {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 14px;
+      padding: 11px 13px;
+      backdrop-filter: blur(8px);
+    }
+
+    .indicator small {
+      display: block;
+      color: #FCA5A5;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .indicator strong {
+      color: var(--white);
+      font-size: 0.92rem;
+    }
+
+    .stage-nav {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 13px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 8px;
+      z-index: 20;
+    }
+
+    .stage-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      color: var(--slate-500);
+      background: var(--slate-50);
+      border: 1px solid transparent;
+      font-weight: 800;
+      font-size: 0.86rem;
+      transition: 0.2s ease;
+    }
+
+    .stage-number {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid var(--slate-300);
+      background: var(--white);
+      color: var(--slate-600);
+      font-size: 0.75rem;
+    }
+
+    .stage-item.active {
+      color: var(--blue-700);
+      background: var(--blue-50);
+      border-color: var(--blue-100);
+    }
+
+    .stage-item.active .stage-number {
+      background: var(--blue-700);
+      color: var(--white);
+      border-color: var(--blue-700);
+    }
+
+    .stage-item.done {
+      color: var(--green-700);
+      background: var(--green-50);
+      border-color: var(--green-100);
+    }
+
+    .stage-item.done .stage-number {
+      background: var(--green-600);
+      color: var(--white);
+      border-color: var(--green-600);
+    }
+
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-header {
+      padding: 22px 22px 0;
+    }
+
+    .kicker {
+      color: var(--blue-700);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.73rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      color: var(--slate-950);
+      font-size: 1.3rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      color: var(--slate-900);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    p {
+      color: var(--slate-600);
+    }
+
+    .statement {
+      margin: 16px 22px 0;
+      border: 1px solid var(--blue-100);
+      background: var(--blue-50);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .statement-label {
+      color: var(--blue-700);
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 5px;
+    }
+
+    .statement p:last-child {
+      color: var(--slate-950);
+      font-weight: 800;
+    }
+
+    .observe-grid {
+      padding: 18px 22px 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(330px, 0.65fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .code-card,
+    .test-area {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--slate-50);
+    }
+
+    .card-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .caption-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--slate-800);
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red-600);
+      box-shadow: 0 0 0 4px var(--red-50);
+    }
+
+    .caption-note {
+      color: var(--slate-500);
+      font-size: 0.78rem;
+    }
+
+    .code-window {
+      background: var(--code);
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 46px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #E5E7EB;
+      white-space: pre;
+    }
+
+    .line-number {
+      color: #6B7280;
+      text-align: right;
+      padding-right: 14px;
+      user-select: none;
+    }
+
+    .line-code {
+      padding-right: 18px;
+    }
+
+    .code-line.problem {
+      background: rgba(217, 45, 32, 0.18);
+      border-left: 4px solid var(--red-600);
+    }
+
+    .code-line.problem .line-number {
+      color: #FDA29B;
+    }
+
+    .token-pre { color: #C084FC; }
+    .token-type { color: #67E8F9; }
+    .token-function { color: #FDE68A; }
+    .token-string { color: #86EFAC; }
+    .token-number { color: #FCA5A5; }
+    .token-comment { color: #94A3B8; font-style: italic; }
+    .token-variable { color: #E2E8F0; }
+    .token-op { color: #F8FAFC; }
+
+    .problem-token {
+      display: inline-block;
+      color: #FFFFFF;
+      background: rgba(217, 45, 32, 0.55);
+      border: 1px solid rgba(254, 228, 226, 0.36);
+      border-radius: 5px;
+      padding: 0 4px;
+      font-weight: 800;
+    }
+
+    .problem-note {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      background: var(--red-50);
+      color: var(--red-700);
+      border-top: 1px solid var(--red-100);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .problem-note svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    .tests-list {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .test-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .test-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 9px;
+    }
+
+    .test-title {
+      color: var(--slate-800);
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    .fail-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-100);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.71rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .test-input {
+      display: block;
+      width: 100%;
+      background: var(--slate-950);
+      color: #E2E8F0;
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-family: Consolas, monospace;
+      font-size: 0.79rem;
+      margin-bottom: 9px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .test-results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .result-box {
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid;
+    }
+
+    .result-box small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.64rem;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .result-box strong {
+      display: block;
+      font-family: Consolas, monospace;
+      font-size: 0.81rem;
+      word-break: break-word;
+    }
+
+    .expected {
+      background: var(--green-50);
+      color: var(--green-700);
+      border-color: var(--green-100);
+    }
+
+    .obtained {
+      background: var(--red-50);
+      color: var(--red-700);
+      border-color: var(--red-100);
+    }
+
+    .diagnose-panel {
+      padding: 22px;
+    }
+
+    .diagnose-panel .intro {
+      margin-top: 6px;
+      max-width: 760px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .option {
+      position: relative;
+      display: grid;
+      grid-template-columns: 36px 1fr 24px;
+      align-items: start;
+      gap: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      padding: 13px 14px;
+      background: var(--slate-50);
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      background: var(--white);
+      border-color: var(--slate-300);
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .letter {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--slate-600);
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+      font-weight: 900;
+    }
+
+    .option-text {
+      color: var(--slate-700);
+      font-size: 0.93rem;
+      padding-top: 4px;
+    }
+
+    .check-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--slate-300);
+      background: var(--white);
+      margin-top: 5px;
+      position: relative;
+    }
+
+    .option:has(input:checked) {
+      border-color: var(--blue-700);
+      background: var(--blue-50);
+      box-shadow: 0 0 0 3px rgba(23, 92, 211, 0.08);
+    }
+
+    .option:has(input:checked) .letter {
+      color: var(--white);
+      background: var(--blue-700);
+      border-color: var(--blue-700);
+    }
+
+    .option:has(input:checked) .check-indicator {
+      border-color: var(--blue-700);
+    }
+
+    .option:has(input:checked) .check-indicator::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      background: var(--blue-700);
+      border-radius: 50%;
+    }
+
+    .action-row {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      min-height: 44px;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .primary-btn {
+      color: var(--white);
+      background: var(--blue-700);
+      box-shadow: 0 8px 18px rgba(23, 92, 211, 0.18);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      background: #1849A9;
+    }
+
+    .secondary-btn {
+      color: var(--slate-700);
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+    }
+
+    .secondary-btn:hover {
+      background: var(--slate-50);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none !important;
+      box-shadow: none;
+    }
+
+    .hypothesis-status {
+      display: none;
+      flex: 1 1 280px;
+      min-height: 44px;
+      align-items: center;
+      gap: 8px;
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.87rem;
+      font-weight: 800;
+    }
+
+    .hypothesis-status.show {
+      display: flex;
+    }
+
+    .feedback-line {
+      display: none;
+      margin-top: 12px;
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .feedback-line.show {
+      display: block;
+    }
+
+    .feedback-line.neutral {
+      color: var(--amber-700);
+      background: var(--amber-50);
+      border: 1px solid var(--amber-100);
+    }
+
+    .analysis-content {
+      display: none;
+      gap: 18px;
+    }
+
+    .analysis-content.visible {
+      display: grid;
+    }
+
+    .explain-grid {
+      padding: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 16px;
+    }
+
+    .diagnosis-summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .diagnosis-card {
+      border-radius: 15px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+    }
+
+    .diagnosis-card.red {
+      background: var(--red-50);
+      border-color: var(--red-100);
+    }
+
+    .diagnosis-card strong {
+      display: block;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+      font-size: 0.88rem;
+    }
+
+    .diagnosis-card.red strong {
+      color: var(--red-700);
+    }
+
+    .diagnosis-card p {
+      font-size: 0.9rem;
+    }
+
+    .flow-card {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: var(--white);
+    }
+
+    .flow-title {
+      margin-bottom: 13px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(7, auto);
+      align-items: stretch;
+      justify-content: stretch;
+      gap: 8px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      border-radius: 13px;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      text-align: center;
+    }
+
+    .flow-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .flow-step strong {
+      color: var(--slate-800);
+      font-size: 0.84rem;
+    }
+
+    .flow-step.error {
+      background: var(--red-50);
+      border-color: var(--red-100);
+    }
+
+    .flow-step.error small,
+    .flow-step.error strong {
+      color: var(--red-700);
+    }
+
+    .flow-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--slate-400);
+      font-size: 1.2rem;
+    }
+
+    .correction-panel {
+      padding: 22px;
+    }
+
+    .correction-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(290px, 0.9fr);
+      gap: 16px;
+      margin-top: 15px;
+    }
+
+    .diff-card {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--code);
+    }
+
+    .diff-head {
+      padding: 12px 14px;
+      background: var(--slate-800);
+      color: #E2E8F0;
+      font-size: 0.82rem;
+      font-weight: 900;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .diff-line {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      padding: 10px 14px;
+      font-family: Consolas, monospace;
+      font-size: 0.89rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .diff-line.minus {
+      color: #FDA29B;
+      background: rgba(217, 45, 32, 0.18);
+    }
+
+    .diff-line.plus {
+      color: #6CE9A6;
+      background: rgba(7, 148, 85, 0.17);
+    }
+
+    .diff-symbol {
+      font-weight: 900;
+    }
+
+    .correction-side {
+      display: grid;
+      gap: 10px;
+    }
+
+    .principle {
+      border-radius: 14px;
+      padding: 13px 14px;
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+    }
+
+    .principle strong {
+      color: var(--green-700);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .principle p {
+      font-size: 0.9rem;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 30px;
+      color: var(--slate-600);
+      font-size: 0.9rem;
+    }
+
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      font-size: 0.72rem;
+      font-weight: 900;
+    }
+
+    .validate-panel {
+      padding: 22px;
+    }
+
+    .validation-tabs-wrap {
+      margin-top: 16px;
+    }
+
+    .validation-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 7px;
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+    }
+
+    .validation-tab {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 11px;
+      padding: 9px 12px;
+      color: var(--slate-600);
+      background: transparent;
+      border: 1px solid transparent;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .validation-tab:hover {
+      color: var(--slate-800);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .validation-tab[aria-selected="true"] {
+      color: var(--blue-700);
+      background: var(--white);
+      border-color: var(--blue-100);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.07);
+    }
+
+    .validation-tab.is-complete {
+      color: var(--green-700);
+    }
+
+    .validation-tab.is-complete::after {
+      content: "✓";
+      width: 19px;
+      height: 19px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--green-600);
+      font-size: 0.7rem;
+    }
+
+    .difficulty-badge {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .difficulty-badge.basic {
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+    }
+
+    .difficulty-badge.intermediate {
+      color: var(--amber-700);
+      background: var(--amber-50);
+      border: 1px solid var(--amber-100);
+    }
+
+    .difficulty-badge.hard {
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-100);
+    }
+
+    .validation-panel[hidden] {
+      display: none;
+    }
+
+    .validation-progress {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 11px;
+      color: var(--slate-500);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .validation-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .validation-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--slate-300);
+    }
+
+    .validation-dot.done {
+      background: var(--green-600);
+    }
+
+    .validate-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(290px, 0.85fr);
+      gap: 16px;
+      margin-top: 15px;
+    }
+
+    .mini-problem,
+    .mini-response {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--slate-50);
+      padding: 16px;
+    }
+
+    .mini-problem p {
+      margin-top: 7px;
+      font-size: 0.9rem;
+    }
+
+    .mini-code {
+      margin-top: 12px;
+      background: var(--code);
+      color: #E2E8F0;
+      border-radius: 12px;
+      padding: 13px;
+      font-family: Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .mini-response .options {
+      margin-top: 10px;
+    }
+
+    .mini-response .option {
+      grid-template-columns: 30px 1fr 20px;
+      padding: 10px 11px;
+      gap: 9px;
+    }
+
+    .mini-response .letter {
+      width: 27px;
+      height: 27px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+    }
+
+    .mini-response .option-text {
+      font-size: 0.85rem;
+      padding-top: 2px;
+    }
+
+    .mini-response .check-indicator {
+      width: 19px;
+      height: 19px;
+      margin-top: 3px;
+    }
+
+    .quick-feedback {
+      display: none;
+      margin-top: 11px;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 0.87rem;
+      font-weight: 700;
+    }
+
+    .quick-feedback.show {
+      display: block;
+    }
+
+    .quick-feedback.correct {
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+    }
+
+    .quick-feedback.incorrect {
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-100);
+    }
+
+    .quick-feedback.neutral {
+      color: var(--amber-700);
+      background: var(--amber-50);
+      border: 1px solid var(--amber-100);
+    }
+
+    .review-card {
+      background: linear-gradient(135deg, var(--slate-950), var(--slate-800));
+      border-radius: var(--radius-xl);
+      color: var(--white);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .review-card h2 {
+      color: var(--white);
+    }
+
+    .review-card > p {
+      color: #CBD5E1;
+      margin-top: 5px;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .review-item {
+      border-radius: 14px;
+      padding: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .review-item strong {
+      display: block;
+      color: var(--white);
+      font-size: 0.86rem;
+      margin-bottom: 4px;
+    }
+
+    .review-item p {
+      color: #CBD5E1;
+      font-size: 0.82rem;
+    }
+
+    details.mobile-details {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    details.mobile-details summary {
+      display: none;
+      cursor: pointer;
+      color: var(--slate-900);
+      font-weight: 900;
+      padding: 15px 16px;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .resource-credit {
+      text-align: center;
+      padding: 14px 10px 0;
+      color: var(--slate-500);
+      font-size: 0.84rem;
+    }
+
+    .resource-credit a {
+      color: var(--blue-700);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .observe-grid,
+      .explain-grid,
+      .correction-grid,
+      .validate-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .indicator-strip {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .review-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 12px 10px 28px;
+      }
+
+      .shell {
+        gap: 12px;
+      }
+
+      .topbar {
+        padding: 20px 18px 18px;
+        border-radius: 20px;
+      }
+
+      .topbar::after {
+        right: -8px;
+        top: -25px;
+        font-size: 150px;
+      }
+
+      .topbar-row {
+        gap: 12px;
+      }
+
+      .bug-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+      }
+
+      .bug-mark svg {
+        width: 23px;
+        height: 23px;
+      }
+
+      .indicator-strip {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      .indicator {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 11px;
+      }
+
+      .indicator small {
+        margin: 0;
+      }
+
+      .indicator strong {
+        text-align: right;
+      }
+
+      .stage-nav {
+        grid-template-columns: repeat(4, minmax(64px, 1fr));
+        overflow-x: auto;
+        padding: 8px;
+        top: 4px;
+      }
+
+      .stage-item {
+        flex-direction: column;
+        gap: 3px;
+        padding: 7px 5px;
+        font-size: 0.69rem;
+        white-space: nowrap;
+      }
+
+      .stage-number {
+        width: 22px;
+        height: 22px;
+      }
+
+      .panel,
+      .review-card {
+        border-radius: 20px;
+      }
+
+      .panel-header {
+        padding: 18px 16px 0;
+      }
+
+      .statement {
+        margin: 13px 16px 0;
+      }
+
+      .observe-grid,
+      .diagnose-panel,
+      .explain-grid,
+      .correction-panel,
+      .validate-panel {
+        padding: 14px 16px 16px;
+      }
+
+      .card-caption {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .caption-note {
+        padding-left: 17px;
+      }
+
+      .code-line {
+        grid-template-columns: 38px minmax(max-content, 1fr);
+        font-size: 0.78rem;
+      }
+
+      .line-number {
+        padding-right: 10px;
+      }
+
+      .option {
+        grid-template-columns: 31px 1fr 21px;
+        gap: 9px;
+        padding: 11px;
+      }
+
+      .letter {
+        width: 28px;
+        height: 28px;
+      }
+
+      .option-text {
+        font-size: 0.87rem;
+        padding-top: 2px;
+      }
+
+      .action-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+
+      .hypothesis-status {
+        width: 100%;
+      }
+
+      .test-results {
+        grid-template-columns: 1fr;
+      }
+
+      .validation-tabs {
+        grid-template-columns: repeat(3, minmax(118px, 1fr));
+        overflow-x: auto;
+      }
+
+      .validation-tab {
+        white-space: nowrap;
+        font-size: 0.8rem;
+      }
+
+      .validation-progress {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+
+      details.mobile-details summary {
+        display: block;
+      }
+
+      details.mobile-details:not([open]) > .mobile-detail-content {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<main class="shell">
+<header aria-label="Cabeçalho do card diagnóstico de erro" class="topbar">
+<div class="topbar-row">
+<div aria-hidden="true" class="bug-mark">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" viewbox="0 0 24 24">
+<path d="M8 9h8v7a4 4 0 0 1-8 0V9Z"></path>
+<path d="M9 9V7a3 3 0 0 1 6 0v2M5 13h3M16 13h3M6 18l2-1M18 18l-2-1M6 8l2 1M18 8l-2 1"></path>
+</svg>
+</div>
+<div>
+<div class="eyebrow-row">
+<span class="pill">Card diagnóstico</span>
+<span class="pill">CCI02</span>
+<span class="pill red">Erro de lógica</span>
+<span class="pill amber">Gravidade alta</span>
+</div>
+<h1>Processamento incompleto</h1>
+<p class="subtitle">Investigue programas que leem os dados e produzem uma saída, mas não realizam todas as operações necessárias para transformar as entradas no resultado solicitado.</p>
+</div>
+</div>
+<div aria-label="Resumo do erro" class="indicator-strip">
+<div class="indicator">
+<small>Sintoma</small>
+<strong>A saída aparece, mas o cálculo está incorreto</strong>
+</div>
+<div class="indicator">
+<small>Impacto</small>
+<strong>Entradas lidas não participam do resultado</strong>
+</div>
+<div class="indicator">
+<small>Competência</small>
+<strong>Fluxo verificável de entrada, processamento e saída</strong>
+</div>
+</div>
+</header>
+<nav aria-label="Etapas do diagnóstico" class="stage-nav">
+<div class="stage-item active" data-stage-item="1">
+<span class="stage-number">1</span>
+<span>Observar</span>
+</div>
+<div class="stage-item" data-stage-item="2">
+<span class="stage-number">2</span>
+<span>Diagnosticar</span>
+</div>
+<div class="stage-item" data-stage-item="3">
+<span class="stage-number">3</span>
+<span>Corrigir</span>
+</div>
+<div class="stage-item" data-stage-item="4">
+<span class="stage-number">4</span>
+<span>Validar</span>
+</div>
+</nav>
+<section class="panel" id="observeSection">
+<div class="panel-header">
+<p class="kicker">Etapa 1 · Observe</p>
+<h2>Verifique se as entradas foram realmente transformadas no resultado pedido</h2>
+</div>
+<div class="statement">
+<p class="statement-label">Enunciado</p>
+<p>Leia duas notas de um estudante, calcule a média aritmética e apresente o resultado com duas casas decimais.</p>
+</div>
+<div class="observe-grid">
+<article aria-label="Programa em C com processamento incompleto" class="code-card">
+<div class="card-caption">
+<div class="caption-title"><span class="status-dot"></span>Solução em análise</div>
+<span class="caption-note">Linguagem C</span>
+</div>
+<div aria-label="Código em C que lê duas notas e imprime apenas a primeira" class="code-window" role="region" tabindex="0">
+<div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="token-pre">#include</span> <span class="token-string">&lt;stdio.h&gt;</span></span></div>
+<div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">3</span><span class="line-code"><span class="token-type">int</span> <span class="token-function">main</span>() {</span></div>
+<div class="code-line"><span class="line-number">4</span><span class="line-code"> <span class="token-type">float</span> <span class="token-variable">nota1</span>, <span class="token-variable">nota2</span>;</span></div>
+<div class="code-line"><span class="line-number">5</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">6</span><span class="line-code"> <span class="token-function">scanf</span>(<span class="token-string">"%f %f"</span>, &amp;<span class="token-variable">nota1</span>, &amp;<span class="token-variable">nota2</span>);</span></div>
+<div class="code-line problem"><span class="line-number">7</span><span class="line-code"> <span class="token-function">printf</span>(<span class="token-string">"Media: %.2f\n"</span>, <span class="problem-token">nota1</span>);</span></div>
+<div class="code-line"><span class="line-number">8</span><span class="line-code"> <span class="token-pre">return</span> <span class="token-number">0</span>;</span></div>
+<div class="code-line"><span class="line-number">9</span><span class="line-code">}</span></div>
+</div>
+<div class="problem-note">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.8 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path></svg>
+<span>As duas notas são lidas, mas o programa imprime apenas a primeira como se fosse a média. A etapa de processamento não foi realizada.</span>
+</div>
+</article>
+<aside aria-label="Casos de teste" class="test-area">
+<div class="card-caption">
+<div class="caption-title">Casos de teste</div>
+<span class="caption-note">3 divergências</span>
+</div>
+<div class="tests-list">
+<article class="test-card">
+<div class="test-card-head">
+<span class="test-title">Teste 1</span>
+<span class="fail-badge">Falhou</span>
+</div>
+<span class="test-input">Notas: 6 e 8</span>
+<div class="test-results">
+<div class="result-box expected"><small>Esperado</small><strong>7.00</strong></div>
+<div class="result-box obtained"><small>Obtido</small><strong>6.00</strong></div>
+</div>
+</article>
+<article class="test-card">
+<div class="test-card-head">
+<span class="test-title">Teste 2</span>
+<span class="fail-badge">Falhou</span>
+</div>
+<span class="test-input">Notas: 10 e 0</span>
+<div class="test-results">
+<div class="result-box expected"><small>Esperado</small><strong>5.00</strong></div>
+<div class="result-box obtained"><small>Obtido</small><strong>10.00</strong></div>
+</div>
+</article>
+<article class="test-card">
+<div class="test-card-head">
+<span class="test-title">Teste 3</span>
+<span class="fail-badge">Falhou</span>
+</div>
+<span class="test-input">Notas: 4 e 9</span>
+<div class="test-results">
+<div class="result-box expected"><small>Esperado</small><strong>6.50</strong></div>
+<div class="result-box obtained"><small>Obtido</small><strong>4.00</strong></div>
+</div>
+</article>
+</div>
+</aside>
+</div>
+</section>
+<section class="panel diagnose-panel" id="diagnoseSection">
+<p class="kicker">Etapa 2 · Diagnostique</p>
+<h2>Qual hipótese explica melhor os resultados apresentados?</h2>
+<p class="intro">Registre sua hipótese antes de abrir a análise. Observe especialmente a ligação entre os dados lidos e o valor exibido.</p>
+<div aria-label="Alternativas para o diagnóstico inicial" class="options" role="radiogroup">
+<label class="option">
+<input name="initialDiagnosis" type="radio" value="a"/>
+<span class="letter">A</span>
+<span class="option-text">O programa lê as duas notas, mas não calcula a média: a segunda entrada não é usada e a saída recebe diretamente o valor da primeira nota.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="initialDiagnosis" type="radio" value="b"/>
+<span class="letter">B</span>
+<span class="option-text">O problema ocorre porque duas notas não podem ser armazenadas em variáveis do tipo float.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="initialDiagnosis" type="radio" value="c"/>
+<span class="letter">C</span>
+<span class="option-text">A média só poderia ser calculada se cada nota fosse impressa imediatamente após a leitura.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+</div>
+<div class="action-row">
+<button class="primary-btn" id="registerHypothesis" type="button">Registrar hipótese</button>
+<button class="secondary-btn" disabled="" id="openAnalysis" type="button">Ver análise e correção</button>
+<div aria-live="polite" class="hypothesis-status" id="hypothesisStatus">Hipótese registrada. Agora confronte sua ideia com a análise completa.</div>
+</div>
+<div aria-live="polite" class="feedback-line neutral" id="diagnosisFeedback">Selecione uma alternativa antes de registrar sua hipótese.</div>
+</section>
+<div aria-hidden="true" class="analysis-content" hidden="" id="analysisContent">
+<details class="mobile-details" open="">
+<summary>Onde está o erro?</summary>
+<div class="mobile-detail-content">
+<section class="panel">
+<div class="panel-header">
+<p class="kicker">Análise do diagnóstico</p>
+<h2>Onde o fluxo entre entrada, processamento e saída foi interrompido?</h2>
+</div>
+<div class="explain-grid">
+<div class="diagnosis-summary">
+<article class="diagnosis-card red">
+<strong>Diagnóstico</strong>
+<p>A alternativa A descreve o problema: as duas notas são lidas, porém nenhuma expressão calcula a média. O programa envia nota1 diretamente para a saída.</p>
+</article>
+<article class="diagnosis-card">
+<strong>Causa conceitual</strong>
+<p>A etapa de processamento deve transformar os dados de entrada na informação solicitada. Sem essa transformação, a saída pode existir, mas não representa o resultado do problema.</p>
+</article>
+<article class="diagnosis-card">
+<strong>Quando aparece</strong>
+<p>Esse erro aparece quando o estudante se preocupa em ler e mostrar valores, mas imprime algo antes de completar todas as operações necessárias.</p>
+</article>
+</div>
+<article class="flow-card">
+<div class="flow-title">
+<h3>Como o erro se propaga</h3>
+<p>A entrada está presente, mas a ausência do cálculo rompe o fluxo verificável.</p>
+</div>
+<div aria-label="Fluxo de propagação do erro" class="flow">
+<div class="flow-step"><small>Entrada</small><strong>nota1 e nota2</strong></div>
+<div aria-hidden="true" class="flow-arrow">→</div>
+<div class="flow-step error"><small>Processamento</small><strong>não realizado</strong></div>
+<div aria-hidden="true" class="flow-arrow">→</div>
+<div class="flow-step error"><small>Saída</small><strong>nota1 apresentada como média</strong></div>
+<div aria-hidden="true" class="flow-arrow">→</div>
+<div class="flow-step error"><small>Resultado</small><strong>valor incorreto</strong></div>
+</div>
+</article>
+</div>
+</section>
+</div>
+</details>
+<details class="mobile-details" open="">
+<summary>Como corrigir?</summary>
+<div class="mobile-detail-content">
+<section class="panel correction-panel" id="correctSection">
+<p class="kicker">Etapa 3 · Corrija</p>
+<h2>Complete o processamento antes de produzir a saída</h2>
+<div class="correction-grid">
+<article aria-label="Comparação entre solução incorreta e solução corrigida" class="diff-card">
+<div class="diff-head">Correção mínima em C</div>
+
+
+
+
+
+
+
+<div class="diff-line minus"><span class="diff-symbol">−</span><span>float nota1, nota2;</span></div>
+<div class="diff-line plus"><span class="diff-symbol">+</span><span>float nota1, nota2, media;</span></div>
+<div class="diff-line plus"><span class="diff-symbol">+</span><span>media = (nota1 + nota2) / 2;</span></div>
+<div class="diff-line minus"><span class="diff-symbol">−</span><span>printf("Media: %.2f\n", nota1);</span></div>
+<div class="diff-line plus"><span class="diff-symbol">+</span><span>printf("Media: %.2f\n", media);</span></div>
+</article>
+<div class="correction-side">
+<article class="principle">
+<strong>Por que funciona?</strong>
+<p>A expressão utiliza as duas entradas para produzir a média. Somente depois dessa transformação o resultado é enviado à saída.</p>
+</article>
+<ul aria-label="Checklist de correção" class="checklist">
+<li>Liste todos os dados que entram no programa.</li>
+<li>Identifique a informação que precisa ser produzida.</li>
+<li>Escreva a expressão ou decisão que transforma as entradas.</li>
+<li>Confira se todos os dados lidos são usados de forma coerente.</li>
+<li>Produza a saída apenas depois de concluir o processamento.</li>
+</ul>
+</div>
+</div>
+</section>
+</div>
+</details>
+<details class="mobile-details" open="">
+<summary>Valide a aprendizagem</summary>
+<div class="mobile-detail-content">
+<section class="panel validate-panel" id="validateSection">
+<p class="kicker">Etapa 4 · Valide</p>
+<h2>Reconheça, aplique e analise o processamento incompleto</h2>
+<p style="margin-top: 6px;">Avance pelas três propostas: reconheça o erro, aplique o diagnóstico em uma nova situação e analise um caso com mais etapas de processamento.</p>
+
+<div class="validation-tabs-wrap">
+<div aria-label="Propostas de validação: reconheça, aplique e analise" class="validation-tabs" role="tablist">
+<button aria-controls="validation-basic" aria-selected="true" class="validation-tab" data-validation-tab="basic" id="tab-basic" role="tab" type="button">Reconheça</button>
+<button aria-controls="validation-intermediate" aria-selected="false" class="validation-tab" data-validation-tab="intermediate" id="tab-intermediate" role="tab" tabindex="-1" type="button">Aplique</button>
+<button aria-controls="validation-hard" aria-selected="false" class="validation-tab" data-validation-tab="hard" id="tab-hard" role="tab" tabindex="-1" type="button">Analise</button>
+</div>
+<div class="validation-progress" aria-live="polite">
+<span id="validationProgressText">Exemplos concluídos: 0 de 3.</span>
+<div class="validation-dots" aria-hidden="true">
+<span class="validation-dot" data-validation-dot="basic"></span>
+<span class="validation-dot" data-validation-dot="intermediate"></span>
+<span class="validation-dot" data-validation-dot="hard"></span>
+</div>
+</div>
+</div>
+
+<div aria-labelledby="tab-basic" class="validation-panel" id="validation-basic" role="tabpanel" tabindex="0">
+<div class="validate-grid">
+<article class="mini-problem">
+<span class="difficulty-badge basic">Reconheça</span>
+<h3>Área de um retângulo</h3>
+<p>Leia a base e a altura de um retângulo, calcule a área e apresente o resultado.</p>
+<div aria-label="Código em C da proposta Reconheça" class="mini-code" role="region" tabindex="0"><span class="token-pre">#include</span> <span class="token-string">&lt;stdio.h&gt;</span>
+
+<span class="token-type">int</span> <span class="token-function">main</span>() {
+    <span class="token-type">float</span> <span class="token-variable">base</span>, <span class="token-variable">altura</span>;
+
+    <span class="token-function">scanf</span>(<span class="token-string">"%f %f"</span>, &amp;<span class="token-variable">base</span>, &amp;<span class="token-variable">altura</span>);
+    <span class="token-function">printf</span>(<span class="token-string">"Area: %.2f\n"</span>, <span class="token-variable">base</span>);
+
+    <span class="token-pre">return</span> <span class="token-number">0</span>;
+}</div>
+</article>
+<article class="mini-response">
+<h3>Qual é o diagnóstico?</h3>
+<div aria-label="Alternativas da proposta Reconheça" class="options" role="radiogroup">
+<label class="option">
+<input name="quickTestBasic" type="radio" value="a"/>
+<span class="letter">A</span>
+<span class="option-text">A altura é lida, mas não participa de nenhum cálculo; o programa mostra a base como se fosse a área.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="quickTestBasic" type="radio" value="b"/>
+<span class="letter">B</span>
+<span class="option-text">A área deveria ser calculada antes da leitura da altura.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="quickTestBasic" type="radio" value="c"/>
+<span class="letter">C</span>
+<span class="option-text">O erro está apenas no nome da variável <code>base</code>, que deveria se chamar <code>area</code>.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+</div>
+<button class="primary-btn validation-check" data-check-validation="basic" style="margin-top: 12px;" type="button">Verificar diagnóstico</button>
+<div aria-live="polite" class="quick-feedback" id="feedback-basic"></div>
+</article>
+</div>
+</div>
+
+<div aria-labelledby="tab-intermediate" class="validation-panel" hidden id="validation-intermediate" role="tabpanel" tabindex="0">
+<div class="validate-grid">
+<article class="mini-problem">
+<span class="difficulty-badge intermediate">Aplique</span>
+<h3>Total de uma compra com desconto</h3>
+<p>Leia o preço unitário, a quantidade comprada e o percentual de desconto. Calcule e mostre o total final após o desconto.</p>
+<div aria-label="Código em C da proposta Aplique" class="mini-code" role="region" tabindex="0"><span class="token-pre">#include</span> <span class="token-string">&lt;stdio.h&gt;</span>
+
+<span class="token-type">int</span> <span class="token-function">main</span>() {
+    <span class="token-type">float</span> <span class="token-variable">preco</span>, <span class="token-variable">desconto</span>, <span class="token-variable">subtotal</span>, <span class="token-variable">total</span>;
+    <span class="token-type">int</span> <span class="token-variable">quantidade</span>;
+
+    <span class="token-function">scanf</span>(<span class="token-string">"%f %d %f"</span>, &amp;<span class="token-variable">preco</span>, &amp;<span class="token-variable">quantidade</span>, &amp;<span class="token-variable">desconto</span>);
+    <span class="token-variable">subtotal</span> <span class="token-op">=</span> <span class="token-variable">preco</span> <span class="token-op">*</span> <span class="token-variable">quantidade</span>;
+    <span class="token-variable">total</span> <span class="token-op">=</span> <span class="token-variable">subtotal</span>;
+
+    <span class="token-function">printf</span>(<span class="token-string">"Total: %.2f\n"</span>, <span class="token-variable">total</span>);
+    <span class="token-pre">return</span> <span class="token-number">0</span>;
+}</div>
+</article>
+<article class="mini-response">
+<h3>Qual é o diagnóstico?</h3>
+<div aria-label="Alternativas da proposta Aplique" class="options" role="radiogroup">
+<label class="option">
+<input name="quickTestIntermediate" type="radio" value="a"/>
+<span class="letter">A</span>
+<span class="option-text">O subtotal é calculado, mas o percentual de desconto lido nunca é aplicado ao total final.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="quickTestIntermediate" type="radio" value="b"/>
+<span class="letter">B</span>
+<span class="option-text">A quantidade não poderia ser inteira, pois toda compra precisa usar apenas variáveis do tipo <code>float</code>.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="quickTestIntermediate" type="radio" value="c"/>
+<span class="letter">C</span>
+<span class="option-text">O desconto deveria ser impresso antes do subtotal, mas o cálculo realizado já está completo.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+</div>
+<button class="primary-btn validation-check" data-check-validation="intermediate" style="margin-top: 12px;" type="button">Verificar diagnóstico</button>
+<div aria-live="polite" class="quick-feedback" id="feedback-intermediate"></div>
+</article>
+</div>
+</div>
+
+<div aria-labelledby="tab-hard" class="validation-panel" hidden id="validation-hard" role="tabpanel" tabindex="0">
+<div class="validate-grid">
+<article class="mini-problem">
+<span class="difficulty-badge hard">Analise</span>
+<h3>Média final com componentes ponderados</h3>
+<p>Leia duas notas de prova e a nota de um projeto. A média das provas vale 70% da nota final e o projeto vale 30%.</p>
+<div aria-label="Código em C da proposta Analise" class="mini-code" role="region" tabindex="0"><span class="token-pre">#include</span> <span class="token-string">&lt;stdio.h&gt;</span>
+
+<span class="token-type">int</span> <span class="token-function">main</span>() {
+    <span class="token-type">float</span> <span class="token-variable">n1</span>, <span class="token-variable">n2</span>, <span class="token-variable">projeto</span>;
+    <span class="token-type">float</span> <span class="token-variable">mediaProvas</span>, <span class="token-variable">parteProvas</span>, <span class="token-variable">parteProjeto</span>, <span class="token-variable">mediaFinal</span>;
+
+    <span class="token-function">scanf</span>(<span class="token-string">"%f %f %f"</span>, &amp;<span class="token-variable">n1</span>, &amp;<span class="token-variable">n2</span>, &amp;<span class="token-variable">projeto</span>);
+    <span class="token-variable">mediaProvas</span> <span class="token-op">=</span> (<span class="token-variable">n1</span> <span class="token-op">+</span> <span class="token-variable">n2</span>) <span class="token-op">/</span> <span class="token-number">2</span>;
+    <span class="token-variable">parteProvas</span> <span class="token-op">=</span> <span class="token-variable">mediaProvas</span> <span class="token-op">*</span> <span class="token-number">0.7</span>;
+    <span class="token-variable">parteProjeto</span> <span class="token-op">=</span> <span class="token-variable">projeto</span> <span class="token-op">*</span> <span class="token-number">0.3</span>;
+    <span class="token-variable">mediaFinal</span> <span class="token-op">=</span> <span class="token-variable">parteProvas</span>;
+
+    <span class="token-function">printf</span>(<span class="token-string">"Media final: %.2f\n"</span>, <span class="token-variable">mediaFinal</span>);
+    <span class="token-pre">return</span> <span class="token-number">0</span>;
+}</div>
+</article>
+<article class="mini-response">
+<h3>Qual é o diagnóstico?</h3>
+<div aria-label="Alternativas da proposta Analise" class="options" role="radiogroup">
+<label class="option">
+<input name="quickTestHard" type="radio" value="a"/>
+<span class="letter">A</span>
+<span class="option-text">A contribuição do projeto é calculada, mas não é combinada com a parte das provas na composição da média final.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="quickTestHard" type="radio" value="b"/>
+<span class="letter">B</span>
+<span class="option-text">O processamento está completo, porque calcular separadamente as duas parcelas já produz automaticamente a média final.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+<label class="option">
+<input name="quickTestHard" type="radio" value="c"/>
+<span class="letter">C</span>
+<span class="option-text">O erro ocorre porque os pesos 0.7 e 0.3 deveriam ser declarados como números inteiros.</span>
+<span aria-hidden="true" class="check-indicator"></span>
+</label>
+</div>
+<button class="primary-btn validation-check" data-check-validation="hard" style="margin-top: 12px;" type="button">Verificar diagnóstico</button>
+<div aria-live="polite" class="quick-feedback" id="feedback-hard"></div>
+</article>
+</div>
+</div>
+</section>
+</div>
+</details>
+<section class="review-card">
+<h2>Síntese diagnóstica</h2>
+<p>Um fluxo correto conecta cada entrada ao processamento necessário e só então produz uma saída verificável.</p>
+<div class="review-grid">
+<article class="review-item"><strong>Erro</strong><p>Produzir a saída sem concluir o processamento.</p></article>
+<article class="review-item"><strong>Sinal</strong><p>Um dado é lido, mas não participa do resultado.</p></article>
+<article class="review-item"><strong>Diagnóstico</strong><p>Rastrear o uso de cada entrada até a saída.</p></article>
+<article class="review-item"><strong>Correção</strong><p>Executar todas as operações antes de imprimir.</p></article>
+</div>
+</section>
+</div>
+<footer class="resource-credit">
+<p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" rel="noopener noreferrer" target="_blank">Marcos Bião</a>.</p>
+</footer>
+</main>
+<script>
+    const registerHypothesisButton = document.getElementById("registerHypothesis");
+    const openAnalysisButton = document.getElementById("openAnalysis");
+    const hypothesisStatus = document.getElementById("hypothesisStatus");
+    const diagnosisFeedback = document.getElementById("diagnosisFeedback");
+    const analysisContent = document.getElementById("analysisContent");
+    const validationTabs = document.querySelectorAll("[data-validation-tab]");
+    const validationPanels = document.querySelectorAll(".validation-panel");
+    const validationProgressText = document.getElementById("validationProgressText");
+    const completedValidationExamples = new Set();
+
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      document.querySelectorAll("details.mobile-details").forEach((detail, index) => {
+        detail.open = index === 0;
+      });
+    }
+
+    let maxCompletedStage = 0;
+
+    function setStage(stage, completedUntil = maxCompletedStage) {
+      maxCompletedStage = Math.max(maxCompletedStage, completedUntil);
+
+      document.querySelectorAll("[data-stage-item]").forEach((item) => {
+        const itemStage = Number(item.dataset.stageItem);
+        item.classList.toggle("active", itemStage === stage);
+        item.classList.toggle("done", itemStage <= maxCompletedStage);
+      });
+    }
+
+    registerHypothesisButton.addEventListener("click", () => {
+      const selected = document.querySelector('input[name="initialDiagnosis"]:checked');
+
+      if (!selected) {
+        diagnosisFeedback.className = "feedback-line neutral show";
+        diagnosisFeedback.textContent = "Selecione uma alternativa antes de registrar sua hipótese.";
+        return;
+      }
+
+      diagnosisFeedback.classList.remove("show");
+      hypothesisStatus.classList.add("show");
+      openAnalysisButton.disabled = false;
+      registerHypothesisButton.textContent = "Hipótese registrada";
+      registerHypothesisButton.disabled = true;
+      document.querySelectorAll('input[name="initialDiagnosis"]').forEach((input) => {
+        input.disabled = true;
+      });
+      setStage(2, 1);
+    });
+
+    openAnalysisButton.addEventListener("click", () => {
+      analysisContent.hidden = false;
+      analysisContent.setAttribute("aria-hidden", "false");
+      analysisContent.classList.add("visible");
+      openAnalysisButton.textContent = "Análise liberada";
+      openAnalysisButton.disabled = true;
+      setStage(3, 2);
+      analysisContent.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    const validationConfig = {
+      basic: {
+        radioName: "quickTestBasic",
+        correct: "a",
+        correctFeedback: "Diagnóstico correto. A altura foi lida, mas não foi usada. O processamento necessário era multiplicar base por altura antes de produzir a saída.",
+        incorrectFeedback: "Revise o caminho de cada entrada. O programa lê base e altura, mas imprime a base sem realizar a multiplicação exigida para calcular a área."
+      },
+      intermediate: {
+        radioName: "quickTestIntermediate",
+        correct: "a",
+        correctFeedback: "Diagnóstico correto. O programa calcula apenas o subtotal. O desconto é uma entrada necessária e precisa participar da operação que produz o total final.",
+        incorrectFeedback: "Observe que preço e quantidade formam apenas o subtotal. Como o percentual de desconto foi lido, ele também precisa transformar esse valor antes da saída."
+      },
+      hard: {
+        radioName: "quickTestHard",
+        correct: "a",
+        correctFeedback: "Diagnóstico correto. As duas parcelas foram calculadas, mas o processamento foi interrompido antes da integração: a média final deveria somar parteProvas e parteProjeto.",
+        incorrectFeedback: "Rastreie os resultados intermediários. A parcela do projeto existe, mas não chega à variável mediaFinal; portanto, a composição ponderada ficou incompleta."
+      }
+    };
+
+    function activateValidationTab(level, moveFocus = false) {
+      validationTabs.forEach((tab) => {
+        const isActive = tab.dataset.validationTab === level;
+        tab.setAttribute("aria-selected", String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+        if (isActive && moveFocus) tab.focus();
+      });
+
+      validationPanels.forEach((panel) => {
+        panel.hidden = panel.id !== `validation-${level}`;
+      });
+    }
+
+    function updateValidationProgress() {
+      validationProgressText.textContent = `Exemplos concluídos: ${completedValidationExamples.size} de 3.`;
+      document.querySelectorAll("[data-validation-dot]").forEach((dot) => {
+        dot.classList.toggle("done", completedValidationExamples.has(dot.dataset.validationDot));
+      });
+      validationTabs.forEach((tab) => {
+        tab.classList.toggle("is-complete", completedValidationExamples.has(tab.dataset.validationTab));
+      });
+
+      if (completedValidationExamples.size === 3) {
+        setStage(4, 4);
+      } else {
+        setStage(4, 3);
+      }
+    }
+
+    validationTabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activateValidationTab(tab.dataset.validationTab));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let nextIndex = index;
+        if (event.key === "ArrowRight") nextIndex = (index + 1) % validationTabs.length;
+        if (event.key === "ArrowLeft") nextIndex = (index - 1 + validationTabs.length) % validationTabs.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = validationTabs.length - 1;
+        activateValidationTab(validationTabs[nextIndex].dataset.validationTab, true);
+      });
+    });
+
+    document.querySelectorAll("[data-check-validation]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const level = button.dataset.checkValidation;
+        const config = validationConfig[level];
+        const selected = document.querySelector(`input[name="${config.radioName}"]:checked`);
+        const feedback = document.getElementById(`feedback-${level}`);
+        feedback.className = "quick-feedback show";
+
+        if (!selected) {
+          feedback.classList.add("neutral");
+          feedback.textContent = "Selecione uma alternativa antes de verificar.";
+          return;
+        }
+
+        if (selected.value === config.correct) {
+          feedback.classList.add("correct");
+          feedback.textContent = config.correctFeedback;
+          completedValidationExamples.add(level);
+          button.textContent = "Diagnóstico concluído";
+          button.disabled = true;
+          document.querySelectorAll(`input[name="${config.radioName}"]`).forEach((input) => {
+            input.disabled = true;
+          });
+          updateValidationProgress();
+        } else {
+          feedback.classList.add("incorrect");
+          feedback.textContent = config.incorrectFeedback;
+          setStage(4, 3);
+        }
+      });
+    });
+
+
+    const stageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        if (entry.target.id === "observeSection") setStage(1, 0);
+        if (entry.target.id === "diagnoseSection" && analysisContent.hidden) setStage(2, 1);
+        if (entry.target.id === "correctSection") setStage(3, 2);
+        if (entry.target.id === "validateSection") setStage(4, 3);
+      });
+    }, { threshold: 0.45 });
+
+    ["observeSection", "diagnoseSection", "correctSection", "validateSection"].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) stageObserver.observe(element);
+    });
+  </script>
+</body>
+</html>

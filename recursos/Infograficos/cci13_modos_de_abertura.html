@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuidado: o modo de abertura pode apagar seus dados</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+      --modo-r: #6366F1;
+      --modo-w: #F59E0B;
+      --modo-a: #14B8A6;
+      --modo-plus: #8B5CF6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(350px, .94fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .example-icon svg, .safety-icon svg, .mode-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.42rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+    .file-before-after { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+    .file-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      background: var(--cor-superficie-suave);
+      padding: 14px;
+      min-height: 150px;
+    }
+    .file-card strong { color: var(--cor-primaria-escura); font-size: .82rem; display: block; margin-bottom: 8px; }
+    .file-paper { border-radius: 12px; border: 1px solid var(--cor-borda); background: white; overflow: hidden; }
+    .file-line { padding: 7px 9px; font-family: Consolas, monospace; font-size: .76rem; color: var(--cor-texto-secundario); border-bottom: 1px solid var(--cor-borda); }
+    .file-line:last-child { border-bottom: none; }
+    .hero-arrow { color: var(--cor-destaque-pontual); font-size: 1.5rem; font-weight: 900; }
+    .mode-badge { display: inline-flex; margin-top: 10px; padding: 5px 9px; border-radius: 999px; background: #FFF7ED; color: #9A3412; font-weight: 900; font-size: .77rem; }
+    .hero-warning { margin-top: 14px; border: 1px solid rgba(245,158,11,.34); background: #FFFBEB; border-radius: 14px; padding: 11px 13px; color: var(--cor-texto-principal); font-size: .86rem; }
+    .hero-warning strong { color: #92400E; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-modos { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 620px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .29); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 190px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .center-file { width: 82px; height: 92px; margin: 12px auto 0; border: 2px solid rgba(255,255,255,.42); border-radius: 12px; position: relative; background: rgba(255,255,255,.09); }
+    .center-file::before { content: ""; position: absolute; top: 14px; left: 15px; right: 15px; height: 2px; background: rgba(255,255,255,.55); box-shadow: 0 14px 0 rgba(255,255,255,.4), 0 28px 0 rgba(255,255,255,.4), 0 42px 0 rgba(255,255,255,.28); }
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 146px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 9px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .82rem; font-weight: 900; }
+    .button-r { left: 38px; top: 38px; }
+    .button-w { right: 38px; top: 38px; }
+    .button-a { left: 38px; bottom: 38px; }
+    .button-plus { right: 38px; bottom: 38px; }
+
+    .modal { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 22px; }
+    .modal:target { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.66); backdrop-filter: blur(5px); }
+    .modal-card {
+      width: min(760px, 100%);
+      max-height: min(82vh, 760px);
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 24px;
+      padding: 26px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 30px 80px rgba(15,23,42,.28);
+      animation: modalIn .26s ease both;
+    }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(.965); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-head { display: flex; align-items: flex-start; gap: 13px; padding-right: 48px; margin-bottom: 17px; }
+    .modal-icon { width: 47px; height: 47px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 15px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .modal-kicker { color: var(--cor-primaria); text-transform: uppercase; letter-spacing: .08em; font-size: .73rem; font-weight: 900; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.35rem; margin: 2px 0 0; }
+    .modal-close { position: absolute; right: 18px; top: 18px; width: 38px; height: 38px; display: grid; place-items: center; text-decoration: none; border-radius: 12px; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.25rem; font-weight: 900; }
+    .modal-close:hover, .modal-close:focus-visible { background: var(--cor-superficie-destacada); outline: 2px solid rgba(79,70,229,.2); }
+    .modal-callout { background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); border-radius: 16px; padding: 14px 16px; margin: 14px 0; color: var(--cor-texto-principal); }
+    .modal-callout strong { color: var(--cor-primaria-escura); }
+    .before-after { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch; margin-top: 17px; }
+    .state-box { border: 1px solid var(--cor-borda); border-radius: 16px; padding: 14px; background: var(--cor-superficie-suave); }
+    .state-box strong { display: block; color: var(--cor-primaria-escura); font-size: .83rem; margin-bottom: 9px; }
+    .state-file { background: white; border: 1px solid var(--cor-borda); border-radius: 11px; overflow: hidden; }
+    .state-file div { padding: 7px 9px; border-bottom: 1px solid var(--cor-borda); font-family: Consolas, monospace; font-size: .8rem; color: var(--cor-texto-secundario); }
+    .state-file div:last-child { border-bottom: none; }
+    .state-arrow { display: grid; place-items: center; color: var(--cor-destaque-pontual); font-size: 1.35rem; font-weight: 900; }
+    .mode-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+    .mode-fact { border: 1px solid var(--cor-borda); border-radius: 14px; padding: 12px; background: var(--cor-superficie); }
+    .mode-fact span { display: block; color: var(--cor-texto-secundario); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 800; }
+    .mode-fact strong { color: var(--cor-texto-principal); font-size: .9rem; }
+    .danger-note { margin-top: 15px; border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; border-radius: 14px; padding: 13px 15px; color: var(--cor-texto-principal); }
+
+    .mode-table-wrap { overflow-x: auto; border: 1px solid var(--cor-borda); border-radius: 19px; }
+    .mode-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    .mode-table th, .mode-table td { padding: 13px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .mode-table th { color: var(--cor-primaria-escura); background: var(--cor-superficie-destacada); font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mode-table td { color: var(--cor-texto-secundario); font-size: .91rem; }
+    .mode-table tr:last-child td { border-bottom: none; }
+    .mode-token { display: inline-grid; place-items: center; min-width: 40px; padding: 5px 9px; border-radius: 9px; color: white; font-family: Consolas, monospace; font-weight: 900; }
+    .token-r { background: var(--modo-r); }
+    .token-w { background: #D97706; }
+    .token-a { background: #0F766E; }
+    .token-plus { background: var(--modo-plus); }
+    .risk-high { color: #9A3412; font-weight: 800; }
+    .risk-low { color: #0F766E; font-weight: 800; }
+
+    .decision-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .decision-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); position: relative; }
+    .decision-card:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); color: var(--cor-destaque-pontual); font-weight: 900; font-size: 1.1rem; z-index: 3; }
+    .step-icon { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .decision-card p { font-size: .9rem; }
+    .decision-result { display: inline-flex; margin-top: 10px; padding: 5px 9px; border-radius: 9px; font-family: Consolas, monospace; font-weight: 900; font-size: .82rem; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); }
+
+    .safety-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .safety-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; background: var(--cor-superficie-suave); }
+    .safety-icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 12px; }
+    .safety-card p { font-size: .9rem; }
+    .safety-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .code-window { background: var(--codigo-fundo); border-radius: 19px; overflow: hidden; border: 1px solid #1F2937; box-shadow: 0 14px 28px rgba(15,23,42,.12); }
+    .code-bar { min-height: 42px; display: flex; align-items: center; gap: 7px; padding: 0 15px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .78rem; font-weight: 800; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-body { padding: 18px 20px; overflow-x: auto; color: var(--codigo-texto); font-family: Consolas, Monaco, "Courier New", monospace; font-size: .87rem; line-height: 1.62; white-space: pre; }
+    .sy-directive { color: var(--syntax-directive); }
+    .sy-header { color: var(--syntax-header); }
+    .sy-type { color: var(--syntax-type); }
+    .sy-function { color: var(--syntax-function); }
+    .sy-keyword { color: var(--syntax-keyword); }
+    .sy-string { color: var(--syntax-string); }
+    .sy-number { color: var(--syntax-number); }
+    .sy-comment { color: var(--syntax-comment); font-style: italic; }
+    .sy-variable { color: var(--syntax-variable); }
+    .sy-operator { color: var(--syntax-operator); }
+
+    .safe-code-layout { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; align-items: start; }
+    .safe-notes { display: grid; gap: 11px; }
+    .safe-note { display: grid; grid-template-columns: auto 1fr; gap: 11px; border: 1px solid var(--cor-borda); border-radius: 16px; padding: 14px; background: var(--cor-superficie-suave); }
+    .safe-note span { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .safe-note p { font-size: .9rem; }
+
+    .examples-tabs { position: relative; }
+    .examples-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+    .tab-label { cursor: pointer; border: 1px solid var(--cor-borda); border-radius: 15px; padding: 12px 14px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; text-align: center; transition: .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.35); transform: translateY(-2px); }
+    #tab-1:checked ~ .tab-labels label[for="tab-1"],
+    #tab-2:checked ~ .tab-labels label[for="tab-2"],
+    #tab-3:checked ~ .tab-labels label[for="tab-3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panel { display: none; }
+    #tab-1:checked ~ .tab-panels .panel-1,
+    #tab-2:checked ~ .tab-panels .panel-2,
+    #tab-3:checked ~ .tab-panels .panel-3 { display: block; animation: tabIn .28s ease both; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .example-grid { display: grid; grid-template-columns: .86fr 1.14fr; gap: 18px; align-items: start; }
+    .example-info { border: 1px solid var(--cor-borda); border-radius: 19px; padding: 19px; background: var(--cor-superficie-suave); }
+    .example-kicker { display: inline-flex; align-items: center; gap: 7px; color: var(--cor-primaria); text-transform: uppercase; letter-spacing: .06em; font-weight: 900; font-size: .75rem; margin-bottom: 9px; }
+    .example-info ul { margin: 12px 0 0 19px; color: var(--cor-texto-secundario); }
+    .example-info li { margin-bottom: 7px; }
+    .mode-preview { margin-top: 15px; border: 1px solid var(--cor-borda); border-radius: 14px; background: white; padding: 13px; }
+    .mode-preview strong { color: var(--cor-primaria-escura); font-size: .86rem; }
+    .mode-preview code { display: block; margin-top: 7px; color: var(--cor-texto-principal); font-weight: 800; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; max-width: 900px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .safe-code-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .choice-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; transform: none; width: auto; min-height: 160px; }
+      .map-center { grid-column: 1 / -1; }
+      .button-r, .button-w, .button-a, .button-plus { inset: auto; }
+      .decision-flow { grid-template-columns: repeat(2, 1fr); }
+      .decision-card::after { display: none; }
+      .safety-grid, .error-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 18px 11px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-panel { padding: 16px; }
+      .file-before-after, .before-after { grid-template-columns: 1fr; }
+      .hero-arrow, .state-arrow { transform: rotate(90deg); }
+      .meta-grid, .concept-points, .choice-map, .decision-flow, .mode-facts { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .tab-labels { grid-template-columns: 1fr; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 21px 17px; border-radius: 20px; max-height: 90vh; }
+      .mode-table-wrap { border-radius: 15px; }
+      .code-body { font-size: .78rem; padding: 16px; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M8 13h8M8 17h6"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Cuidado: o modo de abertura pode apagar seus dados</h1>
+          <p class="subtitle">Entenda como <code>r</code>, <code>w</code> e <code>a</code> alteram o comportamento de um arquivo e escolha o modo adequado antes de ler ou gravar informações.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Comparação visual do modo de escrita">
+          <div class="panel-head">
+            <span class="hero-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M8 13h8M8 17h6"></path></svg>
+            </span>
+            <div>
+              <strong>O arquivo já possui dados</strong>
+              <span>O modo escolhido define o que acontecerá em seguida.</span>
+            </div>
+          </div>
+          <div class="file-before-after">
+            <div class="file-card">
+              <strong>Antes de abrir</strong>
+              <div class="file-paper">
+                <div class="file-line">Ana</div>
+                <div class="file-line">Bruno</div>
+              </div>
+            </div>
+            <div class="hero-arrow">→</div>
+            <div class="file-card">
+              <strong>Depois de usar <code>"w"</code></strong>
+              <div class="file-paper">
+                <div class="file-line">Carla</div>
+              </div>
+              <span class="mode-badge">Ana e Bruno foram apagados</span>
+            </div>
+          </div>
+          <div class="hero-warning"><strong>Ponto de atenção:</strong> abrir um arquivo existente com <code>"w"</code> apaga o conteúdo anterior imediatamente.</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI13</div><p>Manipular arquivos com leitura, escrita, verificação e fechamento seguro.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI04 e CCI10</div><p>Tomar decisões e organizar operações em etapas verificáveis.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Modos de abertura</div><p>Leitura, substituição, acréscimo e modos combinados.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Leitura guiada com comparação de efeitos sobre o arquivo.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e preventivo</div><p>Escolha orientada por intenção, risco e preservação dos dados.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path></svg>Ponteiro <code>FILE *</code></span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Uso básico de <code>fopen</code></span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h6"></path></svg>Leitura e escrita de dados</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"></path></svg>Condições com <code>NULL</code></span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>O modo de abertura é uma decisão sobre os dados</h3>
+          <p>O segundo argumento de <code>fopen</code> não serve apenas para informar uma operação técnica. Ele define se o programa deve <strong>preservar</strong>, <strong>substituir</strong> ou <strong>acrescentar</strong> conteúdo.</p>
+          <div class="concept-note">Antes de escrever <code>fopen("dados.txt", "?")</code>, responda: <strong>quero apenas ler, recomeçar o arquivo ou adicionar sem perder o que já existe?</strong></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina a intenção</h3><p>Decida se a tarefa é consultar, substituir ou acrescentar dados.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Preveja o efeito</h3><p>Verifique se o arquivo precisa existir e se o conteúdo atual será preservado.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Abra com segurança</h3><p>Escolha o modo, teste o retorno de <code>fopen</code> e só então use o arquivo.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-modos">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da escolha segura</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+        Clique em cada bloco para observar o efeito do modo sobre o mesmo arquivo <code>dados.txt</code>.
+      </div>
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="390" y1="260" x2="255" y2="155"></line>
+          <line x1="610" y1="260" x2="745" y2="155"></line>
+          <line x1="390" y1="360" x2="255" y2="465"></line>
+          <line x1="610" y1="360" x2="745" y2="465"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>O que deve acontecer com os dados atuais?</strong>
+            <code>fopen("dados.txt", modo)</code>
+            <span>A intenção determina o modo.</span>
+            <div class="center-file" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <a class="map-button button-r" href="#modal-r">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M8 12h8M8 16h6"></path></svg></span>
+          <h3>Ler sem alterar</h3>
+          <p>Abre um arquivo existente apenas para consulta.</p>
+          <span class="map-code">"r"</span>
+        </a>
+
+        <a class="map-button button-w" href="#modal-w">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"></path><path d="m13 7 4 4"></path></svg></span>
+          <h3>Substituir tudo</h3>
+          <p>Cria um conteúdo novo e descarta o conteúdo anterior.</p>
+          <span class="map-code">"w"</span>
+        </a>
+
+        <a class="map-button button-a" href="#modal-a">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M12 11v6M9 14h6"></path></svg></span>
+          <h3>Acrescentar ao final</h3>
+          <p>Preserva o conteúdo existente e adiciona novos dados no fim.</p>
+          <span class="map-code">"a"</span>
+        </a>
+
+        <a class="map-button button-plus" href="#modal-plus">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5"></path><path d="M16 15v4M14 17h4"></path></svg></span>
+          <h3>Ler e escrever</h3>
+          <p>Os modos com <code>+</code> combinam operações, mas preservam o efeito de <code>r</code>, <code>w</code> ou <code>a</code>.</p>
+          <span class="map-code">"r+" · "w+" · "a+"</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="modal" id="modal-r" role="dialog" aria-modal="true" aria-labelledby="titulo-r">
+      <a class="modal-backdrop" href="#mapa-modos" aria-label="Fechar explicação"></a>
+      <article class="modal-card">
+        <a class="modal-close" href="#mapa-modos" aria-label="Fechar">×</a>
+        <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M8 12h8M8 16h6"></path></svg></span><div><div class="modal-kicker">Modo de leitura</div><h3 id="titulo-r"><code>"r"</code>: consultar sem modificar</h3></div></div>
+        <p>O modo <code>"r"</code> abre um arquivo existente para leitura. Ele não cria um arquivo novo e não altera o conteúdo.</p>
+        <div class="modal-callout"><strong>Exemplo:</strong> o programa abre <code>dados.txt</code>, lê os nomes e fecha o arquivo. Ana e Bruno permanecem gravados.</div>
+        <div class="before-after"><div class="state-box"><strong>Antes</strong><div class="state-file"><div>Ana</div><div>Bruno</div></div></div><div class="state-arrow">→</div><div class="state-box"><strong>Depois da leitura</strong><div class="state-file"><div>Ana</div><div>Bruno</div></div></div></div>
+        <div class="mode-facts"><div class="mode-fact"><span>Precisa existir?</span><strong>Sim</strong></div><div class="mode-fact"><span>Preserva conteúdo?</span><strong>Sim</strong></div><div class="mode-fact"><span>Permite gravar?</span><strong>Não</strong></div></div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-w" role="dialog" aria-modal="true" aria-labelledby="titulo-w">
+      <a class="modal-backdrop" href="#mapa-modos" aria-label="Fechar explicação"></a>
+      <article class="modal-card">
+        <a class="modal-close" href="#mapa-modos" aria-label="Fechar">×</a>
+        <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"></path><path d="m13 7 4 4"></path></svg></span><div><div class="modal-kicker">Modo de substituição</div><h3 id="titulo-w"><code>"w"</code>: começar um conteúdo novo</h3></div></div>
+        <p>O modo <code>"w"</code> abre o arquivo para escrita. Se o arquivo já existir, seu conteúdo é truncado, isto é, reduzido a zero bytes antes da primeira gravação.</p>
+        <div class="modal-callout"><strong>Exemplo:</strong> ao abrir <code>dados.txt</code> com <code>"w"</code> e gravar Carla, os nomes Ana e Bruno deixam de existir no arquivo.</div>
+        <div class="before-after"><div class="state-box"><strong>Antes</strong><div class="state-file"><div>Ana</div><div>Bruno</div></div></div><div class="state-arrow">→</div><div class="state-box"><strong>Depois de gravar</strong><div class="state-file"><div>Carla</div></div></div></div>
+        <div class="mode-facts"><div class="mode-fact"><span>Precisa existir?</span><strong>Não</strong></div><div class="mode-fact"><span>Preserva conteúdo?</span><strong>Não</strong></div><div class="mode-fact"><span>Permite gravar?</span><strong>Sim</strong></div></div>
+        <div class="danger-note"><strong>Risco principal:</strong> a perda ocorre no momento da abertura. Não é necessário chamar <code>fprintf</code> para que o conteúdo anterior seja apagado.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-a" role="dialog" aria-modal="true" aria-labelledby="titulo-a">
+      <a class="modal-backdrop" href="#mapa-modos" aria-label="Fechar explicação"></a>
+      <article class="modal-card">
+        <a class="modal-close" href="#mapa-modos" aria-label="Fechar">×</a>
+        <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M12 11v6M9 14h6"></path></svg></span><div><div class="modal-kicker">Modo de acréscimo</div><h3 id="titulo-a"><code>"a"</code>: adicionar sem apagar</h3></div></div>
+        <p>O modo <code>"a"</code> abre o arquivo para escrita no final. Se ele não existir, será criado. Se já existir, o conteúdo anterior permanece.</p>
+        <div class="modal-callout"><strong>Exemplo:</strong> Carla é gravada depois de Ana e Bruno. O programa não precisa localizar manualmente o final do arquivo.</div>
+        <div class="before-after"><div class="state-box"><strong>Antes</strong><div class="state-file"><div>Ana</div><div>Bruno</div></div></div><div class="state-arrow">→</div><div class="state-box"><strong>Depois de acrescentar</strong><div class="state-file"><div>Ana</div><div>Bruno</div><div>Carla</div></div></div></div>
+        <div class="mode-facts"><div class="mode-fact"><span>Precisa existir?</span><strong>Não</strong></div><div class="mode-fact"><span>Preserva conteúdo?</span><strong>Sim</strong></div><div class="mode-fact"><span>Local da escrita</span><strong>Final</strong></div></div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-plus" role="dialog" aria-modal="true" aria-labelledby="titulo-plus">
+      <a class="modal-backdrop" href="#mapa-modos" aria-label="Fechar explicação"></a>
+      <article class="modal-card">
+        <a class="modal-close" href="#mapa-modos" aria-label="Fechar">×</a>
+        <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5"></path><path d="M16 15v4M14 17h4"></path></svg></span><div><div class="modal-kicker">Modos combinados</div><h3 id="titulo-plus"><code>+</code>: leitura e escrita no mesmo arquivo</h3></div></div>
+        <p>O sinal <code>+</code> acrescenta permissão de leitura e escrita, mas não elimina o comportamento do modo principal.</p>
+        <div class="modal-callout"><strong>Regra:</strong> <code>r+</code> exige arquivo existente e preserva os dados; <code>w+</code> cria ou apaga o conteúdo; <code>a+</code> cria ou preserva e mantém a escrita no final.</div>
+        <div class="mode-facts"><div class="mode-fact"><span><code>r+</code></span><strong>Preserva e começa no início</strong></div><div class="mode-fact"><span><code>w+</code></span><strong>Apaga e recomeça</strong></div><div class="mode-fact"><span><code>a+</code></span><strong>Preserva e escreve no final</strong></div></div>
+        <div class="danger-note"><strong>Atenção:</strong> usar <code>+</code> não torna o modo automaticamente seguro. <code>w+</code> continua apagando o conteúdo existente.</div>
+      </article>
+    </div>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Compare os modos antes de abrir</h2></div>
+      <div class="mode-table-wrap">
+        <table class="mode-table">
+          <thead><tr><th>Modo</th><th>Operações</th><th>Se o arquivo não existir</th><th>Se já existir</th><th>Posição inicial</th><th>Risco principal</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mode-token token-r">r</span></td><td>Leitura</td><td>A abertura falha</td><td>Conteúdo preservado</td><td>Início</td><td class="risk-low">Baixo</td></tr>
+            <tr><td><span class="mode-token token-w">w</span></td><td>Escrita</td><td>Cria o arquivo</td><td>Apaga o conteúdo</td><td>Início</td><td class="risk-high">Perda de dados</td></tr>
+            <tr><td><span class="mode-token token-a">a</span></td><td>Escrita</td><td>Cria o arquivo</td><td>Preserva o conteúdo</td><td>Final para escrita</td><td class="risk-low">Baixo</td></tr>
+            <tr><td><span class="mode-token token-plus">r+</span></td><td>Leitura e escrita</td><td>A abertura falha</td><td>Conteúdo preservado</td><td>Início</td><td>Alteração indevida</td></tr>
+            <tr><td><span class="mode-token token-plus">w+</span></td><td>Leitura e escrita</td><td>Cria o arquivo</td><td>Apaga o conteúdo</td><td>Início</td><td class="risk-high">Perda de dados</td></tr>
+            <tr><td><span class="mode-token token-plus">a+</span></td><td>Leitura e escrita</td><td>Cria o arquivo</td><td>Preserva o conteúdo</td><td>Final para escrita</td><td>Posicionamento</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Escolha o modo pela intenção</h2></div>
+      <div class="decision-flow">
+        <article class="decision-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path><path d="M8 12h8"></path></svg></span><h3>Apenas consultar?</h3><p>Os dados devem permanecer exatamente como estão.</p><span class="decision-result">use "r"</span></article>
+        <article class="decision-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"></path></svg></span><h3>Gerar tudo novamente?</h3><p>O conteúdo antigo não deve fazer parte do novo arquivo.</p><span class="decision-result">use "w"</span></article>
+        <article class="decision-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M12 10v6M9 13h6"></path></svg></span><h3>Adicionar um registro?</h3><p>O novo dado deve entrar depois do conteúdo já salvo.</p><span class="decision-result">use "a"</span></article>
+        <article class="decision-card"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg></span><h3>Precisa ler e alterar?</h3><p>Escolha um modo com <code>+</code> e confirme seu efeito principal.</p><span class="decision-result">r+ · w+ · a+</span></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Três verificações antes de usar <code>"w"</code></h2></div>
+      <div class="safety-grid">
+        <article class="safety-card"><span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M12 3 3 20h18z"></path><path d="M12 9v5M12 17h.01"></path></svg></span><h3>O conteúdo antigo pode ser descartado?</h3><p>Use <code>"w"</code> somente quando a substituição completa fizer parte do requisito.</p></article>
+        <article class="safety-card"><span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><h3>O arquivo é fonte ou resultado?</h3><p>Arquivos de entrada normalmente usam <code>"r"</code>. Relatórios recriados podem usar <code>"w"</code>.</p></article>
+        <article class="safety-card"><span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"></path><path d="M9 7h6M9 11h6M9 15h4"></path></svg></span><h3>É cadastro ou histórico?</h3><p>Quando registros anteriores precisam permanecer, <code>"a"</code> é mais adequado que <code>"w"</code>.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Abertura segura em C</h2></div>
+      <div class="safe-code-layout">
+        <div class="code-window">
+          <div class="code-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>adicionar_nome.c</div>
+          <div class="code-body"><span class="sy-directive">#include</span> <span class="sy-header">&lt;stdio.h&gt;</span>
+
+<span class="sy-type">int</span> <span class="sy-function">main</span>(<span class="sy-type">void</span>) {
+    <span class="sy-type">FILE</span> <span class="sy-operator">*</span><span class="sy-variable">arquivo</span>;
+    <span class="sy-variable">arquivo</span> <span class="sy-operator">=</span> <span class="sy-function">fopen</span>(<span class="sy-string">"dados.txt"</span>, <span class="sy-string">"a"</span>);
+    <span class="sy-keyword">if</span> (<span class="sy-variable">arquivo</span> <span class="sy-operator">==</span> <span class="sy-keyword">NULL</span>) {
+        <span class="sy-function">printf</span>(<span class="sy-string">"Erro ao abrir o arquivo.\n"</span>);
+        <span class="sy-keyword">return</span> <span class="sy-number">1</span>;
+    }
+    <span class="sy-function">fprintf</span>(<span class="sy-variable">arquivo</span>, <span class="sy-string">"Carla\n"</span>);
+    <span class="sy-function">fclose</span>(<span class="sy-variable">arquivo</span>);
+    <span class="sy-keyword">return</span> <span class="sy-number">0</span>;
+}</div>
+        </div>
+        <div class="safe-notes">
+          <article class="safe-note"><span>1</span><div><h3>Modo coerente</h3><p><code>"a"</code> foi escolhido porque o programa acrescentará Carla sem apagar Ana e Bruno.</p></div></article>
+          <article class="safe-note"><span>2</span><div><h3>Falha verificada</h3><p>O retorno de <code>fopen</code> é testado antes de qualquer operação de escrita.</p></div></article>
+          <article class="safe-note"><span>3</span><div><h3>Arquivo fechado</h3><p><code>fclose</code> encerra o uso e permite que os dados pendentes sejam enviados ao arquivo.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="examples-tabs">
+        <input type="radio" name="examples" id="tab-1" checked>
+        <input type="radio" name="examples" id="tab-2">
+        <input type="radio" name="examples" id="tab-3">
+        <div class="tab-labels">
+          <label class="tab-label" for="tab-1">1. Consultar notas</label>
+          <label class="tab-label" for="tab-2">2. Acrescentar produto</label>
+          <label class="tab-label" for="tab-3">3. Recriar relatório</label>
+        </div>
+        <div class="tab-panels">
+          <article class="tab-panel panel-1">
+            <div class="example-grid">
+              <div class="example-info">
+                <div class="example-kicker"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M16 4v4h4"></path></svg></span>Nível básico</div>
+                <h3>Ler notas já armazenadas</h3>
+                <p>O programa apenas consulta os números de <code>notas.txt</code>. Nenhum valor deve ser alterado.</p>
+                <ul><li>Intenção: leitura.</li><li>O arquivo precisa existir.</li><li>Modo adequado: <code>"r"</code>.</li></ul>
+                <div class="mode-preview"><strong>Efeito esperado</strong><code>arquivo preservado</code></div>
+              </div>
+              <div class="code-window"><div class="code-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>ler_notas.c</div><div class="code-body"><span class="sy-directive">#include</span> <span class="sy-header">&lt;stdio.h&gt;</span>
+
+<span class="sy-type">int</span> <span class="sy-function">main</span>(<span class="sy-type">void</span>) {
+    <span class="sy-type">FILE</span> <span class="sy-operator">*</span><span class="sy-variable">arquivo</span> <span class="sy-operator">=</span> <span class="sy-function">fopen</span>(<span class="sy-string">"notas.txt"</span>, <span class="sy-string">"r"</span>);
+    <span class="sy-type">float</span> <span class="sy-variable">nota</span>;
+    <span class="sy-keyword">if</span> (<span class="sy-variable">arquivo</span> <span class="sy-operator">==</span> <span class="sy-keyword">NULL</span>) {
+        <span class="sy-keyword">return</span> <span class="sy-number">1</span>;
+    }
+    <span class="sy-keyword">while</span> (<span class="sy-function">fscanf</span>(<span class="sy-variable">arquivo</span>, <span class="sy-string">"%f"</span>, <span class="sy-operator">&amp;</span><span class="sy-variable">nota</span>) <span class="sy-operator">==</span> <span class="sy-number">1</span>) {
+        <span class="sy-function">printf</span>(<span class="sy-string">"%.1f\n"</span>, <span class="sy-variable">nota</span>);
+    }
+    <span class="sy-function">fclose</span>(<span class="sy-variable">arquivo</span>);
+    <span class="sy-keyword">return</span> <span class="sy-number">0</span>;
+}</div></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-2">
+            <div class="example-grid">
+              <div class="example-info">
+                <div class="example-kicker"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"></path><path d="M12 11v6M9 14h6"></path></svg></span>Nível intermediário</div>
+                <h3>Adicionar um produto ao cadastro</h3>
+                <p>O novo registro deve entrar depois dos produtos já salvos.</p>
+                <ul><li>Intenção: acréscimo.</li><li>O arquivo pode existir ou ser criado.</li><li>Modo adequado: <code>"a"</code>.</li></ul>
+                <div class="mode-preview"><strong>Efeito esperado</strong><code>registros antigos + novo registro</code></div>
+              </div>
+              <div class="code-window"><div class="code-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>adicionar_produto.c</div><div class="code-body"><span class="sy-directive">#include</span> <span class="sy-header">&lt;stdio.h&gt;</span>
+
+<span class="sy-type">int</span> <span class="sy-function">main</span>(<span class="sy-type">void</span>) {
+    <span class="sy-type">FILE</span> <span class="sy-operator">*</span><span class="sy-variable">arquivo</span> <span class="sy-operator">=</span> <span class="sy-function">fopen</span>(<span class="sy-string">"produtos.txt"</span>, <span class="sy-string">"a"</span>);
+    <span class="sy-keyword">if</span> (<span class="sy-variable">arquivo</span> <span class="sy-operator">==</span> <span class="sy-keyword">NULL</span>) {
+        <span class="sy-function">printf</span>(<span class="sy-string">"Falha ao abrir.\n"</span>);
+        <span class="sy-keyword">return</span> <span class="sy-number">1</span>;
+    }
+    <span class="sy-function">fprintf</span>(<span class="sy-variable">arquivo</span>, <span class="sy-string">"%d;%s;%.2f\n"</span>, <span class="sy-number">103</span>, <span class="sy-string">"Teclado"</span>, <span class="sy-number">89.90</span>);
+    <span class="sy-function">fclose</span>(<span class="sy-variable">arquivo</span>);
+    <span class="sy-keyword">return</span> <span class="sy-number">0</span>;
+}</div></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-3">
+            <div class="example-grid">
+              <div class="example-info">
+                <div class="example-kicker"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"></path></svg></span>Nível intermediário</div>
+                <h3>Gerar novamente um relatório diário</h3>
+                <p>O relatório de ontem não deve permanecer. O arquivo será construído novamente com os dados atuais.</p>
+                <ul><li>Intenção: substituição completa.</li><li>A perda do conteúdo antigo é esperada.</li><li>Modo adequado: <code>"w"</code>.</li></ul>
+                <div class="mode-preview"><strong>Efeito esperado</strong><code>relatório antigo substituído</code></div>
+              </div>
+              <div class="code-window"><div class="code-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>gerar_relatorio.c</div><div class="code-body"><span class="sy-directive">#include</span> <span class="sy-header">&lt;stdio.h&gt;</span>
+
+<span class="sy-type">int</span> <span class="sy-function">main</span>(<span class="sy-type">void</span>) {
+    <span class="sy-type">FILE</span> <span class="sy-operator">*</span><span class="sy-variable">arquivo</span> <span class="sy-operator">=</span> <span class="sy-function">fopen</span>(<span class="sy-string">"relatorio.txt"</span>, <span class="sy-string">"w"</span>);
+    <span class="sy-keyword">if</span> (<span class="sy-variable">arquivo</span> <span class="sy-operator">==</span> <span class="sy-keyword">NULL</span>) {
+        <span class="sy-keyword">return</span> <span class="sy-number">1</span>;
+    }
+    <span class="sy-function">fprintf</span>(<span class="sy-variable">arquivo</span>, <span class="sy-string">"RELATORIO DO DIA\n"</span>);
+    <span class="sy-function">fprintf</span>(<span class="sy-variable">arquivo</span>, <span class="sy-string">"Vendas: %d\n"</span>, <span class="sy-number">28</span>);
+    <span class="sy-function">fprintf</span>(<span class="sy-variable">arquivo</span>, <span class="sy-string">"Total: R$ %.2f\n"</span>, <span class="sy-number">1540.50</span>);
+    <span class="sy-function">fclose</span>(<span class="sy-variable">arquivo</span>);
+    <span class="sy-keyword">return</span> <span class="sy-number">0</span>;
+}</div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar <code>"w"</code> para adicionar</h3><p><strong>Por que acontece:</strong> o aluno associa escrita apenas ao modo <code>"w"</code>.</p><p><strong>Como evitar:</strong> use <code>"a"</code> quando o conteúdo anterior precisa permanecer.</p></article>
+        <article class="error-card"><h3>Achar que o conteúdo só é apagado no <code>fprintf</code></h3><p><strong>Por que acontece:</strong> o efeito da abertura é confundido com o efeito da gravação.</p><p><strong>Como evitar:</strong> lembre que <code>fopen(..., "w")</code> já trunca o arquivo existente.</p></article>
+        <article class="error-card"><h3>Ignorar a falha de <code>"r"</code></h3><p><strong>Por que acontece:</strong> o programa assume que o arquivo sempre existe.</p><p><strong>Como evitar:</strong> teste se o ponteiro retornado por <code>fopen</code> é <code>NULL</code>.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual modo adiciona um registro sem apagar os registros anteriores?</summary><p>O modo <code>"a"</code>. Ele preserva o conteúdo existente e posiciona as escritas no final do arquivo.</p></details>
+        <details><summary>O que acontece ao abrir um arquivo existente com <code>"w"</code> e fechá-lo sem escrever nada?</summary><p>O arquivo permanece existente, mas seu conteúdo anterior é apagado, pois o truncamento ocorre durante a abertura.</p></details>
+        <details><summary>Adicionar <code>+</code> torna qualquer modo seguro contra perda de dados?</summary><p>Não. O modo <code>"w+"</code> continua apagando o conteúdo existente. O <code>+</code> apenas permite leitura e escrita.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir escolher um modo de abertura coerente com a intenção do programa, prever seu efeito sobre um arquivo existente e evitar perda acidental de dados.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

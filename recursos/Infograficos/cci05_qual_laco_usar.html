@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qual laço usar?</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 265px; bottom: -102px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(330px, .9fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .tag svg, .pill svg, .hero-icon svg, .concept-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .compare-icon svg, .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.5rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 735px; }
+
+    .hero-loop {
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .loop-console {
+      width: min(100%, 430px);
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.14);
+    }
+
+    .console-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .console-title { display: flex; align-items: center; gap: 10px; color: var(--cor-primaria-escura); font-weight: 900; }
+    .hero-icon { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .console-chip { color: var(--cor-texto-secundario); font-size: .78rem; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-weight: 800; }
+
+    .loop-cycle {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .cycle-node {
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 14px 12px;
+      background: var(--cor-superficie);
+      text-align: center;
+    }
+    .cycle-node strong { display: block; color: var(--cor-primaria-escura); margin-bottom: 3px; }
+    .cycle-node span { color: var(--cor-texto-secundario); font-size: .84rem; }
+    .cycle-arrow { color: var(--cor-primaria); font-size: 1.5rem; font-weight: 900; }
+
+    .loop-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .loop-option { padding: 10px 8px; border-radius: 13px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); text-align: center; }
+    .loop-option code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .loop-option small { display: block; color: var(--cor-texto-secundario); margin-top: 3px; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 510px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .25); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 190px;
+      min-height: 142px;
+      padding: 21px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.12rem; }
+    .map-center span { color: #E0E7FF; font-size: .9rem; }
+
+    .concept-button {
+      position: absolute;
+      width: 265px;
+      min-height: 166px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      padding: 18px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .065);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      z-index: 3;
+    }
+    .concept-button:hover, .concept-button:focus-visible { transform: translateY(-4px); border-color: rgba(79, 70, 229, .42); box-shadow: 0 20px 34px rgba(49, 46, 129, .12); outline: none; }
+    .concept-button .concept-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 10px; }
+    .concept-button h3 { font-size: 1.12rem; }
+    .concept-button p { font-size: .92rem; }
+    .concept-button .click-hint { display: inline-block; margin-top: 7px; color: var(--cor-primaria); font-weight: 800; font-size: .82rem; }
+
+    .button-for { left: 5%; top: 50%; transform: translateY(-50%); }
+    .button-for:hover, .button-for:focus-visible { transform: translateY(calc(-50% - 4px)); }
+    .button-while { right: 5%; top: 9%; }
+    .button-do { right: 5%; bottom: 9%; }
+
+    .decision-guide {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .decision-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 19px;
+      padding: 18px;
+      background: var(--cor-superficie-suave);
+      position: relative;
+    }
+    .decision-card::after { content: ""; position: absolute; top: 24px; right: -8px; width: 16px; height: 16px; transform: rotate(45deg); background: var(--cor-superficie-suave); border-top: 1px solid var(--cor-borda); border-right: 1px solid var(--cor-borda); }
+    .decision-card:last-child::after { display: none; }
+    .decision-card code { display: inline-flex; padding: 5px 10px; border-radius: 10px; color: white; background: var(--cor-primaria); font-weight: 900; margin-bottom: 10px; }
+    .decision-card strong { color: var(--cor-primaria-escura); }
+
+    .compare-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .compare-card { border: 1px solid var(--cor-borda); border-radius: 20px; overflow: hidden; background: var(--cor-superficie); }
+    .compare-head { padding: 16px 18px; background: var(--cor-superficie-destacada); border-bottom: 1px solid var(--cor-borda); display: flex; align-items: center; gap: 10px; }
+    .compare-icon { width: 39px; height: 39px; border-radius: 13px; display: grid; place-items: center; color: var(--cor-primaria); background: white; border: 1px solid rgba(79, 70, 229, .15); }
+    .compare-head code { color: var(--cor-primaria-escura); font-size: 1.06rem; font-weight: 900; }
+    .compare-body { padding: 18px; }
+    .compare-row { padding: 10px 0; border-bottom: 1px solid var(--cor-borda); }
+    .compare-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .compare-label { display: block; color: var(--cor-texto-secundario); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 800; margin-bottom: 3px; }
+    .compare-value { color: var(--cor-texto-principal); font-size: .92rem; font-weight: 700; }
+
+    .same-task { display: grid; grid-template-columns: .85fr 1.15fr; gap: 18px; align-items: stretch; }
+    .same-task-info { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 20px; padding: 21px; }
+    .same-task-info h3 { color: var(--cor-primaria-escura); }
+    .same-task-list { margin-top: 13px; display: grid; gap: 9px; }
+    .same-task-item { display: grid; grid-template-columns: 32px 1fr; gap: 9px; align-items: start; }
+    .same-task-item span { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: white; border: 1px solid var(--cor-borda); color: var(--cor-primaria); font-weight: 900; }
+    .same-task-item p { font-size: .9rem; }
+
+    .mini-code-stack { display: grid; gap: 10px; }
+    .mini-code { background: var(--codigo-fundo); border-radius: 17px; padding: 15px 16px; overflow-x: auto; }
+    .mini-code .code-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; color: #CBD5E1; font-size: .78rem; }
+    .mini-code pre { margin: 0; color: var(--codigo-texto); font-size: .86rem; line-height: 1.55; white-space: pre; }
+
+    .examples-shell { position: relative; }
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); border-radius: 999px; padding: 9px 14px; font-weight: 800; transition: all .18s ease; }
+    .tab-label:hover { border-color: rgba(79, 70, 229, .32); color: var(--cor-primaria-escura); }
+    #tab1:checked ~ .tabs label[for="tab1"],
+    #tab2:checked ~ .tabs label[for="tab2"],
+    #tab3:checked ~ .tabs label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+
+    .example-panel { display: none; animation: panelIn .35s ease both; }
+    #tab1:checked ~ .example-panels .panel1,
+    #tab2:checked ~ .example-panels .panel2,
+    #tab3:checked ~ .example-panels .panel3 { display: block; }
+
+    @keyframes panelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .example-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; }
+    .example-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .example-icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .example-kicker { color: var(--cor-primaria); font-weight: 900; font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; }
+    .example-card h3 { margin-bottom: 2px; }
+    .example-facts { display: grid; gap: 9px; margin-top: 14px; }
+    .fact-row { background: white; border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; }
+    .fact-row strong { color: var(--cor-primaria-escura); }
+
+    .code-card { background: var(--codigo-fundo); border-radius: 20px; overflow: hidden; border: 1px solid #1F2937; }
+    .code-bar { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 15px; border-bottom: 1px solid #263244; color: #CBD5E1; font-size: .8rem; }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dots span { width: 9px; height: 9px; border-radius: 50%; background: #64748B; }
+    .code-content { padding: 18px; overflow-x: auto; }
+    pre { margin: 0; color: var(--codigo-texto); font-size: .9rem; line-height: 1.58; white-space: pre; }
+
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); font-weight: 700; }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; max-width: 920px; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, .65);
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 1000;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal-overlay:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-dismiss { position: absolute; inset: 0; cursor: default; }
+    .modal-card {
+      position: relative;
+      z-index: 2;
+      width: min(760px, 100%);
+      max-height: min(86vh, 760px);
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, .3);
+      padding: 25px;
+      transform: translateY(18px) scale(.96);
+      opacity: 0;
+    }
+    .modal-overlay:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .modal-title-wrap { display: flex; align-items: center; gap: 12px; }
+    .modal-icon { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-kicker { color: var(--cor-primaria); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 900; }
+    .modal-head h2 { font-size: 1.4rem; }
+    .modal-close { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; line-height: 1; font-weight: 700; }
+    .modal-close:hover, .modal-close:focus-visible { color: var(--cor-primaria); border-color: rgba(79, 70, 229, .35); outline: none; }
+    .modal-summary { padding: 14px 16px; border-radius: 16px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); margin-bottom: 16px; }
+    .modal-summary strong { color: var(--cor-primaria-escura); }
+    .modal-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 14px; align-items: start; }
+    .modal-facts { display: grid; gap: 10px; }
+    .modal-fact { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 12px; }
+    .modal-fact strong { display: block; color: var(--cor-primaria-escura); margin-bottom: 3px; }
+    .modal-fact p { font-size: .9rem; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .same-task, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points, .compare-grid, .decision-guide, .error-grid { grid-template-columns: 1fr; }
+      .decision-card::after { display: none; }
+      .choice-map { min-height: auto; display: grid; grid-template-columns: 1fr; gap: 14px; padding: 18px; }
+      .map-lines, .map-center { display: none; }
+      .concept-button { position: static; width: 100%; min-height: auto; transform: none; }
+      .concept-button:hover, .concept-button:focus-visible, .button-for:hover, .button-for:focus-visible { transform: translateY(-3px); }
+      .modal-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 21px; }
+      .hero-grid { gap: 20px; }
+      .hero-loop { min-height: auto; }
+      .loop-cycle { grid-template-columns: 1fr; }
+      .cycle-arrow { transform: rotate(90deg); text-align: center; }
+      .loop-options { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .tabs { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal-overlay { padding: 10px; }
+      .modal-card { padding: 19px; border-radius: 20px; max-height: 92vh; }
+      .modal-title-wrap { align-items: flex-start; }
+      .modal-icon { width: 40px; height: 40px; }
+      pre { font-size: .82rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h8M8 12h8M8 18h5"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Qual laço usar?</h1>
+          <p class="subtitle">Compare <code>for</code>, <code>while</code> e <code>do while</code> para escolher a estrutura de repetição que deixa a lógica mais clara e adequada ao problema.</p>
+        </div>
+
+        <div class="hero-loop" aria-label="Representação visual de uma repetição">
+          <div class="loop-console">
+            <div class="console-head">
+              <div class="console-title">
+                <span class="hero-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>
+                </span>
+                Repetir com controle
+              </div>
+              <span class="console-chip">CCI05</span>
+            </div>
+
+            <div class="loop-cycle">
+              <div class="cycle-node"><strong>Testar</strong><span>A repetição continua?</span></div>
+              <div class="cycle-arrow">→</div>
+              <div class="cycle-node"><strong>Executar</strong><span>Realizar o bloco</span></div>
+            </div>
+
+            <div class="loop-options">
+              <div class="loop-option"><code>for</code><small>contagem</small></div>
+              <div class="loop-option"><code>while</code><small>condição</small></div>
+              <div class="loop-option"><code>do while</code><small>ao menos uma vez</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI05</div>
+          <p>Controlar processamento iterativo com repetição, atualização de estado e paradas seguras.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI04</div>
+          <p>Controlar o fluxo por decisões condicionais e expressões lógicas corretas.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">for, while e do while</div>
+          <p>Comparação entre estruturas de repetição em C.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">15 a 20 minutos</div>
+          <p>Leitura, comparação e análise dos exemplos.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e comparativo</div>
+          <p>Escolha guiada por quantidade, condição e execução mínima.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg>Variáveis e atribuição</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16H6z"/><path d="M9 9h6M9 13h4"/></svg>Condições booleanas</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6l-4 6 4 6M16 6l4 6-4 6"/></svg>Operadores relacionais</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Atualização de estado</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Os três laços repetem comandos, mas destacam controles diferentes</h3>
+          <p><strong>Escolher um laço</strong> não significa procurar o único que funciona. Em muitos problemas, mais de uma estrutura pode produzir o mesmo resultado. A melhor escolha é aquela que deixa explícito <strong>como a repetição começa, continua e termina</strong>.</p>
+          <div class="central-rule">Pergunta principal: o que controla o fim da repetição?</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Quantidade conhecida</h3><p>Quando o número de repetições já está definido, o <code>for</code> costuma deixar a contagem mais visível.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Condição variável</h3><p>Quando a repetição depende de algo que pode ocorrer em momento incerto, o <code>while</code> costuma ser mais natural.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Execução obrigatória</h3><p>Quando o bloco precisa ocorrer pelo menos uma vez antes do teste, o <code>do while</code> expressa essa regra diretamente.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-lacos">
+      <div class="section-title"><span class="marker"></span><h2>Mapa dos laços</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M5 21h14"/></svg>
+        Clique em cada bloco para abrir uma explicação com estrutura, uso adequado e exemplo.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 510" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="255" x2="280" y2="255"/>
+          <line x1="500" y1="255" x2="730" y2="135"/>
+          <line x1="500" y1="255" x2="730" y2="375"/>
+        </svg>
+
+        <div class="map-center"><div><strong>Escolha do laço</strong><br><span>Observe o tipo de controle</span></div></div>
+
+        <a class="concept-button button-for" href="#modal-for">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12M6 20h12M8 4v16M16 4v16"/><path d="M10 8h4M10 12h4M10 16h4"/></svg></span>
+          <h3><code>for</code></h3>
+          <p>Concentra inicialização, condição e atualização. É útil para contagens e percursos bem delimitados.</p>
+          <span class="click-hint">Abrir explicação</span>
+        </a>
+
+        <a class="concept-button button-while" href="#modal-while">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></span>
+          <h3><code>while</code></h3>
+          <p>Testa a condição antes de executar. Pode não executar nenhuma vez se a condição já começar falsa.</p>
+          <span class="click-hint">Abrir explicação</span>
+        </a>
+
+        <a class="concept-button button-do" href="#modal-do">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10a6 6 0 0 1 0 12H8"/><path d="M8 14l-4 4 4 4"/></svg></span>
+          <h3><code>do while</code></h3>
+          <p>Executa o bloco antes de testar. Garante uma primeira execução, útil em menus e validações com leitura inicial.</p>
+          <span class="click-hint">Abrir explicação</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como decidir</h2></div>
+      <div class="decision-guide">
+        <article class="decision-card"><code>1</code><h3>A quantidade é conhecida?</h3><p>Quando você sabe quantas vezes repetir, ou percorre um intervalo definido, considere <strong>for</strong>.</p></article>
+        <article class="decision-card"><code>2</code><h3>O teste vem antes?</h3><p>Quando o bloco só pode executar se uma condição inicial for verdadeira, considere <strong>while</strong>.</p></article>
+        <article class="decision-card"><code>3</code><h3>Precisa executar uma vez?</h3><p>Quando é necessário realizar a ação antes de verificar se haverá nova repetição, considere <strong>do while</strong>.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Comparação direta</h2></div>
+      <div class="compare-grid">
+        <article class="compare-card">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"/></svg></span><code>for</code></div>
+          <div class="compare-body">
+            <div class="compare-row"><span class="compare-label">Teste</span><span class="compare-value">Antes de cada repetição</span></div>
+            <div class="compare-row"><span class="compare-label">Pode executar zero vezes?</span><span class="compare-value">Sim</span></div>
+            <div class="compare-row"><span class="compare-label">Destaque</span><span class="compare-value">Contador e atualização visíveis no cabeçalho</span></div>
+            <div class="compare-row"><span class="compare-label">Uso frequente</span><span class="compare-value">Contagens, vetores e intervalos conhecidos</span></div>
+          </div>
+        </article>
+
+        <article class="compare-card">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M18 8a7 7 0 1 0 1 7"/><path d="M18 3v5h-5"/></svg></span><code>while</code></div>
+          <div class="compare-body">
+            <div class="compare-row"><span class="compare-label">Teste</span><span class="compare-value">Antes de cada repetição</span></div>
+            <div class="compare-row"><span class="compare-label">Pode executar zero vezes?</span><span class="compare-value">Sim</span></div>
+            <div class="compare-row"><span class="compare-label">Destaque</span><span class="compare-value">Condição de continuidade</span></div>
+            <div class="compare-row"><span class="compare-label">Uso frequente</span><span class="compare-value">Sentinela, validação e quantidade incerta</span></div>
+          </div>
+        </article>
+
+        <article class="compare-card">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M5 8a7 7 0 1 1 1 7"/><path d="M6 20v-5h5"/></svg></span><code>do while</code></div>
+          <div class="compare-body">
+            <div class="compare-row"><span class="compare-label">Teste</span><span class="compare-value">Depois de cada repetição</span></div>
+            <div class="compare-row"><span class="compare-label">Pode executar zero vezes?</span><span class="compare-value">Não</span></div>
+            <div class="compare-row"><span class="compare-label">Destaque</span><span class="compare-value">Primeira execução garantida</span></div>
+            <div class="compare-row"><span class="compare-label">Uso frequente</span><span class="compare-value">Menus e leitura antes da validação</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>O mesmo resultado pode ser escrito de formas diferentes</h2></div>
+      <div class="same-task">
+        <div class="same-task-info">
+          <h3>Problema comum</h3>
+          <p>Mostrar os números de 1 a 3. Os três laços podem resolver esse problema, mas o <code>for</code> comunica a contagem com maior concisão.</p>
+          <div class="same-task-list">
+            <div class="same-task-item"><span>1</span><p><strong>Inicializar:</strong> começar com <code>i = 1</code>.</p></div>
+            <div class="same-task-item"><span>2</span><p><strong>Testar:</strong> continuar enquanto <code>i &lt;= 3</code>.</p></div>
+            <div class="same-task-item"><span>3</span><p><strong>Atualizar:</strong> aumentar <code>i</code> após cada exibição.</p></div>
+          </div>
+        </div>
+
+        <div class="mini-code-stack">
+          <div class="mini-code"><div class="code-title"><span>Com for</span><span>mais compacto</span></div><pre><code><span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">i</span>);
+}</code></pre></div>
+          <div class="mini-code"><div class="code-title"><span>Com while</span><span>controle separado</span></div><pre><code><span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+<span class="syn-keyword">while</span> (<span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">3</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">i</span>);
+    <span class="syn-variable">i</span><span class="syn-operator">++</span>;
+}</code></pre></div>
+          <div class="mini-code"><div class="code-title"><span>Com do while</span><span>primeira execução garantida</span></div><pre><code><span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span>;
+<span class="syn-keyword">do</span> {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">i</span>);
+    <span class="syn-variable">i</span><span class="syn-operator">++</span>;
+} <span class="syn-keyword">while</span> (<span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">3</span>);</code></pre></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="examples-shell">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+
+        <div class="tabs" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">Exemplo 1: contagem com for</label>
+          <label class="tab-label" for="tab2">Exemplo 2: leitura com while</label>
+          <label class="tab-label" for="tab3">Exemplo 3: menu com do while</label>
+        </div>
+
+        <div class="example-panels">
+          <article class="example-panel panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-heading"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span><div><div class="example-kicker">Nível básico</div><h3>Mostrar os números de 1 a 5</h3></div></div>
+                <p>A quantidade de repetições é conhecida. O contador começa em 1, termina em 5 e aumenta de uma unidade.</p>
+                <div class="example-facts">
+                  <div class="fact-row"><strong>Laço indicado:</strong> <code>for</code></div>
+                  <div class="fact-row"><strong>Controle:</strong> intervalo conhecido</div>
+                  <div class="fact-row"><strong>Saída:</strong> 1 2 3 4 5</div>
+                </div>
+              </div>
+              <div class="code-card">
+                <div class="code-bar"><span>contagem.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+                <div class="code-content"><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">5</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">i</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-heading"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></span><div><div class="example-kicker">Nível intermediário</div><h3>Ler números até o usuário digitar zero</h3></div></div>
+                <p>A quantidade de leituras não é conhecida. O valor zero funciona como sentinela e encerra a repetição.</p>
+                <div class="example-facts">
+                  <div class="fact-row"><strong>Laço indicado:</strong> <code>while</code></div>
+                  <div class="fact-row"><strong>Controle:</strong> valor sentinela</div>
+                  <div class="fact-row"><strong>Atenção:</strong> a variável precisa ser lida novamente dentro do laço</div>
+                </div>
+              </div>
+              <div class="code-card">
+                <div class="code-bar"><span>sentinela.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+                <div class="code-content"><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">numero</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">numero</span>);
+
+    <span class="syn-keyword">while</span> (<span class="syn-variable">numero</span> <span class="syn-operator">!=</span> <span class="syn-number">0</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Lido: %d\n"</span>, <span class="syn-variable">numero</span>);
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">numero</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-heading"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg></span><div><div class="example-kicker">Nível intermediário</div><h3>Exibir um menu até escolher sair</h3></div></div>
+                <p>O menu precisa aparecer pelo menos uma vez. Depois da escolha, a condição decide se o programa deve repetir.</p>
+                <div class="example-facts">
+                  <div class="fact-row"><strong>Laço indicado:</strong> <code>do while</code></div>
+                  <div class="fact-row"><strong>Controle:</strong> opção escolhida</div>
+                  <div class="fact-row"><strong>Detalhe sintático:</strong> existe ponto e vírgula após o <code>while</code></div>
+                </div>
+              </div>
+              <div class="code-card">
+                <div class="code-bar"><span>menu.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+                <div class="code-content"><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">opcao</span>;
+
+    <span class="syn-keyword">do</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"1 - Continuar\n0 - Sair\n"</span>);
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">opcao</span>);
+
+        <span class="syn-keyword">if</span> (<span class="syn-variable">opcao</span> <span class="syn-operator">==</span> <span class="syn-number">1</span>) {
+            <span class="syn-function">printf</span>(<span class="syn-string">"Executando...\n"</span>);
+        }
+    } <span class="syn-keyword">while</span> (<span class="syn-variable">opcao</span> <span class="syn-operator">!=</span> <span class="syn-number">0</span>);
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Esquecer a atualização</h3><p><strong>Por que acontece:</strong> a variável usada na condição nunca muda.</p><p><strong>Como evitar:</strong> identifique qual comando aproxima o estado da condição de parada.</p></article>
+        <article class="error-card"><h3>Errar o limite da contagem</h3><p><strong>Por que acontece:</strong> confusão entre <code>&lt;</code> e <code>&lt;=</code>, causando uma repetição a menos ou a mais.</p><p><strong>Como evitar:</strong> simule o primeiro e o último valor do contador.</p></article>
+        <article class="error-card"><h3>Usar o laço apenas por hábito</h3><p><strong>Por que acontece:</strong> o aluno memoriza uma estrutura e ignora a forma de controle do problema.</p><p><strong>Como evitar:</strong> verifique quantidade conhecida, posição do teste e necessidade de execução inicial.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Um laço for sempre pode ser substituído por while?</summary><p>Em muitos casos, sim. A inicialização pode ser colocada antes do <code>while</code> e a atualização dentro do bloco. A escolha deve considerar qual escrita comunica melhor a lógica.</p></details>
+        <details><summary>Qual laço garante que o bloco execute pelo menos uma vez?</summary><p>O <code>do while</code>, porque a condição é testada somente depois da primeira execução do bloco.</p></details>
+        <details><summary>Qual laço é mais indicado para percorrer 10 posições de um vetor?</summary><p>Normalmente o <code>for</code>, pois a faixa de índices e a atualização do contador são conhecidas e ficam reunidas no cabeçalho.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir comparar <code>for</code>, <code>while</code> e <code>do while</code>, reconhecer como cada estrutura testa a continuidade e escolher o laço que representa com maior clareza o controle exigido pelo problema.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <div class="modal-overlay" id="modal-for" role="dialog" aria-modal="true" aria-labelledby="titulo-for">
+    <a class="modal-dismiss" href="#mapa-lacos" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12M6 20h12M8 4v16M16 4v16"/><path d="M10 8h4M10 12h4M10 16h4"/></svg></span><div><div class="modal-kicker">Laço com contagem visível</div><h2 id="titulo-for">Como funciona o for</h2></div></div>
+        <a class="modal-close" href="#mapa-lacos" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Use quando:</strong> a inicialização, a condição e a atualização formam um controle regular, especialmente em contagens e percursos por índices.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Inicialização</strong><p>Executa uma vez, antes do primeiro teste.</p></div>
+          <div class="modal-fact"><strong>Condição</strong><p>É verificada antes de cada repetição.</p></div>
+          <div class="modal-fact"><strong>Atualização</strong><p>Executa após cada passagem pelo bloco.</p></div>
+        </div>
+        <div class="code-card">
+          <div class="code-bar"><span>estrutura_for.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+          <div class="code-content"><pre><code><span class="syn-comment">// Exibe cinco valores</span>
+<span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-variable">i</span>);
+}</code></pre></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-while" role="dialog" aria-modal="true" aria-labelledby="titulo-while">
+    <a class="modal-dismiss" href="#mapa-lacos" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M18 8a7 7 0 1 0 1 7"/><path d="M18 3v5h-5"/></svg></span><div><div class="modal-kicker">Teste antes do bloco</div><h2 id="titulo-while">Como funciona o while</h2></div></div>
+        <a class="modal-close" href="#mapa-lacos" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Use quando:</strong> a repetição depende de uma condição que pode mudar em momento incerto e o bloco só deve executar se essa condição já for verdadeira.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Teste inicial</strong><p>A condição é verificada antes da primeira execução.</p></div>
+          <div class="modal-fact"><strong>Execução zero</strong><p>Se a condição começar falsa, o bloco não executa.</p></div>
+          <div class="modal-fact"><strong>Responsabilidade</strong><p>Algum comando do bloco deve alterar o estado relacionado à condição.</p></div>
+        </div>
+        <div class="code-card">
+          <div class="code-bar"><span>estrutura_while.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+          <div class="code-content"><pre><code><span class="syn-type">int</span> <span class="syn-variable">senha</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+<span class="syn-keyword">while</span> (<span class="syn-variable">senha</span> <span class="syn-operator">!=</span> <span class="syn-number">1234</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"Digite a senha: "</span>);
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">senha</span>);
+}</code></pre></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-do" role="dialog" aria-modal="true" aria-labelledby="titulo-do">
+    <a class="modal-dismiss" href="#mapa-lacos" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 8a7 7 0 1 1 1 7"/><path d="M6 20v-5h5"/></svg></span><div><div class="modal-kicker">Teste depois do bloco</div><h2 id="titulo-do">Como funciona o do while</h2></div></div>
+        <a class="modal-close" href="#mapa-lacos" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Use quando:</strong> o programa precisa executar uma ação antes de decidir se haverá outra repetição, como exibir um menu ou ler um valor antes de validá-lo.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Primeira execução</strong><p>O bloco ocorre antes do primeiro teste.</p></div>
+          <div class="modal-fact"><strong>Teste posterior</strong><p>A condição decide se o fluxo retorna ao início.</p></div>
+          <div class="modal-fact"><strong>Sintaxe</strong><p>O comando termina com ponto e vírgula após <code>while (condicao);</code>.</p></div>
+        </div>
+        <div class="code-card">
+          <div class="code-bar"><span>estrutura_do_while.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+          <div class="code-content"><pre><code><span class="syn-type">int</span> <span class="syn-variable">nota</span>;
+
+<span class="syn-keyword">do</span> {
+    <span class="syn-function">printf</span>(<span class="syn-string">"Nota entre 0 e 10: "</span>);
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">nota</span>);
+} <span class="syn-keyword">while</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&lt;</span> <span class="syn-number">0</span> <span class="syn-operator">||</span> <span class="syn-variable">nota</span> <span class="syn-operator">&gt;</span> <span class="syn-number">10</span>);</code></pre></div>
+        </div>
+      </div>
+    </article>
+  </div>
+</body>
+</html>

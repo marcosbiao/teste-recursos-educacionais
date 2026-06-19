@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qual estrutura resolve melhor este problema?</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(360px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg, .decision-icon svg, .combo-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-path { display: grid; gap: 9px; }
+    .hero-path-row { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: center; gap: 10px; }
+    .hero-path-number { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .hero-path-card { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; background: var(--cor-superficie-suave); }
+    .hero-path-card strong { color: var(--cor-primaria-escura); font-size: .9rem; }
+    .hero-path-card p { font-size: .82rem; }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    #mapa-da-escolha { scroll-margin-top: 18px; }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 710px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 245px;
+      min-height: 185px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 235px;
+      min-height: 145px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+
+    .button-condition { left: 38px; top: 38px; }
+    .button-loop { right: 38px; top: 38px; }
+    .button-vector { left: 38px; bottom: 42px; }
+    .button-matrix { right: 38px; bottom: 42px; }
+    .button-function { left: 50%; bottom: 18px; transform: translateX(-50%); }
+    .button-function:hover, .button-function:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .decision-tree { display: grid; gap: 13px; }
+    .decision-row { display: grid; grid-template-columns: 54px minmax(0, 1fr) 130px; gap: 13px; align-items: center; }
+    .decision-index { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .decision-question { border: 1px solid var(--cor-borda); border-radius: 17px; padding: 15px 17px; background: var(--cor-superficie-suave); }
+    .decision-question strong { color: var(--cor-primaria-escura); }
+    .decision-answer { border-radius: 14px; padding: 11px 12px; text-align: center; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.19); color: var(--cor-primaria-escura); font-weight: 900; font-family: Consolas, Monaco, monospace; font-size: .87rem; }
+    .decision-note { margin-top: 15px; border-left: 5px solid var(--cor-destaque-pontual); border-radius: 15px; background: #FFFBEB; padding: 14px 16px; color: var(--cor-texto-principal); }
+
+    .comparison-wrap { overflow-x: auto; }
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; font-size: .92rem; }
+    .comparison-table th, .comparison-table td { padding: 13px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .comparison-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; text-transform: uppercase; letter-spacing: .04em; }
+    .comparison-table tr:last-child td { border-bottom: 0; }
+    .comparison-table td:first-child { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; white-space: nowrap; }
+    .clue { display: inline-flex; padding: 4px 8px; border-radius: 999px; margin: 2px 3px 2px 0; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); font-size: .8rem; font-weight: 700; }
+
+    .combination-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .combo-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .combo-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .combo-code { display: block; margin-top: 10px; padding: 8px 10px; border-radius: 11px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-weight: 900; font-size: .79rem; overflow-x: auto; }
+    .combo-card p { font-size: .89rem; }
+
+    .scenario-layout { display: grid; grid-template-columns: .88fr 1.12fr; gap: 18px; align-items: stretch; }
+    .scenario-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .scenario-brief { padding: 14px; border-radius: 15px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); margin-bottom: 14px; }
+    .scenario-brief strong { color: var(--cor-primaria-escura); }
+    .scenario-stack { display: grid; gap: 10px; }
+    .scenario-structure { display: grid; grid-template-columns: 105px minmax(0, 1fr); gap: 10px; align-items: center; padding: 11px 12px; border: 1px solid var(--cor-borda); border-radius: 14px; background: var(--cor-superficie); }
+    .scenario-structure code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .scenario-structure p { font-size: .86rem; }
+
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #1F2937; }
+    .code-toolbar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .75rem; font-weight: 800; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .9rem; line-height: 1.58; tab-size: 2; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .tabs { position: relative; }
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; padding: 10px 15px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; font-size: .9rem; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panels { position: relative; }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .example-level { display: inline-flex; margin-top: 12px; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+    .example-list { margin: 13px 0 0 19px; color: var(--cor-texto-secundario); }
+    .example-list li { margin-bottom: 6px; }
+    .structure-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .structure-tag { display: inline-flex; border-radius: 999px; padding: 5px 9px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-size: .76rem; font-weight: 900; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .91rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; list-style-position: outside; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      width: min(760px, 100%);
+      max-height: min(86vh, 780px);
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      border-radius: 24px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      box-shadow: 0 28px 70px rgba(15,23,42,.28);
+      padding: 25px;
+      transform: translateY(18px) scale(.97);
+      opacity: 0;
+    }
+    .modal:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.75,.25,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; font-weight: 700; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 46px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-head h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 16px; border-radius: 17px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); }
+    .modal-rule { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); }
+    .modal-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+    .modal-box { padding: 13px; border-radius: 14px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .modal-box strong { color: var(--cor-primaria-escura); display: block; margin-bottom: 5px; }
+    .modal-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .scenario-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .choice-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center { position: static; transform: none; width: auto; min-height: 150px; grid-column: 1 / -1; order: 1; }
+      .map-button { position: static; width: auto; min-height: 145px; transform: none; }
+      .map-button:hover, .map-button:focus-visible, .button-function:hover, .button-function:focus-visible { transform: translateY(-4px); }
+      .button-condition { order: 2; }
+      .button-loop { order: 3; }
+      .button-vector { order: 4; }
+      .button-matrix { order: 5; }
+      .button-function { order: 6; grid-column: 1 / -1; }
+      .combination-grid { grid-template-columns: repeat(2, 1fr); }
+      .error-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 12px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .meta-grid, .choice-map, .combination-grid, .error-grid { grid-template-columns: 1fr; }
+      .map-center, .button-function { grid-column: auto; }
+      .decision-row { grid-template-columns: 42px minmax(0, 1fr); }
+      .decision-index { width: 38px; height: 38px; border-radius: 12px; }
+      .decision-answer { grid-column: 2; text-align: left; }
+      .scenario-structure { grid-template-columns: 1fr; }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .comparison-table th, .comparison-table td { padding: 10px; font-size: .83rem; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Qual estrutura resolve melhor este problema?</h1>
+          <p class="subtitle">Aprenda a reconhecer o tipo de tarefa descrita no enunciado e a escolher entre condição, repetição, vetor, matriz e função.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Resumo do processo de escolha">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v5H4zM14 14h6v5h-6z"></path><path d="M10 7.5h3a3 3 0 0 1 3 3V14"></path><path d="M7 10v7h7"></path></svg></span>
+            <div><strong>Não escolha pela aparência do código</strong><span>Comece pela forma do problema.</span></div>
+          </div>
+          <div class="hero-path">
+            <div class="hero-path-row"><span class="hero-path-number">1</span><div class="hero-path-card"><strong>Identifique a tarefa</strong><p>Decidir, repetir, armazenar, organizar ou reutilizar?</p></div></div>
+            <div class="hero-path-row"><span class="hero-path-number">2</span><div class="hero-path-card"><strong>Escolha a estrutura principal</strong><p>Associe o padrão do problema à estrutura mais adequada.</p></div></div>
+            <div class="hero-path-row"><span class="hero-path-number">3</span><div class="hero-path-card"><strong>Combine quando necessário</strong><p>Um mesmo programa pode usar várias estruturas.</p></div></div>
+          </div>
+          <p class="hero-caption"><strong>Ideia-chave:</strong> a estrutura é uma ferramenta. O problema é que determina qual ferramenta usar.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI08</div><p>Selecionar e combinar estruturas adequadas ao tipo de problema.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI04, CCI05, CCI06 e CCI07</div><p>Decisões, repetições, coleções e modularização.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Escolha de estruturas</div><p>Condição, repetição, vetor, matriz e função.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura, comparação e análise dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Decisão orientada</div><p>Mapa visual, pistas do enunciado e combinações.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg>Noção de algoritmo</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 12h12M12 6l6 6-6 6"></path></svg>Fluxo de execução</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"></path></svg>Variáveis e expressões</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>Estruturas básicas de C</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <article class="concept-main">
+          <h3>Leia o problema antes de escolher a estrutura</h3>
+          <p>Uma estrutura é adequada quando corresponde à <strong>ação principal</strong> exigida pelo problema. Decidir entre caminhos sugere condição. Repetir uma ação sugere laço. Guardar vários valores pode exigir vetor ou matriz. Isolar uma tarefa com nome sugere função.</p>
+          <p class="concept-note">A escolha não é exclusiva. Um vetor costuma ser percorrido por um <code>for</code>, e uma condição pode aparecer dentro desse laço.</p>
+        </article>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Reconheça o padrão</h3><p>Procure o que precisa acontecer com os dados, não apenas palavras isoladas.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Escolha a base</h3><p>Defina qual estrutura organiza a parte principal da solução.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Combine com propósito</h3><p>Adicione outras estruturas somente quando elas cumprirem uma função clara.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-da-escolha">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da escolha</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+        Clique em cada estrutura para ver quando usar, quais pistas procurar e qual erro evitar.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 710" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="355" x2="155" y2="115"></line>
+          <line x1="500" y1="355" x2="845" y2="115"></line>
+          <line x1="500" y1="355" x2="155" y2="595"></line>
+          <line x1="500" y1="355" x2="845" y2="595"></line>
+          <line x1="500" y1="355" x2="500" y2="650"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Qual é a forma do problema?</strong>
+            <code>tarefa → estrutura</code>
+            <span>A ação necessária orienta a escolha.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-condition" href="#modal-condicao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 9l8 6 8-6-8-6z"></path><path d="M4 15l8 6 8-6"></path></svg></span>
+          <h3>Condição</h3>
+          <p>Escolhe um caminho de acordo com um teste.</p>
+          <span class="map-code">if / else / switch</span>
+        </a>
+
+        <a class="map-button button-loop" href="#modal-repeticao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-5"></path><path d="M18 3v5h-5"></path><path d="M20 13a8 8 0 0 1-14 5"></path><path d="M6 21v-5h5"></path></svg></span>
+          <h3>Repetição</h3>
+          <p>Executa uma ação várias vezes sob um controle.</p>
+          <span class="map-code">for / while / do while</span>
+        </a>
+
+        <a class="map-button button-vector" href="#modal-vetor">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="5" height="10"></rect><rect x="9.5" y="7" width="5" height="10"></rect><rect x="16" y="7" width="5" height="10"></rect></svg></span>
+          <h3>Vetor</h3>
+          <p>Organiza uma sequência de valores do mesmo tipo.</p>
+          <span class="map-code">dados[i]</span>
+        </a>
+
+        <a class="map-button button-matrix" href="#modal-matriz">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M4 16h16M10 4v16M16 4v16"></path></svg></span>
+          <h3>Matriz</h3>
+          <p>Organiza dados em linhas e colunas.</p>
+          <span class="map-code">dados[i][j]</span>
+        </a>
+
+        <a class="map-button button-function" href="#modal-funcao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 6h7v5H4zM13 13h7v5h-7z"></path><path d="M11 8.5h4a2 2 0 0 1 2 2V13"></path><path d="M8 11v5h5"></path></svg></span>
+          <h3>Função</h3>
+          <p>Isola uma tarefa com nome, parâmetros e possível retorno.</p>
+          <span class="map-code">resultado = calcular(...)</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas que orientam a escolha</h2></div>
+      <div class="decision-tree">
+        <article class="decision-row"><span class="decision-index">1</span><div class="decision-question"><strong>O programa precisa escolher entre caminhos?</strong><p>Exemplo: aprovado ou reprovado, maior ou menor, opção de menu.</p></div><div class="decision-answer">condição</div></article>
+        <article class="decision-row"><span class="decision-index">2</span><div class="decision-question"><strong>A mesma ação precisa ocorrer várias vezes?</strong><p>Exemplo: ler 10 valores, tentar até acertar, repetir enquanto houver dados.</p></div><div class="decision-answer">repetição</div></article>
+        <article class="decision-row"><span class="decision-index">3</span><div class="decision-question"><strong>É necessário guardar uma lista indexada de valores?</strong><p>Exemplo: notas de alunos, temperaturas diárias, idades.</p></div><div class="decision-answer">vetor</div></article>
+        <article class="decision-row"><span class="decision-index">4</span><div class="decision-question"><strong>Os dados formam uma tabela com linhas e colunas?</strong><p>Exemplo: assentos, tabuleiro, notas por turma e avaliação.</p></div><div class="decision-answer">matriz</div></article>
+        <article class="decision-row"><span class="decision-index">5</span><div class="decision-question"><strong>Uma tarefa merece nome ou será reutilizada?</strong><p>Exemplo: calcular média, validar valor, imprimir relatório.</p></div><div class="decision-answer">função</div></article>
+      </div>
+      <p class="decision-note"><strong>Mais de uma resposta pode ser “sim”.</strong> Nesse caso, escolha uma estrutura principal e combine as demais para organizar cada parte da solução.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Comparação rápida</h2></div>
+      <div class="comparison-wrap">
+        <table class="comparison-table">
+          <thead><tr><th>Estrutura</th><th>Resolve principalmente</th><th>Pistas no problema</th><th>Exemplo de uso</th></tr></thead>
+          <tbody>
+            <tr><td>if / switch</td><td>Escolher um caminho ou classificar um caso.</td><td><span class="clue">se</span><span class="clue">caso</span><span class="clue">depende</span></td><td>Informar se uma nota indica aprovação.</td></tr>
+            <tr><td>for / while</td><td>Repetir uma ação com quantidade, condição ou sentinela.</td><td><span class="clue">para cada</span><span class="clue">enquanto</span><span class="clue">até</span></td><td>Ler cinco notas e calcular a soma.</td></tr>
+            <tr><td>vetor</td><td>Guardar vários valores do mesmo tipo em uma dimensão.</td><td><span class="clue">lista</span><span class="clue">sequência</span><span class="clue">todos os valores</span></td><td>Armazenar as notas de uma turma.</td></tr>
+            <tr><td>matriz</td><td>Guardar valores organizados por dois índices.</td><td><span class="clue">linhas e colunas</span><span class="clue">tabela</span><span class="clue">grade</span></td><td>Armazenar vendas por mês e produto.</td></tr>
+            <tr><td>função</td><td>Separar uma tarefa coesa e reutilizável.</td><td><span class="clue">calcular</span><span class="clue">validar</span><span class="clue">informar</span></td><td>Criar uma função para calcular a média.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Combinações frequentes</h2></div>
+      <div class="combination-grid">
+        <article class="combo-card"><span class="combo-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path><path d="M7 4v16"></path></svg></span><h3>Vetor + repetição</h3><p>O vetor armazena os valores e o laço visita cada posição.</p><code class="combo-code">for (...) soma += notas[i];</code></article>
+        <article class="combo-card"><span class="combo-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M10 4v16"></path><path d="M15 14l2 2 3-4"></path></svg></span><h3>Repetição + condição</h3><p>O laço percorre os dados e a condição seleciona alguns deles.</p><code class="combo-code">if (valor % 2 == 0)</code></article>
+        <article class="combo-card"><span class="combo-icon"><svg viewBox="0 0 24 24"><path d="M4 5h6v6H4zM14 13h6v6h-6z"></path><path d="M10 8h5v5"></path></svg></span><h3>Função + estruturas</h3><p>A função pode conter condição, repetição, vetor ou matriz.</p><code class="combo-code">float media(float v[], int n)</code></article>
+        <article class="combo-card"><span class="combo-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M4 16h16M10 4v16M16 4v16"></path><path d="M21 21l-4-4"></path></svg></span><h3>Matriz + laços aninhados</h3><p>Um laço controla as linhas e outro percorre as colunas.</p><code class="combo-code">for (i...) for (j...)</code></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Um problema, várias estruturas</h2></div>
+      <div class="scenario-layout">
+        <article class="scenario-card">
+          <div class="scenario-brief"><strong>Problema:</strong> registrar as notas de duas turmas com três estudantes, calcular a média de cada turma e informar quantos estudantes foram aprovados.</div>
+          <div class="scenario-stack">
+            <div class="scenario-structure"><code>matriz</code><p>Armazena as notas por turma e estudante.</p></div>
+            <div class="scenario-structure"><code>for</code><p>Percorre linhas e colunas.</p></div>
+            <div class="scenario-structure"><code>if</code><p>Conta notas maiores ou iguais a 7.</p></div>
+            <div class="scenario-structure"><code>função</code><p>Calcula a média de uma turma.</p></div>
+          </div>
+        </article>
+
+        <div class="code-window">
+          <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span> combinação_estruturas.c</div>
+          <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">float</span> <span class="syn-function">mediaTurma</span>(<span class="syn-type">float</span> <span class="syn-variable">notas</span>[], <span class="syn-type">int</span> <span class="syn-variable">quantidade</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">quantidade</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">notas</span>[<span class="syn-variable">i</span>];
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-variable">soma</span> <span class="syn-operator">/</span> <span class="syn-variable">quantidade</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">notas</span>[<span class="syn-number">2</span>][<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-number">8.0</span>, <span class="syn-number">6.0</span>, <span class="syn-number">9.0</span>},
+        {<span class="syn-number">5.0</span>, <span class="syn-number">7.5</span>, <span class="syn-number">7.0</span>}
+    };
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">t</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">t</span> <span class="syn-operator">&lt;</span> <span class="syn-number">2</span>; <span class="syn-variable">t</span><span class="syn-operator">++</span>) {
+        <span class="syn-type">int</span> <span class="syn-variable">aprovados</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+        <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">a</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">a</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">a</span><span class="syn-operator">++</span>) {
+            <span class="syn-keyword">if</span> (<span class="syn-variable">notas</span>[<span class="syn-variable">t</span>][<span class="syn-variable">a</span>] <span class="syn-operator">&gt;=</span> <span class="syn-number">7.0</span>) {
+                <span class="syn-variable">aprovados</span><span class="syn-operator">++</span>;
+            }
+        }
+
+        <span class="syn-function">printf</span>(<span class="syn-string">"Turma %d: media %.1f, aprovados %d\n"</span>,
+               <span class="syn-variable">t</span> <span class="syn-operator">+</span> <span class="syn-number">1</span>, <span class="syn-function">mediaTurma</span>(<span class="syn-variable">notas</span>[<span class="syn-variable">t</span>], <span class="syn-number">3</span>), <span class="syn-variable">aprovados</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="examples" id="tab1" checked>
+        <input type="radio" name="examples" id="tab2">
+        <input type="radio" name="examples" id="tab3">
+
+        <div class="tab-labels">
+          <label class="tab-label" for="tab1">1. Classificar uma idade</label>
+          <label class="tab-label" for="tab2">2. Média de cinco notas</label>
+          <label class="tab-label" for="tab3">3. Desempenho de turmas</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 9l8 6 8-6-8-6z"></path><path d="M4 15l8 6 8-6"></path></svg></span><div><h3>Decidir entre dois caminhos</h3><p>Leia uma idade e informe se a pessoa é maior de idade.</p></div></div>
+                <ul class="example-list"><li>Existe uma única entrada.</li><li>Não há repetição nem coleção de dados.</li><li>A resposta depende de um teste relacional.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">estrutura principal: if / else</span></div>
+                <span class="example-level">Nível básico</span>
+              </div>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span> classificar_idade.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">idade</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">idade</span>);
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">idade</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">18</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Maior de idade\n"</span>);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Menor de idade\n"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path><path d="M7 4v16"></path></svg></span><div><h3>Guardar, percorrer e calcular</h3><p>Leia cinco notas, armazene-as e calcule a média.</p></div></div>
+                <ul class="example-list"><li>Há vários valores do mesmo tipo.</li><li>Todos precisam ser guardados e percorridos.</li><li>O cálculo da média pode ser separado em função.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">vetor</span><span class="structure-tag">for</span><span class="structure-tag">função</span></div>
+                <span class="example-level">Nível intermediário</span>
+              </div>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span> media_notas.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">float</span> <span class="syn-function">calcularMedia</span>(<span class="syn-type">float</span> <span class="syn-variable">notas</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">notas</span>[<span class="syn-variable">i</span>];
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-variable">soma</span> <span class="syn-operator">/</span> <span class="syn-variable">n</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">notas</span>[<span class="syn-number">5</span>];
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">notas</span>[<span class="syn-variable">i</span>]);
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Media: %.2f\n"</span>, <span class="syn-function">calcularMedia</span>(<span class="syn-variable">notas</span>, <span class="syn-number">5</span>));
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M4 16h16M10 4v16M16 4v16"></path></svg></span><div><h3>Organizar duas dimensões</h3><p>Armazene notas de duas turmas e três estudantes e conte os aprovados.</p></div></div>
+                <ul class="example-list"><li>Os dados possuem linha e coluna.</li><li>Dois laços percorrem a matriz.</li><li>Uma condição classifica cada nota.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">matriz</span><span class="structure-tag">laços aninhados</span><span class="structure-tag">if</span></div>
+                <span class="example-level">Nível intermediário</span>
+              </div>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span> aprovados_turmas.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">notas</span>[<span class="syn-number">2</span>][<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-number">8.0</span>, <span class="syn-number">6.0</span>, <span class="syn-number">9.0</span>},
+        {<span class="syn-number">5.0</span>, <span class="syn-number">7.5</span>, <span class="syn-number">7.0</span>}
+    };
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">2</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-type">int</span> <span class="syn-variable">aprovados</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+        <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">j</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">j</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">j</span><span class="syn-operator">++</span>) {
+            <span class="syn-keyword">if</span> (<span class="syn-variable">notas</span>[<span class="syn-variable">i</span>][<span class="syn-variable">j</span>] <span class="syn-operator">&gt;=</span> <span class="syn-number">7.0</span>) {
+                <span class="syn-variable">aprovados</span><span class="syn-operator">++</span>;
+            }
+        }
+
+        <span class="syn-function">printf</span>(<span class="syn-string">"Turma %d: %d aprovados\n"</span>,
+               <span class="syn-variable">i</span> <span class="syn-operator">+</span> <span class="syn-number">1</span>, <span class="syn-variable">aprovados</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Escolher por uma palavra</h3><p><strong>Por que acontece:</strong> o aluno encontra “cada” e decide usar vetor, mesmo sem precisar guardar os valores.</p><p><strong>Como evitar:</strong> identifique a ação e verifique se o armazenamento é realmente necessário.</p></article>
+        <article class="error-card"><h3>Usar vetor sem necessidade</h3><p><strong>Por que acontece:</strong> vários dados são lidos, mas apenas soma ou contagem precisa ser mantida.</p><p><strong>Como evitar:</strong> use vetor somente quando os valores precisarem ser acessados depois.</p></article>
+        <article class="error-card"><h3>Usar matriz para uma lista</h3><p><strong>Por que acontece:</strong> o aluno confunde quantidade de valores com quantidade de dimensões.</p><p><strong>Como evitar:</strong> escolha matriz apenas quando linha e coluna tiverem significado.</p></article>
+        <article class="error-card"><h3>Procurar uma única estrutura</h3><p><strong>Por que acontece:</strong> o aluno pensa que condição, laço e função são alternativas excludentes.</p><p><strong>Como evitar:</strong> defina uma estrutura principal e combine as demais por responsabilidade.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Um problema pede a soma de 100 valores, mas não precisa mostrar os valores depois. É obrigatório usar vetor?</summary><p>Não. Um laço e um acumulador podem resolver o problema sem armazenar todos os valores. O vetor só é necessário quando os valores precisam permanecer disponíveis.</p></details>
+        <details><summary>Uma matriz substitui os laços aninhados?</summary><p>Não. A matriz organiza os dados em duas dimensões. Para percorrer todas as linhas e colunas, normalmente são usados dois laços aninhados.</p></details>
+        <details><summary>Uma função pode conter condição e repetição?</summary><p>Sim. A função organiza uma tarefa. Dentro dela podem existir condições, laços, vetores e matrizes, desde que contribuam para a responsabilidade daquela função.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir analisar o padrão de um problema, escolher uma estrutura principal e combinar condição, repetição, vetor, matriz e função de forma justificada.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-condicao" role="dialog" aria-modal="true" aria-labelledby="titulo-condicao">
+    <a class="modal-backdrop" href="#mapa-da-escolha" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-escolha" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 9l8 6 8-6-8-6z"></path><path d="M4 15l8 6 8-6"></path></svg></span><div><h2 id="titulo-condicao">Use condição para escolher caminhos</h2><p>A execução depende do resultado verdadeiro ou falso de um teste.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo</h3>
+        <p>Informar se uma nota é suficiente para aprovação.</p>
+        <div class="modal-grid"><div class="modal-box"><strong>Pista no enunciado</strong><span>“Se a nota for maior ou igual a 7...”</span></div><div class="modal-box"><strong>Estrutura</strong><code>if (nota &gt;= 7)</code></div></div>
+      </div>
+      <p class="modal-rule"><strong>Cuidado:</strong> uma condição escolhe caminhos. Ela não repete automaticamente o teste para vários dados.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-repeticao" role="dialog" aria-modal="true" aria-labelledby="titulo-repeticao">
+    <a class="modal-backdrop" href="#mapa-da-escolha" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-escolha" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-5"></path><path d="M18 3v5h-5"></path><path d="M20 13a8 8 0 0 1-14 5"></path><path d="M6 21v-5h5"></path></svg></span><div><h2 id="titulo-repeticao">Use repetição para executar uma ação várias vezes</h2><p>O laço controla quando começar, continuar, atualizar e parar.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo</h3>
+        <p>Ler cinco números e calcular a soma.</p>
+        <div class="modal-grid"><div class="modal-box"><strong>Pista no enunciado</strong><span>“Leia cinco valores”</span></div><div class="modal-box"><strong>Estrutura</strong><code>for (i = 0; i &lt; 5; i++)</code></div></div>
+      </div>
+      <p class="modal-rule"><strong>Cuidado:</strong> repetir não significa armazenar. Se os valores não forem usados depois, talvez um vetor não seja necessário.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-vetor" role="dialog" aria-modal="true" aria-labelledby="titulo-vetor">
+    <a class="modal-backdrop" href="#mapa-da-escolha" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-escolha" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="5" height="10"></rect><rect x="9.5" y="7" width="5" height="10"></rect><rect x="16" y="7" width="5" height="10"></rect></svg></span><div><h2 id="titulo-vetor">Use vetor para uma coleção unidimensional</h2><p>Os elementos possuem o mesmo tipo e são acessados por um único índice.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo</h3>
+        <p>Guardar as cinco notas de um estudante para consultar depois.</p>
+        <div class="modal-grid"><div class="modal-box"><strong>Representação</strong><code>float notas[5];</code></div><div class="modal-box"><strong>Acesso</strong><code>notas[i]</code></div></div>
+      </div>
+      <p class="modal-rule"><strong>Cuidado:</strong> se apenas uma soma, contagem ou média for necessária, o armazenamento de todos os valores pode ser dispensável.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-matriz" role="dialog" aria-modal="true" aria-labelledby="titulo-matriz">
+    <a class="modal-backdrop" href="#mapa-da-escolha" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-escolha" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M4 16h16M10 4v16M16 4v16"></path></svg></span><div><h2 id="titulo-matriz">Use matriz quando duas dimensões têm significado</h2><p>Uma posição depende de linha e coluna, como em uma tabela ou grade.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo</h3>
+        <p>Guardar notas de duas turmas, cada uma com três estudantes.</p>
+        <div class="modal-grid"><div class="modal-box"><strong>Representação</strong><code>float notas[2][3];</code></div><div class="modal-box"><strong>Acesso</strong><code>notas[turma][aluno]</code></div></div>
+      </div>
+      <p class="modal-rule"><strong>Cuidado:</strong> uma lista de valores não vira matriz apenas por ser grande. As duas dimensões precisam representar categorias diferentes.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-funcao" role="dialog" aria-modal="true" aria-labelledby="titulo-funcao">
+    <a class="modal-backdrop" href="#mapa-da-escolha" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-escolha" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 6h7v5H4zM13 13h7v5h-7z"></path><path d="M11 8.5h4a2 2 0 0 1 2 2V13"></path><path d="M8 11v5h5"></path></svg></span><div><h2 id="titulo-funcao">Use função para separar uma tarefa com responsabilidade clara</h2><p>A função recebe informações, executa uma tarefa e pode devolver um resultado.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo</h3>
+        <p>Calcular a média de um vetor de notas.</p>
+        <div class="modal-grid"><div class="modal-box"><strong>Assinatura</strong><code>float media(float notas[], int n)</code></div><div class="modal-box"><strong>Uso</strong><code>resultado = media(notas, 5);</code></div></div>
+      </div>
+      <p class="modal-rule"><strong>Cuidado:</strong> criar uma função não substitui as estruturas internas. Ela pode usar laços e condições para cumprir sua tarefa.</p>
+    </article>
+  </section>
+</body>
+</html>

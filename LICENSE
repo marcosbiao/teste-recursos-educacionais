@@ -1,21 +1,118 @@
-MIT License
+LICENÇA DOS CONTEÚDOS EDUCACIONAIS
+
+Creative Commons Atribuição 4.0 Internacional — CC BY 4.0
 
 Copyright (c) 2026 Marcos Bião
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. ESCOPO
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Salvo indicação expressa em contrário, os conteúdos educacionais originais
+disponibilizados neste projeto são licenciados sob a Creative Commons
+Atribuição 4.0 Internacional — CC BY 4.0.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Esta licença se aplica, entre outros, aos seguintes materiais originais:
+
+- textos e explicações pedagógicas;
+- infográficos educacionais;
+- roteiros de resolução;
+- cards de erros comuns;
+- desafios guiados;
+- exemplos didáticos;
+- exercícios e sequências de aprendizagem;
+- diagramas e representações visuais;
+- descrições de competências e objetivos de aprendizagem;
+- orientações, dicas e feedbacks pedagógicos;
+- organização didática dos recursos;
+- documentação educacional da coleção.
+
+2. PERMISSÕES
+
+Nos termos da CC BY 4.0, é permitido:
+
+- copiar e redistribuir os materiais em qualquer suporte ou formato;
+- utilizar os materiais em aulas, cursos, ambientes virtuais e publicações;
+- adaptar, transformar, traduzir e criar materiais derivados;
+- utilizar os materiais para fins educacionais, científicos ou profissionais;
+- utilizar os materiais inclusive para fins comerciais.
+
+Essas permissões são concedidas desde que as condições da licença sejam
+respeitadas.
+
+3. CONDIÇÕES DE ATRIBUIÇÃO
+
+Ao compartilhar, utilizar ou adaptar os materiais, deve-se, de maneira
+razoável:
+
+- atribuir a autoria a Marcos Bião;
+- indicar o título ou a identificação do recurso utilizado, quando disponível;
+- incluir um link para o projeto original:
+  https://github.com/marcosbiao/teste-recursos-educacionais
+- indicar que o material está licenciado sob CC BY 4.0;
+- incluir um link para a licença:
+  https://creativecommons.org/licenses/by/4.0/
+- informar se foram realizadas alterações;
+- não sugerir que Marcos Bião apoia, aprova ou endossa a reutilização ou a
+  adaptação realizada.
+
+4. EXEMPLO DE ATRIBUIÇÃO
+
+Recurso educacional de Marcos Bião, disponível em
+https://github.com/marcosbiao/teste-recursos-educacionais, licenciado sob
+Creative Commons Atribuição 4.0 Internacional — CC BY 4.0.
+
+Em caso de adaptação:
+
+Material adaptado de “Recursos Educacionais para Introdução à Programação”,
+de Marcos Bião, disponível em
+https://github.com/marcosbiao/teste-recursos-educacionais, sob licença
+CC BY 4.0. Alterações foram realizadas.
+
+5. MATERIAIS DE TERCEIROS
+
+Esta licença se aplica somente aos conteúdos educacionais originais de autoria
+de Marcos Bião.
+
+Imagens, referências, marcas, logotipos, textos, questões, bases de dados e
+outros materiais pertencentes a terceiros permanecem sujeitos aos direitos e
+às licenças de seus respectivos titulares.
+
+Quando um recurso ou arquivo apresentar uma licença, autoria ou condição
+específica, essa indicação prevalecerá para o material correspondente.
+
+6. DIREITOS NÃO ABRANGIDOS
+
+A CC BY 4.0 não elimina nem substitui outros direitos que possam incidir sobre
+determinado material, incluindo direitos de imagem, privacidade, marcas,
+direitos morais e outros direitos previstos na legislação aplicável.
+
+A reutilização deve respeitar esses direitos quando pertinentes.
+
+7. AUSÊNCIA DE GARANTIAS
+
+Os materiais são disponibilizados no estado em que se encontram, sem garantias
+de adequação a uma finalidade educacional específica.
+
+O usuário é responsável por avaliar a pertinência, a correção e a adequação
+dos materiais ao contexto em que serão utilizados.
+
+8. TEXTO OFICIAL DA LICENÇA
+
+Resumo oficial em português:
+https://creativecommons.org/licenses/by/4.0/deed.pt-br
+
+Texto legal oficial:
+https://creativecommons.org/licenses/by/4.0/legalcode.pt
+
+O presente arquivo descreve o escopo dos materiais licenciados e oferece uma
+explicação prática das condições de uso. Em caso de divergência, prevalece o
+texto legal oficial da licença Creative Commons Atribuição 4.0 Internacional.
+
+9. AUTORIA
+
+Marcos Bião
+
+Projeto:
+Recursos Educacionais para Introdução à Programação
+
+Repositório:
+https://github.com/marcosbiao/teste-recursos-educacionais

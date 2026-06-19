@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuidado com o índice fora do limite</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 280px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(350px, .95fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg, .safety-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 480px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-vector-labels, .hero-vector {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .hero-vector-labels { margin-bottom: 6px; }
+    .hero-index { text-align: center; color: var(--cor-texto-secundario); font-size: .7rem; font-weight: 900; }
+    .hero-cell {
+      min-height: 52px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      background: var(--cor-superficie-suave);
+      color: var(--cor-primaria-escura);
+      font-family: Consolas, monospace;
+      font-weight: 900;
+      position: relative;
+    }
+
+    .hero-cell.invalid {
+      border: 2px dashed var(--cor-destaque-pontual);
+      background: #FFFBEB;
+      color: #92400E;
+    }
+
+    .hero-cell.invalid::after {
+      content: "fora";
+      position: absolute;
+      bottom: -22px;
+      font-size: .66rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #92400E;
+    }
+
+    .hero-rule {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 30px;
+      padding: 12px 14px;
+      border: 1px solid rgba(79,70,229,.18);
+      border-radius: 14px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-texto-principal);
+      font-size: .88rem;
+    }
+
+    .hero-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .limit-map {
+      min-height: 590px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .27); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 240px;
+      min-height: 166px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: 1rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 150px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .map-button p { font-size: .91rem; }
+    .map-code { display: inline-flex; margin-top: 8px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-size { left: 32px; top: 40px; }
+    .button-loop { right: 32px; top: 40px; }
+    .button-matrix { left: 32px; bottom: 40px; }
+    .button-validation { right: 32px; bottom: 40px; }
+
+    .bounds-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .bounds-card { border: 1px solid var(--cor-borda); border-radius: 21px; padding: 21px; background: var(--cor-superficie-suave); }
+    .bounds-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .mini-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .bounds-rule { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .9rem; }
+    .bounds-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .vector-labels, .vector-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; }
+    .vector-labels { margin-top: 18px; margin-bottom: 6px; }
+    .axis { text-align: center; color: var(--cor-texto-secundario); font-size: .7rem; font-weight: 900; }
+    .vector-cell { min-height: 58px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--cor-borda); background: var(--cor-superficie); font-family: Consolas, monospace; font-weight: 900; color: var(--cor-primaria-escura); }
+    .vector-cell.bad { border: 2px dashed var(--cor-destaque-pontual); background: #FFFBEB; color: #92400E; }
+
+    .matrix-limit-wrap { margin-top: 18px; overflow-x: auto; }
+    .matrix-limit { min-width: 480px; display: grid; grid-template-columns: 44px repeat(4, 1fr); gap: 7px; }
+    .matrix-limit .corner, .matrix-limit .col-label, .matrix-limit .row-label { display: grid; place-items: center; min-height: 34px; color: var(--cor-texto-secundario); font-size: .72rem; font-weight: 900; }
+    .matrix-limit .cell { min-height: 56px; display: grid; place-items: center; border: 1px solid var(--cor-borda); border-radius: 12px; background: var(--cor-superficie); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-weight: 900; }
+    .matrix-limit .cell.bad { border: 2px dashed var(--cor-destaque-pontual); background: #FFFBEB; color: #92400E; }
+
+    .safe-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; }
+    .safe-step { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; background: var(--cor-superficie); }
+    .safe-step:not(:last-child)::after { content: "›"; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; z-index: 2; }
+    .safety-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .safe-step p { font-size: .91rem; }
+
+    .trace-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; align-items: start; }
+    .trace-left { display: grid; gap: 15px; }
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #1F2937; }
+    .code-toolbar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .75rem; font-weight: 800; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .9rem; line-height: 1.58; tab-size: 2; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .trace-memory { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie-suave); }
+    .trace-memory h3 { margin-bottom: 12px; }
+    .memory-labels, .memory-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+    .memory-labels { margin-bottom: 6px; }
+    .memory-cell { min-height: 50px; display: grid; place-items: center; border-radius: 11px; border: 1px solid var(--cor-borda); background: var(--cor-superficie); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-weight: 900; }
+    .memory-cell.invalid { border: 2px dashed var(--cor-destaque-pontual); background: #FFFBEB; color: #92400E; }
+
+    .trace-table-wrap { overflow-x: auto; }
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; font-size: .93rem; }
+    .mini-table th, .mini-table td { padding: 13px 14px; text-align: left; border-bottom: 1px solid var(--cor-borda); }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table tr:last-child td { border-bottom: 0; }
+    .mini-table td code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .bad-row td { background: #FFFBEB; color: #92400E; font-weight: 700; }
+    .status-ok, .status-bad { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: .76rem; font-weight: 900; }
+    .status-ok { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .status-bad { background: #FEF3C7; color: #92400E; }
+
+    .tabs { position: relative; }
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; padding: 10px 15px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; font-size: .9rem; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panels { position: relative; }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .example-level { display: inline-flex; margin-top: 12px; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+    .example-list { margin: 13px 0 0 19px; color: var(--cor-texto-secundario); }
+    .example-list li { margin-bottom: 6px; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; box-shadow: var(--sombra-suave); }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(15,23,42,.64);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      position: relative;
+      width: min(720px, 100%);
+      max-height: min(86vh, 760px);
+      overflow-y: auto;
+      border-radius: 24px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      box-shadow: 0 30px 90px rgba(15,23,42,.35);
+      padding: 25px;
+      transform: translateY(18px) scale(.96);
+      opacity: 0;
+    }
+
+    .modal:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.75,.25,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; font-weight: 700; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 46px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-head h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 16px; border-radius: 17px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); }
+    .modal-rule { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); }
+    .modal-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .modal-vector { margin-top: 12px; }
+    .modal-vector .vector-labels, .modal-vector .vector-strip { grid-template-columns: repeat(6, 1fr); }
+    .modal-matrix { margin-top: 12px; overflow-x: auto; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .trace-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .bounds-layout { grid-template-columns: 1fr; }
+      .safe-flow { grid-template-columns: repeat(2, 1fr); }
+      .safe-step:nth-child(2)::after { display: none; }
+      .error-grid { grid-template-columns: 1fr; }
+      .limit-map { min-height: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 20px; }
+      .map-lines, .map-center { display: none; }
+      .map-button { position: static; width: auto; min-height: 150px; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-grid { gap: 22px; }
+      .hero-panel { padding: 17px; }
+      .meta-grid, .concept-points, .safe-flow, .limit-map { grid-template-columns: 1fr; }
+      .safe-step::after { display: none !important; }
+      .hero-vector-labels, .hero-vector, .vector-labels, .vector-strip { gap: 4px; }
+      .hero-cell, .vector-cell { min-height: 47px; font-size: .82rem; }
+      .hero-rule { flex-direction: column; }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .section-title { align-items: flex-start; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+      .trace-table-wrap { margin: 0 -4px; }
+      .mini-table th, .mini-table td { padding: 10px; font-size: .84rem; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Cuidado com o índice fora do limite</h1>
+          <p class="subtitle">Aprenda a reconhecer posições válidas, corrigir limites de laços e impedir acessos indevidos em vetores e matrizes.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Exemplo visual de limite de vetor">
+          <div class="panel-head">
+            <span class="hero-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path><path d="M19 4l2 2-2 2"></path></svg>
+            </span>
+            <div>
+              <strong>Vetor com cinco posições</strong>
+              <span>O tamanho não é um índice válido</span>
+            </div>
+          </div>
+          <div class="hero-vector-labels" aria-hidden="true">
+            <span class="hero-index">0</span><span class="hero-index">1</span><span class="hero-index">2</span><span class="hero-index">3</span><span class="hero-index">4</span><span class="hero-index">5</span>
+          </div>
+          <div class="hero-vector">
+            <span class="hero-cell">12</span><span class="hero-cell">7</span><span class="hero-cell">20</span><span class="hero-cell">4</span><span class="hero-cell">9</span><span class="hero-cell invalid">?</span>
+          </div>
+          <div class="hero-rule">
+            <span>Válidos: <code>0 até TAM - 1</code></span>
+            <span>Inválido: <code>vetor[TAM]</code></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI06</div>
+          <p>Representar, percorrer e processar coleções indexadas e dados estruturados simples.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Competências secundárias</div>
+          <div class="meta-value">CCI04 e CCI05</div>
+          <p>Validar condições e controlar corretamente a repetição.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Erros com índice</div>
+          <p>Reconhecer e evitar acessos fora dos limites.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">12 a 18 minutos</div>
+          <p>Leitura visual, rastreamento e comparação de exemplos.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Diagnóstico visual</div>
+          <p>Faixas válidas, simulação de índices e correção de limites.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path></svg>Vetores</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M5 10h14M10 5v14"></path></svg>Matrizes</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"></path><path d="M4 12h3M17 12h3"></path></svg>Laços com índice</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>Operadores relacionais</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>O índice precisa apontar para uma posição existente</h3>
+          <p>Em C, a primeira posição tem índice <strong>0</strong>. Por isso, uma estrutura com tamanho <strong>TAM</strong> termina no índice <strong>TAM - 1</strong>. Acessar antes de 0 ou a partir de TAM ultrapassa o espaço reservado.</p>
+          <div class="central-rule"><code>0 &lt;= índice &amp;&amp; índice &lt; tamanho</code></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Descubra o tamanho</h3><p>Identifique quantas posições existem em cada dimensão.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Calcule o último índice</h3><p>Subtraia 1 do tamanho para obter a última posição válida.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Controle o acesso</h3><p>Use condições e laços que nunca ultrapassem essa faixa.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Mapa dos limites</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="M8 11l4 4 4-4"></path><path d="M5 20h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação com exemplo.
+      </div>
+
+      <div class="limit-map">
+        <svg class="map-lines" viewBox="0 0 1000 590" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="390" y1="250" x2="250" y2="150"></line>
+          <line x1="610" y1="250" x2="750" y2="150"></line>
+          <line x1="390" y1="340" x2="250" y2="445"></line>
+          <line x1="610" y1="340" x2="750" y2="445"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Acesso seguro</strong>
+            <code>0 ... tamanho - 1</code>
+            <span>Qualquer valor fora dessa faixa é inválido.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-size" href="#modal-tamanho">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path></svg></span>
+          <h3>Tamanho e último índice</h3>
+          <p>O tamanho informa a quantidade, não o número da última posição.</p>
+          <span class="map-code">TAM = 5 → último = 4</span>
+        </a>
+
+        <a class="map-button button-loop" href="#modal-laco">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M17 6h2v5"></path><path d="M19 11a7 7 0 1 0-2 5"></path><path d="M19 11h-5"></path></svg></span>
+          <h3>Condição do laço</h3>
+          <p>Uma comparação incorreta pode produzir uma repetição a mais.</p>
+          <span class="map-code">i &lt; TAM</span>
+        </a>
+
+        <a class="map-button button-matrix" href="#modal-matriz">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M4 10h16M10 4v16"></path></svg></span>
+          <h3>Dois limites na matriz</h3>
+          <p>Linha e coluna possuem faixas próprias e precisam ser verificadas.</p>
+          <span class="map-code">m[linha][coluna]</span>
+        </a>
+
+        <a class="map-button button-validation" href="#modal-validacao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-5"></path></svg></span>
+          <h3>Índice informado</h3>
+          <p>Quando o índice vem do usuário, valide antes de acessar a estrutura.</p>
+          <span class="map-code">indice &gt;= 0 &amp;&amp; indice &lt; TAM</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Onde termina cada estrutura?</h2></div>
+      <div class="bounds-layout">
+        <article class="bounds-card">
+          <div class="bounds-head">
+            <span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path></svg></span>
+            <div><h3>Vetor <code>dados[5]</code></h3><p>Cinco posições, índices de 0 a 4.</p></div>
+          </div>
+          <div class="vector-labels" aria-hidden="true">
+            <span class="axis">0</span><span class="axis">1</span><span class="axis">2</span><span class="axis">3</span><span class="axis">4</span><span class="axis">5</span>
+          </div>
+          <div class="vector-strip">
+            <span class="vector-cell">18</span><span class="vector-cell">6</span><span class="vector-cell">11</span><span class="vector-cell">3</span><span class="vector-cell">9</span><span class="vector-cell bad">inválido</span>
+          </div>
+          <div class="bounds-rule">Faixa válida: <code>0 &lt;= i &amp;&amp; i &lt; 5</code></div>
+        </article>
+
+        <article class="bounds-card">
+          <div class="bounds-head">
+            <span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M4 10h16M10 4v16"></path></svg></span>
+            <div><h3>Matriz <code>m[2][3]</code></h3><p>Duas linhas e três colunas.</p></div>
+          </div>
+          <div class="matrix-limit-wrap">
+            <div class="matrix-limit" aria-label="Matriz com limites válidos e inválidos">
+              <span class="corner"></span><span class="col-label">j = 0</span><span class="col-label">j = 1</span><span class="col-label">j = 2</span><span class="col-label">j = 3</span>
+              <span class="row-label">i = 0</span><span class="cell">4</span><span class="cell">7</span><span class="cell">2</span><span class="cell bad">inválido</span>
+              <span class="row-label">i = 1</span><span class="cell">8</span><span class="cell">5</span><span class="cell">9</span><span class="cell bad">inválido</span>
+              <span class="row-label">i = 2</span><span class="cell bad">inválido</span><span class="cell bad">inválido</span><span class="cell bad">inválido</span><span class="cell bad">inválido</span>
+            </div>
+          </div>
+          <div class="bounds-rule">Linhas: <code>0 a 1</code>. Colunas: <code>0 a 2</code>.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Antes de acessar, faça quatro verificações</h2></div>
+      <div class="safe-flow">
+        <article class="safe-step">
+          <span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path></svg></span>
+          <h3>1. Identifique a dimensão</h3>
+          <p>Descubra o tamanho do vetor ou de cada dimensão da matriz.</p>
+        </article>
+        <article class="safe-step">
+          <span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M15 8l4 4-4 4"></path></svg></span>
+          <h3>2. Determine a faixa</h3>
+          <p>Transforme o tamanho na faixa que começa em 0 e termina em tamanho menos 1.</p>
+        </article>
+        <article class="safe-step">
+          <span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg></span>
+          <h3>3. Valide o índice</h3>
+          <p>Confirme os limites inferior e superior antes de usar a posição.</p>
+        </article>
+        <article class="safe-step">
+          <span class="safety-icon"><svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"></path><path d="M4 12h3M17 12h3"></path></svg></span>
+          <h3>4. Acesse a estrutura</h3>
+          <p>Leia ou altere o elemento somente depois que a condição for verdadeira.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreamento de um acesso inválido</h2></div>
+      <div class="trace-layout">
+        <div class="trace-left">
+          <div class="code-window">
+            <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>erro_limite.c</div>
+            <pre><code><span class="syn-type">int</span> <span class="syn-variable">v</span>[<span class="syn-number">4</span>] <span class="syn-operator">=</span> {<span class="syn-number">10</span>, <span class="syn-number">20</span>, <span class="syn-number">30</span>, <span class="syn-number">40</span>};
+
+<span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">4</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">v</span>[<span class="syn-variable">i</span>]);
+}</code></pre>
+          </div>
+          <div class="trace-memory">
+            <h3>Vetor observado durante o laço</h3>
+            <div class="memory-labels" aria-hidden="true"><span class="axis">0</span><span class="axis">1</span><span class="axis">2</span><span class="axis">3</span><span class="axis">4</span></div>
+            <div class="memory-strip"><span class="memory-cell">10</span><span class="memory-cell">20</span><span class="memory-cell">30</span><span class="memory-cell">40</span><span class="memory-cell invalid">?</span></div>
+          </div>
+        </div>
+
+        <div class="trace-table-wrap">
+          <table class="mini-table">
+            <thead><tr><th>Repetição</th><th>i</th><th>Acesso</th><th>Situação</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>0</td><td><code>v[0]</code></td><td><span class="status-ok">válido</span></td></tr>
+              <tr><td>2</td><td>1</td><td><code>v[1]</code></td><td><span class="status-ok">válido</span></td></tr>
+              <tr><td>3</td><td>2</td><td><code>v[2]</code></td><td><span class="status-ok">válido</span></td></tr>
+              <tr><td>4</td><td>3</td><td><code>v[3]</code></td><td><span class="status-ok">válido</span></td></tr>
+              <tr class="bad-row"><td>5</td><td>4</td><td><code>v[4]</code></td><td><span class="status-bad">fora do limite</span></td></tr>
+            </tbody>
+          </table>
+          <div class="bounds-rule" style="margin-top:14px;">A correção é usar <code>i &lt; 4</code>. Em C, um acesso inválido produz comportamento indefinido: o programa pode mostrar um valor inesperado, alterar outra região de memória ou encerrar.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="tabs" id="tab1" checked>
+        <input type="radio" name="tabs" id="tab2">
+        <input type="radio" name="tabs" id="tab3">
+
+        <div class="tab-labels" role="tablist" aria-label="Exemplos">
+          <label class="tab-label" for="tab1">1. Percorrer um vetor</label>
+          <label class="tab-label" for="tab2">2. Percorrer uma matriz</label>
+          <label class="tab-label" for="tab3">3. Validar posição informada</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path></svg></span><div><h3>Exibir cinco valores</h3><p>O laço visita exatamente os índices de 0 a 4.</p></div></div>
+                <ul class="example-list"><li>Tamanho: 5</li><li>Último índice: 4</li><li>Condição segura: <code>i &lt; 5</code></li></ul>
+                <span class="example-level">Nível básico</span>
+              </div>
+              <div class="code-window">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>vetor.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">#define</span> <span class="syn-variable">TAM</span> <span class="syn-number">5</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">v</span>[<span class="syn-variable">TAM</span>] <span class="syn-operator">=</span> {<span class="syn-number">3</span>, <span class="syn-number">6</span>, <span class="syn-number">9</span>, <span class="syn-number">12</span>, <span class="syn-number">15</span>};
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">TAM</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">v</span>[<span class="syn-variable">i</span>]);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M4 10h16M10 4v16"></path></svg></span><div><h3>Percorrer uma matriz 2 por 3</h3><p>Cada laço respeita o tamanho de sua dimensão.</p></div></div>
+                <ul class="example-list"><li>Linhas válidas: 0 e 1</li><li>Colunas válidas: 0, 1 e 2</li><li>Condições: <code>i &lt; 2</code> e <code>j &lt; 3</code></li></ul>
+                <span class="example-level">Nível intermediário</span>
+              </div>
+              <div class="code-window">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>matriz.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">m</span>[<span class="syn-number">2</span>][<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-number">4</span>, <span class="syn-number">7</span>, <span class="syn-number">2</span>},
+        {<span class="syn-number">8</span>, <span class="syn-number">5</span>, <span class="syn-number">9</span>}
+    };
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">2</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">j</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">j</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">j</span><span class="syn-operator">++</span>) {
+            <span class="syn-function">printf</span>(<span class="syn-string">"%d "</span>, <span class="syn-variable">m</span>[<span class="syn-variable">i</span>][<span class="syn-variable">j</span>]);
+        }
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-5"></path></svg></span><div><h3>Consultar uma posição escolhida</h3><p>O acesso acontece somente após a validação completa.</p></div></div>
+                <ul class="example-list"><li>Limite inferior: índice maior ou igual a 0</li><li>Limite superior: índice menor que TAM</li><li>Mensagem clara quando a posição for inválida</li></ul>
+                <span class="example-level">Nível intermediário</span>
+              </div>
+              <div class="code-window">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>consulta.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">#define</span> <span class="syn-variable">TAM</span> <span class="syn-number">5</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">v</span>[<span class="syn-variable">TAM</span>] <span class="syn-operator">=</span> {<span class="syn-number">11</span>, <span class="syn-number">22</span>, <span class="syn-number">33</span>, <span class="syn-number">44</span>, <span class="syn-number">55</span>};
+    <span class="syn-type">int</span> <span class="syn-variable">indice</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">indice</span>);
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">indice</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">0</span> <span class="syn-operator">&amp;&amp;</span> <span class="syn-variable">indice</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">TAM</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Valor: %d\n"</span>, <span class="syn-variable">v</span>[<span class="syn-variable">indice</span>]);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Indice invalido.\n"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar <code>&lt;= tamanho</code></h3><p><strong>Por que acontece:</strong> o aluno confunde quantidade de elementos com último índice.</p><p><strong>Como evitar:</strong> use <code>i &lt; tamanho</code> quando o índice começa em 0.</p></article>
+        <article class="error-card"><h3>Validar apenas o limite superior</h3><p><strong>Por que acontece:</strong> o programa verifica se o índice é menor que o tamanho, mas aceita valores negativos.</p><p><strong>Como evitar:</strong> teste os dois lados da faixa.</p></article>
+        <article class="error-card"><h3>Trocar linha e coluna</h3><p><strong>Por que acontece:</strong> as dimensões da matriz são tratadas como se tivessem o mesmo tamanho.</p><p><strong>Como evitar:</strong> associe o primeiro índice às linhas e o segundo às colunas.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual é o último índice válido de um vetor com 8 posições?</summary><p>O último índice é 7, pois os índices começam em 0.</p></details>
+        <details><summary>Por que <code>i &lt;= TAM</code> costuma estar errado ao percorrer um vetor?</summary><p>Porque a condição permite que i assuma o valor TAM, mas essa posição não existe. O último índice válido é TAM menos 1.</p></details>
+        <details><summary>O que deve ser validado antes de acessar <code>m[linha][coluna]</code>?</summary><p>A linha precisa estar entre 0 e o número de linhas menos 1. A coluna precisa estar entre 0 e o número de colunas menos 1.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir identificar a faixa válida de índices, corrigir condições de percurso e validar posições antes de acessar vetores e matrizes.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-tamanho" role="dialog" aria-modal="true" aria-labelledby="titulo-tamanho">
+    <a class="modal-backdrop" href="#" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 8h16v8H4z"></path><path d="M8 8v8M12 8v8M16 8v8"></path></svg></span><div><h2 id="titulo-tamanho">Tamanho não é último índice</h2><p>O tamanho conta posições. O índice identifica uma delas.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo: <code>int notas[5];</code></h3>
+        <div class="modal-vector">
+          <div class="vector-labels" aria-hidden="true"><span class="axis">0</span><span class="axis">1</span><span class="axis">2</span><span class="axis">3</span><span class="axis">4</span><span class="axis">5</span></div>
+          <div class="vector-strip"><span class="vector-cell">posição</span><span class="vector-cell">posição</span><span class="vector-cell">posição</span><span class="vector-cell">posição</span><span class="vector-cell">posição</span><span class="vector-cell bad">não existe</span></div>
+        </div>
+      </div>
+      <div class="modal-rule">Se <code>TAM = 5</code>, os índices válidos são <code>0, 1, 2, 3 e 4</code>.</div>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-laco" role="dialog" aria-modal="true" aria-labelledby="titulo-laco">
+    <a class="modal-backdrop" href="#" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M17 6h2v5"></path><path d="M19 11a7 7 0 1 0-2 5"></path><path d="M19 11h-5"></path></svg></span><div><h2 id="titulo-laco">A condição decide o último acesso</h2><p>Uma repetição a mais já é suficiente para sair do vetor.</p></div></div>
+      <div class="modal-example">
+        <h3>Compare as condições</h3>
+        <div class="bounds-rule"><code>i &lt;= 5</code> permite 0, 1, 2, 3, 4 e 5. O índice 5 é inválido.</div>
+        <div class="bounds-rule"><code>i &lt; 5</code> permite somente 0, 1, 2, 3 e 4. Todos são válidos.</div>
+      </div>
+      <div class="modal-rule">Ao iniciar em 0, prefira pensar: repetir enquanto o índice for menor que o tamanho.</div>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-matriz" role="dialog" aria-modal="true" aria-labelledby="titulo-matriz">
+    <a class="modal-backdrop" href="#" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M4 10h16M10 4v16"></path></svg></span><div><h2 id="titulo-matriz">A matriz possui dois limites</h2><p>Cada índice precisa respeitar o tamanho de sua dimensão.</p></div></div>
+      <div class="modal-example">
+        <h3>Exemplo: <code>int m[2][3];</code></h3>
+        <p>Linhas válidas: 0 e 1. Colunas válidas: 0, 1 e 2.</p>
+        <div class="bounds-rule"><code>m[1][2]</code> é válido. <code>m[2][2]</code> e <code>m[1][3]</code> são inválidos.</div>
+      </div>
+      <div class="modal-rule">Use um limite para i e outro para j. Não suponha que linhas e colunas têm o mesmo tamanho.</div>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-validacao" role="dialog" aria-modal="true" aria-labelledby="titulo-validacao">
+    <a class="modal-backdrop" href="#" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"></path><path d="M9 12l2 2 4-5"></path></svg></span><div><h2 id="titulo-validacao">Valide antes de acessar</h2><p>Um índice digitado pode ser negativo ou maior que a estrutura.</p></div></div>
+      <div class="modal-example">
+        <h3>Condição completa</h3>
+        <div class="bounds-rule"><code>indice &gt;= 0 &amp;&amp; indice &lt; TAM</code></div>
+        <p style="margin-top:12px;">O acesso <code>v[indice]</code> deve ficar dentro do bloco executado apenas quando essa condição for verdadeira.</p>
+      </div>
+      <div class="modal-rule">Não basta verificar <code>indice &lt; TAM</code>. Valores negativos também estão fora do limite.</div>
+    </article>
+  </section>
+</body>
+</html>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como escrever uma condição correta</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    .page { max-width: 1120px; margin: 0 auto; }
+
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 260px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(330px, .88fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .concept-icon svg, .modal-icon svg,
+    .interaction-note svg, .hero-icon svg, .logic-icon svg,
+    .rule-icon svg, .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.5rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 730px; }
+
+    .hero-condition {
+      min-height: 300px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .condition-console {
+      width: min(100%, 420px);
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.14);
+    }
+
+    .console-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .console-title { display: flex; align-items: center; gap: 10px; color: var(--cor-primaria-escura); font-weight: 900; }
+    .hero-icon { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .console-chip { color: var(--cor-texto-secundario); font-size: .78rem; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-weight: 800; }
+
+    .condition-builder {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid rgba(79, 70, 229, .18);
+      border-radius: 18px;
+      background: var(--cor-superficie-destacada);
+    }
+
+    .condition-operand {
+      padding: 11px 8px;
+      text-align: center;
+      border-radius: 12px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      font-family: Consolas, Monaco, monospace;
+      color: var(--cor-texto-principal);
+      font-weight: 900;
+    }
+
+    .condition-operator {
+      min-width: 52px;
+      padding: 8px;
+      text-align: center;
+      border-radius: 12px;
+      background: var(--cor-primaria);
+      color: white;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1.16rem;
+      font-weight: 900;
+    }
+
+    .condition-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-secundario);
+      font-weight: 800;
+    }
+
+    .condition-result strong { color: var(--cor-primaria-escura); }
+    .result-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--cor-primaria); box-shadow: 0 0 0 5px rgba(79, 70, 229, .11); }
+
+    .condition-chain {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      margin-top: 13px;
+      color: var(--cor-texto-secundario);
+      font-size: .84rem;
+      text-align: center;
+    }
+
+    .chain-token { padding: 5px 8px; border-radius: 9px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); font-family: Consolas, Monaco, monospace; font-weight: 800; color: var(--cor-texto-principal); }
+    .chain-join { color: var(--cor-primaria); font-family: Consolas, Monaco, monospace; font-weight: 900; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .truth-badge { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 11px; border-radius: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+    .truth-badge code { color: var(--cor-primaria-escura); }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .modal-choice { position: absolute; opacity: 0; pointer-events: none; }
+
+    .condition-map {
+      position: relative;
+      min-height: 500px;
+      border-radius: 24px;
+      border: 1px solid var(--cor-borda);
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      overflow: hidden;
+    }
+
+    .condition-map::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(79, 70, 229, .09) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: .38;
+      pointer-events: none;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .map-lines line { stroke: rgba(79, 70, 229, .23); stroke-width: 2; stroke-dasharray: 7 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 190px;
+      min-height: 145px;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      padding: 20px;
+      border-radius: 24px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      box-shadow: 0 18px 36px rgba(49, 46, 129, .2);
+      z-index: 3;
+    }
+    .map-center strong { font-size: 1.16rem; margin-bottom: 5px; }
+    .map-center span { color: #E0E7FF; font-size: .91rem; }
+
+    .concept-button {
+      position: absolute;
+      width: 250px;
+      min-height: 150px;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255, 255, 255, .98);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .07);
+      cursor: pointer;
+      z-index: 2;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .concept-button:hover, .concept-button:focus-visible { transform: translateY(-4px); border-color: rgba(79, 70, 229, .42); box-shadow: 0 18px 36px rgba(49, 46, 129, .13); outline: none; }
+    .concept-button.one { left: 28px; top: 28px; }
+    .concept-button.two { right: 28px; top: 28px; }
+    .concept-button.three { left: 28px; bottom: 28px; }
+    .concept-button.four { right: 28px; bottom: 28px; }
+    .concept-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 12px; }
+    .concept-button code { color: var(--cor-primaria-escura); font-size: 1rem; font-weight: 900; }
+    .concept-button p { font-size: .91rem; }
+
+    .concept-alert { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 22px; z-index: 100; }
+    #modal-rel:checked ~ .concept-alert,
+    #modal-and:checked ~ .concept-alert,
+    #modal-or:checked ~ .concept-alert,
+    #modal-not:checked ~ .concept-alert { display: flex; }
+
+    .concept-alert-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .62); backdrop-filter: blur(5px); cursor: pointer; animation: fadeBackdrop .25s ease both; }
+    .concept-alert-window { position: relative; width: min(780px, 100%); max-height: min(86vh, 720px); overflow-y: auto; border-radius: 24px; border: 1px solid rgba(255,255,255,.5); background: var(--cor-superficie); box-shadow: 0 28px 80px rgba(15,23,42,.32); z-index: 1; animation: modalRise .34s cubic-bezier(.2,.85,.25,1.15) both; }
+    .modal-close { position: sticky; float: right; top: 14px; right: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); cursor: pointer; font-size: 1.35rem; line-height: 1; z-index: 3; }
+    .modal-panel { display: none; padding: 28px; }
+    #modal-rel:checked ~ .concept-alert .panel-rel,
+    #modal-and:checked ~ .concept-alert .panel-and,
+    #modal-or:checked ~ .concept-alert .panel-or,
+    #modal-not:checked ~ .concept-alert .panel-not { display: block; }
+    .modal-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-right: 42px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.35rem; margin: 0; }
+    .modal-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
+    .modal-explanation, .modal-example { border-radius: 17px; padding: 17px; border: 1px solid var(--cor-borda); }
+    .modal-explanation { background: var(--cor-superficie-suave); }
+    .modal-example { background: var(--cor-superficie-destacada); }
+    .modal-list { margin: 12px 0 0 20px; color: var(--cor-texto-secundario); }
+    .modal-list li { margin-bottom: 7px; }
+    .modal-list code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .mini-evaluation { display: grid; gap: 8px; margin-top: 12px; }
+    .eval-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 11px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .eval-row code { color: var(--cor-texto-principal); font-weight: 900; }
+    .eval-result { min-width: 92px; text-align: center; padding: 4px 8px; border-radius: 999px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-size: .82rem; font-weight: 900; }
+
+    @keyframes modalRise { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes fadeBackdrop { from { opacity: 0; } to { opacity: 1; } }
+
+    .operator-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .operator-card { border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; background: var(--cor-superficie); }
+    .operator-symbol { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 15px; background: var(--cor-superficie-destacada); border-bottom: 1px solid rgba(79,70,229,.14); }
+    .operator-symbol code { font-size: 1.34rem; color: var(--cor-primaria-escura); font-weight: 900; }
+    .operator-kind { font-size: .73rem; text-transform: uppercase; letter-spacing: .05em; color: var(--cor-texto-secundario); font-weight: 800; }
+    .operator-body { padding: 15px; }
+    .operator-body p { font-size: .91rem; }
+    .operator-example { display: block; margin-top: 9px; padding: 8px 10px; border-radius: 10px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .logic-board { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .logic-panel { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 19px; background: var(--cor-superficie-suave); }
+    .logic-head { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+    .logic-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.14); }
+    .truth-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    .truth-table th, .truth-table td { border: 1px solid var(--cor-borda); padding: 9px; text-align: center; }
+    .truth-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .truth-table td { background: var(--cor-superficie); color: var(--cor-texto-principal); }
+    .truth-table .highlight { font-weight: 900; color: var(--cor-primaria-escura); }
+    .logic-rule { margin-top: 12px; padding: 11px 12px; border-radius: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .9rem; }
+    .logic-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .build-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+    .build-step { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; background: var(--cor-superficie); }
+    .build-step:not(:last-child)::after { content: "→"; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; z-index: 2; }
+    .step-label { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 34px; padding: 0 10px; border-radius: 11px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; margin-bottom: 11px; }
+    .build-step code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .build-step p { font-size: .91rem; }
+
+    .example-tabs { position: relative; }
+    .tab-choice { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .tab-label { display: flex; align-items: center; gap: 10px; padding: 13px 14px; border-radius: 15px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); cursor: pointer; color: var(--cor-texto-secundario); font-weight: 800; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+    .tab-label:hover { transform: translateY(-2px); border-color: rgba(79,70,229,.35); }
+    .tab-index { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); flex: 0 0 auto; }
+    #tab-one:checked ~ .tab-labels label[for="tab-one"],
+    #tab-two:checked ~ .tab-labels label[for="tab-two"],
+    #tab-three:checked ~ .tab-labels label[for="tab-three"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    #tab-one:checked ~ .tab-labels label[for="tab-one"] .tab-index,
+    #tab-two:checked ~ .tab-labels label[for="tab-two"] .tab-index,
+    #tab-three:checked ~ .tab-labels label[for="tab-three"] .tab-index { background: rgba(255,255,255,.18); color: white; border-color: rgba(255,255,255,.35); }
+
+    .example-panel { display: none; border: 1px solid var(--cor-borda); border-radius: 21px; overflow: hidden; background: var(--cor-superficie); }
+    #tab-one:checked ~ .tab-panels .panel-one,
+    #tab-two:checked ~ .tab-panels .panel-two,
+    #tab-three:checked ~ .tab-panels .panel-three { display: block; animation: tabAppear .28s ease both; }
+    @keyframes tabAppear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-head { padding: 18px 20px; background: var(--cor-superficie-destacada); border-bottom: 1px solid rgba(79,70,229,.15); }
+    .example-head h3 { color: var(--cor-primaria-escura); margin-bottom: 4px; }
+    .example-head p { font-size: .92rem; }
+    .example-content { display: grid; grid-template-columns: .9fr 1.1fr; gap: 0; }
+    .example-analysis { padding: 20px; background: var(--cor-superficie-suave); border-right: 1px solid var(--cor-borda); }
+    .example-code { padding: 20px; min-width: 0; }
+    .analysis-grid { display: grid; gap: 10px; margin-top: 13px; }
+    .analysis-item { border-radius: 13px; padding: 11px 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .analysis-label { display: block; color: var(--cor-texto-secundario); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 900; margin-bottom: 4px; }
+    .analysis-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .test-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 13px; }
+    .test-case { padding: 9px; text-align: center; border-radius: 11px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .test-case span { display: block; color: var(--cor-texto-secundario); font-size: .72rem; font-weight: 800; text-transform: uppercase; }
+    .test-case strong { color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .code-window { border-radius: 17px; overflow: hidden; background: var(--codigo-fundo); box-shadow: 0 12px 28px rgba(15,23,42,.14); }
+    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 13px; background: #0B1220; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dot { width: 9px; height: 9px; border-radius: 50%; background: #64748B; }
+    .code-file { color: #94A3B8; font-size: .78rem; font-family: Consolas, Monaco, monospace; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .87rem; line-height: 1.58; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+    .bad-good { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 11px; }
+    .bad-good code { display: block; padding: 8px; border-radius: 10px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .82rem; text-align: center; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 17px; padding: 15px 17px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 900; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 13px; padding: 13px; color: var(--cor-texto-principal); }
+    details code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; box-shadow: var(--sombra-suave); }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; max-width: 920px; }
+
+    @media (max-width: 1000px) {
+      .hero-grid, .concept-summary, .example-content, .modal-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points, .operator-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .example-analysis { border-right: 0; border-bottom: 1px solid var(--cor-borda); }
+      .condition-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .concept-button { position: static; width: auto; min-height: 145px; transform: none; }
+      .map-center { grid-column: 1 / -1; }
+      .concept-button:hover, .concept-button:focus-visible { transform: translateY(-3px); }
+      .build-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .build-step:nth-child(2)::after { display: none; }
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 17px 11px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 21px; }
+      .hero-condition { min-height: 250px; }
+      .condition-console { padding: 17px; }
+      .meta-grid, .concept-points, .condition-map, .operator-grid, .logic-board, .build-flow, .tab-labels, .error-grid { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .concept-button { min-height: auto; }
+      .build-step:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -19px; transform: translateX(-50%); }
+      .build-step:nth-child(2)::after { display: grid; }
+      .tab-label { padding: 11px 12px; }
+      .test-strip { grid-template-columns: 1fr; }
+      .bad-good { grid-template-columns: 1fr; }
+      .modal-panel { padding: 22px 18px; }
+      .concept-alert { padding: 12px; }
+      .condition-builder { grid-template-columns: 1fr; }
+      .condition-operator { width: 70px; justify-self: center; }
+      .condition-chain { flex-wrap: wrap; }
+      .truth-table { font-size: .82rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" stroke-width="1.8" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5M8 16h7"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Como escrever uma condição correta</h1>
+          <p class="subtitle">Aprenda a comparar valores, combinar regras e prever quando uma expressão em C será verdadeira ou falsa.</p>
+        </div>
+
+        <div class="hero-condition" aria-label="Exemplo visual de condição">
+          <div class="condition-console">
+            <div class="console-head">
+              <div class="console-title">
+                <span class="hero-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="m8 9-3 3 3 3"></path><path d="m16 9 3 3-3 3"></path><path d="M10 18 14 6"></path></svg></span>
+                Construtor de condição
+              </div>
+              <span class="console-chip">resultado lógico</span>
+            </div>
+            <div class="condition-builder">
+              <span class="condition-operand">idade</span>
+              <span class="condition-operator">&gt;=</span>
+              <span class="condition-operand">18</span>
+            </div>
+            <div class="condition-result"><span class="result-dot"></span> Se <strong>idade = 20</strong>, o resultado é verdadeiro.</div>
+            <div class="condition-chain">
+              <span class="chain-token">temIngresso</span>
+              <span class="chain-join">&&</span>
+              <span class="chain-token">idade &gt;= 18</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI04</div><p>Controlar o fluxo por decisões condicionais e expressões lógicas corretas.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência de apoio</div><div class="meta-value">CCI03</div><p>Usar valores, variáveis e expressões que serão comparados na condição.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Operadores relacionais e lógicos</div><p>Comparar, combinar e negar resultados lógicos.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura exploratória com exemplos e testes rápidos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e analítico</div><p>Mapas, tabelas de verdade e rastreamento de condições.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 6h14v12H5z"></path><path d="M9 10h6M9 14h3"></path></svg>Variáveis e valores</span>
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 12h14M12 5v14"></path></svg>Expressões simples</span>
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h7"></path></svg>Leitura de código em C</span>
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M8 5h8l3 7-3 7H8l-3-7z"></path></svg>Noção de decisão</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Uma condição é uma pergunta feita ao programa</h3>
+          <p>Ela compara valores e produz apenas um de dois resultados: <strong>verdadeiro</strong> ou <strong>falso</strong>. Esse resultado determina qual caminho do programa será executado.</p>
+          <span class="truth-badge"><code>idade &gt;= 18</code> → verdadeiro ou falso</span>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Compare</h3><p>Use operadores relacionais para perguntar como dois valores se relacionam.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Combine</h3><p>Use <code>&amp;&amp;</code> ou <code>||</code> quando uma decisão depende de mais de uma comparação.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Negue</h3><p>Use <code>!</code> para inverter um resultado lógico já existente.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Mapa das condições</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 20h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação com o mesmo contexto de exemplo.
+      </div>
+
+      <input class="modal-choice" type="radio" name="condition-modal" id="modal-none" checked>
+      <input class="modal-choice" type="radio" name="condition-modal" id="modal-rel">
+      <input class="modal-choice" type="radio" name="condition-modal" id="modal-and">
+      <input class="modal-choice" type="radio" name="condition-modal" id="modal-or">
+      <input class="modal-choice" type="radio" name="condition-modal" id="modal-not">
+
+      <div class="condition-map">
+        <svg class="map-lines" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="250" x2="150" y2="105"></line>
+          <line x1="500" y1="250" x2="850" y2="105"></line>
+          <line x1="500" y1="250" x2="150" y2="395"></line>
+          <line x1="500" y1="250" x2="850" y2="395"></line>
+        </svg>
+
+        <div class="map-center"><strong>Condição</strong><span>Uma expressão que responde verdadeiro ou falso</span></div>
+
+        <label class="concept-button one" for="modal-rel" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 8h14M5 16h14"></path><path d="m9 5-4 3 4 3M15 13l4 3-4 3"></path></svg></span>
+          <h3>Comparar valores</h3>
+          <p><code>== != &gt; &lt; &gt;= &lt;=</code></p>
+          <p>Produzem uma resposta lógica a partir de dois valores.</p>
+        </label>
+
+        <label class="concept-button two" for="modal-and" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg></span>
+          <h3>Exigir tudo</h3>
+          <p><code>&amp;&amp;</code> operador E</p>
+          <p>O resultado só é verdadeiro quando todas as partes são verdadeiras.</p>
+        </label>
+
+        <label class="concept-button three" for="modal-or" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 12h5M15 12h5"></path><path d="M9 7c4 0 6 2 6 5s-2 5-6 5"></path></svg></span>
+          <h3>Aceitar alternativas</h3>
+          <p><code>||</code> operador OU</p>
+          <p>O resultado é verdadeiro quando pelo menos uma parte é verdadeira.</p>
+        </label>
+
+        <label class="concept-button four" for="modal-not" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5l14 14"></path><path d="M8 18h8M12 6v7"></path></svg></span>
+          <h3>Inverter o resultado</h3>
+          <p><code>!</code> operador NÃO</p>
+          <p>Transforma verdadeiro em falso e falso em verdadeiro.</p>
+        </label>
+      </div>
+
+      <div class="concept-alert" role="dialog" aria-modal="true" aria-label="Explicação sobre operadores relacionais e lógicos">
+        <label class="concept-alert-backdrop" for="modal-none" aria-label="Fechar janela"></label>
+        <div class="concept-alert-window">
+          <label class="modal-close" for="modal-none" aria-label="Fechar">×</label>
+
+          <article class="modal-panel panel-rel">
+            <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 8h14M5 16h14"></path><path d="m9 5-4 3 4 3M15 13l4 3-4 3"></path></svg></span><h3>Operadores relacionais comparam dois valores</h3></div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <p>Considere um sistema que verifica se uma pessoa pode entrar em um evento. A idade informada será comparada com o limite mínimo.</p>
+                <ul class="modal-list"><li><code>idade &gt;= 18</code>: idade mínima atingida</li><li><code>idade == 18</code>: idade exatamente igual a 18</li><li><code>idade != 18</code>: idade diferente de 18</li></ul>
+              </div>
+              <div class="modal-example">
+                <h3>Teste com valores</h3>
+                <div class="mini-evaluation"><div class="eval-row"><code>17 &gt;= 18</code><span class="eval-result">falso</span></div><div class="eval-row"><code>18 &gt;= 18</code><span class="eval-result">verdadeiro</span></div><div class="eval-row"><code>20 != 18</code><span class="eval-result">verdadeiro</span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-and">
+            <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg></span><h3><code>&amp;&amp;</code> exige que todas as regras sejam atendidas</h3></div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <p>No mesmo evento, a entrada exige idade mínima e ingresso válido. As duas comparações precisam ser verdadeiras.</p>
+                <ul class="modal-list"><li>Regra 1: <code>idade &gt;= 18</code></li><li>Regra 2: <code>temIngresso == 1</code></li><li>Condição: <code>idade &gt;= 18 &amp;&amp; temIngresso == 1</code></li></ul>
+              </div>
+              <div class="modal-example">
+                <h3>Quando libera?</h3>
+                <div class="mini-evaluation"><div class="eval-row"><code>V &amp;&amp; V</code><span class="eval-result">verdadeiro</span></div><div class="eval-row"><code>V &amp;&amp; F</code><span class="eval-result">falso</span></div><div class="eval-row"><code>F &amp;&amp; V</code><span class="eval-result">falso</span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-or">
+            <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 12h5M15 12h5"></path><path d="M9 7c4 0 6 2 6 5s-2 5-6 5"></path></svg></span><h3><code>||</code> permite caminhos alternativos</h3></div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <p>Uma credencial pode ser validada por ingresso digital ou por nome na lista. Basta uma das alternativas funcionar.</p>
+                <ul class="modal-list"><li>Alternativa 1: <code>ingressoDigital == 1</code></li><li>Alternativa 2: <code>estaNaLista == 1</code></li><li>Condição: <code>ingressoDigital == 1 || estaNaLista == 1</code></li></ul>
+              </div>
+              <div class="modal-example">
+                <h3>Quando libera?</h3>
+                <div class="mini-evaluation"><div class="eval-row"><code>F || V</code><span class="eval-result">verdadeiro</span></div><div class="eval-row"><code>V || F</code><span class="eval-result">verdadeiro</span></div><div class="eval-row"><code>F || F</code><span class="eval-result">falso</span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-not">
+            <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5l14 14"></path><path d="M8 18h8M12 6v7"></path></svg></span><h3><code>!</code> inverte uma condição</h3></div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <p>Se a variável <code>bloqueado</code> vale 1 quando o acesso está impedido, <code>!bloqueado</code> representa a ideia de “não está bloqueado”.</p>
+                <ul class="modal-list"><li><code>bloqueado = 1</code> → verdadeiro</li><li><code>!bloqueado</code> → falso</li><li><code>bloqueado = 0</code> → <code>!bloqueado</code> é verdadeiro</li></ul>
+              </div>
+              <div class="modal-example">
+                <h3>Inversão lógica</h3>
+                <div class="mini-evaluation"><div class="eval-row"><code>!verdadeiro</code><span class="eval-result">falso</span></div><div class="eval-row"><code>!falso</code><span class="eval-result">verdadeiro</span></div><div class="eval-row"><code>!0</code><span class="eval-result">verdadeiro</span></div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Operadores relacionais</h2></div>
+      <div class="operator-grid">
+        <article class="operator-card"><div class="operator-symbol"><code>==</code><span class="operator-kind">igualdade</span></div><div class="operator-body"><h3>É igual a</h3><p>Verifica se os dois valores são iguais.</p><code class="operator-example">nota == 10</code></div></article>
+        <article class="operator-card"><div class="operator-symbol"><code>!=</code><span class="operator-kind">diferença</span></div><div class="operator-body"><h3>É diferente de</h3><p>Verifica se os valores não são iguais.</p><code class="operator-example">opcao != 0</code></div></article>
+        <article class="operator-card"><div class="operator-symbol"><code>&gt;</code><span class="operator-kind">comparação</span></div><div class="operator-body"><h3>É maior que</h3><p>Não inclui o valor que aparece à direita.</p><code class="operator-example">saldo &gt; 0</code></div></article>
+        <article class="operator-card"><div class="operator-symbol"><code>&lt;</code><span class="operator-kind">comparação</span></div><div class="operator-body"><h3>É menor que</h3><p>Também não inclui o limite comparado.</p><code class="operator-example">idade &lt; 18</code></div></article>
+        <article class="operator-card"><div class="operator-symbol"><code>&gt;=</code><span class="operator-kind">limite incluso</span></div><div class="operator-body"><h3>É maior ou igual a</h3><p>Inclui o valor mínimo indicado.</p><code class="operator-example">media &gt;= 7</code></div></article>
+        <article class="operator-card"><div class="operator-symbol"><code>&lt;=</code><span class="operator-kind">limite incluso</span></div><div class="operator-body"><h3>É menor ou igual a</h3><p>Inclui o valor máximo indicado.</p><code class="operator-example">temperatura &lt;= 30</code></div></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Operadores lógicos</h2></div>
+      <div class="logic-board">
+        <article class="logic-panel">
+          <div class="logic-head"><span class="logic-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg></span><div><h3><code>&amp;&amp;</code> E</h3><p>Todas as partes precisam ser verdadeiras.</p></div></div>
+          <table class="truth-table"><thead><tr><th>A</th><th>B</th><th>A &amp;&amp; B</th></tr></thead><tbody><tr><td>V</td><td>V</td><td class="highlight">V</td></tr><tr><td>V</td><td>F</td><td>F</td></tr><tr><td>F</td><td>V</td><td>F</td></tr><tr><td>F</td><td>F</td><td>F</td></tr></tbody></table>
+          <p class="logic-rule"><strong>Pense:</strong> “A regra A <em>e também</em> a regra B precisam valer”.</p>
+        </article>
+
+        <article class="logic-panel">
+          <div class="logic-head"><span class="logic-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 12h5M15 12h5"></path><path d="M9 7c4 0 6 2 6 5s-2 5-6 5"></path></svg></span><div><h3><code>||</code> OU</h3><p>Pelo menos uma parte precisa ser verdadeira.</p></div></div>
+          <table class="truth-table"><thead><tr><th>A</th><th>B</th><th>A || B</th></tr></thead><tbody><tr><td>V</td><td>V</td><td class="highlight">V</td></tr><tr><td>V</td><td>F</td><td class="highlight">V</td></tr><tr><td>F</td><td>V</td><td class="highlight">V</td></tr><tr><td>F</td><td>F</td><td>F</td></tr></tbody></table>
+          <p class="logic-rule"><strong>Pense:</strong> “A regra A <em>ou</em> a regra B pode liberar o caminho”.</p>
+        </article>
+      </div>
+      <div class="logic-panel" style="margin-top:18px;">
+        <div class="logic-head"><span class="logic-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5l14 14"></path><path d="M8 18h8M12 6v7"></path></svg></span><div><h3><code>!</code> NÃO</h3><p>Inverte um resultado lógico que já existe.</p></div></div>
+        <table class="truth-table"><thead><tr><th>A</th><th>!A</th><th>Leitura</th></tr></thead><tbody><tr><td>V</td><td>F</td><td>Se A é verdadeiro, “não A” é falso.</td></tr><tr><td>F</td><td class="highlight">V</td><td>Se A é falso, “não A” é verdadeiro.</td></tr></tbody></table>
+        <p class="logic-rule"><strong>Exemplo:</strong> <code>!bloqueado</code> pode ser lido como “não está bloqueado”.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como montar uma condição correta</h2></div>
+      <div class="build-flow">
+        <article class="build-step"><span class="step-label">1</span><h3>Escreva a regra em palavras</h3><p>Exemplo: “a nota deve estar entre 0 e 10”.</p></article>
+        <article class="build-step"><span class="step-label">2</span><h3>Separe as comparações</h3><p><code>nota &gt;= 0</code> e <code>nota &lt;= 10</code>.</p></article>
+        <article class="build-step"><span class="step-label">3</span><h3>Escolha o conector</h3><p>As duas precisam valer, então use <code>&amp;&amp;</code>.</p></article>
+        <article class="build-step"><span class="step-label">4</span><h3>Teste valores simples</h3><p>Experimente um valor válido, um abaixo e outro acima do limite.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="example-tabs">
+        <input class="tab-choice" type="radio" name="examples" id="tab-one" checked>
+        <input class="tab-choice" type="radio" name="examples" id="tab-two">
+        <input class="tab-choice" type="radio" name="examples" id="tab-three">
+
+        <div class="tab-labels">
+          <label class="tab-label" for="tab-one"><span class="tab-index">1</span><span>Comparação simples</span></label>
+          <label class="tab-label" for="tab-two"><span class="tab-index">2</span><span>Faixa válida com E</span></label>
+          <label class="tab-label" for="tab-three"><span class="tab-index">3</span><span>Alternativa e negação</span></label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="example-panel panel-one">
+            <div class="example-head"><h3>Exemplo 1: verificar maioridade</h3><p>O programa lê uma idade e informa se a pessoa tem 18 anos ou mais.</p></div>
+            <div class="example-content">
+              <div class="example-analysis">
+                <h3>Construção da condição</h3>
+                <div class="analysis-grid">
+                  <div class="analysis-item"><span class="analysis-label">Regra em palavras</span>A idade precisa ser maior ou igual a 18.</div>
+                  <div class="analysis-item"><span class="analysis-label">Condição em C</span><code>idade &gt;= 18</code></div>
+                  <div class="analysis-item"><span class="analysis-label">Por que &gt;=</span>O valor 18 deve ser aceito, não apenas valores maiores.</div>
+                </div>
+                <div class="test-strip"><div class="test-case"><span>Entrada</span><strong>17 → falso</strong></div><div class="test-case"><span>Limite</span><strong>18 → verdadeiro</strong></div><div class="test-case"><span>Acima</span><strong>25 → verdadeiro</strong></div></div>
+              </div>
+              <div class="example-code">
+                <div class="code-window"><div class="code-toolbar"><div class="window-dots"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span></div><span class="code-file">maioridade.c</span></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">idade</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">idade</span>);
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">idade</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">18</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Maior de idade"</span>);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Menor de idade"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel-two">
+            <div class="example-head"><h3>Exemplo 2: validar uma nota</h3><p>Uma nota é válida somente quando está entre 0 e 10, incluindo os dois limites.</p></div>
+            <div class="example-content">
+              <div class="example-analysis">
+                <h3>Duas regras precisam valer</h3>
+                <div class="analysis-grid">
+                  <div class="analysis-item"><span class="analysis-label">Limite inferior</span><code>nota &gt;= 0</code></div>
+                  <div class="analysis-item"><span class="analysis-label">Limite superior</span><code>nota &lt;= 10</code></div>
+                  <div class="analysis-item"><span class="analysis-label">Combinação correta</span><code>nota &gt;= 0 &amp;&amp; nota &lt;= 10</code></div>
+                </div>
+                <div class="test-strip"><div class="test-case"><span>Abaixo</span><strong>-1 → falso</strong></div><div class="test-case"><span>Dentro</span><strong>7.5 → verdadeiro</strong></div><div class="test-case"><span>Acima</span><strong>11 → falso</strong></div></div>
+              </div>
+              <div class="example-code">
+                <div class="code-window"><div class="code-toolbar"><div class="window-dots"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span></div><span class="code-file">validar_nota.c</span></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">nota</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">nota</span>);
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">0</span> <span class="syn-operator">&amp;&amp;</span> <span class="syn-variable">nota</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">10</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Nota valida"</span>);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Nota invalida"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel-three">
+            <div class="example-head"><h3>Exemplo 3: liberar acesso por senha ou biometria</h3><p>O acesso é permitido quando uma credencial é válida e o usuário não está bloqueado.</p></div>
+            <div class="example-content">
+              <div class="example-analysis">
+                <h3>Agrupamento da lógica</h3>
+                <div class="analysis-grid">
+                  <div class="analysis-item"><span class="analysis-label">Alternativas de autenticação</span><code>senhaCorreta || biometriaValida</code></div>
+                  <div class="analysis-item"><span class="analysis-label">Restrição</span><code>!bloqueado</code></div>
+                  <div class="analysis-item"><span class="analysis-label">Condição completa</span><code>(senhaCorreta || biometriaValida) &amp;&amp; !bloqueado</code></div>
+                </div>
+                <div class="test-strip"><div class="test-case"><span>Senha válida</span><strong>libera</strong></div><div class="test-case"><span>Biometria válida</span><strong>libera</strong></div><div class="test-case"><span>Bloqueado</span><strong>não libera</strong></div></div>
+              </div>
+              <div class="example-code">
+                <div class="code-window"><div class="code-toolbar"><div class="window-dots"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span></div><span class="code-file">acesso.c</span></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">senhaCorreta</span>, <span class="syn-variable">biometriaValida</span>, <span class="syn-variable">bloqueado</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d %d %d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">senhaCorreta</span>,
+          <span class="syn-operator">&amp;</span><span class="syn-variable">biometriaValida</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">bloqueado</span>);
+
+    <span class="syn-keyword">if</span> ((<span class="syn-variable">senhaCorreta</span> <span class="syn-operator">||</span> <span class="syn-variable">biometriaValida</span>)
+        <span class="syn-operator">&amp;&amp;</span> <span class="syn-operator">!</span><span class="syn-variable">bloqueado</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Acesso liberado"</span>);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Acesso negado"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar <code>=</code> no lugar de <code>==</code></h3><p><strong>Por que acontece:</strong> o símbolo de atribuição é confundido com comparação de igualdade.</p><p><strong>Como evitar:</strong> leia <code>==</code> como “é igual a” dentro da condição.</p><div class="bad-good"><code>if (x = 5)</code><code>if (x == 5)</code></div></article>
+        <article class="error-card"><h3>Escrever uma faixa como na matemática</h3><p><strong>Por que acontece:</strong> expressões encadeadas como <code>0 &lt;= nota &lt;= 10</code> parecem naturais, mas não representam a faixa corretamente em C.</p><p><strong>Como evitar:</strong> escreva duas comparações e conecte com <code>&amp;&amp;</code>.</p><div class="bad-good"><code>0 &lt;= nota &lt;= 10</code><code>nota &gt;= 0 &amp;&amp; nota &lt;= 10</code></div></article>
+        <article class="error-card"><h3>Trocar E por OU</h3><p><strong>Por que acontece:</strong> o aluno escolhe o operador pelo som da frase, sem verificar quais casos devem ser aceitos.</p><p><strong>Como evitar:</strong> use <code>&amp;&amp;</code> quando todas as regras forem obrigatórias e <code>||</code> quando houver alternativas.</p></article>
+        <article class="error-card"><h3>Omitir parênteses em condições longas</h3><p><strong>Por que acontece:</strong> o agrupamento pretendido fica apenas na cabeça de quem escreveu.</p><p><strong>Como evitar:</strong> agrupe partes relacionadas, como <code>(senha || biometria) &amp;&amp; !bloqueado</code>.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual operador verifica se dois valores são iguais?</summary><p>O operador de igualdade é <code>==</code>. Um único <code>=</code> realiza atribuição.</p></details>
+        <details><summary>Para aceitar uma nota apenas entre 0 e 10, deve-se usar E ou OU?</summary><p>Use <code>&amp;&amp;</code>, porque a nota precisa atender simultaneamente ao limite inferior e ao limite superior.</p></details>
+        <details><summary>O que acontece quando aplicamos <code>!</code> a uma condição verdadeira?</summary><p>O resultado é invertido e passa a ser falso.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir traduzir uma regra em comparações, escolher entre <code>&amp;&amp;</code>, <code>||</code> e <code>!</code>, testar valores simples e justificar por que a condição produz o resultado esperado.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

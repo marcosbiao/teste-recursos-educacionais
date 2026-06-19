@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variável não é número solto: é memória com nome</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+      --syntax-constant: #FCA5A5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    .page { max-width: 1120px; margin: 0 auto; }
+
+    .hero,
+    .section,
+    .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 270px; height: 270px; right: -110px; top: -120px; }
+    .hero::after { width: 145px; height: 145px; right: 250px; bottom: -96px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg,
+    .pill svg,
+    .memory-icon svg,
+    .modal-icon svg,
+    .interaction-note svg,
+    .concept-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.08rem, 5vw, 3.55rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.08rem;
+      max-width: 740px;
+    }
+
+    .hero-memory {
+      min-height: 260px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .memory-window {
+      width: min(100%, 370px);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.13);
+    }
+
+    .memory-window-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .memory-window-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+    }
+
+    .memory-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      flex: 0 0 auto;
+    }
+
+    .address-chip {
+      color: var(--cor-texto-secundario);
+      font-family: Consolas, Monaco, monospace;
+      font-size: .78rem;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 999px;
+      padding: 5px 9px;
+    }
+
+    .memory-cell {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--cor-superficie);
+    }
+
+    .memory-field { padding: 16px; }
+    .memory-field + .memory-field { border-left: 1px solid var(--cor-borda); }
+    .memory-label { display: block; color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 5px; }
+    .memory-name { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-size: 1.2rem; font-weight: 900; }
+    .memory-value { color: var(--cor-texto-principal); font-family: Consolas, Monaco, monospace; font-size: 1.75rem; font-weight: 900; }
+
+    .memory-update {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .memory-state {
+      text-align: center;
+      border-radius: 13px;
+      padding: 9px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+
+    .memory-state.current {
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79, 70, 229, .22);
+      color: var(--cor-primaria-escura);
+    }
+
+    .memory-arrow { color: var(--cor-primaria); font-size: 1.35rem; font-weight: 900; }
+
+    .memory-caption {
+      margin-top: 13px;
+      color: var(--cor-texto-secundario);
+      font-size: .88rem;
+      text-align: center;
+    }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: 0.98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: 0.9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .concept-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.4fr); gap: 18px; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, 0.17); border-radius: 22px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-main code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .concept-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; }
+    .concept-number { display: inline-grid; place-items: center; width: 35px; height: 35px; border-radius: 12px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-card p { font-size: 0.92rem; }
+
+    .explore-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 15px 17px;
+      margin-bottom: 18px;
+    }
+
+    .interaction-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .memory-map {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px 190px;
+      background: linear-gradient(180deg, var(--cor-superficie-suave), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      border-radius: 26px;
+      padding: 30px;
+      min-height: 480px;
+      align-items: center;
+    }
+
+    .memory-map::before,
+    .memory-map::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 190px;
+      border-top: 2px dashed rgba(79,70,229,.25);
+      transform-origin: left center;
+      pointer-events: none;
+    }
+
+    .memory-map::before { transform: rotate(35deg); }
+    .memory-map::after { transform: rotate(-35deg); }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 190px;
+      min-height: 150px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 22px;
+      box-shadow: 0 18px 36px rgba(49,46,129,.2);
+      z-index: 2;
+    }
+
+    .map-center strong { font-size: 1.15rem; }
+    .map-center span { display: block; color: #E0E7FF; font-size: .9rem; margin-top: 5px; }
+    .map-center code { display: inline-block; margin-top: 9px; padding: 5px 9px; border-radius: 9px; background: rgba(255,255,255,.12); color: white; }
+
+    .modal-choice { position: fixed; opacity: 0; pointer-events: none; }
+
+    .concept-button {
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 13px 28px rgba(15,23,42,.06);
+      position: relative;
+      z-index: 3;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .concept-button:hover,
+    .concept-button:focus-visible {
+      transform: translateY(-4px);
+      border-color: rgba(79,70,229,.36);
+      box-shadow: 0 18px 34px rgba(49,46,129,.12);
+      outline: none;
+    }
+
+    .concept-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      border: 1px solid rgba(79,70,229,.16);
+    }
+
+    .concept-button h3 { margin-bottom: 4px; }
+    .concept-button p { font-size: .91rem; }
+    .concept-button .click-hint { display: block; color: var(--cor-primaria); font-size: .78rem; font-weight: 800; margin-top: 9px; }
+
+    #modal-variable:checked ~ .concept-alert,
+    #modal-constant:checked ~ .concept-alert,
+    #modal-assignment:checked ~ .concept-alert,
+    #modal-state:checked ~ .concept-alert { display: grid; }
+
+    .concept-alert {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      place-items: center;
+      padding: 22px;
+      animation: alert-fade .24s ease both;
+    }
+
+    .concept-alert-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15,23,42,.68);
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+    }
+
+    .alert-shell {
+      position: relative;
+      z-index: 1;
+      width: min(860px, 100%);
+      max-height: min(86vh, 760px);
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 26px;
+      box-shadow: 0 30px 80px rgba(15,23,42,.32);
+      animation: alert-rise .34s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .alert-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      justify-content: flex-end;
+      padding: 13px 15px 0;
+      background: linear-gradient(var(--cor-superficie) 70%, transparent);
+    }
+
+    .alert-close {
+      cursor: pointer;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-principal);
+      font-size: 1.35rem;
+      font-weight: 500;
+      line-height: 1;
+      transition: .18s ease;
+    }
+
+    .alert-close:hover { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); transform: rotate(5deg); }
+    .modal-panel { display: none; padding: 8px 26px 28px; }
+    #modal-variable:checked ~ .concept-alert .panel-variable,
+    #modal-constant:checked ~ .concept-alert .panel-constant,
+    #modal-assignment:checked ~ .concept-alert .panel-assignment,
+    #modal-state:checked ~ .concept-alert .panel-state { display: block; }
+
+    .modal-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 18px; }
+    .modal-icon { width: 52px; height: 52px; border-radius: 17px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.38rem; margin-bottom: 3px; }
+    .modal-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 18px; }
+    .modal-explanation, .modal-example { border-radius: 18px; padding: 18px; border: 1px solid var(--cor-borda); }
+    .modal-explanation { background: var(--cor-superficie-suave); }
+    .modal-example { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.18); }
+    .modal-list { display: grid; gap: 10px; margin-top: 12px; }
+    .modal-list div { display: grid; grid-template-columns: 28px 1fr; gap: 9px; align-items: start; }
+    .modal-list span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: var(--cor-primaria); color: white; font-size: .8rem; font-weight: 900; }
+    .modal-list p { font-size: .92rem; }
+
+    .mini-code {
+      display: block;
+      margin-top: 12px;
+      background: var(--codigo-fundo);
+      color: var(--codigo-texto);
+      border-radius: 15px;
+      padding: 15px;
+      overflow-x: auto;
+      line-height: 1.55;
+      font-size: .88rem;
+      white-space: pre;
+    }
+
+    .modal-state-boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 12px; }
+    .modal-state-box { background: white; border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px; text-align: center; }
+    .modal-state-box span { display: block; color: var(--cor-texto-secundario); font-size: .76rem; margin-bottom: 3px; }
+    .modal-state-box strong { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; }
+
+    @keyframes alert-fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes alert-rise { from { opacity: 0; transform: translateY(25px) scale(.96); } to { opacity: 1; transform: none; } }
+
+    .state-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 13px;
+      align-items: stretch;
+      position: relative;
+    }
+
+    .state-step {
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 19px;
+      padding: 17px;
+      position: relative;
+    }
+
+    .state-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cor-primaria);
+      font-size: 1.25rem;
+      font-weight: 900;
+      z-index: 2;
+    }
+
+    .state-command {
+      display: inline-block;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79,70,229,.16);
+      border-radius: 10px;
+      padding: 5px 8px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: .82rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .state-memory {
+      background: white;
+      border: 1px solid var(--cor-borda);
+      border-radius: 13px;
+      padding: 11px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .state-memory small { display: block; color: var(--cor-texto-secundario); font-size: .75rem; }
+    .state-memory strong { color: var(--cor-texto-principal); font-family: Consolas, Monaco, monospace; font-size: 1.15rem; }
+    .state-step p { font-size: .88rem; }
+
+    .attention-box {
+      margin-top: 16px;
+      border-left: 5px solid var(--cor-destaque-pontual);
+      background: #FFFBEB;
+      border-radius: 15px;
+      padding: 14px 16px;
+    }
+    .attention-box strong { color: var(--cor-texto-principal); }
+
+    .example-tabs { position: relative; }
+    .example-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .example-tab-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .example-tab-labels label { cursor: pointer; text-align: center; padding: 12px 13px; border-radius: 14px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; transition: .2s ease; }
+    .example-tab-labels label:hover { transform: translateY(-2px); border-color: rgba(79,70,229,.35); }
+
+    #example-1:checked ~ .example-tab-labels label[for="example-1"],
+    #example-2:checked ~ .example-tab-labels label[for="example-2"],
+    #example-3:checked ~ .example-tab-labels label[for="example-3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); box-shadow: 0 10px 20px rgba(79,70,229,.18); }
+
+    .example-panel { display: none; grid-template-columns: minmax(0,.98fr) minmax(0,1.02fr); gap: 18px; animation: tab-in .34s ease both; }
+    #example-1:checked ~ .example-panels .panel-1,
+    #example-2:checked ~ .example-panels .panel-2,
+    #example-3:checked ~ .example-panels .panel-3 { display: grid; }
+
+    @keyframes tab-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .example-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 19px; padding: 19px; }
+    .example-card.highlight { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.18); }
+    .level-chip { display: inline-block; margin-bottom: 11px; border-radius: 999px; padding: 5px 9px; background: white; border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-size: .76rem; font-weight: 900; }
+
+    .trace-table { width: 100%; border-collapse: collapse; margin-top: 13px; font-size: .86rem; }
+    .trace-table th, .trace-table td { padding: 9px; border: 1px solid var(--cor-borda); text-align: left; vertical-align: top; }
+    .trace-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .trace-table td { background: white; color: var(--cor-texto-secundario); }
+    .trace-table code { color: var(--cor-texto-principal); font-weight: 700; }
+
+    .code-window { border-radius: 18px; overflow: hidden; border: 1px solid rgba(15,23,42,.28); box-shadow: 0 13px 28px rgba(15,23,42,.12); }
+    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #0B1220; padding: 10px 13px; }
+    .code-dots { display: flex; gap: 6px; }
+    .code-dots span { width: 10px; height: 10px; border-radius: 50%; background: #334155; }
+    .code-title { color: #94A3B8; font-size: .78rem; font-family: Consolas, Monaco, monospace; }
+    pre { margin: 0; }
+    pre code { display: block; padding: 18px; background: var(--codigo-fundo); color: var(--codigo-texto); overflow-x: auto; line-height: 1.58; font-size: .89rem; tab-size: 4; }
+
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+    .syn-constant { color: var(--syntax-constant); font-weight: 700; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .91rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; box-shadow: var(--sombra-suave); }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; max-width: 940px; }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .concept-layout,
+      .example-panel,
+      .modal-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .concept-cards { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .memory-map { gap: 28px 140px; }
+      .state-flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .state-step:nth-child(2)::after { display: none; }
+      .error-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 18px 12px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-grid { gap: 22px; }
+      .hero-memory { min-height: 0; }
+      .concept-cards { grid-template-columns: 1fr; }
+      .explore-intro { align-items: flex-start; flex-direction: column; }
+      .interaction-note { white-space: normal; }
+      .memory-map { grid-template-columns: 1fr; gap: 14px; min-height: 0; padding: 18px; }
+      .memory-map::before, .memory-map::after { display: none; }
+      .map-center { position: static; transform: none; width: 100%; min-height: auto; order: -1; }
+      .concept-button { grid-template-columns: auto 1fr; }
+      .state-flow { grid-template-columns: 1fr; }
+      .state-step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -21px; transform: translateX(50%); }
+      .state-step:nth-child(2)::after { display: block; }
+      .example-tab-labels { grid-template-columns: 1fr; }
+      .trace-table { display: block; overflow-x: auto; }
+      .error-grid { grid-template-columns: 1fr; }
+      .modal-state-boxes { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .meta-grid { grid-template-columns: 1fr; }
+      .memory-cell { grid-template-columns: 1fr; }
+      .memory-field + .memory-field { border-left: 0; border-top: 1px solid var(--cor-borda); }
+      .memory-update { grid-template-columns: 1fr; }
+      .memory-arrow { transform: rotate(90deg); }
+      .concept-alert { padding: 10px; }
+      .alert-shell { border-radius: 20px; max-height: 92vh; }
+      .modal-panel { padding: 6px 18px 22px; }
+      .modal-head { align-items: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="3"></rect><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Variável não é número solto: é memória com nome</h1>
+          <p class="subtitle">Entenda como um programa guarda valores, identifica cada espaço de memória e modifica seu estado por meio de atribuições.</p>
+        </div>
+
+        <div class="hero-memory" aria-label="Representação de uma variável na memória">
+          <div class="memory-window">
+            <div class="memory-window-head">
+              <div class="memory-window-title">
+                <span class="memory-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 8h8v8H8z"></path><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"></path></svg></span>
+                Memória do programa
+              </div>
+              <span class="address-chip">0x7ffd...</span>
+            </div>
+
+            <div class="memory-cell">
+              <div class="memory-field">
+                <span class="memory-label">Nome</span>
+                <strong class="memory-name">pontos</strong>
+              </div>
+              <div class="memory-field">
+                <span class="memory-label">Valor atual</span>
+                <strong class="memory-value">30</strong>
+              </div>
+            </div>
+
+            <div class="memory-update">
+              <div class="memory-state">Antes: 20</div>
+              <div class="memory-arrow">→</div>
+              <div class="memory-state current">Agora: 30</div>
+            </div>
+            <p class="memory-caption"><code>pontos = pontos + 10;</code> substitui o valor anterior pelo novo resultado.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI02</div>
+          <p>Implementar soluções introdutórias usando elementos básicos da linguagem C.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Competência secundária</div>
+          <div class="meta-value">CCI01</div>
+          <p>Relacionar os dados do problema às informações que precisam ser armazenadas.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Variável, constante e atribuição</div>
+          <p>Nome, tipo, valor armazenado e mudança de estado.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">12 a 18 minutos</div>
+          <p>Leitura visual, exploração dos conceitos e análise dos exemplos.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e rastreável</div>
+          <p>Acompanhamento do conteúdo da memória após cada comando.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 5h14v14H5z"></path><path d="M9 9h6M9 13h4"></path></svg>Estrutura básica em C</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M7 4v6M17 4v6M6 14h4M14 14h4M8 18h8"></path></svg>Tipos básicos</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 12h14M12 5v14"></path></svg>Operações aritméticas</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M6 4h12v16H6z"></path><path d="M9 8h6M9 12h6M9 16h3"></path></svg>Execução sequencial</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-layout">
+        <div class="concept-main">
+          <h3>O programa precisa lembrar informações</h3>
+          <p>Uma <strong>variável</strong> associa um nome a um espaço de memória. Esse espaço guarda um valor compatível com seu tipo. Quando ocorre uma <strong>atribuição</strong>, o conteúdo armazenado pode ser substituído. Uma <strong>constante</strong> também possui nome, mas representa um valor que não deve mudar durante a execução.</p>
+        </div>
+        <div class="concept-cards">
+          <article class="concept-card"><span class="concept-number">1</span><h3>Nomear</h3><p><code>idade</code> é mais informativo do que pensar apenas no número <code>18</code>.</p></article>
+          <article class="concept-card"><span class="concept-number">2</span><h3>Armazenar</h3><p>O tipo informa qual espécie de dado pode ocupar aquele espaço.</p></article>
+          <article class="concept-card"><span class="concept-number">3</span><h3>Atualizar</h3><p>Cada atribuição pode produzir um novo estado para o programa.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Explore os elementos da memória</h2></div>
+      <div class="explore-intro">
+        <p>Os quatro conceitos abaixo explicam partes diferentes de um mesmo exemplo: um programa que começa com 20 pontos e acrescenta um bônus fixo de 10 pontos.</p>
+        <span class="interaction-note"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11V7a2 2 0 1 1 4 0v4"></path><path d="M13 10V8a2 2 0 1 1 4 0v5"></path><path d="M9 10a2 2 0 0 0-4 0v4c0 4 3 7 7 7h1c4 0 7-3 7-7v-3a2 2 0 0 0-3-2"></path></svg>Clique nos cards</span>
+      </div>
+
+      <input class="modal-choice" type="radio" name="memory-modal" id="modal-none" checked>
+      <input class="modal-choice" type="radio" name="memory-modal" id="modal-variable">
+      <input class="modal-choice" type="radio" name="memory-modal" id="modal-constant">
+      <input class="modal-choice" type="radio" name="memory-modal" id="modal-assignment">
+      <input class="modal-choice" type="radio" name="memory-modal" id="modal-state">
+
+      <div class="memory-map">
+        <label class="concept-button" for="modal-variable" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="3"></rect><path d="M8 9h8M8 13h5"></path></svg></span>
+          <span><h3>Variável</h3><p>Espaço identificado que pode receber valores durante a execução.</p><span class="click-hint">Ver no exemplo</span></span>
+        </label>
+
+        <label class="concept-button" for="modal-constant" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M7 4h10l3 5-8 11L4 9l3-5Z"></path><path d="M8 9h8"></path></svg></span>
+          <span><h3>Constante</h3><p>Nome associado a um valor fixo que não deve ser alterado.</p><span class="click-hint">Ver no exemplo</span></span>
+        </label>
+
+        <div class="map-center">
+          <div><strong>Estado atual</strong><span>valor guardado agora</span><code>pontos = 30</code></div>
+        </div>
+
+        <label class="concept-button" for="modal-assignment" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 8h11"></path><path d="m12 5 3 3-3 3"></path><path d="M20 16H9"></path><path d="m12 13-3 3 3 3"></path></svg></span>
+          <span><h3>Atribuição</h3><p>Comando que grava ou substitui um valor em uma variável.</p><span class="click-hint">Ver no exemplo</span></span>
+        </label>
+
+        <label class="concept-button" for="modal-state" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 18V6"></path><path d="M4 18h16"></path><path d="m7 14 4-4 3 3 5-6"></path></svg></span>
+          <span><h3>Mudança de estado</h3><p>Retrato dos valores armazenados depois de cada comando.</p><span class="click-hint">Ver no exemplo</span></span>
+        </label>
+      </div>
+
+      <div class="concept-alert" role="dialog" aria-modal="true" aria-label="Explicação dos elementos da memória">
+        <label class="concept-alert-backdrop" for="modal-none" aria-label="Fechar janela"></label>
+        <div class="alert-shell">
+          <div class="alert-toolbar"><label class="alert-close" for="modal-none" aria-label="Fechar">×</label></div>
+
+          <article class="modal-panel panel-variable">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="3"></rect><path d="M8 9h8M8 13h5"></path></svg></span>
+              <div><h3>Variável: memória identificada por um nome</h3><p>O nome permite recuperar e modificar a informação sem depender de um endereço de memória.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>O que observar</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p><strong>Tipo:</strong> <code>int</code> indica que o espaço guardará um número inteiro.</p></div>
+                  <div><span>2</span><p><strong>Nome:</strong> <code>pontos</code> identifica o papel daquela informação.</p></div>
+                  <div><span>3</span><p><strong>Valor:</strong> o conteúdo pode mudar ao longo da execução.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>No mesmo exemplo</h3>
+                <code class="mini-code"><span class="syn-type">int</span> <span class="syn-variable">pontos</span> <span class="syn-operator">=</span> <span class="syn-number">20</span>;</code>
+                <div class="modal-state-boxes">
+                  <div class="modal-state-box"><span>Tipo</span><strong>int</strong></div>
+                  <div class="modal-state-box"><span>Nome</span><strong>pontos</strong></div>
+                  <div class="modal-state-box"><span>Valor</span><strong>20</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-constant">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M7 4h10l3 5-8 11L4 9l3-5Z"></path><path d="M8 9h8"></path></svg></span>
+              <div><h3>Constante: um nome para um valor fixo</h3><p>A constante torna explícito que aquele valor tem significado e não deve mudar.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Por que usar</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Evita repetir um número sem explicar o que ele representa.</p></div>
+                  <div><span>2</span><p>Centraliza um valor que participa de vários cálculos.</p></div>
+                  <div><span>3</span><p>Impede alterações acidentais depois da declaração.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>No mesmo exemplo</h3>
+                <code class="mini-code"><span class="syn-keyword">const</span> <span class="syn-type">int</span> <span class="syn-constant">BONUS</span> <span class="syn-operator">=</span> <span class="syn-number">10</span>;</code>
+                <p style="margin-top:12px;">O nome <code>BONUS</code> comunica a função do valor 10. O programa pode usá-lo, mas não deve atribuir outro valor a essa constante.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-assignment">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 8h11"></path><path d="m12 5 3 3-3 3"></path><path d="M20 16H9"></path><path d="m12 13-3 3 3 3"></path></svg></span>
+              <div><h3>Atribuição: calcular primeiro, armazenar depois</h3><p>O lado direito é avaliado usando o estado atual. Depois, o resultado substitui o conteúdo da variável à esquerda.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Leia da direita para a esquerda</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Ler o valor atual de <code>pontos</code>, que é 20.</p></div>
+                  <div><span>2</span><p>Somar o valor da constante <code>BONUS</code>, que é 10.</p></div>
+                  <div><span>3</span><p>Guardar o resultado 30 novamente em <code>pontos</code>.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>No mesmo exemplo</h3>
+                <code class="mini-code"><span class="syn-variable">pontos</span> <span class="syn-operator">=</span> <span class="syn-variable">pontos</span> <span class="syn-operator">+</span> <span class="syn-constant">BONUS</span>;</code>
+                <div class="modal-state-boxes">
+                  <div class="modal-state-box"><span>Leitura</span><strong>20</strong></div>
+                  <div class="modal-state-box"><span>Cálculo</span><strong>20 + 10</strong></div>
+                  <div class="modal-state-box"><span>Gravação</span><strong>30</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-state">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 18V6"></path><path d="M4 18h16"></path><path d="m7 14 4-4 3 3 5-6"></path></svg></span>
+              <div><h3>Estado: o conjunto de valores em um instante</h3><p>Quando uma variável muda, o estado do programa também muda.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Dois momentos diferentes</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Antes da atualização, <code>pontos</code> contém 20.</p></div>
+                  <div><span>2</span><p>A atribuição usa esse valor para calcular o próximo estado.</p></div>
+                  <div><span>3</span><p>Depois da atualização, <code>pontos</code> contém 30.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>No mesmo exemplo</h3>
+                <div class="modal-state-boxes">
+                  <div class="modal-state-box"><span>Estado inicial</span><strong>pontos = 20</strong></div>
+                  <div class="modal-state-box"><span>Comando</span><strong>+ BONUS</strong></div>
+                  <div class="modal-state-box"><span>Novo estado</span><strong>pontos = 30</strong></div>
+                </div>
+                <p style="margin-top:12px;">O valor 20 não permanece junto do valor 30 na mesma variável. Ele foi substituído.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Acompanhe a mudança de estado</h2></div>
+      <div class="state-flow">
+        <article class="state-step">
+          <span class="state-command">int pontos;</span>
+          <div class="state-memory"><small>Conteúdo de pontos</small><strong>não definido</strong></div>
+          <p>O espaço foi declarado, mas ainda não recebeu um valor seguro para uso.</p>
+        </article>
+        <article class="state-step">
+          <span class="state-command">pontos = 20;</span>
+          <div class="state-memory"><small>Conteúdo de pontos</small><strong>20</strong></div>
+          <p>A primeira atribuição estabelece o estado inicial da variável.</p>
+        </article>
+        <article class="state-step">
+          <span class="state-command">pontos = pontos + 10;</span>
+          <div class="state-memory"><small>Conteúdo de pontos</small><strong>30</strong></div>
+          <p>O valor anterior participa do cálculo e depois é substituído.</p>
+        </article>
+        <article class="state-step">
+          <span class="state-command">printf("%d", pontos);</span>
+          <div class="state-memory"><small>Valor utilizado</small><strong>30</strong></div>
+          <p>A saída consulta o estado atual da variável naquele momento.</p>
+        </article>
+      </div>
+      <div class="attention-box"><p><strong>Ponto de atenção:</strong> em C, uma variável local declarada sem inicialização possui valor indeterminado. Ela deve receber um valor válido antes de participar de cálculos ou saídas.</p></div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="example-tabs">
+        <input type="radio" name="examples" id="example-1" checked>
+        <input type="radio" name="examples" id="example-2">
+        <input type="radio" name="examples" id="example-3">
+
+        <div class="example-tab-labels">
+          <label for="example-1">1. Idade atualizada</label>
+          <label for="example-2">2. Preço com desconto</label>
+          <label for="example-3">3. Pontuação de jogo</label>
+        </div>
+
+        <div class="example-panels">
+          <div class="example-panel panel-1">
+            <article class="example-card highlight">
+              <span class="level-chip">Nível básico</span>
+              <h3>Uma variável muda de valor</h3>
+              <p>O programa começa com uma idade de 18 anos, acrescenta um ano e mostra o valor atualizado.</p>
+              <table class="trace-table">
+                <thead><tr><th>Comando</th><th>Estado de <code>idade</code></th></tr></thead>
+                <tbody>
+                  <tr><td><code>idade = 18;</code></td><td>18</td></tr>
+                  <tr><td><code>idade = idade + 1;</code></td><td>19</td></tr>
+                  <tr><td><code>printf(...)</code></td><td>Consulta 19</td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="example-card">
+              <div class="code-window">
+                <div class="code-toolbar"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">idade.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">idade</span> <span class="syn-operator">=</span> <span class="syn-number">18</span>;
+
+    <span class="syn-variable">idade</span> <span class="syn-operator">=</span> <span class="syn-variable">idade</span> <span class="syn-operator">+</span> <span class="syn-number">1</span>;
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Idade: %d\n"</span>, <span class="syn-variable">idade</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </article>
+          </div>
+
+          <div class="example-panel panel-2">
+            <article class="example-card highlight">
+              <span class="level-chip">Nível intermediário</span>
+              <h3>Constante e variáveis em um cálculo</h3>
+              <p>O percentual de desconto é fixo. O preço digitado e os resultados calculados variam a cada execução.</p>
+              <table class="trace-table">
+                <thead><tr><th>Elemento</th><th>Papel</th><th>Exemplo</th></tr></thead>
+                <tbody>
+                  <tr><td><code>TAXA_DESCONTO</code></td><td>Constante</td><td>0.10</td></tr>
+                  <tr><td><code>preco</code></td><td>Entrada variável</td><td>200.00</td></tr>
+                  <tr><td><code>desconto</code></td><td>Resultado intermediário</td><td>20.00</td></tr>
+                  <tr><td><code>precoFinal</code></td><td>Novo valor calculado</td><td>180.00</td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="example-card">
+              <div class="code-window">
+                <div class="code-toolbar"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">desconto.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">const</span> <span class="syn-type">float</span> <span class="syn-constant">TAXA_DESCONTO</span> <span class="syn-operator">=</span> <span class="syn-number">0.10f</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span>, <span class="syn-variable">desconto</span>, <span class="syn-variable">precoFinal</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">preco</span>);
+
+    <span class="syn-variable">desconto</span> <span class="syn-operator">=</span> <span class="syn-variable">preco</span> <span class="syn-operator">*</span> <span class="syn-constant">TAXA_DESCONTO</span>;
+    <span class="syn-variable">precoFinal</span> <span class="syn-operator">=</span> <span class="syn-variable">preco</span> <span class="syn-operator">-</span> <span class="syn-variable">desconto</span>;
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Preco final: %.2f\n"</span>, <span class="syn-variable">precoFinal</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </article>
+          </div>
+
+          <div class="example-panel panel-3">
+            <article class="example-card highlight">
+              <span class="level-chip">Nível intermediário</span>
+              <h3>Várias mudanças no mesmo estado</h3>
+              <p>Uma pontuação começa em zero, recebe os pontos de uma fase e depois recebe um bônus fixo.</p>
+              <table class="trace-table">
+                <thead><tr><th>Momento</th><th>Comando</th><th>Valor de <code>pontos</code></th></tr></thead>
+                <tbody>
+                  <tr><td>Inicial</td><td><code>pontos = 0;</code></td><td>0</td></tr>
+                  <tr><td>Após a fase</td><td><code>pontos = pontos + 35;</code></td><td>35</td></tr>
+                  <tr><td>Após o bônus</td><td><code>pontos = pontos + BONUS;</code></td><td>45</td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="example-card">
+              <div class="code-window">
+                <div class="code-toolbar"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-title">pontos.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">const</span> <span class="syn-type">int</span> <span class="syn-constant">BONUS</span> <span class="syn-operator">=</span> <span class="syn-number">10</span>;
+    <span class="syn-type">int</span> <span class="syn-variable">pontos</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-variable">pontos</span> <span class="syn-operator">=</span> <span class="syn-variable">pontos</span> <span class="syn-operator">+</span> <span class="syn-number">35</span>;
+    <span class="syn-variable">pontos</span> <span class="syn-operator">=</span> <span class="syn-variable">pontos</span> <span class="syn-operator">+</span> <span class="syn-constant">BONUS</span>;
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Pontuacao: %d\n"</span>, <span class="syn-variable">pontos</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar antes de atribuir</h3><p><strong>Por que acontece:</strong> a variável foi declarada, mas ainda não recebeu um valor válido.</p><p><strong>Como evitar:</strong> inicialize a variável antes de utilizá-la em cálculo ou saída.</p></article>
+        <article class="error-card"><h3>Ler a atribuição como igualdade</h3><p><strong>Por que acontece:</strong> o símbolo <code>=</code> é interpretado como uma afirmação matemática.</p><p><strong>Como evitar:</strong> leia como “recebe o resultado de”.</p></article>
+        <article class="error-card"><h3>Tentar alterar uma constante</h3><p><strong>Por que acontece:</strong> a diferença entre variável e constante não foi considerada.</p><p><strong>Como evitar:</strong> use constante apenas para valores que devem permanecer fixos.</p></article>
+        <article class="error-card"><h3>Repetir números sem significado</h3><p><strong>Por que acontece:</strong> o mesmo valor fixo aparece várias vezes no código.</p><p><strong>Como evitar:</strong> atribua um nome semântico ao valor por meio de uma constante.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Depois de <code>x = 5;</code> e <code>x = x + 2;</code>, qual valor fica armazenado em <code>x</code>?</summary><p>O valor armazenado passa a ser 7. O programa usa o valor atual 5, calcula 5 + 2 e grava 7 no mesmo espaço.</p></details>
+        <details><summary>Uma constante pode receber outro valor depois de declarada?</summary><p>Não. A constante representa um valor fixo durante a execução e não deve aparecer no lado esquerdo de uma nova atribuição.</p></details>
+        <details><summary>Em <code>idade = 20;</code>, o símbolo <code>=</code> compara dois valores?</summary><p>Não. Nesse contexto, ele realiza uma atribuição. O valor 20 é gravado na variável <code>idade</code>.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir declarar variáveis e constantes, interpretar atribuições e acompanhar como os valores armazenados mudam durante a execução de um programa em C.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

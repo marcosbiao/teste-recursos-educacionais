@@ -1,0 +1,1725 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cards de Erros Comuns | Recursos Educacionais</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="./assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --red-darkest: #450A0A;
+      --red-dark: #7F1D1D;
+      --red-strong: #991B1B;
+      --red-700: #B42318;
+      --red-600: #D92D20;
+      --red-100: #FEE4E2;
+      --red-50: #FEF3F2;
+      --green-700: #067647;
+      --green-600: #079455;
+      --green-100: #D1FADF;
+      --green-50: #ECFDF3;
+      --amber-700: #B54708;
+      --amber-100: #FEF0C7;
+      --amber-50: #FFFAEB;
+      --blue-700: #175CD3;
+      --blue-100: #D1E9FF;
+      --blue-50: #EFF8FF;
+      --slate-950: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+      --cor-primaria: var(--red-700);
+      --cor-primaria-escura: var(--red-dark);
+      --cor-destaque-pontual: #F97316;
+      --cor-fundo: var(--slate-50);
+      --cor-superficie: var(--white);
+      --cor-superficie-suave: var(--slate-100);
+      --cor-superficie-destacada: var(--red-50);
+      --cor-texto-principal: var(--slate-950);
+      --cor-texto-secundario: var(--slate-600);
+      --cor-borda: var(--slate-200);
+      --sombra-suave: 0 18px 45px rgba(69, 10, 10, 0.14);
+      --sombra-minima: 0 10px 26px rgba(15, 23, 42, 0.05);
+      --raio: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--cor-texto-principal);
+      background:
+        linear-gradient(180deg, #ffffff 0, var(--cor-fundo) 540px),
+        var(--cor-fundo);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -4rem;
+      z-index: 20;
+      padding: 0.75rem 1rem;
+      color: #ffffff;
+      background: var(--red-dark);
+      border-radius: 999px;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner,
+    .page-section,
+    .footer-inner {
+      width: min(1160px, calc(100% - 2rem));
+      margin-inline: auto;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 78px;
+      padding: 0.75rem 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-width: max-content;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      color: var(--red-700);
+      border: 1px solid rgba(180, 35, 24, 0.28);
+      border-radius: var(--raio);
+      background: var(--red-50);
+    }
+
+    .brand-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 850;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 0.2rem;
+      color: var(--cor-texto-secundario);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .nav-links a,
+    .back-link,
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 42px;
+      border-radius: 8px;
+      font-weight: 850;
+      transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .nav-links a {
+      padding: 0.4rem 0.8rem;
+      color: #1e293b;
+      font-size: 0.92rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible,
+    .nav-links a[aria-current="page"] {
+      color: var(--red-dark);
+      background: var(--red-50);
+      outline: none;
+    }
+
+    .nav-links a[aria-current="page"] {
+      box-shadow: inset 0 -2px 0 var(--red-600);
+    }
+
+    .back-link {
+      padding: 0.55rem 0.85rem;
+      color: var(--red-dark);
+      border: 1px solid rgba(180, 35, 24, 0.24);
+      background: #ffffff;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible,
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible {
+      border-color: rgba(180, 35, 24, 0.46);
+      background: var(--red-50);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-top: 1.25rem;
+      padding: clamp(2rem, 5vw, 4.1rem);
+      color: #ffffff;
+      border: 1px solid rgba(254, 228, 226, 0.20);
+      border-radius: var(--raio);
+      background:
+        radial-gradient(circle at 86% 22%, rgba(255, 255, 255, 0.16), transparent 24%),
+        linear-gradient(135deg, var(--red-darkest) 0%, var(--red-dark) 56%, var(--red-strong) 100%);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #F04438, #FB7185 55%, #F97316);
+    }
+
+    .hero::after {
+      content: "!";
+      position: absolute;
+      right: clamp(1rem, 6vw, 4rem);
+      top: -3.9rem;
+      color: rgba(255, 255, 255, 0.07);
+      font-size: clamp(11rem, 20vw, 17rem);
+      line-height: 1;
+      font-weight: 950;
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.9fr);
+      gap: clamp(2rem, 5vw, 4rem);
+      align-items: center;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+      padding: 0.42rem 0.72rem;
+      color: #FFF7F7;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      backdrop-filter: blur(8px);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 1.1rem;
+      font-size: clamp(2.45rem, 5.6vw, 4.85rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin-bottom: 1.25rem;
+      color: #FEE2E2;
+      font-size: 1.05rem;
+    }
+
+    .objective-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.9rem;
+      align-items: start;
+      max-width: 680px;
+      padding: 1rem;
+      border: 1px solid rgba(254, 228, 226, 0.22);
+      border-radius: var(--raio);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 14px 30px rgba(69, 10, 10, 0.18);
+    }
+
+    .objective-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      color: #ffffff;
+      border-radius: var(--raio);
+      background: var(--red-700);
+    }
+
+    .objective-card h2 {
+      margin-bottom: 0.2rem;
+      color: var(--red-dark);
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    .objective-card p {
+      margin-bottom: 0;
+      color: var(--slate-700);
+      font-size: 0.94rem;
+    }
+
+    .diagnostic-visual {
+      position: relative;
+      min-height: 370px;
+    }
+
+    .code-window {
+      position: absolute;
+      right: 5%;
+      top: 5%;
+      width: min(390px, 88%);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: #12131f;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    .code-bar {
+      display: flex;
+      gap: 0.36rem;
+      padding: 0.62rem 0.78rem;
+      background: #1e1f2d;
+    }
+
+    .code-bar span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fb7185;
+    }
+
+    .code-bar span:nth-child(2) {
+      background: #fbbf24;
+    }
+
+    .code-bar span:nth-child(3) {
+      background: #34d399;
+    }
+
+    .code-body {
+      display: grid;
+      gap: 0.48rem;
+      padding: 1rem;
+      color: #e5e7eb;
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+      font-size: 0.82rem;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 1.4rem 1fr;
+      gap: 0.6rem;
+      align-items: center;
+      min-height: 22px;
+    }
+
+    .code-line span:first-child {
+      color: #94a3b8;
+      text-align: right;
+    }
+
+    .code-line.problem span:last-child {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.08rem 0.32rem;
+      color: #fff7f7;
+      border-radius: 5px;
+      background: rgba(217, 45, 32, 0.72);
+    }
+
+    .code-line.fixed span:last-child {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.08rem 0.32rem;
+      color: #ecfdf3;
+      border-radius: 5px;
+      background: rgba(7, 148, 85, 0.72);
+    }
+
+    .fixed-window {
+      right: 0;
+      top: auto;
+      bottom: 10%;
+      width: min(300px, 72%);
+    }
+
+    .magnifier,
+    .status-bubble {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 16px 34px rgba(69, 10, 10, 0.24);
+    }
+
+    .magnifier {
+      left: 7%;
+      top: 42%;
+      width: 86px;
+      height: 86px;
+      color: var(--blue-700);
+      border: 8px solid rgba(209, 233, 255, 0.78);
+    }
+
+    .status-bubble {
+      right: 1%;
+      bottom: 1%;
+      width: 76px;
+      height: 76px;
+      color: #ffffff;
+      background: var(--green-600);
+      border: 7px solid rgba(209, 250, 223, 0.62);
+    }
+
+    .step-strip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+
+    .step-chip {
+      min-width: 0;
+      padding: 0.72rem 0.7rem;
+      color: var(--slate-800);
+      border: 1px solid rgba(255, 255, 255, 0.70);
+      border-radius: var(--raio);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 24px rgba(69, 10, 10, 0.16);
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .step-chip span {
+      display: block;
+      margin-inline: auto;
+      margin-bottom: 0.36rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--red-100);
+    }
+
+    .step-chip:nth-child(2) span {
+      background: var(--blue-100);
+    }
+
+    .step-chip:nth-child(3) span,
+    .step-chip:nth-child(4) span {
+      background: var(--green-100);
+    }
+
+    .listing-intro {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.15rem;
+      align-items: end;
+      padding: clamp(2rem, 5vw, 3.2rem) 0 1.3rem;
+    }
+
+    .listing-intro h2 {
+      margin-bottom: 0.35rem;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .listing-intro p,
+    .result-count {
+      color: var(--cor-texto-secundario);
+    }
+
+    .result-count {
+      display: block;
+      margin-top: 0.65rem;
+      font-size: 0.92rem;
+      font-weight: 850;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.4fr) minmax(150px, 0.7fr) minmax(180px, 0.85fr) minmax(150px, 0.65fr) minmax(150px, auto);
+      gap: 0.75rem;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+
+    .field label {
+      color: var(--cor-texto-principal);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap svg {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      color: var(--blue-700);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 48px;
+      color: var(--cor-texto-principal);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio);
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input {
+      padding: 0.78rem 1rem 0.78rem 2.65rem;
+    }
+
+    select {
+      padding: 0.78rem 0.85rem;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(180, 35, 24, 0.62);
+      box-shadow: 0 0 0 4px rgba(217, 45, 32, 0.12);
+    }
+
+    .infographic-table {
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio);
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: var(--sombra-minima);
+      overflow: hidden;
+    }
+
+    .table-head,
+    .info-row {
+      display: grid;
+      grid-template-columns: minmax(190px, 1.08fr) minmax(220px, 1.18fr) minmax(280px, 1.65fr) minmax(86px, 0.34fr);
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .table-head {
+      padding: 0.95rem 1.15rem;
+      color: #ffffff;
+      background: linear-gradient(90deg, var(--red-dark) 0%, var(--red-700) 100%);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .head-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 0;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .info-row {
+      position: relative;
+      padding: 1.05rem 1.15rem;
+      border-top: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .info-row::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 1rem;
+      bottom: 1rem;
+      width: 4px;
+      border-radius: 999px;
+      background: var(--red-600);
+      opacity: 0.72;
+    }
+
+    .info-row:hover {
+      z-index: 1;
+      background: #fffdfd;
+      box-shadow: inset 4px 0 0 var(--red-600), 0 10px 24px rgba(69, 10, 10, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .mobile-label {
+      display: none;
+      margin-bottom: 0.25rem;
+      color: var(--cor-texto-secundario);
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .competence-cell {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+      min-width: 0;
+    }
+
+    .competence-badge {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      place-items: center;
+      color: var(--red-700);
+      border: 1px solid rgba(180, 35, 24, 0.18);
+      border-radius: var(--raio);
+      background: var(--red-50);
+      font-size: 0.82rem;
+      font-weight: 950;
+    }
+
+    .competence-name {
+      display: block;
+      color: var(--cor-texto-principal);
+      font-size: 0.94rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .info-title {
+      color: var(--red-dark);
+      font-size: 1.08rem;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.36rem;
+      align-items: center;
+      margin-top: 0.45rem;
+      color: var(--slate-600);
+      font-size: 0.8rem;
+      font-weight: 750;
+    }
+
+    .title-meta span + span::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      margin-right: 0.36rem;
+      vertical-align: middle;
+      border-radius: 50%;
+      background: var(--red-600);
+    }
+
+    .info-description {
+      margin: 0;
+      color: var(--cor-texto-secundario);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.42rem;
+      margin-top: 0.62rem;
+    }
+
+    .error-badge,
+    .severity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.32rem;
+      min-height: 26px;
+      padding: 0.22rem 0.54rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .error-badge {
+      color: var(--red-dark);
+      border: 1px solid rgba(217, 45, 32, 0.15);
+      background: var(--red-50);
+    }
+
+    .severity-badge svg {
+      flex: 0 0 auto;
+    }
+
+    .severity-alta {
+      color: var(--red-dark);
+      border: 1px solid rgba(217, 45, 32, 0.18);
+      background: var(--red-100);
+    }
+
+    .severity-media {
+      color: var(--amber-700);
+      border: 1px solid rgba(181, 71, 8, 0.18);
+      background: var(--amber-100);
+    }
+
+    .severity-baixa {
+      color: var(--blue-700);
+      border: 1px solid rgba(23, 92, 211, 0.18);
+      background: var(--blue-100);
+    }
+
+    .open-link {
+      display: inline-flex;
+      justify-self: end;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      width: 46px;
+      min-width: 46px;
+      min-height: 46px;
+      color: #ffffff;
+      border-radius: 999px;
+      background: var(--red-700);
+      font-size: 0.86rem;
+      font-weight: 900;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .open-link:hover,
+    .open-link:focus-visible {
+      background: var(--red-dark);
+      outline: 3px solid rgba(217, 45, 32, 0.24);
+      outline-offset: 3px;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px rgba(69, 10, 10, 0.18);
+    }
+
+    .open-link svg {
+      flex: 0 0 auto;
+    }
+
+    .open-link-label {
+      display: none;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda);
+      background: #ffffff;
+    }
+
+    .empty-state.is-visible {
+      display: block;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.25rem;
+      font-size: 1.28rem;
+    }
+
+    .empty-state p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0.7rem 0.95rem;
+      border: 1px solid rgba(180, 35, 24, 0.28);
+      color: var(--red-dark);
+      background: #ffffff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      border-color: var(--red-600);
+      background: var(--red-50);
+    }
+
+    .clear-button {
+      color: var(--red-700);
+      border-color: rgba(217, 45, 32, 0.24);
+      background: #ffffff;
+    }
+
+    .closing {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1fr);
+      gap: clamp(1.4rem, 4vw, 3rem);
+      align-items: center;
+      margin-top: 1.6rem;
+      margin-bottom: 2.5rem;
+      padding: clamp(1.4rem, 3vw, 2rem);
+      color: #ffffff;
+      border-radius: var(--raio);
+      background:
+        radial-gradient(circle at 96% 12%, rgba(255, 255, 255, 0.14), transparent 26%),
+        linear-gradient(135deg, var(--red-darkest), var(--red-dark));
+      box-shadow: var(--sombra-suave);
+    }
+
+    .closing::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      bottom: -50px;
+      width: 190px;
+      height: 190px;
+      opacity: 0.14;
+      background:
+        linear-gradient(90deg, transparent 47%, #ffffff 48%, #ffffff 52%, transparent 53%),
+        linear-gradient(transparent 47%, #ffffff 48%, #ffffff 52%, transparent 53%);
+      background-size: 28px 28px;
+      transform: rotate(-8deg);
+    }
+
+    .closing-content,
+    .closing-flow {
+      position: relative;
+      z-index: 1;
+    }
+
+    .closing h2 {
+      margin-bottom: 0.45rem;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .closing p {
+      margin-bottom: 0;
+      color: #FEE2E2;
+    }
+
+    .closing-flow {
+      display: grid;
+      grid-template-columns: repeat(7, auto);
+      gap: 0.65rem;
+      align-items: center;
+      justify-content: end;
+    }
+
+    .flow-step {
+      display: grid;
+      gap: 0.38rem;
+      justify-items: center;
+      min-width: 82px;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .flow-icon {
+      display: grid;
+      width: 58px;
+      height: 58px;
+      place-items: center;
+      border-radius: 50%;
+      color: #ffffff;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+    }
+
+    .flow-red {
+      background: var(--red-600);
+    }
+
+    .flow-blue {
+      background: var(--blue-700);
+    }
+
+    .flow-green {
+      background: var(--green-600);
+    }
+
+    .flow-arrow {
+      color: rgba(255, 255, 255, 0.78);
+      font-weight: 900;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--cor-borda);
+      background: #ffffff;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 72px;
+      color: var(--slate-700);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .footer-inner a {
+      color: var(--red-dark);
+    }
+
+    .footer-inner a:hover,
+    .footer-inner a:focus-visible {
+      color: var(--red-700);
+      outline: none;
+      text-decoration: underline;
+      text-underline-offset: 0.22rem;
+    }
+
+    @media (max-width: 1120px) {
+      .listing-intro,
+      .hero-grid,
+      .closing {
+        grid-template-columns: 1fr;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+      }
+
+      .nav-actions {
+        flex: 1 1 100%;
+        justify-content: space-between;
+      }
+
+      .diagnostic-visual {
+        min-height: 345px;
+      }
+
+      .table-head,
+      .info-row {
+        grid-template-columns: minmax(160px, 0.95fr) minmax(190px, 1fr) minmax(230px, 1.35fr) minmax(76px, 0.32fr);
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .clear-button {
+        grid-column: 1 / -1;
+      }
+
+      .closing-flow {
+        justify-content: start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .header-inner,
+      .page-section,
+      .footer-inner {
+        width: min(100% - 1rem, 1160px);
+      }
+
+      .site-header {
+        position: relative;
+      }
+
+      .nav-actions,
+      .nav-links,
+      .filters {
+        width: 100%;
+      }
+
+      .nav-actions,
+      .filters {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+      }
+
+      .nav-actions {
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: space-between;
+        gap: 0.25rem;
+      }
+
+      .nav-links a,
+      .back-link {
+        flex: 1 1 auto;
+        padding-inline: 0.45rem;
+        font-size: 0.82rem;
+      }
+
+      .hero {
+        padding: 1.4rem;
+      }
+
+      h1 {
+        font-size: clamp(2.25rem, 15vw, 3.25rem);
+      }
+
+      .objective-card {
+        grid-template-columns: 1fr;
+      }
+
+      .diagnostic-visual {
+        min-height: 390px;
+      }
+
+      .code-window {
+        left: 50%;
+        right: auto;
+        top: 0;
+        width: min(330px, 92%);
+        transform: translateX(-50%);
+      }
+
+      .fixed-window {
+        top: 130px;
+        bottom: auto;
+        width: min(280px, 82%);
+      }
+
+      .magnifier {
+        left: 1%;
+        top: 182px;
+        width: 64px;
+        height: 64px;
+        border-width: 6px;
+      }
+
+      .status-bubble {
+        right: 1%;
+        bottom: 80px;
+        width: 62px;
+        height: 62px;
+        border-width: 6px;
+      }
+
+      .step-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .table-head {
+        display: none;
+      }
+
+      .infographic-table {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .info-list {
+        gap: 0.8rem;
+      }
+
+      .info-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        padding: 1rem;
+        border: 1px solid var(--cor-borda);
+        border-radius: var(--raio);
+        box-shadow: var(--sombra-minima);
+      }
+
+      .info-row::before {
+        top: 1rem;
+        bottom: auto;
+        width: 42px;
+        height: 4px;
+        left: 1rem;
+      }
+
+      .info-row:hover {
+        box-shadow: var(--sombra-minima);
+        transform: none;
+      }
+
+      .mobile-label {
+        display: block;
+      }
+
+      .open-link {
+        justify-self: stretch;
+        width: 100%;
+        min-height: 46px;
+        border-radius: var(--raio);
+      }
+
+      .open-link-label {
+        display: inline;
+      }
+
+      .closing-flow {
+        grid-template-columns: 1fr;
+        justify-items: stretch;
+      }
+
+      .flow-step {
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: center;
+        justify-items: start;
+      }
+
+      .flow-arrow {
+        display: none;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 1rem 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Recursos Educacionais - página inicial">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+            <path d="M8 21h8"></path>
+            <path d="M12 17v4"></path>
+            <path d="m10 9-2 2 2 2"></path>
+            <path d="m14 9 2 2-2 2"></path>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-title">Recursos Educacionais</span>
+          <span class="brand-subtitle">Introdução à Programação</span>
+        </span>
+      </a>
+
+      <div class="nav-actions" aria-label="Navegação principal">
+        <nav class="nav-links">
+          <a href="index.html">Início</a>
+          <a href="infograficos.html">Infográficos</a>
+          <a href="cards-erros.html" aria-current="page">Cards de erros</a>
+        </nav>
+        <a class="back-link" href="index.html#recursos">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+          </svg>
+          Voltar para recursos
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero page-section" aria-labelledby="hero-titulo">
+      <div class="hero-grid">
+        <div>
+          <span class="section-tag">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 9v4"></path>
+              <path d="M12 17h.01"></path>
+              <path d="M10.3 3.8 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
+            </svg>
+            Cards de erros comuns
+          </span>
+          <h1 id="hero-titulo">Reconheça o erro. Entenda a causa. Aprenda a corrigir.</h1>
+          <p class="hero-copy">Os cards de erros comuns apresentam situações frequentes em programação para ajudar o estudante a observar sintomas, formular um diagnóstico, compreender a causa conceitual e validar uma forma adequada de correção.</p>
+
+          <div class="objective-card">
+            <span class="objective-icon" aria-hidden="true">
+              <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 3v3"></path>
+                <path d="m15.5 8.5-3.5 3.5"></path>
+                <path d="M12 12h.01"></path>
+              </svg>
+            </span>
+            <div>
+              <h2>Objetivo dos cards</h2>
+              <p>Desenvolver a capacidade de reconhecer, diagnosticar e corrigir erros de programação, relacionando o comportamento do código aos conceitos envolvidos.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="diagnostic-visual" aria-hidden="true">
+          <div class="code-window">
+            <div class="code-bar"><span></span><span></span><span></span></div>
+            <div class="code-body">
+              <div class="code-line"><span>1</span><span># algoritmo</span></div>
+              <div class="code-line"><span>2</span><span>inicio</span></div>
+              <div class="code-line"><span>3</span><span>leia n</span></div>
+              <div class="code-line problem"><span>4</span><span>para i &lt; n faça</span></div>
+              <div class="code-line"><span>5</span><span>  soma = soma + i</span></div>
+              <div class="code-line"><span>6</span><span>fimpara</span></div>
+            </div>
+          </div>
+
+          <div class="code-window fixed-window">
+            <div class="code-bar"><span></span><span></span><span></span></div>
+            <div class="code-body">
+              <div class="code-line"><span>1</span><span># correção</span></div>
+              <div class="code-line"><span>2</span><span>inicio</span></div>
+              <div class="code-line fixed"><span>3</span><span>para i &lt;= n faça</span></div>
+              <div class="code-line"><span>4</span><span>  validar saída</span></div>
+            </div>
+          </div>
+
+          <div class="magnifier">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </div>
+
+          <div class="status-bubble">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m20 6-11 11-5-5"></path>
+            </svg>
+          </div>
+
+          <div class="step-strip">
+            <div class="step-chip"><span></span>Observar</div>
+            <div class="step-chip"><span></span>Diagnosticar</div>
+            <div class="step-chip"><span></span>Corrigir</div>
+            <div class="step-chip"><span></span>Validar</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" aria-labelledby="lista-titulo">
+      <div class="listing-intro">
+        <div>
+          <a class="back-link" href="index.html#recursos">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m12 19-7-7 7-7"></path>
+              <path d="M19 12H5"></path>
+            </svg>
+            Voltar para recursos
+          </a>
+          <h2 id="lista-titulo">Nossos cards de erros</h2>
+          <p>Explore erros frequentes em programação e pratique o processo de observar, diagnosticar, corrigir e validar uma solução.</p>
+          <span class="result-count" data-result-count aria-live="polite"></span>
+        </div>
+
+        <form class="filters" role="search" aria-label="Busca e filtros de cards de erros">
+          <div class="field">
+            <label for="busca-card">Buscar card</label>
+            <div class="input-wrap">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              <input id="busca-card" type="search" autocomplete="off" placeholder="Buscar por erro, competência ou sintoma...">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="filtro-competencia">Competência</label>
+            <select id="filtro-competencia">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="filtro-tipo">Tipo de erro</label>
+            <select id="filtro-tipo">
+              <option value="">Todos</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="filtro-gravidade">Gravidade</label>
+            <select id="filtro-gravidade">
+              <option value="">Todas</option>
+            </select>
+          </div>
+
+          <button class="btn clear-button" type="button" data-clear-filters>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+              <path d="M3 3v6h6"></path>
+            </svg>
+            Limpar filtros
+          </button>
+        </form>
+      </div>
+
+      <div class="infographic-table">
+        <div class="table-head" aria-hidden="true">
+          <span class="head-cell">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20"></path>
+              <path d="M5 7h14"></path>
+              <path d="M5 12h14"></path>
+              <path d="M5 17h14"></path>
+            </svg>
+            Competência trabalhada
+          </span>
+          <span class="head-cell">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path>
+              <path d="M14 2v6h6"></path>
+            </svg>
+            Título
+          </span>
+          <span class="head-cell">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 9v4"></path>
+              <path d="M12 17h.01"></path>
+              <path d="M10.3 3.8 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
+            </svg>
+            Erro abordado
+          </span>
+          <span>Ação</span>
+        </div>
+
+        <div class="info-list" data-card-list></div>
+
+        <div class="empty-state" data-empty-state>
+          <h3>Nenhum card de erro encontrado</h3>
+          <p>Tente buscar por outro erro, sintoma ou competência.</p>
+          <button class="btn" type="button" data-clear-empty>Limpar busca e filtros</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section closing" aria-labelledby="fechamento-titulo">
+      <div class="closing-content">
+        <h2 id="fechamento-titulo">Errar também faz parte de aprender a programar</h2>
+        <p>Os cards diagnósticos ajudam a transformar erros frequentes em oportunidades de observar o comportamento do código, compreender suas causas e construir estratégias de correção.</p>
+      </div>
+
+      <div class="closing-flow" aria-label="Etapas dos cards diagnósticos">
+        <div class="flow-step">
+          <span class="flow-icon flow-red" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </span>
+          Observar
+        </div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="flow-step">
+          <span class="flow-icon flow-blue" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </span>
+          Diagnosticar
+        </div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="flow-step">
+          <span class="flow-icon flow-green" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l2.1-2.1a4 4 0 0 1-5.1 5.1l-7.4 7.4a2.1 2.1 0 0 1-3-3l7.4-7.4a4 4 0 0 1 5.1-5.1l-2.1 2.1Z"></path>
+            </svg>
+          </span>
+          Corrigir
+        </div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="flow-step">
+          <span class="flow-icon flow-green" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </span>
+          Validar
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Projeto de Doutorado - Introdução à Programação</span>
+      <a href="index.html#recursos">Voltar para a página principal</a>
+    </div>
+  </footer>
+
+  <script>
+    const cardsErros = [
+      {
+        competenciaCodigo: "CCI01",
+        competenciaNome: "Representar problemas por soluções algorítmicas claras",
+        titulo: "Solução começa sem entender o problema",
+        tipoErro: "Erro de interpretação",
+        gravidade: "Alta",
+        sintoma: "Resolve apenas parte do pedido e ignora dados essenciais.",
+        descricao: "Investiga como um algoritmo pode parecer coerente e ainda assim responder a um problema diferente daquele que foi proposto.",
+        conteudoAbordado: "Leitura do enunciado, entrada, processamento e saída",
+        impacto: "Dados essenciais são ignorados e o programa resolve uma tarefa diferente da solicitada.",
+        linguagem: "C",
+        versao: "card atual",
+        url: "recursos/carderro/CCI01_solucao_sem_entender_problema.html"
+      },
+      {
+        competenciaCodigo: "CCI01",
+        competenciaNome: "Representar problemas por soluções algorítmicas claras",
+        titulo: "Passos algorítmicos vagos",
+        tipoErro: "Erro de formulação",
+        gravidade: "Média",
+        sintoma: "Ações genéricas e não executáveis aparecem no lugar de instruções precisas.",
+        descricao: "Mostra por que frases como calcular tudo ou verificar se está correto expressam intenção, mas não descrevem ações executáveis.",
+        conteudoAbordado: "Formulação de passos algorítmicos e precisão operacional",
+        impacto: "A solução não pode ser implementada de forma clara pelo programa.",
+        linguagem: "C",
+        versao: "card atual",
+        url: "recursos/carderro/CCI01_passos_algoritmicos_vagos.html"
+      },
+      {
+        competenciaCodigo: "CCI02",
+        competenciaNome: "Construir um fluxo verificável de entrada, processamento e saída",
+        titulo: "Processamento incompleto",
+        tipoErro: "Erro de lógica",
+        gravidade: "Alta",
+        sintoma: "A saída aparece, mas o cálculo está incorreto.",
+        descricao: "Investiga programas que leem os dados e produzem uma saída, mas não realizam todas as operações necessárias para chegar ao resultado solicitado.",
+        conteudoAbordado: "Entrada, processamento, saída e expressões",
+        impacto: "Entradas lidas não participam do resultado.",
+        linguagem: "C",
+        versao: "card atual",
+        url: "recursos/carderro/CCI02_processamento_incompleto.html"
+      },
+      {
+        competenciaCodigo: "CCI03",
+        competenciaNome: "Usar tipos, variáveis e expressões mantendo a coerência do estado",
+        titulo: "Tipo de dado inadequado",
+        tipoErro: "Erro de representação",
+        gravidade: "Alta",
+        sintoma: "Casas decimais desaparecem do resultado.",
+        descricao: "Mostra como um programa pode executar normalmente e ainda perder informação quando o tipo escolhido não representa os valores exigidos.",
+        conteudoAbordado: "Tipos de dados, variáveis, expressões e conversão",
+        impacto: "O estado armazenado deixa de representar o cálculo real.",
+        linguagem: "C",
+        versao: "card atual",
+        url: "recursos/carderro/CCI03_tipo_de_dado_inadequado.html"
+      },
+      {
+        competenciaCodigo: "CCI03",
+        competenciaNome: "Usar tipos, variáveis e expressões mantendo a coerência do estado",
+        titulo: "Variável não inicializada",
+        tipoErro: "Erro de estado",
+        gravidade: "Alta",
+        sintoma: "O resultado é imprevisível ou incorreto.",
+        descricao: "Investiga cálculos que se tornam imprevisíveis quando uma variável é usada antes de receber um valor inicial coerente com seu papel.",
+        conteudoAbordado: "Variáveis, inicialização, expressões e estado",
+        impacto: "Um estado indefinido contamina os cálculos seguintes.",
+        linguagem: "C",
+        versao: "card atual",
+        url: "recursos/carderro/CCI03_variavel_nao_inicializada.html"
+      }
+    ];
+
+    const list = document.querySelector("[data-card-list]");
+    const searchInput = document.querySelector("#busca-card");
+    const competenceFilter = document.querySelector("#filtro-competencia");
+    const typeFilter = document.querySelector("#filtro-tipo");
+    const severityFilter = document.querySelector("#filtro-gravidade");
+    const resultCount = document.querySelector("[data-result-count]");
+    const emptyState = document.querySelector("[data-empty-state]");
+    const clearButtons = document.querySelectorAll("[data-clear-filters], [data-clear-empty]");
+    const filtersForm = document.querySelector(".filters");
+
+    function normalizeText(value) {
+      return String(value)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function buildSearchText(card) {
+      return normalizeText([
+        card.competenciaCodigo,
+        card.competenciaNome,
+        card.titulo,
+        card.tipoErro,
+        card.gravidade,
+        card.sintoma,
+        card.descricao,
+        card.conteudoAbordado,
+        card.impacto,
+        card.linguagem,
+        card.versao
+      ].join(" "));
+    }
+
+    function severityClass(value) {
+      return normalizeText(value).replace(/\s+/g, "-");
+    }
+
+    function severityIcon() {
+      return `
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path>
+          <path d="M10.3 3.8 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path>
+        </svg>
+      `;
+    }
+
+    function populateFilter(select, values, order = []) {
+      const orderedValues = [...values].sort((a, b) => {
+        const orderA = order.indexOf(a);
+        const orderB = order.indexOf(b);
+
+        if (orderA !== -1 || orderB !== -1) {
+          return (orderA === -1 ? 999 : orderA) - (orderB === -1 ? 999 : orderB);
+        }
+
+        return a.localeCompare(b, "pt-BR");
+      });
+
+      orderedValues.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.append(option);
+      });
+    }
+
+    function populateFilters() {
+      populateFilter(
+        competenceFilter,
+        new Set(cardsErros.map((card) => card.competenciaCodigo))
+      );
+      populateFilter(
+        typeFilter,
+        new Set(cardsErros.map((card) => card.tipoErro))
+      );
+      populateFilter(
+        severityFilter,
+        new Set(cardsErros.map((card) => card.gravidade)),
+        ["Alta", "Média", "Baixa"]
+      );
+    }
+
+    function renderCards() {
+      const query = normalizeText(searchInput.value.trim());
+      const selectedCompetence = competenceFilter.value;
+      const selectedType = typeFilter.value;
+      const selectedSeverity = severityFilter.value;
+
+      const filteredCards = cardsErros.filter((card) => {
+        const matchesSearch = !query || buildSearchText(card).includes(query);
+        const matchesCompetence = !selectedCompetence || card.competenciaCodigo === selectedCompetence;
+        const matchesType = !selectedType || card.tipoErro === selectedType;
+        const matchesSeverity = !selectedSeverity || card.gravidade === selectedSeverity;
+        return matchesSearch && matchesCompetence && matchesType && matchesSeverity;
+      });
+
+      list.innerHTML = filteredCards.map((card) => {
+        const title = escapeHTML(card.titulo);
+        const code = escapeHTML(card.competenciaCodigo);
+        const competenceName = escapeHTML(card.competenciaNome);
+        const type = escapeHTML(card.tipoErro);
+        const severity = escapeHTML(card.gravidade);
+        const symptom = escapeHTML(card.sintoma);
+        const url = escapeHTML(card.url);
+        const language = escapeHTML(card.linguagem);
+        const version = escapeHTML(card.versao);
+        const severityModifier = escapeHTML(severityClass(card.gravidade));
+
+        return `
+          <article class="info-row">
+            <div class="row-section">
+              <span class="mobile-label">Competência</span>
+              <div class="competence-cell">
+                <span class="competence-badge">${code}</span>
+                <span>
+                  <span class="competence-name">${competenceName}</span>
+                </span>
+              </div>
+            </div>
+            <div class="row-section">
+              <span class="mobile-label">Título</span>
+              <div class="info-title">${title}</div>
+              <div class="title-meta">
+                <span>Card diagnóstico</span>
+                <span>${version}</span>
+                <span>Linguagem ${language}</span>
+              </div>
+            </div>
+            <div class="row-section">
+              <span class="mobile-label">Erro abordado</span>
+              <p class="info-description">${symptom}</p>
+              <div class="badge-row">
+                <span class="error-badge">${type}</span>
+                <span class="severity-badge severity-${severityModifier}">${severityIcon()} Gravidade ${severity.toLowerCase()}</span>
+              </div>
+            </div>
+            <a class="open-link" href="${url}" aria-label="Abrir card ${title}">
+              <span class="open-link-label">Abrir card</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </article>
+        `;
+      }).join("");
+
+      const visibleCount = filteredCards.length;
+      const hasActiveFilters = Boolean(query || selectedCompetence || selectedType || selectedSeverity);
+      const label = visibleCount === 1
+        ? "1 card encontrado"
+        : `${visibleCount} cards ${hasActiveFilters ? "encontrados" : "disponíveis"}`;
+
+      resultCount.textContent = label;
+      emptyState.classList.toggle("is-visible", visibleCount === 0);
+    }
+
+    function clearFilters() {
+      searchInput.value = "";
+      competenceFilter.value = "";
+      typeFilter.value = "";
+      severityFilter.value = "";
+      renderCards();
+      searchInput.focus();
+    }
+
+    clearButtons.forEach((button) => {
+      button.addEventListener("click", clearFilters);
+    });
+
+    searchInput.addEventListener("input", renderCards);
+    competenceFilter.addEventListener("change", renderCards);
+    typeFilter.addEventListener("change", renderCards);
+    severityFilter.addEventListener("change", renderCards);
+    filtersForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
+
+    populateFilters();
+    renderCards();
+  </script>
+</body>
+</html>

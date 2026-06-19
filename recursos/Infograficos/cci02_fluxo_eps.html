@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O fluxo E P S: entrada, processamento e saída</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    .page { max-width: 1120px; margin: 0 auto; }
+
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 260px; height: 260px; right: -105px; top: -110px; }
+    .hero::after { width: 130px; height: 130px; right: 210px; bottom: -84px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.24fr) minmax(330px, 0.76fr);
+      gap: 30px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .eps-icon svg, .modal-icon svg, .interaction-note svg {
+      width: 19px;
+      height: 19px;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.08rem, 5vw, 3.55rem);
+      line-height: 1.06;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+      min-height: 230px;
+      position: relative;
+    }
+
+    .hero-step {
+      min-width: 0;
+      min-height: 132px;
+      padding: 18px 12px;
+      border-radius: 22px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255, 255, 255, 0.92);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.07);
+    }
+
+    .hero-step strong { color: var(--cor-primaria-escura); font-size: 1rem; }
+    .hero-step small { display: block; color: var(--cor-texto-secundario); margin-top: 5px; font-size: 0.76rem; }
+
+    .hero-step span {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      font-weight: 900;
+      margin-bottom: 9px;
+    }
+
+    .hero-arrow { color: var(--cor-primaria); font-size: 1.45rem; font-weight: 900; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: 0.98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: 0.9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .concept-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.4fr); gap: 18px; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, 0.17); border-radius: 22px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .concept-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; }
+    .concept-number { display: inline-grid; place-items: center; width: 35px; height: 35px; border-radius: 12px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-card p { font-size: 0.92rem; }
+
+    .explore-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 15px 17px;
+      margin-bottom: 18px;
+    }
+
+    .interaction-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .eps-stage {
+      background: linear-gradient(180deg, #F8FAFC, #EEF2FF);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eps-flow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr) 84px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .eps-card {
+      cursor: pointer;
+      min-height: 248px;
+      border-radius: 22px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+    }
+
+    .eps-card:hover, .eps-card:focus {
+      transform: translateY(-5px);
+      border-color: rgba(79, 70, 229, 0.38);
+      box-shadow: 0 18px 34px rgba(49, 46, 129, 0.11);
+    }
+
+    .eps-icon {
+      width: 48px;
+      height: 48px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      margin-bottom: 15px;
+    }
+
+    .eps-letter { color: var(--cor-primaria); font-weight: 900; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .eps-card h3 { font-size: 1.22rem; color: var(--cor-primaria-escura); }
+    .eps-question { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--cor-borda); font-size: 0.9rem; color: var(--cor-texto-principal); font-weight: 700; }
+    .eps-click { margin-top: auto; padding-top: 14px; color: var(--cor-primaria); font-size: 0.84rem; font-weight: 800; }
+
+    .flow-arrow {
+      min-height: 84px;
+      display: grid;
+      place-items: center;
+      color: var(--cor-primaria);
+      position: relative;
+    }
+
+    .flow-arrow::before { content: ""; width: 100%; height: 3px; border-radius: 999px; background: linear-gradient(90deg, rgba(79,70,229,.18), var(--cor-primaria)); }
+    .flow-arrow::after { content: "›"; position: absolute; right: -2px; top: 50%; transform: translateY(-53%); font-size: 2.1rem; font-weight: 900; }
+    .flow-arrow span { position: absolute; top: 2px; color: var(--cor-texto-secundario); font-size: 0.73rem; font-weight: 800; background: var(--cor-fundo); padding: 2px 6px; border-radius: 999px; }
+
+    .eps-choice { position: fixed; opacity: 0; pointer-events: none; }
+    .eps-alert { position: fixed; inset: 0; z-index: 1000; display: none; place-items: center; padding: 22px; }
+
+    #eps-input:checked ~ .eps-alert,
+    #eps-process:checked ~ .eps-alert,
+    #eps-output:checked ~ .eps-alert { display: grid; }
+
+    .eps-alert-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.66); backdrop-filter: blur(5px); cursor: pointer; animation: fade-in 0.25s ease both; }
+
+    .eps-alert-dialog {
+      width: min(880px, 94vw);
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 25px;
+      padding: 0;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 34px 90px rgba(15, 23, 42, 0.32);
+      animation: alert-in 0.34s cubic-bezier(.2,.75,.25,1.12) both;
+    }
+
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes alert-in { from { opacity: 0; transform: translateY(26px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .alert-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--cor-borda); position: sticky; top: 0; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); z-index: 2; }
+    .alert-kicker { color: var(--cor-primaria-escura); font-size: 0.82rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.07em; }
+    .alert-close { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: 1.42rem; cursor: pointer; }
+    .alert-close:hover { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+
+    .modal-panel { display: none; padding: 24px; }
+    #eps-input:checked ~ .eps-alert .panel-input,
+    #eps-process:checked ~ .eps-alert .panel-process,
+    #eps-output:checked ~ .eps-alert .panel-output { display: block; }
+
+    .modal-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 18px; }
+    .modal-icon { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.35rem; margin-bottom: 3px; }
+
+    .modal-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 18px; }
+    .modal-explanation, .modal-example { border-radius: 18px; padding: 18px; border: 1px solid var(--cor-borda); }
+    .modal-explanation { background: var(--cor-superficie-suave); }
+    .modal-example { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.18); }
+    .modal-list { display: grid; gap: 10px; margin-top: 12px; }
+    .modal-list div { display: grid; grid-template-columns: 28px 1fr; gap: 9px; align-items: start; }
+    .modal-list span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: var(--cor-primaria); color: white; font-size: 0.8rem; font-weight: 900; }
+    .modal-list p { font-size: 0.92rem; }
+
+    .data-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .data-chip { border-radius: 999px; padding: 7px 11px; background: white; border: 1px solid rgba(79,70,229,.18); color: var(--cor-primaria-escura); font-size: .86rem; font-weight: 800; }
+
+    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; background: #0B1220; border-bottom: 1px solid rgba(255,255,255,.08); border-radius: 18px 18px 0 0; }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dots span { width: 9px; height: 9px; border-radius: 50%; background: #64748B; }
+    .code-file { color: #CBD5E1; font-family: Consolas, Monaco, "Courier New", monospace; font-size: .8rem; }
+    pre { margin: 0; }
+    .code-box, .example-code { border-radius: 18px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid rgba(15,23,42,.16); }
+    pre code { display: block; padding: 18px; background: var(--codigo-fundo); color: var(--codigo-texto); overflow-x: auto; line-height: 1.58; font-size: .89rem; tab-size: 4; }
+
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .trace-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 18px; }
+    .trace-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); position: relative; }
+    .trace-card::after { content: ""; position: absolute; top: 50%; right: -15px; width: 15px; height: 2px; background: rgba(79,70,229,.35); }
+    .trace-card:last-child::after { display: none; }
+    .trace-label { color: var(--cor-primaria); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; }
+    .trace-card strong { display: block; margin: 5px 0; color: var(--cor-texto-principal); }
+    .trace-card p { font-size: .9rem; }
+
+    .examples-intro { margin-bottom: 16px; }
+    .example-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .example-tab-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .example-tab-labels label { cursor: pointer; text-align: center; padding: 12px 13px; border-radius: 14px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; transition: .2s ease; }
+    .example-tab-labels label:hover { transform: translateY(-2px); border-color: rgba(79,70,229,.35); }
+
+    #example-1:checked ~ .example-tab-labels label[for="example-1"],
+    #example-2:checked ~ .example-tab-labels label[for="example-2"],
+    #example-3:checked ~ .example-tab-labels label[for="example-3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); box-shadow: 0 10px 20px rgba(79,70,229,.18); }
+
+    .example-panel { display: none; grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr); gap: 18px; animation: tab-in .34s ease both; }
+    #example-1:checked ~ .example-panels .panel-example-1,
+    #example-2:checked ~ .example-panels .panel-example-2,
+    #example-3:checked ~ .example-panels .panel-example-3 { display: grid; }
+    @keyframes tab-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .example-problem, .example-code { border: 1px solid var(--cor-borda); border-radius: 19px; overflow: hidden; }
+    .example-problem { padding: 20px; background: var(--cor-superficie-suave); }
+    .example-level { display: inline-flex; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); border-radius: 999px; padding: 6px 10px; font-size: .78rem; font-weight: 900; margin-bottom: 10px; }
+
+    .eps-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .9rem; }
+    .eps-table th, .eps-table td { padding: 10px; border: 1px solid var(--cor-borda); text-align: left; vertical-align: top; }
+    .eps-table th { width: 34%; color: var(--cor-primaria-escura); background: var(--cor-superficie-destacada); }
+    .eps-table td { background: white; color: var(--cor-texto-secundario); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: white; border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; box-shadow: var(--sombra-suave); }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-layout, .modal-grid, .example-panel { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 620px; margin: 0 auto; }
+      .meta-grid { grid-template-columns: repeat(2,1fr); }
+      .eps-flow { grid-template-columns: 1fr; }
+      .flow-arrow { min-height: 56px; }
+      .flow-arrow::before { width: 3px; height: 48px; background: linear-gradient(180deg, rgba(79,70,229,.18), var(--cor-primaria)); }
+      .flow-arrow::after { content: "⌄"; right: auto; top: auto; bottom: -2px; left: 50%; transform: translateX(-50%); }
+      .flow-arrow span { top: 50%; left: calc(50% + 14px); transform: translateY(-50%); }
+      .eps-card { min-height: 205px; }
+      .trace-grid, .error-grid { grid-template-columns: 1fr; }
+      .trace-card::after { display: none; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .hero-flow { grid-template-columns: 1fr; min-height: 0; }
+      .hero-arrow { transform: rotate(90deg); }
+      .hero-step { min-height: 105px; }
+      .meta-grid, .concept-cards, .example-tab-labels { grid-template-columns: 1fr; }
+      .meta-card { min-height: 0; }
+      .explore-intro { align-items: flex-start; flex-direction: column; }
+      .interaction-note { white-space: normal; }
+      .eps-stage { padding: 15px; }
+      .eps-card { min-height: 0; }
+      .eps-alert { padding: 10px; }
+      .eps-alert-dialog { width: 100%; max-height: 94vh; border-radius: 20px; }
+      .modal-panel { padding: 18px; }
+      .modal-head { align-items: center; }
+      .example-tab-labels label { text-align: left; }
+      pre code { font-size: .8rem; padding: 15px; }
+      .eps-table { display: block; overflow-x: auto; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M4 6h5v5H4zM15 6h5v5h-5zM9 15h6v5H9zM9 8h6M7 11v2a2 2 0 0 0 2 2M17 11v2a2 2 0 0 1-2 2"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>O fluxo E P S: entrada, processamento e saída</h1>
+          <p class="subtitle">Visualize como um programa recebe dados, transforma ou decide algo e produz uma resposta compreensível para o usuário.</p>
+        </div>
+
+        <div class="hero-flow" aria-label="Fluxo entrada, processamento e saída">
+          <div class="hero-step"><div><span>E</span><strong>Entrada</strong><small>dados recebidos</small></div></div>
+          <div class="hero-arrow">›</div>
+          <div class="hero-step"><div><span>P</span><strong>Processamento</strong><small>cálculo ou decisão</small></div></div>
+          <div class="hero-arrow">›</div>
+          <div class="hero-step"><div><span>S</span><strong>Saída</strong><small>resposta produzida</small></div></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI02</div><p>Implementar soluções algorítmicas em programas introdutórios.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI01</div><p>Reconhecer a estrutura lógica do problema antes da implementação.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Entrada, processamento e saída</div><p>Organização do caminho percorrido pelos dados.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Leitura, exploração dos alertas e análise dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e sequencial</div><p>Fluxo, rastreamento de dados e comparação entre etapas.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg>Noção de algoritmo</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>Sequência de comandos</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 5h14v14H5zM8 9h8M8 13h5"></path></svg>Variáveis simples</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M8 4 3 12l5 8M16 4l5 8-5 8"></path></svg>Estrutura básica em C</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-layout">
+        <div class="concept-main">
+          <h3>Todo programa transforma uma situação</h3>
+          <p>O fluxo E P S ajuda a enxergar o programa como um caminho. A <strong>entrada</strong> fornece os dados, o <strong>processamento</strong> aplica operações ou regras e a <strong>saída</strong> comunica o resultado. Nem todo programa terá muitas instruções, mas essas três funções ajudam a organizar o raciocínio.</p>
+        </div>
+        <div class="concept-cards">
+          <article class="concept-card"><span class="concept-number">1</span><h3>Receber</h3><p>Identifique quais informações o programa precisa conhecer.</p></article>
+          <article class="concept-card"><span class="concept-number">2</span><h3>Transformar</h3><p>Defina o cálculo, comparação ou decisão necessária.</p></article>
+          <article class="concept-card"><span class="concept-number">3</span><h3>Comunicar</h3><p>Mostre somente a resposta necessária e em formato compreensível.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Explore o fluxo E P S</h2></div>
+      <div class="explore-intro">
+        <p>Use o mesmo problema como referência: <strong>ler duas notas, calcular a média e mostrar o resultado</strong>. Selecione uma etapa para abrir sua explicação em primeiro plano.</p>
+        <span class="interaction-note"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 11V6a2 2 0 1 1 4 0v4M13 9a2 2 0 1 1 4 0v3M17 11a2 2 0 1 1 4 0v4c0 4-3 7-7 7h-1c-3 0-5-1-7-4l-3-5a2 2 0 0 1 3-2l3 3"></path></svg>Clique em uma etapa</span>
+      </div>
+
+      <div class="eps-stage">
+        <div class="eps-flow">
+          <label class="eps-card" for="eps-input" tabindex="0">
+            <span class="eps-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h12M11 5l7 7-7 7M20 5v14"></path></svg></span>
+            <span class="eps-letter">E de entrada</span>
+            <h3>O que o programa recebe?</h3>
+            <p>São os dados fornecidos pelo usuário, por um arquivo, sensor ou outra fonte.</p>
+            <p class="eps-question">Exemplo: quais valores precisam ser lidos para calcular a média?</p>
+            <span class="eps-click">Abrir exemplo de entrada ›</span>
+          </label>
+
+          <div class="flow-arrow"><span>dados disponíveis</span></div>
+
+          <label class="eps-card" for="eps-process" tabindex="0">
+            <span class="eps-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M7 4v6M17 14v6M4 17h16M9 12h6"></path></svg></span>
+            <span class="eps-letter">P de processamento</span>
+            <h3>O que será feito com os dados?</h3>
+            <p>É a parte em que o programa calcula, compara, repete ou decide.</p>
+            <p class="eps-question">Exemplo: qual fórmula transforma duas notas em uma média?</p>
+            <span class="eps-click">Abrir exemplo de processamento ›</span>
+          </label>
+
+          <div class="flow-arrow"><span>resultado obtido</span></div>
+
+          <label class="eps-card" for="eps-output" tabindex="0">
+            <span class="eps-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v12H4zM8 21h8M12 17v4M8 9h8M8 13h5"></path></svg></span>
+            <span class="eps-letter">S de saída</span>
+            <h3>O que o programa comunica?</h3>
+            <p>É a resposta exibida ou enviada depois que o processamento termina.</p>
+            <p class="eps-question">Exemplo: qual valor deve aparecer para o usuário?</p>
+            <span class="eps-click">Abrir exemplo de saída ›</span>
+          </label>
+        </div>
+      </div>
+
+      <input class="eps-choice" type="radio" name="eps-part" id="eps-close" checked>
+      <input class="eps-choice" type="radio" name="eps-part" id="eps-input">
+      <input class="eps-choice" type="radio" name="eps-part" id="eps-process">
+      <input class="eps-choice" type="radio" name="eps-part" id="eps-output">
+
+      <div class="eps-alert" aria-live="polite">
+        <label class="eps-alert-backdrop" for="eps-close" aria-label="Fechar explicação"></label>
+        <div class="eps-alert-dialog" role="dialog" aria-modal="true" aria-label="Explicação da etapa selecionada">
+          <div class="alert-toolbar">
+            <span class="alert-kicker">Fluxo E P S no mesmo exemplo</span>
+            <label class="alert-close" for="eps-close" tabindex="0" aria-label="Fechar explicação">×</label>
+          </div>
+
+          <article class="modal-panel panel-input">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h12M11 5l7 7-7 7M20 5v14"></path></svg></span>
+              <div><h3>Entrada: os dados que iniciam o fluxo</h3><p>No problema da média, o programa precisa conhecer as duas notas antes de realizar qualquer cálculo.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Como reconhecer a entrada</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Procure no enunciado os valores que serão <strong>fornecidos</strong>.</p></div>
+                  <div><span>2</span><p>Defina variáveis compatíveis com o tipo desses dados.</p></div>
+                  <div><span>3</span><p>Use comandos de leitura para armazenar cada valor.</p></div>
+                </div>
+                <div class="data-chips"><span class="data-chip">nota1</span><span class="data-chip">nota2</span><span class="data-chip">tipo float</span></div>
+              </div>
+              <div class="modal-example">
+                <h3>Trecho correspondente em C</h3>
+                <div class="code-box">
+                  <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">entrada.c</span></div>
+                  <pre><code><span class="syn-type">float</span> <span class="syn-variable">nota1</span><span class="syn-operator">,</span> <span class="syn-variable">nota2</span><span class="syn-operator">;</span>
+
+<span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota1</span><span class="syn-operator">);</span>
+<span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota2</span><span class="syn-operator">);</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-process">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M7 4v6M17 14v6M4 17h16M9 12h6"></path></svg></span>
+              <div><h3>Processamento: a transformação dos dados</h3><p>As duas notas são combinadas por uma fórmula. O resultado dessa operação é armazenado em uma nova variável.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Como reconhecer o processamento</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Localize o verbo que expressa a ação: calcular, comparar, converter ou decidir.</p></div>
+                  <div><span>2</span><p>Escreva a fórmula ou regra usando os dados de entrada.</p></div>
+                  <div><span>3</span><p>Armazene o resultado quando ele for necessário em outra etapa.</p></div>
+                </div>
+                <div class="data-chips"><span class="data-chip">somar</span><span class="data-chip">dividir por 2</span><span class="data-chip">guardar em media</span></div>
+              </div>
+              <div class="modal-example">
+                <h3>Trecho correspondente em C</h3>
+                <div class="code-box">
+                  <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">processamento.c</span></div>
+                  <pre><code><span class="syn-type">float</span> <span class="syn-variable">media</span><span class="syn-operator">;</span>
+
+<span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-operator">(</span><span class="syn-variable">nota1</span> <span class="syn-operator">+</span> <span class="syn-variable">nota2</span><span class="syn-operator">)</span> <span class="syn-operator">/</span> <span class="syn-number">2.0</span><span class="syn-operator">;</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-output">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v12H4zM8 21h8M12 17v4M8 9h8M8 13h5"></path></svg></span>
+              <div><h3>Saída: a resposta produzida pelo programa</h3><p>Depois do cálculo, a média é apresentada com uma mensagem que identifica o significado do valor.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Como reconhecer a saída</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Descubra qual resposta o enunciado pede para mostrar.</p></div>
+                  <div><span>2</span><p>Escolha a variável que contém o resultado correto.</p></div>
+                  <div><span>3</span><p>Inclua uma mensagem curta para tornar a saída compreensível.</p></div>
+                </div>
+                <div class="data-chips"><span class="data-chip">resultado: media</span><span class="data-chip">duas casas decimais</span><span class="data-chip">mensagem clara</span></div>
+              </div>
+              <div class="modal-example">
+                <h3>Trecho correspondente em C</h3>
+                <div class="code-box">
+                  <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">saida.c</span></div>
+                  <pre><code><span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Media: %.2f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">);</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreie o caminho dos dados</h2></div>
+      <p>Um modo simples de verificar o programa é acompanhar um conjunto de valores do início ao fim.</p>
+      <div class="trace-grid">
+        <article class="trace-card"><span class="trace-label">Entrada</span><strong>nota1 = 8,0 e nota2 = 6,0</strong><p>Os valores são lidos e armazenados nas variáveis.</p></article>
+        <article class="trace-card"><span class="trace-label">Processamento</span><strong>media = (8,0 + 6,0) / 2</strong><p>O cálculo produz o valor 7,0.</p></article>
+        <article class="trace-card"><span class="trace-label">Saída</span><strong>Media: 7.00</strong><p>O resultado é exibido com uma mensagem identificadora.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <p class="examples-intro">Troque as abas para observar como o fluxo E P S permanece reconhecível em problemas com cálculo simples, decisão e combinação de operações.</p>
+
+      <div class="example-tabs">
+        <input type="radio" name="example-tab" id="example-1" checked>
+        <input type="radio" name="example-tab" id="example-2">
+        <input type="radio" name="example-tab" id="example-3">
+
+        <div class="example-tab-labels" role="tablist" aria-label="Exemplos do fluxo E P S">
+          <label for="example-1" role="tab">1. Converter temperatura</label>
+          <label for="example-2" role="tab">2. Compra com desconto</label>
+          <label for="example-3" role="tab">3. Média e situação</label>
+        </div>
+
+        <div class="example-panels">
+          <article class="example-panel panel-example-1">
+            <div class="example-problem">
+              <span class="example-level">Nível inicial</span>
+              <h3>Converter Celsius para Fahrenheit</h3>
+              <p>O programa recebe uma temperatura em Celsius, aplica a fórmula de conversão e mostra o valor em Fahrenheit.</p>
+              <table class="eps-table">
+                <tr><th>Entrada</th><td>Temperatura em Celsius</td></tr>
+                <tr><th>Processamento</th><td><code>fahrenheit = celsius * 9 / 5 + 32</code></td></tr>
+                <tr><th>Saída</th><td>Temperatura convertida</td></tr>
+              </table>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">temperatura.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">float</span> <span class="syn-variable">celsius</span><span class="syn-operator">,</span> <span class="syn-variable">fahrenheit</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">celsius</span><span class="syn-operator">);</span>
+
+    <span class="syn-variable">fahrenheit</span> <span class="syn-operator">=</span> <span class="syn-variable">celsius</span> <span class="syn-operator">*</span> <span class="syn-number">9.0</span> <span class="syn-operator">/</span> <span class="syn-number">5.0</span> <span class="syn-operator">+</span> <span class="syn-number">32.0</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Fahrenheit: %.1f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">fahrenheit</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-example-2">
+            <div class="example-problem">
+              <span class="example-level">Nível intermediário</span>
+              <h3>Calcular compra com desconto</h3>
+              <p>O programa recebe o valor da compra. Se o valor for pelo menos 200, aplica 10% de desconto; caso contrário, mantém o total.</p>
+              <table class="eps-table">
+                <tr><th>Entrada</th><td>Valor da compra</td></tr>
+                <tr><th>Processamento</th><td>Comparar o valor e calcular o total com ou sem desconto</td></tr>
+                <tr><th>Saída</th><td>Total a pagar</td></tr>
+              </table>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">desconto.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">float</span> <span class="syn-variable">compra</span><span class="syn-operator">,</span> <span class="syn-variable">total</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">compra</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">compra</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">200.0</span><span class="syn-operator">)</span>
+        <span class="syn-variable">total</span> <span class="syn-operator">=</span> <span class="syn-variable">compra</span> <span class="syn-operator">*</span> <span class="syn-number">0.90</span><span class="syn-operator">;</span>
+    <span class="syn-keyword">else</span>
+        <span class="syn-variable">total</span> <span class="syn-operator">=</span> <span class="syn-variable">compra</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Total: R$ %.2f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">total</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-example-3">
+            <div class="example-problem">
+              <span class="example-level">Nível intermediário</span>
+              <h3>Calcular média e informar situação</h3>
+              <p>O programa lê três notas, calcula a média e informa se o estudante foi aprovado ou reprovado.</p>
+              <table class="eps-table">
+                <tr><th>Entrada</th><td>Três notas</td></tr>
+                <tr><th>Processamento</th><td>Calcular a média e compará-la com 7,0</td></tr>
+                <tr><th>Saída</th><td>Média e situação do estudante</td></tr>
+              </table>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">situacao.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">float</span> <span class="syn-variable">n1</span><span class="syn-operator">,</span> <span class="syn-variable">n2</span><span class="syn-operator">,</span> <span class="syn-variable">n3</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f %f %f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">n1</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">n2</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">n3</span><span class="syn-operator">);</span>
+    <span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-operator">(</span><span class="syn-variable">n1</span> <span class="syn-operator">+</span> <span class="syn-variable">n2</span> <span class="syn-operator">+</span> <span class="syn-variable">n3</span><span class="syn-operator">)</span> <span class="syn-operator">/</span> <span class="syn-number">3.0</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Media: %.2f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">media</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">media</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7.0</span><span class="syn-operator">)</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Aprovado\n"</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">else</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Reprovado\n"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Ler um dado e não utilizá-lo</h3><p><strong>Por que acontece:</strong> a entrada é criada sem relação com o cálculo ou a decisão.</p><p><strong>Como evitar:</strong> confira onde cada variável lida participa do processamento.</p></article>
+        <article class="error-card"><h3>Mostrar a variável errada</h3><p><strong>Por que acontece:</strong> o programa calcula um resultado, mas imprime um valor de entrada.</p><p><strong>Como evitar:</strong> identifique qual variável contém a resposta final antes do <code>printf</code>.</p></article>
+        <article class="error-card"><h3>Confundir fórmula com saída</h3><p><strong>Por que acontece:</strong> o aluno tenta exibir dados antes de concluir as operações necessárias.</p><p><strong>Como evitar:</strong> mantenha clara a ordem: receber, processar e somente depois comunicar.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Uma variável declarada é sempre uma entrada?</summary><p>Não. Uma variável pode guardar um dado recebido, um resultado intermediário ou a resposta final. Ela se torna entrada quando recebe um dado vindo de fora do processamento.</p></details>
+        <details><summary>Uma estrutura <code>if</code> pertence a qual etapa do fluxo?</summary><p>Ao processamento, porque aplica uma regra e decide qual caminho será seguido com base nos dados disponíveis.</p></details>
+        <details><summary>O programa precisa sempre usar <code>scanf</code> para ter entrada?</summary><p>Não. Dados também podem vir de arquivos, sensores, parâmetros ou valores previamente definidos. Em programas introdutórios, <code>scanf</code> é uma forma frequente de entrada pelo teclado.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir reconhecer e implementar o caminho percorrido pelos dados em um programa simples: receber entradas, aplicar o processamento adequado e produzir uma saída coerente.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

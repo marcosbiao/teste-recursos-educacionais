@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toda recursão precisa de uma saída</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(350px, .96fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .example-icon svg, .trace-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .recursion-stair { display: grid; gap: 8px; padding: 4px 2px; }
+    .call-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 13px;
+      padding: 9px 12px;
+      background: var(--cor-superficie);
+      box-shadow: 0 7px 16px rgba(15,23,42,.035);
+    }
+    .call-box:nth-child(2) { margin-left: 26px; }
+    .call-box:nth-child(3) { margin-left: 52px; }
+    .call-box:nth-child(4) { margin-left: 78px; background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.25); }
+    .call-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .call-box span { font-size: .78rem; color: var(--cor-texto-secundario); }
+    .call-box.base span { color: var(--cor-primaria-escura); font-weight: 800; }
+    .return-strip {
+      margin-top: 14px;
+      border: 1px solid rgba(245,158,11,.33);
+      background: #FFFBEB;
+      border-radius: 14px;
+      padding: 11px 13px;
+      color: var(--cor-texto-principal);
+      font-size: .86rem;
+    }
+    .return-strip strong { color: #92400E; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-da-recursao { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 620px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .29); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 175px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 146px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-base { left: 38px; top: 38px; }
+    .button-step { right: 38px; top: 38px; }
+    .button-reduction { left: 38px; bottom: 38px; }
+    .button-return { right: 38px; bottom: 38px; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+    .modal:target { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .68); backdrop-filter: blur(6px); }
+    .modal-card {
+      width: min(720px, 100%);
+      max-height: min(86vh, 760px);
+      overflow-y: auto;
+      position: relative;
+      z-index: 2;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, .34);
+      padding: 25px;
+      animation: modalIn .24s ease both;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(18px) scale(.965); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+    .modal-title-wrap { display: flex; gap: 12px; align-items: center; }
+    .modal-icon { width: 47px; height: 47px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .modal-title-wrap h3 { margin-bottom: 2px; color: var(--cor-primaria-escura); font-size: 1.24rem; }
+    .modal-title-wrap p { font-size: .87rem; }
+    .modal-close { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); text-decoration: none; font-size: 1.35rem; line-height: 1; flex: 0 0 auto; }
+    .modal-close:hover, .modal-close:focus-visible { background: var(--cor-superficie-destacada); outline: none; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .modal-box { border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); border-radius: 16px; padding: 15px; }
+    .modal-box strong { display: block; color: var(--cor-texto-principal); margin-bottom: 6px; }
+    .modal-box p { font-size: .9rem; }
+    .modal-example { margin-top: 15px; border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; border-radius: 15px; padding: 14px 16px; color: var(--cor-texto-principal); }
+    .modal-example code { color: #78350F; font-weight: 900; }
+
+    .anatomy-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 18px; align-items: stretch; }
+    .code-window { border: 1px solid #25324A; border-radius: 20px; overflow: hidden; background: var(--codigo-fundo); box-shadow: 0 18px 34px rgba(15,23,42,.12); }
+    .code-top { display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .79rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-title { margin-left: 3px; font-weight: 800; }
+    pre { margin: 0; padding: 19px; overflow-x: auto; color: var(--codigo-texto); font-size: .89rem; line-height: 1.62; tab-size: 4; }
+    .line { display: block; min-width: max-content; }
+    .focus-base { background: rgba(134,239,172,.09); border-left: 3px solid #86EFAC; margin-left: -12px; padding-left: 9px; }
+    .focus-step { background: rgba(253,230,138,.08); border-left: 3px solid #FDE68A; margin-left: -12px; padding-left: 9px; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .annotation-list { display: grid; gap: 11px; }
+    .annotation {
+      display: grid;
+      grid-template-columns: 42px minmax(0,1fr);
+      gap: 11px;
+      align-items: start;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie-suave);
+      border-radius: 16px;
+      padding: 13px;
+    }
+    .annotation-number { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .annotation p { font-size: .88rem; }
+    .annotation code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .trace-layout { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); gap: 18px; align-items: start; }
+    .trace-panel { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 19px; background: var(--cor-superficie-suave); }
+    .trace-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .trace-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .trace-title strong { color: var(--cor-primaria-escura); }
+    .stack { display: grid; gap: 8px; }
+    .stack-frame { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; background: var(--cor-superficie); }
+    .stack-frame code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .stack-frame span { display: block; margin-top: 3px; font-size: .79rem; color: var(--cor-texto-secundario); }
+    .stack-frame.base { border-color: rgba(79,70,229,.28); background: var(--cor-superficie-destacada); }
+    .return-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 14px; }
+    .return-chip { padding: 7px 10px; border-radius: 10px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .82rem; font-weight: 900; }
+    .return-arrow { color: var(--cor-destaque-pontual); font-weight: 900; }
+
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie); }
+    .mini-table th, .mini-table td { padding: 12px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table td { font-size: .9rem; color: var(--cor-texto-principal); }
+    .mini-table tr:last-child td { border-bottom: 0; }
+    .mini-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .safety-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .safety-card { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .safety-card:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-weight: 900; z-index: 2; }
+    .step-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 10px; }
+    .safety-card p { font-size: .88rem; }
+    .safety-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .test-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; margin-top: 17px; }
+    .test-case { border: 1px solid var(--cor-borda); border-radius: 15px; padding: 13px; background: var(--cor-superficie-suave); }
+    .test-case strong { display: block; color: var(--cor-texto-principal); font-size: .88rem; }
+    .test-case code { display: inline-block; margin-top: 5px; color: var(--cor-primaria-escura); font-weight: 900; font-size: .84rem; }
+
+    .examples-wrap { position: relative; }
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--cor-borda); border-radius: 999px; padding: 9px 14px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .89rem; font-weight: 800; transition: .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.35); color: var(--cor-primaria-escura); }
+    .tab-panel { display: none; animation: tabIn .22s ease both; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    #tab1:checked ~ .tabs label[for="tab1"],
+    #tab2:checked ~ .tabs label[for="tab2"],
+    #tab3:checked ~ .tabs label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    #tab1:checked ~ .panels #panel1,
+    #tab2:checked ~ .panels #panel2,
+    #tab3:checked ~ .panels #panel3 { display: block; }
+
+    .example-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 18px; align-items: stretch; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; gap: 11px; align-items: center; margin-bottom: 14px; }
+    .example-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .level { display: inline-flex; margin-bottom: 7px; padding: 4px 9px; border-radius: 999px; border: 1px solid rgba(79,70,229,.18); background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .73rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+    .example-list { display: grid; gap: 9px; margin-top: 13px; }
+    .example-row { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; background: var(--cor-superficie); }
+    .example-row strong { color: var(--cor-texto-principal); font-size: .84rem; }
+    .example-row p { font-size: .86rem; margin-top: 2px; }
+    .example-row code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .error-card { border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 17px; padding: 16px; background: var(--cor-superficie); }
+    .error-card p { font-size: .88rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 11px; }
+    details { border: 1px solid var(--cor-borda); border-radius: 17px; padding: 15px 17px; background: var(--cor-superficie-suave); }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 11px; padding: 12px 13px; border: 1px solid var(--cor-borda); border-radius: 13px; background: var(--cor-superficie); color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 10px; }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.02rem; max-width: 920px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .anatomy-layout, .trace-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .choice-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; transform: none; width: auto; min-height: 145px; }
+      .map-center { grid-column: 1 / -1; }
+      .map-button:hover, .map-button:focus-visible { transform: translateY(-3px); }
+      .safety-grid, .error-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .safety-card:nth-child(2)::after { display: none; }
+      .test-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 15px 10px; }
+      .hero, .section, .closing { padding: 21px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .call-box:nth-child(2), .call-box:nth-child(3), .call-box:nth-child(4) { margin-left: 0; }
+      .meta-grid, .choice-map, .safety-grid, .error-grid, .test-strip, .modal-grid { grid-template-columns: 1fr; }
+      .choice-map { padding: 14px; }
+      .map-center, .map-button { min-height: auto; }
+      .safety-card::after { display: none; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 19px; border-radius: 20px; }
+      .tabs { display: grid; grid-template-columns: 1fr; }
+      .tab-label { justify-content: center; }
+      .mini-table { display: block; overflow-x: auto; }
+      pre { font-size: .8rem; padding: 15px; }
+      h1 { font-size: 2.1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-3"/><path d="M16 3h5v5"/><path d="m21 3-8 8"/><path d="M15 14a4 4 0 1 1-4-4"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Toda recursão precisa de uma saída</h1>
+          <p class="subtitle">Entenda como o caso base interrompe as chamadas e como o passo recursivo reduz o problema até alcançar essa saída.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Visualização resumida das chamadas recursivas">
+          <div class="panel-head">
+            <span class="hero-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </span>
+            <div><strong>Uma chamada cria a próxima</strong><span>Até que o caso base seja alcançado</span></div>
+          </div>
+          <div class="recursion-stair">
+            <div class="call-box"><code>fatorial(4)</code><span>aguarda 4 × fatorial(3)</span></div>
+            <div class="call-box"><code>fatorial(3)</code><span>aguarda 3 × fatorial(2)</span></div>
+            <div class="call-box"><code>fatorial(2)</code><span>aguarda 2 × fatorial(1)</span></div>
+            <div class="call-box base"><code>fatorial(1)</code><span>caso base: retorna 1</span></div>
+          </div>
+          <div class="return-strip"><strong>Depois da saída:</strong> as chamadas retornam em ordem inversa e produzem 2, 6 e 24.</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI12</div><p>Compreender e construir soluções recursivas com término garantido.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI07</div><p>Mobiliza função, parâmetro, chamada e valor de retorno.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Caso base e passo recursivo</div><p>Os dois elementos essenciais de uma função recursiva.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura visual, rastreamento e comparação de exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Rastreamento de chamadas</div><p>Descida até a base e retorno dos resultados.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9h8M8 13h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>Funções e parâmetros</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>Condição com if</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16"/></svg>Expressões aritméticas</span>
+        <span class="pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v4H5zM7 10h10v4H7zM9 16h6v4H9z"/></svg>Chamada e retorno</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Recursão é resolver um problema por uma versão menor dele</h3>
+          <p>Uma função recursiva chama a si mesma, mas não pode repetir a mesma situação indefinidamente. Ela precisa de um <strong>caso base</strong> que encerre as chamadas e de um <strong>passo recursivo</strong> que aproxime a entrada desse caso.</p>
+          <div class="concept-note">A pergunta principal é: <strong>cada nova chamada está mais perto da saída?</strong></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Reconheça a saída</h3><p>Defina a menor situação que pode ser respondida diretamente.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Reduza o problema</h3><p>Faça a nova chamada receber uma entrada menor ou mais simples.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Use o retorno</h3><p>Combine a resposta menor para formar a resposta do problema atual.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-da-recursao">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da recursão</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 21h14"/></svg>
+        Clique em cada bloco para abrir uma explicação usando o mesmo exemplo: <strong>fatorial(4)</strong>.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1060 620" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="530" y1="310" x2="190" y2="116"/>
+          <line x1="530" y1="310" x2="870" y2="116"/>
+          <line x1="530" y1="310" x2="190" y2="504"/>
+          <line x1="530" y1="310" x2="870" y2="504"/>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Recursão segura</strong>
+            <code>fatorial(4)</code>
+            <span>Desce até uma saída alcançável e depois retorna.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-base" href="#modal-base">
+          <span class="map-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16"/><path d="M12 4v16"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <h3>Caso base</h3>
+          <p>Responde diretamente à menor entrada e encerra novas chamadas.</p>
+          <span class="map-code">n &lt;= 1</span>
+        </a>
+
+        <a class="map-button button-step" href="#modal-step">
+          <span class="map-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>
+          <h3>Passo recursivo</h3>
+          <p>Chama a função novamente para resolver uma versão menor.</p>
+          <span class="map-code">fatorial(n - 1)</span>
+        </a>
+
+        <a class="map-button button-reduction" href="#modal-reduction">
+          <span class="map-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg></span>
+          <h3>Redução do problema</h3>
+          <p>A entrada precisa mudar na direção do caso base.</p>
+          <span class="map-code">4 → 3 → 2 → 1</span>
+        </a>
+
+        <a class="map-button button-return" href="#modal-return">
+          <span class="map-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M9 12h10"/><path d="M5 5v14"/></svg></span>
+          <h3>Retorno das chamadas</h3>
+          <p>As respostas voltam em ordem inversa e formam o resultado final.</p>
+          <span class="map-code">1 → 2 → 6 → 24</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="modal" id="modal-base" role="dialog" aria-modal="true" aria-labelledby="title-base">
+      <a class="modal-backdrop" href="#mapa-da-recursao" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span><div><h3 id="title-base">Caso base</h3><p>A resposta que não precisa de outra chamada.</p></div></div>
+          <a class="modal-close" href="#mapa-da-recursao" aria-label="Fechar">×</a>
+        </div>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>O que faz</strong><p>Interrompe a recursão quando a entrada já representa o menor problema.</p></div>
+          <div class="modal-box"><strong>No fatorial</strong><p>Para <code>n = 1</code>, o resultado é conhecido: <code>1! = 1</code>.</p></div>
+        </div>
+        <div class="modal-example"><strong>Trecho:</strong> <code>if (n &lt;= 1) return 1;</code>. Sem essa saída, a função continuaria criando chamadas.</div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-step" role="dialog" aria-modal="true" aria-labelledby="title-step">
+      <a class="modal-backdrop" href="#mapa-da-recursao" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span><div><h3 id="title-step">Passo recursivo</h3><p>A regra que reutiliza a própria função.</p></div></div>
+          <a class="modal-close" href="#mapa-da-recursao" aria-label="Fechar">×</a>
+        </div>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>O que faz</strong><p>Expressa a solução atual usando a resposta de uma entrada menor.</p></div>
+          <div class="modal-box"><strong>No fatorial</strong><p><code>4!</code> pode ser escrito como <code>4 × 3!</code>.</p></div>
+        </div>
+        <div class="modal-example"><strong>Trecho:</strong> <code>return n * fatorial(n - 1);</code>. A chamada menor ainda precisa retornar para concluir a multiplicação.</div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-reduction" role="dialog" aria-modal="true" aria-labelledby="title-reduction">
+      <a class="modal-backdrop" href="#mapa-da-recursao" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg></span><div><h3 id="title-reduction">Redução do problema</h3><p>A condição para o caso base ser alcançável.</p></div></div>
+          <a class="modal-close" href="#mapa-da-recursao" aria-label="Fechar">×</a>
+        </div>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Direção correta</strong><p>Se a saída ocorre em <code>n = 1</code>, cada chamada deve aproximar <code>n</code> de 1.</p></div>
+          <div class="modal-box"><strong>Risco</strong><p>Usar <code>n + 1</code> faria a entrada se afastar do caso base.</p></div>
+        </div>
+        <div class="modal-example"><strong>Sequência segura:</strong> <code>4 → 3 → 2 → 1</code>. A redução prova que a recursão tem caminho para terminar.</div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-return" role="dialog" aria-modal="true" aria-labelledby="title-return">
+      <a class="modal-backdrop" href="#mapa-da-recursao" aria-label="Fechar explicação"></a>
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/><path d="M9 12h10"/><path d="M5 5v14"/></svg></span><div><h3 id="title-return">Retorno das chamadas</h3><p>A construção da resposta após alcançar a saída.</p></div></div>
+          <a class="modal-close" href="#mapa-da-recursao" aria-label="Fechar">×</a>
+        </div>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Ordem</strong><p>A última chamada criada é a primeira a terminar.</p></div>
+          <div class="modal-box"><strong>No fatorial</strong><p>Os produtos pendentes são resolvidos de dentro para fora.</p></div>
+        </div>
+        <div class="modal-example"><strong>Retorno:</strong> <code>f(1)=1</code>, <code>f(2)=2</code>, <code>f(3)=6</code> e <code>f(4)=24</code>.</div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Anatomia de uma função recursiva</h2></div>
+      <div class="anatomy-layout">
+        <div class="code-window">
+          <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">fatorial.c</span></div>
+          <pre><code><span class="line"><span class="syn-type">int</span> <span class="syn-function">fatorial</span><span class="syn-operator">(</span><span class="syn-type">int</span> <span class="syn-variable">n</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">n</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">1</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">        <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span> <span class="syn-comment">// caso base</span></span>
+<span class="line focus-base">    <span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line focus-step">    <span class="syn-keyword">return</span> <span class="syn-variable">n</span> <span class="syn-operator">*</span> <span class="syn-function">fatorial</span><span class="syn-operator">(</span><span class="syn-variable">n</span> <span class="syn-operator">-</span> <span class="syn-number">1</span><span class="syn-operator">);</span></span>
+<span class="line"><span class="syn-operator">}</span></span></code></pre>
+        </div>
+
+        <div class="annotation-list">
+          <article class="annotation"><span class="annotation-number">1</span><div><h3>Parâmetro atual</h3><p><code>n</code> representa o problema que esta chamada precisa resolver.</p></div></article>
+          <article class="annotation"><span class="annotation-number">2</span><div><h3>Teste da saída</h3><p>Antes de criar outra chamada, a função verifica se chegou ao caso base.</p></div></article>
+          <article class="annotation"><span class="annotation-number">3</span><div><h3>Resposta direta</h3><p>O caso base retorna um valor sem chamar novamente a função.</p></div></article>
+          <article class="annotation"><span class="annotation-number">4</span><div><h3>Problema menor</h3><p><code>n - 1</code> aproxima a próxima chamada da saída.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Descida e retorno das chamadas</h2></div>
+      <div class="trace-layout">
+        <div class="trace-panel">
+          <div class="trace-title"><span class="trace-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v4H5zM7 10h10v4H7zM9 16h6v4H9z"/></svg></span><div><strong>Pilha conceitual de chamadas</strong><p>Cada chamada aguarda a resposta da próxima.</p></div></div>
+          <div class="stack">
+            <div class="stack-frame"><code>fatorial(4)</code><span>aguarda 4 × resposta</span></div>
+            <div class="stack-frame"><code>fatorial(3)</code><span>aguarda 3 × resposta</span></div>
+            <div class="stack-frame"><code>fatorial(2)</code><span>aguarda 2 × resposta</span></div>
+            <div class="stack-frame base"><code>fatorial(1)</code><span>caso base retorna 1</span></div>
+          </div>
+          <div class="return-chain" aria-label="Sequência de retorno">
+            <span class="return-chip">1</span><span class="return-arrow">→</span>
+            <span class="return-chip">2 × 1 = 2</span><span class="return-arrow">→</span>
+            <span class="return-chip">3 × 2 = 6</span><span class="return-arrow">→</span>
+            <span class="return-chip">4 × 6 = 24</span>
+          </div>
+        </div>
+
+        <table class="mini-table">
+          <thead><tr><th>Etapa</th><th>Chamada</th><th>O que acontece</th><th>Resultado</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>fatorial(4)</code></td><td>Cria a chamada para 3</td><td>Aguarda</td></tr>
+            <tr><td>2</td><td><code>fatorial(3)</code></td><td>Cria a chamada para 2</td><td>Aguarda</td></tr>
+            <tr><td>3</td><td><code>fatorial(2)</code></td><td>Cria a chamada para 1</td><td>Aguarda</td></tr>
+            <tr><td>4</td><td><code>fatorial(1)</code></td><td>Atende ao caso base</td><td>Retorna 1</td></tr>
+            <tr><td>5</td><td><code>fatorial(2)</code></td><td>Calcula 2 × 1</td><td>Retorna 2</td></tr>
+            <tr><td>6</td><td><code>fatorial(3)</code></td><td>Calcula 3 × 2</td><td>Retorna 6</td></tr>
+            <tr><td>7</td><td><code>fatorial(4)</code></td><td>Calcula 4 × 6</td><td>Retorna 24</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como verificar se a recursão termina</h2></div>
+      <div class="safety-grid">
+        <article class="safety-card"><span class="step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></span><h3>1. Defina a menor entrada</h3><p>Qual caso pode ser respondido sem outra chamada?</p></article>
+        <article class="safety-card"><span class="step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16"/><circle cx="12" cy="12" r="9"/></svg></span><h3>2. Escreva a saída</h3><p>O caso base retorna ou encerra imediatamente?</p></article>
+        <article class="safety-card"><span class="step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg></span><h3>3. Garanta a redução</h3><p>A próxima entrada está mais perto do caso base?</p></article>
+        <article class="safety-card"><span class="step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span><h3>4. Teste valores pequenos</h3><p>Simule a base, o primeiro passo e uma entrada maior.</p></article>
+      </div>
+
+      <div class="test-strip">
+        <article class="test-case"><strong>Caso base</strong><code>fatorial(1) = 1</code></article>
+        <article class="test-case"><strong>Um passo</strong><code>fatorial(2) = 2</code></article>
+        <article class="test-case"><strong>Dois passos</strong><code>fatorial(3) = 6</code></article>
+        <article class="test-case"><strong>Entrada maior</strong><code>fatorial(4) = 24</code></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="examples-wrap">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+
+        <div class="tabs" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">Exemplo 1 · Contagem regressiva</label>
+          <label class="tab-label" for="tab2">Exemplo 2 · Soma até n</label>
+          <label class="tab-label" for="tab3">Exemplo 3 · Potência inteira</label>
+        </div>
+
+        <div class="panels">
+          <article class="tab-panel" id="panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <span class="level">Básico</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9l4 2"/><circle cx="12" cy="12" r="9"/></svg></span><div><h3>Exibir uma contagem até chegar a zero</h3><p>A função imprime o valor atual e reduz <code>n</code> em uma unidade.</p></div></div>
+                <div class="example-list">
+                  <div class="example-row"><strong>Entrada</strong><p><code>contagem(3)</code></p></div>
+                  <div class="example-row"><strong>Caso base</strong><p>Quando <code>n == 0</code>, mostrar “Fim” e retornar.</p></div>
+                  <div class="example-row"><strong>Passo recursivo</strong><p>Chamar <code>contagem(n - 1)</code>.</p></div>
+                  <div class="example-row"><strong>Saída</strong><p><code>3 2 1 Fim</code></p></div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">contagem.c</span></div>
+                <pre><code><span class="line"><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="syn-type">void</span> <span class="syn-function">contagem</span><span class="syn-operator">(</span><span class="syn-type">int</span> <span class="syn-variable">n</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">n</span> <span class="syn-operator">==</span> <span class="syn-number">0</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Fim!\n"</span><span class="syn-operator">);</span></span>
+<span class="line focus-base">        <span class="syn-keyword">return</span><span class="syn-operator">;</span></span>
+<span class="line focus-base">    <span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line">    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"%d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">n</span><span class="syn-operator">);</span></span>
+<span class="line focus-step">    <span class="syn-function">contagem</span><span class="syn-operator">(</span><span class="syn-variable">n</span> <span class="syn-operator">-</span> <span class="syn-number">1</span><span class="syn-operator">);</span></span>
+<span class="line"><span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">) {</span></span>
+<span class="line">    <span class="syn-function">contagem</span><span class="syn-operator">(</span><span class="syn-number">3</span><span class="syn-operator">);</span></span>
+<span class="line">    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="line"><span class="syn-operator">}</span></span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel" id="panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <span class="level">Intermediário</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M12 4v16"/><circle cx="12" cy="12" r="9"/></svg></span><div><h3>Somar os números de 1 até n</h3><p>Cada chamada soma o valor atual ao resultado da entrada anterior.</p></div></div>
+                <div class="example-list">
+                  <div class="example-row"><strong>Entrada</strong><p><code>somaAte(4)</code></p></div>
+                  <div class="example-row"><strong>Caso base</strong><p>Para <code>n &lt;= 0</code>, retornar <code>0</code>.</p></div>
+                  <div class="example-row"><strong>Passo recursivo</strong><p><code>n + somaAte(n - 1)</code></p></div>
+                  <div class="example-row"><strong>Resultado</strong><p><code>4 + 3 + 2 + 1 = 10</code></p></div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">soma.c</span></div>
+                <pre><code><span class="line"><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">somaAte</span><span class="syn-operator">(</span><span class="syn-type">int</span> <span class="syn-variable">n</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">n</span> <span class="syn-operator">&lt;=</span> <span class="syn-number">0</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">        <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="line focus-base">    <span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line focus-step">    <span class="syn-keyword">return</span> <span class="syn-variable">n</span> <span class="syn-operator">+</span> <span class="syn-function">somaAte</span><span class="syn-operator">(</span><span class="syn-variable">n</span> <span class="syn-operator">-</span> <span class="syn-number">1</span><span class="syn-operator">);</span></span>
+<span class="line"><span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">) {</span></span>
+<span class="line">    <span class="syn-type">int</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-function">somaAte</span><span class="syn-operator">(</span><span class="syn-number">4</span><span class="syn-operator">);</span></span>
+<span class="line">    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Soma: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">resultado</span><span class="syn-operator">);</span></span>
+<span class="line">    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="line"><span class="syn-operator">}</span></span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel" id="panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <span class="level">Intermediário</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11"/></svg></span><div><h3>Calcular uma potência inteira</h3><p>O expoente diminui até zero, quando a resposta conhecida é 1.</p></div></div>
+                <div class="example-list">
+                  <div class="example-row"><strong>Entrada</strong><p><code>potencia(2, 4)</code></p></div>
+                  <div class="example-row"><strong>Caso base</strong><p>Para <code>expoente == 0</code>, retornar <code>1</code>.</p></div>
+                  <div class="example-row"><strong>Passo recursivo</strong><p><code>base * potencia(base, expoente - 1)</code></p></div>
+                  <div class="example-row"><strong>Resultado</strong><p><code>2 × 2 × 2 × 2 = 16</code></p></div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">potencia.c</span></div>
+                <pre><code><span class="line"><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></span>
+<span class="line"> </span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">potencia</span><span class="syn-operator">(</span><span class="syn-type">int</span> <span class="syn-variable">base</span><span class="syn-operator">,</span> <span class="syn-type">int</span> <span class="syn-variable">expoente</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">expoente</span> <span class="syn-operator">==</span> <span class="syn-number">0</span><span class="syn-operator">) {</span></span>
+<span class="line focus-base">        <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span></span>
+<span class="line focus-base">    <span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line focus-step">    <span class="syn-keyword">return</span> <span class="syn-variable">base</span> <span class="syn-operator">*</span> <span class="syn-function">potencia</span><span class="syn-operator">(</span><span class="syn-variable">base</span><span class="syn-operator">,</span> <span class="syn-variable">expoente</span> <span class="syn-operator">-</span> <span class="syn-number">1</span><span class="syn-operator">);</span></span>
+<span class="line"><span class="syn-operator">}</span></span>
+<span class="line"> </span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">) {</span></span>
+<span class="line">    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Resultado: %d\n"</span><span class="syn-operator">,</span> <span class="syn-function">potencia</span><span class="syn-operator">(</span><span class="syn-number">2</span><span class="syn-operator">,</span> <span class="syn-number">4</span><span class="syn-operator">));</span></span>
+<span class="line">    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="line"><span class="syn-operator">}</span></span></code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Não escrever caso base</h3><p><strong>Por que acontece:</strong> o aluno foca apenas na chamada da própria função.</p><p><strong>Como evitar:</strong> defina primeiro a menor entrada e sua resposta direta.</p></article>
+        <article class="error-card"><h3>Afastar-se da saída</h3><p><strong>Por que acontece:</strong> a próxima chamada aumenta o problema em vez de reduzi-lo.</p><p><strong>Como evitar:</strong> simule a sequência dos parâmetros até a base.</p></article>
+        <article class="error-card"><h3>Retornar valor base incorreto</h3><p><strong>Por que acontece:</strong> o caso base termina, mas entrega uma identidade inadequada.</p><p><strong>Como evitar:</strong> verifique matematicamente a menor situação.</p></article>
+        <article class="error-card"><h3>Ignorar o retorno recursivo</h3><p><strong>Por que acontece:</strong> a função é chamada, mas seu resultado não participa da resposta atual.</p><p><strong>Como evitar:</strong> combine a chamada em um <code>return</code> quando houver cálculo.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>O que impede uma função recursiva de chamar a si mesma para sempre?</summary><p>Um caso base alcançável, combinado com uma mudança de parâmetro que aproxima cada chamada dessa condição.</p></details>
+        <details><summary>Em <code>fatorial(n - 1)</code>, qual é o problema menor?</summary><p>Calcular o fatorial do número imediatamente anterior. A entrada diminui até chegar a 1.</p></details>
+        <details><summary>Quando as multiplicações de <code>fatorial(4)</code> são concluídas?</summary><p>Depois que o caso base retorna. As chamadas pendentes são resolvidas em ordem inversa: 2, 6 e 24.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir identificar o caso base, construir um passo recursivo que reduza o problema e rastrear a descida e o retorno de uma função recursiva simples.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quando usar if e quando usar switch</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 260px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(330px, .9fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .concept-icon svg,
+    .modal-icon svg, .interaction-note svg, .compare-icon svg,
+    .decision-icon svg, .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.5rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 730px; }
+
+    .hero-decision {
+      min-height: 310px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .decision-console {
+      width: min(100%, 430px);
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.14);
+    }
+
+    .console-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .console-title { display: flex; align-items: center; gap: 10px; color: var(--cor-primaria-escura); font-weight: 900; }
+    .hero-icon { width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .console-chip { color: var(--cor-texto-secundario); font-size: .78rem; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-weight: 800; }
+
+    .decision-question {
+      padding: 15px;
+      border: 1px solid rgba(79, 70, 229, .18);
+      border-radius: 17px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-texto-principal);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .decision-paths { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .decision-path {
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 15px;
+      background: var(--cor-superficie);
+      text-align: center;
+    }
+    .decision-path code { display: inline-block; color: white; background: var(--cor-primaria); border-radius: 10px; padding: 5px 10px; font-weight: 900; margin-bottom: 8px; }
+    .decision-path p { font-size: .86rem; }
+    .decision-path strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+    .central-rule code { color: var(--cor-primaria-escura); }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 515px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .22); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 190px;
+      min-height: 140px;
+      padding: 21px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.12rem; }
+    .map-center span { color: #E0E7FF; font-size: .9rem; }
+
+    .concept-button {
+      position: absolute;
+      width: 260px;
+      min-height: 158px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      padding: 18px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .065);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      z-index: 3;
+    }
+    .concept-button:hover, .concept-button:focus-visible { transform: translateY(-4px); border-color: rgba(79, 70, 229, .36); box-shadow: 0 18px 36px rgba(49, 46, 129, .12); outline: none; }
+    .concept-button.one { left: 28px; top: 28px; }
+    .concept-button.two { right: 28px; top: 28px; }
+    .concept-button.three { left: 28px; bottom: 28px; }
+    .concept-button.four { right: 28px; bottom: 28px; }
+    .concept-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .concept-button p { font-size: .91rem; }
+    .concept-button code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .concept-alert {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+    .concept-alert:target { display: flex; }
+    .concept-alert-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .7); backdrop-filter: blur(4px); }
+    .concept-alert-window {
+      position: relative;
+      width: min(790px, 100%);
+      max-height: min(86vh, 740px);
+      overflow-y: auto;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.5);
+      background: var(--cor-superficie);
+      box-shadow: 0 28px 80px rgba(15,23,42,.32);
+      z-index: 1;
+      animation: modalRise .34s cubic-bezier(.2,.85,.25,1.15) both;
+    }
+    .modal-close { position: sticky; float: right; top: 14px; right: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); cursor: pointer; font-size: 1.35rem; line-height: 1; z-index: 3; text-decoration: none; }
+    .modal-panel { padding: 28px; }
+    .modal-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-right: 42px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.35rem; margin: 0; }
+    .modal-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
+    .modal-explanation, .modal-example { border-radius: 17px; padding: 17px; border: 1px solid var(--cor-borda); }
+    .modal-explanation { background: var(--cor-superficie-suave); }
+    .modal-example { background: var(--cor-superficie-destacada); }
+    .modal-list { margin: 12px 0 0 20px; color: var(--cor-texto-secundario); }
+    .modal-list li { margin-bottom: 7px; }
+    .modal-list code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .mini-code { margin-top: 12px; padding: 13px; border-radius: 13px; background: var(--codigo-fundo); color: var(--codigo-texto); overflow-x: auto; font-size: .86rem; line-height: 1.55; }
+
+    @keyframes modalRise { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .comparison-board { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .comparison-card { border: 1px solid var(--cor-borda); border-radius: 21px; overflow: hidden; background: var(--cor-superficie); }
+    .comparison-head { padding: 19px; display: flex; align-items: center; gap: 12px; background: var(--cor-superficie-destacada); border-bottom: 1px solid var(--cor-borda); }
+    .compare-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie); border: 1px solid rgba(79,70,229,.16); flex: 0 0 auto; }
+    .comparison-head h3 { margin: 0; color: var(--cor-primaria-escura); font-size: 1.2rem; }
+    .comparison-list { list-style: none; padding: 18px; display: grid; gap: 11px; }
+    .comparison-list li { display: grid; grid-template-columns: 25px 1fr; gap: 9px; color: var(--cor-texto-secundario); font-size: .94rem; }
+    .comparison-list li::before { content: "✓"; width: 23px; height: 23px; display: grid; place-items: center; border-radius: 8px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); font-weight: 900; }
+    .comparison-list strong { color: var(--cor-texto-principal); }
+
+    .criteria-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: .92rem; }
+    .criteria-table th, .criteria-table td { border: 1px solid var(--cor-borda); padding: 12px; text-align: left; vertical-align: top; }
+    .criteria-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .criteria-table td:first-child { color: var(--cor-texto-principal); font-weight: 800; width: 25%; }
+    .best-choice { display: inline-flex; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; }
+
+    .decision-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: stretch; }
+    .flow-node { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie-suave); display: flex; flex-direction: column; justify-content: center; }
+    .flow-node.question { background: var(--cor-superficie-destacada); }
+    .flow-node.answer { border-top: 4px solid var(--cor-primaria); }
+    .flow-node code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .flow-arrow { display: grid; place-items: center; color: var(--cor-primaria); font-size: 1.45rem; font-weight: 900; }
+    .flow-tag { display: inline-flex; width: fit-content; margin-bottom: 8px; border-radius: 999px; padding: 4px 9px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-secundario); font-size: .76rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
+
+    .example-tabs { position: relative; }
+    .tab-choice { position: absolute; opacity: 0; }
+    .tab-labels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .tab-label { display: flex; align-items: center; gap: 10px; padding: 13px 14px; border-radius: 15px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); cursor: pointer; color: var(--cor-texto-secundario); font-weight: 800; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+    .tab-label:hover { transform: translateY(-2px); border-color: rgba(79,70,229,.35); }
+    .tab-index { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 10px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); flex: 0 0 auto; }
+    #tab-one:checked ~ .tab-labels label[for="tab-one"],
+    #tab-two:checked ~ .tab-labels label[for="tab-two"],
+    #tab-three:checked ~ .tab-labels label[for="tab-three"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    #tab-one:checked ~ .tab-labels label[for="tab-one"] .tab-index,
+    #tab-two:checked ~ .tab-labels label[for="tab-two"] .tab-index,
+    #tab-three:checked ~ .tab-labels label[for="tab-three"] .tab-index { background: rgba(255,255,255,.18); color: white; border-color: rgba(255,255,255,.35); }
+    .example-panel { display: none; }
+    #tab-one:checked ~ .tab-panels .panel-one,
+    #tab-two:checked ~ .tab-panels .panel-two,
+    #tab-three:checked ~ .tab-panels .panel-three { display: block; animation: tabAppear .28s ease both; }
+    @keyframes tabAppear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-panel { border: 1px solid var(--cor-borda); border-radius: 21px; overflow: hidden; background: var(--cor-superficie); }
+    .example-head { padding: 18px 20px; background: var(--cor-superficie-destacada); border-bottom: 1px solid var(--cor-borda); }
+    .example-head h3 { color: var(--cor-primaria-escura); font-size: 1.16rem; }
+    .example-content { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; padding: 19px; }
+    .example-analysis { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie-suave); }
+    .choice-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.18); color: var(--cor-primaria-escura); font-weight: 900; font-size: .86rem; margin-bottom: 12px; }
+    .analysis-grid { display: grid; gap: 10px; }
+    .analysis-item { padding: 12px; border: 1px solid var(--cor-borda); border-radius: 13px; background: var(--cor-superficie); }
+    .analysis-label { display: block; font-size: .76rem; color: var(--cor-texto-secundario); font-weight: 900; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+    .analysis-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .why-box { margin-top: 12px; border-left: 4px solid var(--cor-destaque-pontual); border-radius: 12px; background: #FFFBEB; padding: 12px; color: var(--cor-texto-principal); font-size: .91rem; }
+
+    .code-window { border-radius: 18px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #273449; box-shadow: 0 14px 28px rgba(15,23,42,.16); }
+    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 13px; background: #1F2937; border-bottom: 1px solid #334155; }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-file { color: #CBD5E1; font-size: .78rem; font-family: Consolas, Monaco, monospace; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .87rem; line-height: 1.58; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .91rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+    .bad-good { display: grid; gap: 7px; margin-top: 10px; }
+    .bad-good code { display: block; border-radius: 10px; padding: 8px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-size: .82rem; overflow-x: auto; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .example-content, .modal-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .concept-points { grid-template-columns: repeat(3, 1fr); }
+      .choice-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines, .map-center { display: none; }
+      .concept-button { position: static; width: auto; min-height: 0; }
+      .comparison-board { grid-template-columns: 1fr 1fr; }
+      .decision-flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); min-height: 28px; }
+      .error-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 18px 11px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-decision { min-height: auto; }
+      .decision-paths, .meta-grid, .concept-points, .choice-map, .comparison-board, .tab-labels, .error-grid { grid-template-columns: 1fr; }
+      .tab-label { padding: 11px 12px; }
+      .criteria-table { display: block; overflow-x: auto; }
+      .modal-panel { padding: 22px 18px; }
+      .concept-alert { padding: 12px; }
+      .concept-alert-window { border-radius: 20px; }
+      pre { font-size: .78rem; padding: 15px; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Quando usar if e quando usar switch</h1>
+          <p class="subtitle">Compare duas formas de controlar decisões em C e escolha a estrutura mais clara para cada tipo de regra.</p>
+        </div>
+
+        <div class="hero-decision" aria-label="Comparação visual entre if e switch">
+          <div class="decision-console">
+            <div class="console-head">
+              <div class="console-title">
+                <span class="hero-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5v5h5"></path><path d="M19 19v-5h-5"></path><path d="M10 10 5 5M14 14l5 5"></path><path d="M14 10l5-5M10 14l-5 5"></path></svg></span>
+                Escolha da estrutura
+              </div>
+              <span class="console-chip">controle de fluxo</span>
+            </div>
+            <div class="decision-question">A regra usa uma faixa ou valores exatos?</div>
+            <div class="decision-paths">
+              <div class="decision-path"><code>if</code><p><strong>Faixas e expressões</strong><br>nota &gt;= 7, idade &lt; 18, duas condições</p></div>
+              <div class="decision-path"><code>switch</code><p><strong>Casos discretos</strong><br>opção 1, opção 2, opção 3</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI04</div><p>Controlar o fluxo por estruturas de decisão adequadas à regra do problema.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência de apoio</div><div class="meta-value">CCI03</div><p>Usar variáveis e expressões que alimentam a decisão.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">if else versus switch case</div><p>Comparar flexibilidade, legibilidade e limitações.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">18 a 25 minutos</div><p>Leitura exploratória, comparação e exemplos progressivos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Comparativo e decisório</div><p>Mapas, critérios de escolha e rastreamento de caminhos.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 6h14v12H5z"></path><path d="M9 10h6M9 14h3"></path></svg>Variáveis e valores</span>
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 8h14M5 16h14"></path><path d="m9 5-4 3 4 3M15 13l4 3-4 3"></path></svg>Operadores relacionais</span>
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><circle cx="7" cy="12" r="3"></circle><circle cx="17" cy="12" r="3"></circle><path d="M10 12h4"></path></svg>Operadores lógicos</span>
+        <span class="pill"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="m8 9-3 3 3 3"></path><path d="m16 9 3 3-3 3"></path><path d="M10 18 14 6"></path></svg>Blocos e comandos em C</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>As duas estruturas criam caminhos, mas não resolvem o mesmo tipo de regra</h3>
+          <p><strong>if</strong> avalia qualquer expressão lógica. <strong>switch</strong> compara o valor de uma única expressão com casos constantes e exatos. A melhor escolha é a que representa a regra com menos esforço de leitura.</p>
+          <div class="central-rule"><code>regra flexível → if</code>&nbsp;&nbsp;|&nbsp;&nbsp;<code>valor exato → switch</code></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Observe a regra</h3><p>Veja se há faixa, desigualdade, combinação lógica ou comparação por igualdade.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Conte os dados</h3><p>Verifique se a decisão depende de uma única expressão ou de várias condições.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Escolha pela clareza</h3><p>Duas soluções podem funcionar, mas uma delas pode comunicar melhor a intenção.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-escolha">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da escolha</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 20h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação em formato de alerta.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="250" x2="155" y2="105"></line>
+          <line x1="500" y1="250" x2="845" y2="105"></line>
+          <line x1="500" y1="250" x2="155" y2="395"></line>
+          <line x1="500" y1="250" x2="845" y2="395"></line>
+        </svg>
+
+        <div class="map-center"><strong>Uma decisão</strong><span>Escolha a estrutura que melhor representa a regra</span></div>
+
+        <a class="concept-button one" href="#modal-if">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5v5h5"></path><path d="M10 10 5 5"></path><path d="M10 10h7a2 2 0 0 1 2 2v7"></path></svg></span>
+          <h3>if e else</h3>
+          <p><code>if (condição)</code></p>
+          <p>Use para faixas, desigualdades e regras que produzem verdadeiro ou falso.</p>
+        </a>
+
+        <a class="concept-button two" href="#modal-switch">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M6 4v16"></path><path d="M6 8h6l3-3M6 12h9l3-3M6 16h6l3 3"></path></svg></span>
+          <h3>switch e case</h3>
+          <p><code>switch (expressão)</code></p>
+          <p>Use para selecionar um entre vários valores constantes e exatos.</p>
+        </a>
+
+        <a class="concept-button three" href="#modal-elseif">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 4v5h5"></path><path d="M10 9 5 4"></path><path d="M10 9h4l5 5"></path><path d="M14 9l5-5"></path></svg></span>
+          <h3>else if</h3>
+          <p><code>if ... else if ... else</code></p>
+          <p>Use quando as faixas ou condições são diferentes e apenas um caminho deve vencer.</p>
+        </a>
+
+        <a class="concept-button four" href="#modal-break">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 6h14v12H5z"></path><path d="M9 9h6M9 13h6"></path><path d="m12 16 2-2-2-2"></path></svg></span>
+          <h3>break e default</h3>
+          <p><code>break;</code> e <code>default:</code></p>
+          <p>Controlam a saída de um caso e tratam valores não previstos no switch.</p>
+        </a>
+      </div>
+    </section>
+
+    <div class="concept-alert" id="modal-if" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-if">
+      <a class="concept-alert-backdrop" href="#mapa-escolha" aria-label="Fechar janela"></a>
+      <div class="concept-alert-window">
+        <a class="modal-close" href="#mapa-escolha" aria-label="Fechar">×</a>
+        <article class="modal-panel">
+          <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5v5h5"></path><path d="M10 10 5 5"></path><path d="M10 10h7a2 2 0 0 1 2 2v7"></path></svg></span><h3 id="titulo-modal-if">if avalia expressões lógicas flexíveis</h3></div>
+          <div class="modal-grid">
+            <div class="modal-explanation">
+              <p>Use <code>if</code> quando a regra envolver relações como maior, menor, intervalo ou combinação de condições.</p>
+              <ul class="modal-list">
+                <li><code>nota &gt;= 7</code></li>
+                <li><code>idade &gt;= 18 &amp;&amp; temIngresso</code></li>
+                <li><code>temperatura &lt; 10 || temperatura &gt; 35</code></li>
+              </ul>
+            </div>
+            <div class="modal-example">
+              <h3>Exemplo com faixa</h3>
+              <p>Uma nota é aprovada quando for maior ou igual a 7.</p>
+              <pre class="mini-code"><code><span class="syn-keyword">if</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"Aprovado"</span>);
+} <span class="syn-keyword">else</span> {
+    <span class="syn-function">printf</span>(<span class="syn-string">"Reprovado"</span>);
+}</code></pre>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="concept-alert" id="modal-switch" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-switch">
+      <a class="concept-alert-backdrop" href="#mapa-escolha" aria-label="Fechar janela"></a>
+      <div class="concept-alert-window">
+        <a class="modal-close" href="#mapa-escolha" aria-label="Fechar">×</a>
+        <article class="modal-panel">
+          <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M6 4v16"></path><path d="M6 8h6l3-3M6 12h9l3-3M6 16h6l3 3"></path></svg></span><h3 id="titulo-modal-switch">switch compara uma expressão com valores exatos</h3></div>
+          <div class="modal-grid">
+            <div class="modal-explanation">
+              <p>Use <code>switch</code> quando uma variável ou expressão inteira puder assumir opções bem definidas.</p>
+              <ul class="modal-list">
+                <li>Opção de menu: <code>1</code>, <code>2</code> ou <code>3</code></li>
+                <li>Letra de comando: <code>'A'</code>, <code>'B'</code> ou <code>'S'</code></li>
+                <li>Código de estado: <code>0</code>, <code>1</code> ou <code>2</code></li>
+              </ul>
+            </div>
+            <div class="modal-example">
+              <h3>Exemplo com menu</h3>
+              <pre class="mini-code"><code><span class="syn-keyword">switch</span> (<span class="syn-variable">opcao</span>) {
+    <span class="syn-keyword">case</span> <span class="syn-number">1</span>:
+        <span class="syn-function">printf</span>(<span class="syn-string">"Cadastrar"</span>);
+        <span class="syn-keyword">break</span>;
+    <span class="syn-keyword">case</span> <span class="syn-number">2</span>:
+        <span class="syn-function">printf</span>(<span class="syn-string">"Consultar"</span>);
+        <span class="syn-keyword">break</span>;
+}</code></pre>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="concept-alert" id="modal-elseif" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-elseif">
+      <a class="concept-alert-backdrop" href="#mapa-escolha" aria-label="Fechar janela"></a>
+      <div class="concept-alert-window">
+        <a class="modal-close" href="#mapa-escolha" aria-label="Fechar">×</a>
+        <article class="modal-panel">
+          <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 4v5h5"></path><path d="M10 9 5 4"></path><path d="M10 9h4l5 5"></path><path d="M14 9l5-5"></path></svg></span><h3 id="titulo-modal-elseif">else if organiza condições mutuamente exclusivas</h3></div>
+          <div class="modal-grid">
+            <div class="modal-explanation">
+              <p>Quando há várias faixas, as condições devem ser testadas em uma sequência. Assim que uma for verdadeira, os demais ramos são ignorados.</p>
+              <ul class="modal-list">
+                <li><code>nota &gt;= 9</code>: conceito A</li>
+                <li><code>nota &gt;= 7</code>: conceito B</li>
+                <li><code>else</code>: conceito C</li>
+              </ul>
+            </div>
+            <div class="modal-example">
+              <h3>A ordem importa</h3>
+              <pre class="mini-code"><code><span class="syn-keyword">if</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">9</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"A"</span>);
+} <span class="syn-keyword">else if</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"B"</span>);
+} <span class="syn-keyword">else</span> {
+    <span class="syn-function">printf</span>(<span class="syn-string">"C"</span>);
+}</code></pre>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="concept-alert" id="modal-break" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-break">
+      <a class="concept-alert-backdrop" href="#mapa-escolha" aria-label="Fechar janela"></a>
+      <div class="concept-alert-window">
+        <a class="modal-close" href="#mapa-escolha" aria-label="Fechar">×</a>
+        <article class="modal-panel">
+          <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 6h14v12H5z"></path><path d="M9 9h6M9 13h6"></path><path d="m12 16 2-2-2-2"></path></svg></span><h3 id="titulo-modal-break">break encerra o caso e default trata o restante</h3></div>
+          <div class="modal-grid">
+            <div class="modal-explanation">
+              <p>Sem <code>break</code>, a execução continua nos casos seguintes. O bloco <code>default</code> é usado quando nenhum valor listado corresponde à expressão.</p>
+              <ul class="modal-list">
+                <li><code>break;</code>: sai do switch</li>
+                <li><code>default:</code>: trata opção inválida ou não prevista</li>
+                <li>Casos agrupados podem compartilhar o mesmo bloco</li>
+              </ul>
+            </div>
+            <div class="modal-example">
+              <h3>Tratamento completo</h3>
+              <pre class="mini-code"><code><span class="syn-keyword">switch</span> (<span class="syn-variable">opcao</span>) {
+    <span class="syn-keyword">case</span> <span class="syn-number">1</span>:
+        <span class="syn-function">printf</span>(<span class="syn-string">"Abrir"</span>);
+        <span class="syn-keyword">break</span>;
+    <span class="syn-keyword">default</span>:
+        <span class="syn-function">printf</span>(<span class="syn-string">"Opcao invalida"</span>);
+}</code></pre>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Comparação direta</h2></div>
+      <div class="comparison-board">
+        <article class="comparison-card">
+          <div class="comparison-head"><span class="compare-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M5 5v5h5"></path><path d="M10 10 5 5"></path><path d="M10 10h7a2 2 0 0 1 2 2v7"></path></svg></span><h3>Use if quando...</h3></div>
+          <ul class="comparison-list">
+            <li>A regra usa <strong>maior, menor, diferente</strong> ou intervalos.</li>
+            <li>A decisão depende de <strong>duas ou mais variáveis</strong>.</li>
+            <li>É necessário combinar condições com <strong>&amp;&amp;, || ou !</strong>.</li>
+            <li>Os caminhos representam <strong>faixas</strong>, como nota baixa, média e alta.</li>
+          </ul>
+        </article>
+
+        <article class="comparison-card">
+          <div class="comparison-head"><span class="compare-icon"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M6 4v16"></path><path d="M6 8h6l3-3M6 12h9l3-3M6 16h6l3 3"></path></svg></span><h3>Use switch quando...</h3></div>
+          <ul class="comparison-list">
+            <li>Uma única expressão será comparada com <strong>valores exatos</strong>.</li>
+            <li>Os casos são <strong>constantes</strong>, como opções de menu.</li>
+            <li>Há vários ramos semelhantes e o switch melhora a <strong>leitura</strong>.</li>
+            <li>O valor é de tipo compatível, como <strong>int, char ou enum</strong>.</li>
+          </ul>
+        </article>
+      </div>
+
+      <table class="criteria-table">
+        <thead><tr><th>Tipo de regra</th><th>Exemplo</th><th>Escolha mais clara</th></tr></thead>
+        <tbody>
+          <tr><td>Faixa numérica</td><td><code>idade &gt;= 18</code></td><td><span class="best-choice">if</span></td></tr>
+          <tr><td>Condição composta</td><td><code>nota &gt;= 7 &amp;&amp; frequencia &gt;= 75</code></td><td><span class="best-choice">if</span></td></tr>
+          <tr><td>Opções exatas</td><td><code>1, 2, 3 ou 4</code></td><td><span class="best-choice">switch</span></td></tr>
+          <tr><td>Comando por caractere</td><td><code>'A', 'B' ou 'S'</code></td><td><span class="best-choice">switch</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como escolher</h2></div>
+      <div class="decision-flow">
+        <article class="flow-node question"><span class="flow-tag">Pergunta 1</span><h3>A regra compara uma única expressão com valores constantes e exatos?</h3><p>Exemplo: opção igual a 1, 2 ou 3.</p></article>
+        <div class="flow-arrow">→</div>
+        <article class="flow-node answer"><span class="flow-tag">Sim</span><h3>Considere <code>switch</code></h3><p>Ele organiza os casos e torna a seleção mais visível.</p></article>
+        <div class="flow-arrow">→</div>
+        <article class="flow-node answer"><span class="flow-tag">Não</span><h3>Use <code>if</code></h3><p>Ele aceita faixas, desigualdades, várias variáveis e operadores lógicos.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="example-tabs">
+        <input class="tab-choice" type="radio" name="example-tabs" id="tab-one" checked>
+        <input class="tab-choice" type="radio" name="example-tabs" id="tab-two">
+        <input class="tab-choice" type="radio" name="example-tabs" id="tab-three">
+
+        <div class="tab-labels">
+          <label class="tab-label" for="tab-one"><span class="tab-index">1</span>Faixa de nota</label>
+          <label class="tab-label" for="tab-two"><span class="tab-index">2</span>Menu numérico</label>
+          <label class="tab-label" for="tab-three"><span class="tab-index">3</span>Calculadora</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="example-panel panel-one">
+            <div class="example-head"><h3>Exemplo 1: classificar uma nota</h3><p>A classificação depende de intervalos, não de valores únicos.</p></div>
+            <div class="example-content">
+              <div class="example-analysis">
+                <span class="choice-badge">Estrutura indicada: if, else if e else</span>
+                <div class="analysis-grid">
+                  <div class="analysis-item"><span class="analysis-label">Regra 1</span><code>nota &gt;= 7</code> produz “Aprovado”.</div>
+                  <div class="analysis-item"><span class="analysis-label">Regra 2</span><code>nota &gt;= 4</code> produz “Recuperação”.</div>
+                  <div class="analysis-item"><span class="analysis-label">Restante</span><code>else</code> produz “Reprovado”.</div>
+                </div>
+                <div class="why-box"><strong>Por que não switch?</strong> Seria necessário listar muitos valores exatos e ainda haveria notas decimais. O problema é baseado em faixas.</div>
+              </div>
+              <div class="example-code">
+                <div class="code-window"><div class="code-toolbar"><div class="window-dots"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span></div><span class="code-file">classificar_nota.c</span></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">nota</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">nota</span>);
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Aprovado"</span>);
+    } <span class="syn-keyword">else if</span> (<span class="syn-variable">nota</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">4</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Recuperacao"</span>);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Reprovado"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel-two">
+            <div class="example-head"><h3>Exemplo 2: executar uma opção de menu</h3><p>A decisão compara uma variável inteira com valores exatos e conhecidos.</p></div>
+            <div class="example-content">
+              <div class="example-analysis">
+                <span class="choice-badge">Estrutura indicada: switch e case</span>
+                <div class="analysis-grid">
+                  <div class="analysis-item"><span class="analysis-label">Caso 1</span><code>opcao == 1</code> cadastra.</div>
+                  <div class="analysis-item"><span class="analysis-label">Caso 2</span><code>opcao == 2</code> consulta.</div>
+                  <div class="analysis-item"><span class="analysis-label">Caso 3</span><code>opcao == 3</code> encerra.</div>
+                </div>
+                <div class="why-box"><strong>Por que switch?</strong> A mesma variável é comparada por igualdade com poucos valores constantes. Os ramos ficam alinhados e fáceis de localizar.</div>
+              </div>
+              <div class="example-code">
+                <div class="code-window"><div class="code-toolbar"><div class="window-dots"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span></div><span class="code-file">menu.c</span></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">opcao</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">opcao</span>);
+
+    <span class="syn-keyword">switch</span> (<span class="syn-variable">opcao</span>) {
+        <span class="syn-keyword">case</span> <span class="syn-number">1</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"Cadastrar"</span>);
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">case</span> <span class="syn-number">2</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"Consultar"</span>);
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">case</span> <span class="syn-number">3</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"Encerrar"</span>);
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">default</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"Opcao invalida"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel-three">
+            <div class="example-head"><h3>Exemplo 3: selecionar uma operação e validar a divisão</h3><p>O switch escolhe a operação. Um if interno trata uma regra específica da divisão.</p></div>
+            <div class="example-content">
+              <div class="example-analysis">
+                <span class="choice-badge">Estruturas combinadas: switch e if</span>
+                <div class="analysis-grid">
+                  <div class="analysis-item"><span class="analysis-label">Seleção</span><code>switch (operacao)</code> escolhe somar, subtrair, multiplicar ou dividir.</div>
+                  <div class="analysis-item"><span class="analysis-label">Validação</span><code>if (b != 0)</code> impede divisão por zero.</div>
+                  <div class="analysis-item"><span class="analysis-label">Tratamento</span><code>default</code> informa símbolo inválido.</div>
+                </div>
+                <div class="why-box"><strong>Ideia importante:</strong> escolher entre if e switch não significa que apenas uma estrutura pode existir no programa. Cada uma deve resolver a regra para a qual é mais adequada.</div>
+              </div>
+              <div class="example-code">
+                <div class="code-window"><div class="code-toolbar"><div class="window-dots"><span class="window-dot"></span><span class="window-dot"></span><span class="window-dot"></span></div><span class="code-file">calculadora.c</span></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">a</span>, <span class="syn-variable">b</span>;
+    <span class="syn-type">char</span> <span class="syn-variable">operacao</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%f %c %f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">a</span>,
+          <span class="syn-operator">&amp;</span><span class="syn-variable">operacao</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">b</span>);
+
+    <span class="syn-keyword">switch</span> (<span class="syn-variable">operacao</span>) {
+        <span class="syn-keyword">case</span> <span class="syn-string">'+'</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"%.2f"</span>, <span class="syn-variable">a</span> <span class="syn-operator">+</span> <span class="syn-variable">b</span>);
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">case</span> <span class="syn-string">'-'</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"%.2f"</span>, <span class="syn-variable">a</span> <span class="syn-operator">-</span> <span class="syn-variable">b</span>);
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">case</span> <span class="syn-string">'*'</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"%.2f"</span>, <span class="syn-variable">a</span> <span class="syn-operator">*</span> <span class="syn-variable">b</span>);
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">case</span> <span class="syn-string">'/'</span>:
+            <span class="syn-keyword">if</span> (<span class="syn-variable">b</span> <span class="syn-operator">!=</span> <span class="syn-number">0</span>) {
+                <span class="syn-function">printf</span>(<span class="syn-string">"%.2f"</span>, <span class="syn-variable">a</span> <span class="syn-operator">/</span> <span class="syn-variable">b</span>);
+            } <span class="syn-keyword">else</span> {
+                <span class="syn-function">printf</span>(<span class="syn-string">"Divisao por zero"</span>);
+            }
+            <span class="syn-keyword">break</span>;
+        <span class="syn-keyword">default</span>:
+            <span class="syn-function">printf</span>(<span class="syn-string">"Operacao invalida"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Usar switch para faixas</h3><p><strong>Por que acontece:</strong> o aluno tenta escrever casos como <code>case nota &gt;= 7</code>.</p><p><strong>Como evitar:</strong> use <code>if</code> quando o caminho depender de uma condição relacional.</p><div class="bad-good"><code>case nota &gt;= 7:</code><code>if (nota &gt;= 7)</code></div></article>
+        <article class="error-card"><h3>Esquecer o break</h3><p><strong>Por que acontece:</strong> o caso é executado, mas o fluxo continua nos blocos seguintes.</p><p><strong>Como evitar:</strong> finalize cada caso independente com <code>break;</code>.</p></article>
+        <article class="error-card"><h3>Usar valores variáveis em case</h3><p><strong>Por que acontece:</strong> o aluno trata <code>case</code> como uma condição geral.</p><p><strong>Como evitar:</strong> os rótulos de caso devem ser constantes compatíveis com a expressão do switch.</p></article>
+        <article class="error-card"><h3>Criar vários if independentes</h3><p><strong>Por que acontece:</strong> cada condição é escrita como um novo <code>if</code>, mesmo quando apenas um caminho deve executar.</p><p><strong>Como evitar:</strong> use uma cadeia <code>if, else if, else</code> para alternativas exclusivas.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual estrutura é mais adequada para verificar se uma idade está entre 18 e 60?</summary><p>Use <code>if</code>, porque a regra depende de uma faixa: <code>idade &gt;= 18 &amp;&amp; idade &lt;= 60</code>.</p></details>
+        <details><summary>Qual estrutura é mais adequada para um menu com opções 1, 2, 3 e 4?</summary><p>O <code>switch</code> costuma ser mais claro, porque uma única variável é comparada com valores exatos.</p></details>
+        <details><summary>O que pode acontecer quando um case não possui break?</summary><p>A execução pode continuar nos casos seguintes, mesmo que seus rótulos não tenham sido selecionados.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir analisar a regra de uma decisão, escolher entre <code>if</code> e <code>switch</code>, justificar a escolha e combinar as duas estruturas quando o problema exigir tipos diferentes de controle.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

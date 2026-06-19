@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vários registros organizados em uma coleção</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(350px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .example-icon svg, .compare-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .entity-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--cor-superficie);
+    }
+    .entity-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--cor-primaria-escura);
+      color: white;
+    }
+    .entity-head strong { font-family: Consolas, monospace; }
+    .entity-head span { font-size: .78rem; color: #E0E7FF; }
+    .entity-fields { display: grid; gap: 8px; padding: 13px; }
+    .entity-field {
+      display: grid;
+      grid-template-columns: 94px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie-suave);
+      border-radius: 12px;
+      padding: 9px 11px;
+    }
+    .entity-field code { color: var(--cor-primaria-escura); font-weight: 900; font-size: .82rem; }
+    .entity-field span { color: var(--cor-texto-principal); font-size: .84rem; }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-da-struct { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 710px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 190px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .map-button {
+      position: absolute;
+      width: 235px;
+      min-height: 145px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-entity { left: 38px; top: 38px; }
+    .button-fields { right: 38px; top: 38px; }
+    .button-types { left: 38px; bottom: 42px; }
+    .button-instance { right: 38px; bottom: 42px; }
+    .button-access { left: 50%; bottom: 18px; transform: translateX(-50%); }
+    .button-access:hover, .button-access:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .compare-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .compare-card.good { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.2); }
+    .compare-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .compare-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: white; border: 1px solid var(--cor-borda); }
+    .loose-data { display: grid; gap: 8px; margin-top: 13px; }
+    .loose-item { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--cor-borda); border-radius: 12px; background: white; }
+    .loose-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .loose-item span { color: var(--cor-texto-secundario); font-size: .88rem; }
+
+    .anatomy-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .code-window { border-radius: 20px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #263244; }
+    .code-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #0B1220; border-bottom: 1px solid #2B374A; color: #CBD5E1; font-size: .82rem; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .9rem; line-height: 1.6; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+    .anatomy-list { display: grid; gap: 11px; }
+    .anatomy-item { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 11px; align-items: start; border: 1px solid var(--cor-borda); border-radius: 15px; padding: 13px; background: var(--cor-superficie-suave); }
+    .anatomy-number { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .anatomy-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .anatomy-item p { font-size: .89rem; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .step-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); position: relative; }
+    .step-card:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-weight: 900; z-index: 2; }
+    .step-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .step-label { display: inline-flex; margin-bottom: 9px; padding: 4px 8px; border-radius: 999px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+    .step-card p { font-size: .9rem; }
+
+    .tabs { position: relative; }
+    .tabs input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 16px; }
+    .tab-label { cursor: pointer; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .9rem; font-weight: 800; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panels { min-height: 440px; }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .example-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .example-info { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; gap: 11px; align-items: center; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: white; border: 1px solid var(--cor-borda); }
+    .example-badge { display: inline-flex; margin-bottom: 10px; border-radius: 999px; padding: 4px 9px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; font-weight: 900; }
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; margin-top: 13px; border: 1px solid var(--cor-borda); border-radius: 14px; font-size: .88rem; }
+    .mini-table th, .mini-table td { padding: 10px 11px; text-align: left; border-bottom: 1px solid var(--cor-borda); vertical-align: top; }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table tr:last-child td { border-bottom: none; }
+    .mini-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .72); backdrop-filter: blur(4px); }
+    .modal-card {
+      position: relative;
+      width: min(680px, 100%);
+      max-height: min(84vh, 760px);
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 28px 70px rgba(15,23,42,.35);
+      transform: translateY(18px) scale(.97);
+      animation: none;
+      z-index: 2;
+    }
+    .modal:target .modal-card { animation: modalIn .32s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: 1.35rem; line-height: 1; font-weight: 700; }
+    .modal-heading { display: flex; align-items: center; gap: 12px; padding-right: 45px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-heading h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 15px; border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie-suave); }
+    .modal-example code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-list { margin: 12px 0 0 20px; color: var(--cor-texto-secundario); }
+    .modal-list li { margin-bottom: 7px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .anatomy-layout, .example-grid, .compare-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .step-card:nth-child(2)::after { display: none; }
+      .choice-map { min-height: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 18px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; width: auto; transform: none; min-height: 145px; }
+      .map-center { grid-column: 1 / -1; order: -1; }
+      .button-access { transform: none; }
+      .button-access:hover, .button-access:focus-visible { transform: translateY(-4px); }
+      .error-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .meta-grid, .steps-grid, .choice-map { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .step-card::after { display: none !important; }
+      .entity-field { grid-template-columns: 82px minmax(0,1fr); }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 22px 18px; border-radius: 20px; }
+      .mini-table { display: block; overflow-x: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  
+
+    /* Componentes específicos deste infográfico */
+    #mapa-da-colecao { scroll-margin-top: 18px; }
+
+    .collection-hero {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+      align-items: stretch;
+    }
+    .record-mini {
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      overflow: hidden;
+      background: var(--cor-superficie);
+      min-width: 0;
+    }
+    .record-mini-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 9px 10px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      font-family: Consolas, Monaco, monospace;
+      font-size: .75rem;
+      font-weight: 900;
+    }
+    .record-mini-head span { color: #C7D2FE; font-size: .68rem; }
+    .record-mini-body { display: grid; gap: 6px; padding: 9px; }
+    .record-mini-field {
+      display: grid;
+      gap: 1px;
+      padding: 7px 8px;
+      border-radius: 9px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      min-width: 0;
+    }
+    .record-mini-field code { color: var(--cor-primaria-escura); font-weight: 900; font-size: .67rem; }
+    .record-mini-field span { color: var(--cor-texto-principal); font-size: .74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .collection-indexes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 9px; }
+    .collection-indexes span { text-align: center; color: var(--cor-texto-secundario); font: 800 .72rem Consolas, monospace; }
+
+    .collection-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 17px;
+      border-radius: 20px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79,70,229,.18);
+    }
+    .collection-cell {
+      min-width: 0;
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      background: white;
+      overflow: hidden;
+      box-shadow: 0 8px 18px rgba(15,23,42,.04);
+    }
+    .collection-cell-head {
+      padding: 8px 10px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      font: 900 .78rem Consolas, monospace;
+    }
+    .collection-cell-body { display: grid; gap: 5px; padding: 10px; }
+    .collection-cell-body span { display: flex; justify-content: space-between; gap: 8px; color: var(--cor-texto-secundario); font-size: .78rem; }
+    .collection-cell-body strong { color: var(--cor-texto-principal); font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .collection-caption { margin-top: 12px; color: var(--cor-texto-secundario); font-size: .9rem; text-align: center; }
+    .collection-caption code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .access-board {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .access-formula {
+      display: grid;
+      place-items: center;
+      min-height: 245px;
+      padding: 22px;
+      text-align: center;
+      border-radius: 20px;
+      background: var(--cor-primaria-escura);
+      color: white;
+    }
+    .access-formula code { display: block; color: #FDE68A; font-size: clamp(1.35rem, 4vw, 2.2rem); font-weight: 900; margin-bottom: 12px; }
+    .access-formula p { color: #E0E7FF; max-width: 390px; }
+    .access-breakdown { display: grid; gap: 10px; }
+    .access-part {
+      display: grid;
+      grid-template-columns: 72px minmax(0,1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      background: var(--cor-superficie-suave);
+    }
+    .access-part code { text-align: center; color: var(--cor-primaria-escura); font-weight: 900; font-size: 1rem; }
+    .access-part p { font-size: .88rem; }
+
+    .trace-layout { display: grid; grid-template-columns: .95fr 1.05fr; gap: 18px; align-items: start; }
+    .trace-list { display: grid; gap: 10px; }
+    .trace-row {
+      display: grid;
+      grid-template-columns: 55px 92px minmax(0,1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      background: var(--cor-superficie-suave);
+    }
+    .trace-row .trace-step { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .trace-row code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .trace-row span { color: var(--cor-texto-secundario); font-size: .86rem; }
+
+    .map-center .map-main-code { font-size: 1rem; }
+    .button-entity { left: 38px; top: 38px; }
+    .button-fields { right: 38px; top: 38px; }
+    .button-types { left: 38px; bottom: 42px; }
+    .button-instance { right: 38px; bottom: 42px; }
+    .button-access { left: 50%; bottom: 18px; transform: translateX(-50%); }
+
+    .capacity-note {
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 14px;
+      background: #FFFBEB;
+      border: 1px solid rgba(245,158,11,.34);
+      color: var(--cor-texto-principal);
+      font-size: .9rem;
+    }
+    .capacity-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    @media (max-width: 980px) {
+      .access-board, .trace-layout { grid-template-columns: 1fr; }
+      .collection-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .collection-hero { grid-template-columns: 1fr; }
+      .collection-indexes { display: none; }
+      .collection-strip { grid-template-columns: 1fr; }
+      .access-part { grid-template-columns: 58px minmax(0,1fr); }
+      .trace-row { grid-template-columns: 45px minmax(0,1fr); }
+      .trace-row span { grid-column: 2; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Vários registros organizados em uma coleção</h1>
+          <p class="subtitle">Entenda como um vetor de <code>structs</code> permite armazenar e percorrer vários alunos, produtos ou livros com a mesma organização.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Representação visual de um vetor de structs Aluno">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h5v12H4zM10 6h5v12h-5zM16 6h4v12h-4z"></path></svg></span>
+            <div><strong>Um molde, vários registros</strong><span>Cada posição guarda uma entidade completa</span></div>
+          </div>
+          <div class="collection-hero">
+            <article class="record-mini"><div class="record-mini-head">turma[0]<span>Aluno</span></div><div class="record-mini-body"><div class="record-mini-field"><code>nome</code><span>Lia</span></div><div class="record-mini-field"><code>media</code><span>8.4</span></div></div></article>
+            <article class="record-mini"><div class="record-mini-head">turma[1]<span>Aluno</span></div><div class="record-mini-body"><div class="record-mini-field"><code>nome</code><span>Caio</span></div><div class="record-mini-field"><code>media</code><span>6.9</span></div></div></article>
+            <article class="record-mini"><div class="record-mini-head">turma[2]<span>Aluno</span></div><div class="record-mini-body"><div class="record-mini-field"><code>nome</code><span>Nina</span></div><div class="record-mini-field"><code>media</code><span>9.1</span></div></div></article>
+          </div>
+          <div class="collection-indexes"><span>índice 0</span><span>índice 1</span><span>índice 2</span></div>
+          <p class="hero-caption"><strong>Ideia-chave:</strong> o índice escolhe o registro e o operador ponto escolhe o campo dentro dele.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI11</div><p>Organizar e manipular coleções de dados compostos.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI06 e CCI09</div><p>Percorrer vetores e trabalhar com vários registros.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Vetor de structs</div><p>Declaração, índice, acesso a campos e percurso.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Exploração visual, rastreamento e exemplos em C.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e estrutural</div><p>Relação entre coleção, registro, posição e campo.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>Conceito de struct</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 6h4v12H4zM10 6h4v12h-4zM16 6h4v12h-4z"></path></svg>Vetores e índices</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"></path></svg>Laço for</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><circle cx="7" cy="12" r="2"></circle></svg>Acesso com ponto</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Um vetor de structs reúne vários registros do mesmo tipo</h3>
+          <p>A <code>struct</code> define como <strong>um registro</strong> é organizado. O vetor reserva várias posições desse tipo. Assim, <code>turma[0]</code>, <code>turma[1]</code> e <code>turma[2]</code> são alunos diferentes, mas todos possuem os mesmos campos.</p>
+          <div class="concept-note">Acesso completo: <code>turma[i].media</code> significa “campo média do aluno que está na posição <code>i</code>”.</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina o registro</h3><p>Crie a <code>struct</code> com os campos que descrevem uma entidade.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Crie a coleção</h3><p>Declare um vetor cujo tipo é a estrutura definida.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Percorra e acesse</h3><p>Use um índice para escolher o registro e ponto para escolher o campo.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-da-colecao">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da coleção</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 20h14"></path></svg>
+        Clique em cada bloco para explorar a coleção <strong>turma</strong> usando o mesmo exemplo.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 710" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="355" x2="160" y2="120"></line>
+          <line x1="500" y1="355" x2="840" y2="120"></line>
+          <line x1="500" y1="355" x2="160" y2="590"></line>
+          <line x1="500" y1="355" x2="840" y2="590"></line>
+          <line x1="500" y1="355" x2="500" y2="630"></line>
+        </svg>
+
+        <div class="map-center"><div><strong>Vetor de structs</strong><code class="map-main-code">struct Aluno turma[3]</code><span>Três posições, cada uma contendo um registro completo.</span></div></div>
+
+        <a class="map-button button-entity" href="#modal-molde">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span>
+          <h3>Molde do registro</h3><p>Define quais campos cada elemento da coleção possui.</p><span class="map-code">struct Aluno</span>
+        </a>
+
+        <a class="map-button button-fields" href="#modal-vetor">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM9.5 7h5v10h-5zM16 7h5v10h-5z"></path></svg></span>
+          <h3>Vetor</h3><p>Reserva várias posições do mesmo tipo composto.</p><span class="map-code">turma[3]</span>
+        </a>
+
+        <a class="map-button button-types" href="#modal-indice">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m14 7 5 5-5 5"></path><circle cx="7" cy="12" r="2"></circle></svg></span>
+          <h3>Índice</h3><p>Seleciona qual registro será consultado ou alterado.</p><span class="map-code">turma[i]</span>
+        </a>
+
+        <a class="map-button button-instance" href="#modal-campo">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M5 10h14M10 5v14"></path></svg></span>
+          <h3>Campo</h3><p>Seleciona uma informação dentro do registro escolhido.</p><span class="map-code">turma[i].media</span>
+        </a>
+
+        <a class="map-button button-access" href="#modal-percurso">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 8h13"></path><path d="m13 4 4 4-4 4"></path><path d="M20 16H7"></path><path d="m11 12-4 4 4 4"></path></svg></span>
+          <h3>Percurso</h3><p>Visita todos os registros usando um laço e um índice.</p><span class="map-code">for (i = 0; i &lt; 3; i++)</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>De um registro para vários</h2></div>
+      <div class="compare-grid">
+        <article class="compare-card">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><div><h3>Uma variável struct</h3><p>Representa apenas uma entidade concreta.</p></div></div>
+          <div class="entity-card"><div class="entity-head"><strong>aluno</strong><span>struct Aluno</span></div><div class="entity-fields"><div class="entity-field"><code>.nome</code><span>"Lia"</span></div><div class="entity-field"><code>.media</code><span>8.4</span></div></div></div>
+          <div class="capacity-note"><code>struct Aluno aluno;</code> reserva espaço para <strong>um</strong> registro.</div>
+        </article>
+
+        <article class="compare-card good">
+          <div class="compare-head"><span class="compare-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM9.5 7h5v10h-5zM16 7h5v10h-5z"></path></svg></span><div><h3>Um vetor de structs</h3><p>Representa vários registros com a mesma estrutura.</p></div></div>
+          <div class="collection-strip">
+            <article class="collection-cell"><div class="collection-cell-head">turma[0]</div><div class="collection-cell-body"><span>nome <strong>Lia</strong></span><span>média <strong>8.4</strong></span></div></article>
+            <article class="collection-cell"><div class="collection-cell-head">turma[1]</div><div class="collection-cell-body"><span>nome <strong>Caio</strong></span><span>média <strong>6.9</strong></span></div></article>
+            <article class="collection-cell"><div class="collection-cell-head">turma[2]</div><div class="collection-cell-body"><span>nome <strong>Nina</strong></span><span>média <strong>9.1</strong></span></div></article>
+            <article class="collection-cell"><div class="collection-cell-head">turma[3]</div><div class="collection-cell-body"><span>nome <strong>Rui</strong></span><span>média <strong>7.5</strong></span></div></article>
+          </div>
+          <div class="capacity-note"><code>struct Aluno turma[4];</code> reserva quatro registros, com índices de <strong>0 a 3</strong>.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Anatomia da declaração e do acesso</h2></div>
+      <div class="anatomy-layout">
+        <div class="code-window">
+          <div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>turma.c</strong></div>
+          <pre><code><span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> {
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span>[<span class="syn-number">30</span>];
+    <span class="syn-type">float</span> <span class="syn-variable">media</span>;
+};
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> <span class="syn-variable">turma</span>[<span class="syn-number">3</span>];
+
+<span class="syn-variable">turma</span>[<span class="syn-number">0</span>].<span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-number">8.4</span>;
+<span class="syn-function">printf</span>(<span class="syn-string">"%.1f"</span>, <span class="syn-variable">turma</span>[<span class="syn-number">0</span>].<span class="syn-variable">media</span>);</code></pre>
+        </div>
+
+        <div class="anatomy-list">
+          <article class="anatomy-item"><span class="anatomy-number">1</span><div><h3><code>struct Aluno</code></h3><p>É o tipo de cada elemento armazenado no vetor.</p></div></article>
+          <article class="anatomy-item"><span class="anatomy-number">2</span><div><h3><code>turma[3]</code></h3><p>Cria três registros completos nas posições 0, 1 e 2.</p></div></article>
+          <article class="anatomy-item"><span class="anatomy-number">3</span><div><h3><code>turma[0]</code></h3><p>Escolhe o primeiro registro da coleção.</p></div></article>
+          <article class="anatomy-item"><span class="anatomy-number">4</span><div><h3><code>.media</code></h3><p>Escolhe um campo dentro do registro selecionado.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como ler um acesso completo</h2></div>
+      <div class="access-board">
+        <div class="access-formula"><div><code>turma[i].media</code><p>Leia da esquerda para a direita: coleção, posição e campo.</p></div></div>
+        <div class="access-breakdown">
+          <article class="access-part"><code>turma</code><div><h3>Coleção</h3><p>Nome do vetor que armazena todos os registros.</p></div></article>
+          <article class="access-part"><code>[i]</code><div><h3>Posição</h3><p>Índice que seleciona um registro específico.</p></div></article>
+          <article class="access-part"><code>.media</code><div><h3>Campo</h3><p>Informação consultada dentro do registro escolhido.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Percorrendo a coleção</h2></div>
+      <div class="trace-layout">
+        <div>
+          <div class="code-window">
+            <div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>percurso.c</strong></div>
+            <pre><code><span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"%s: %.1f
+"</span>,
+           <span class="syn-variable">turma</span>[<span class="syn-variable">i</span>].<span class="syn-variable">nome</span>,
+           <span class="syn-variable">turma</span>[<span class="syn-variable">i</span>].<span class="syn-variable">media</span>);
+}</code></pre>
+          </div>
+          <p class="capacity-note">A condição usa <code>i &lt; 3</code> porque o vetor possui três posições válidas: 0, 1 e 2.</p>
+        </div>
+        <div class="trace-list">
+          <article class="trace-row"><span class="trace-step">1</span><code>i = 0</code><span>Acessa <code>turma[0]</code>: Lia, média 8.4.</span></article>
+          <article class="trace-row"><span class="trace-step">2</span><code>i = 1</code><span>Acessa <code>turma[1]</code>: Caio, média 6.9.</span></article>
+          <article class="trace-row"><span class="trace-step">3</span><code>i = 2</code><span>Acessa <code>turma[2]</code>: Nina, média 9.1.</span></article>
+          <article class="trace-row"><span class="trace-step">4</span><code>i = 3</code><span>A condição fica falsa. O índice 3 não é acessado.</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="tabs" id="tab1" checked>
+        <input type="radio" name="tabs" id="tab2">
+        <input type="radio" name="tabs" id="tab3">
+
+        <div class="tab-labels" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">1. Exibir alunos</label>
+          <label class="tab-label" for="tab2">2. Valor do estoque</label>
+          <label class="tab-label" for="tab3">3. Buscar livro</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <div class="example-info">
+                <span class="example-badge">Nível básico</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg></span><div><h3>Exibir os registros da turma</h3><p>O laço visita cada aluno e acessa dois campos.</p></div></div>
+                <table class="mini-table"><thead><tr><th>Expressão</th><th>Significado</th></tr></thead><tbody><tr><td><code>turma[i]</code></td><td>Aluno atual</td></tr><tr><td><code>.nome</code></td><td>Nome do aluno</td></tr><tr><td><code>.media</code></td><td>Média do aluno</td></tr></tbody></table>
+              </div>
+              <div class="code-window"><div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>alunos.c</strong></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> {
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span>[<span class="syn-number">20</span>];
+    <span class="syn-type">float</span> <span class="syn-variable">media</span>;
+};
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> <span class="syn-variable">turma</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-string">"Lia"</span>, <span class="syn-number">8.4</span>},
+        {<span class="syn-string">"Caio"</span>, <span class="syn-number">6.9</span>},
+        {<span class="syn-string">"Nina"</span>, <span class="syn-number">9.1</span>}
+    };
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">printf</span>(<span class="syn-string">"%s: %.1f
+"</span>,
+               <span class="syn-variable">turma</span>[<span class="syn-variable">i</span>].<span class="syn-variable">nome</span>,
+               <span class="syn-variable">turma</span>[<span class="syn-variable">i</span>].<span class="syn-variable">media</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <div class="example-info">
+                <span class="example-badge">Nível intermediário</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v11H4z"></path><path d="M8 7V4h8v3M8 12h8"></path></svg></span><div><h3>Calcular o valor total do estoque</h3><p>Cada produto contribui com <code>preco × quantidade</code>.</p></div></div>
+                <table class="mini-table"><thead><tr><th>Produto</th><th>Cálculo</th></tr></thead><tbody><tr><td>Caderno</td><td>12,50 × 4 = 50,00</td></tr><tr><td>Caneta</td><td>2,00 × 10 = 20,00</td></tr><tr><td>Total</td><td>R$ 70,00</td></tr></tbody></table>
+              </div>
+              <div class="code-window"><div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>estoque.c</strong></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> {
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span>[<span class="syn-number">20</span>];
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span>;
+    <span class="syn-type">int</span> <span class="syn-variable">quantidade</span>;
+};
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> <span class="syn-variable">produtos</span>[<span class="syn-number">2</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-string">"Caderno"</span>, <span class="syn-number">12.50</span>, <span class="syn-number">4</span>},
+        {<span class="syn-string">"Caneta"</span>, <span class="syn-number">2.00</span>, <span class="syn-number">10</span>}
+    };
+    <span class="syn-type">float</span> <span class="syn-variable">total</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">2</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-variable">total</span> <span class="syn-operator">+=</span> <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">preco</span>
+               <span class="syn-operator">*</span> <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">quantidade</span>;
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Total: R$ %.2f
+"</span>, <span class="syn-variable">total</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <div class="example-info">
+                <span class="example-badge">Nível intermediário</span>
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"></path><path d="M8 4v16"></path><circle cx="15" cy="11" r="2"></circle><path d="m16.5 12.5 2 2"></path></svg></span><div><h3>Buscar um livro pelo código</h3><p>O laço percorre a coleção até localizar a chave procurada.</p></div></div>
+                <table class="mini-table"><thead><tr><th>Etapa</th><th>Ação</th></tr></thead><tbody><tr><td>Percorrer</td><td>Visitar <code>livros[i]</code></td></tr><tr><td>Comparar</td><td>Testar <code>codigo</code></td></tr><tr><td>Resultado</td><td>Mostrar título ou informar ausência</td></tr></tbody></table>
+              </div>
+              <div class="code-window"><div class="code-bar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>busca_livro.c</strong></div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Livro</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+    <span class="syn-type">char</span> <span class="syn-variable">titulo</span>[<span class="syn-number">30</span>];
+};
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-keyword">struct</span> <span class="syn-type">Livro</span> <span class="syn-variable">livros</span>[<span class="syn-number">3</span>] <span class="syn-operator">=</span> {
+        {<span class="syn-number">101</span>, <span class="syn-string">"Algoritmos"</span>},
+        {<span class="syn-number">205</span>, <span class="syn-string">"Linguagem C"</span>},
+        {<span class="syn-number">310</span>, <span class="syn-string">"Estruturas"</span>}
+    };
+    <span class="syn-type">int</span> <span class="syn-variable">busca</span> <span class="syn-operator">=</span> <span class="syn-number">205</span>;
+    <span class="syn-type">int</span> <span class="syn-variable">posicao</span> <span class="syn-operator">=</span> <span class="syn-number">-1</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">3</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-variable">livros</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span> <span class="syn-operator">==</span> <span class="syn-variable">busca</span>) {
+            <span class="syn-variable">posicao</span> <span class="syn-operator">=</span> <span class="syn-variable">i</span>;
+            <span class="syn-keyword">break</span>;
+        }
+    }
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">posicao</span> <span class="syn-operator">!=</span> <span class="syn-number">-1</span>)
+        <span class="syn-function">printf</span>(<span class="syn-string">"%s
+"</span>, <span class="syn-variable">livros</span>[<span class="syn-variable">posicao</span>].<span class="syn-variable">titulo</span>);
+    <span class="syn-keyword">else</span>
+        <span class="syn-function">printf</span>(<span class="syn-string">"Livro nao encontrado
+"</span>);
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Trocar a ordem do índice e do campo</h3><p><strong>Por que acontece:</strong> o aluno tenta escrever algo como <code>turma.media[i]</code>.</p><p><strong>Como evitar:</strong> primeiro escolha o registro com <code>[i]</code>, depois o campo com ponto: <code>turma[i].media</code>.</p></article>
+        <article class="error-card"><h3>Ultrapassar o tamanho do vetor</h3><p><strong>Por que acontece:</strong> um vetor de tamanho 3 é percorrido até o índice 3.</p><p><strong>Como evitar:</strong> use índices de 0 a 2 e uma condição como <code>i &lt; 3</code>.</p></article>
+        <article class="error-card"><h3>Usar toda a capacidade como quantidade real</h3><p><strong>Por que acontece:</strong> o vetor possui espaço para 100 registros, mas apenas parte foi preenchida.</p><p><strong>Como evitar:</strong> mantenha uma variável <code>quantidade</code> com o número de registros válidos.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>O que existe em cada posição de um vetor de structs?</summary><p>Uma instância completa da estrutura, com todos os campos definidos no molde.</p></details>
+        <details><summary>Como acessar a média do aluno que está na posição 2?</summary><p>Use <code>turma[2].media</code>. O índice escolhe o aluno e o ponto escolhe o campo.</p></details>
+        <details><summary>Um vetor com capacidade 50 sempre possui 50 registros válidos?</summary><p>Não. Capacidade indica o espaço reservado. Uma variável de quantidade deve indicar quantas posições foram realmente preenchidas.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir declarar um vetor de <code>structs</code>, acessar campos de registros específicos e percorrer uma coleção de entidades com segurança.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <div id="modal-molde" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-molde">
+    <a class="modal-backdrop" href="#mapa-da-colecao" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-colecao" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><div><h2 id="titulo-molde">Molde do registro</h2><p>Todos os elementos do vetor seguem a mesma estrutura.</p></div></div>
+      <p>A definição de <code>struct Aluno</code> determina quais campos cada posição da coleção terá. No exemplo, todo aluno possui <code>nome</code> e <code>media</code>.</p>
+      <div class="modal-example"><code>struct Aluno { char nome[30]; float media; };</code></div>
+    </article>
+  </div>
+
+  <div id="modal-vetor" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-vetor">
+    <a class="modal-backdrop" href="#mapa-da-colecao" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-colecao" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M3 7h5v10H3zM9.5 7h5v10h-5zM16 7h5v10h-5z"></path></svg></span><div><h2 id="titulo-vetor">Vetor de structs</h2><p>A coleção reserva várias posições do tipo composto.</p></div></div>
+      <p>A declaração <code>struct Aluno turma[3];</code> cria espaço para três alunos. Cada posição guarda todos os campos de um aluno.</p>
+      <div class="modal-example"><code>turma[0]</code>, <code>turma[1]</code> e <code>turma[2]</code> são três registros independentes.</div>
+    </article>
+  </div>
+
+  <div id="modal-indice" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-indice">
+    <a class="modal-backdrop" href="#mapa-da-colecao" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-colecao" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m14 7 5 5-5 5"></path><circle cx="7" cy="12" r="2"></circle></svg></span><div><h2 id="titulo-indice">Índice</h2><p>O índice escolhe um registro da coleção.</p></div></div>
+      <p>Em <code>turma[i]</code>, o valor de <code>i</code> determina qual aluno será acessado. Se <code>i</code> vale 1, a expressão seleciona o segundo registro.</p>
+      <div class="modal-example"><strong>Cuidado:</strong> em um vetor de tamanho 3, os índices válidos são 0, 1 e 2.</div>
+    </article>
+  </div>
+
+  <div id="modal-campo" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-campo">
+    <a class="modal-backdrop" href="#mapa-da-colecao" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-colecao" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M5 10h14M10 5v14"></path></svg></span><div><h2 id="titulo-campo">Campo</h2><p>O ponto escolhe uma informação dentro do registro.</p></div></div>
+      <p>Depois de selecionar o aluno com <code>turma[i]</code>, use o operador ponto para indicar o campo desejado.</p>
+      <ul class="modal-list"><li><code>turma[i].nome</code>: nome do aluno atual</li><li><code>turma[i].media</code>: média do aluno atual</li></ul>
+    </article>
+  </div>
+
+  <div id="modal-percurso" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-percurso">
+    <a class="modal-backdrop" href="#mapa-da-colecao" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-colecao" aria-label="Fechar">×</a>
+      <div class="modal-heading"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 8h13"></path><path d="m13 4 4 4-4 4"></path><path d="M20 16H7"></path><path d="m11 12-4 4 4 4"></path></svg></span><div><h2 id="titulo-percurso">Percurso</h2><p>O laço faz o índice visitar todos os registros válidos.</p></div></div>
+      <p>O padrão <code>for (i = 0; i &lt; quantidade; i++)</code> percorre apenas as posições preenchidas. Dentro do laço, <code>turma[i]</code> representa o registro atual.</p>
+      <div class="modal-example"><code>printf("%s", turma[i].nome);</code> mostra o nome de cada aluno durante o percurso.</div>
+    </article>
+  </div>
+</body>
+</html>

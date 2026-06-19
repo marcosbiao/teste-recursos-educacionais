@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O ciclo básico de um arquivo em C</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(350px, .96fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .example-icon svg, .trace-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+    .hero-cycle { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-items: stretch; }
+    .hero-step {
+      min-height: 112px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      gap: 7px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      background: var(--cor-superficie);
+      padding: 11px 8px;
+      position: relative;
+    }
+    .hero-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cor-destaque-pontual);
+      font-weight: 900;
+      z-index: 2;
+    }
+    .hero-step span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); font-weight: 900; }
+    .hero-step strong { color: var(--cor-primaria-escura); font-size: .83rem; }
+    .hero-step code { color: var(--cor-texto-secundario); font-size: .72rem; font-weight: 800; }
+    .hero-note {
+      margin-top: 14px;
+      border: 1px solid rgba(245,158,11,.33);
+      background: #FFFBEB;
+      border-radius: 14px;
+      padding: 11px 13px;
+      color: var(--cor-texto-principal);
+      font-size: .86rem;
+    }
+    .hero-note strong { color: #92400E; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-do-arquivo { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 620px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .29); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 180px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .file-mini { width: 82px; height: 96px; margin: 12px auto 0; border: 2px solid rgba(255,255,255,.42); border-radius: 12px; position: relative; background: rgba(255,255,255,.09); }
+    .file-mini::before { content: ""; position: absolute; top: 13px; left: 15px; right: 15px; height: 2px; background: rgba(255,255,255,.55); box-shadow: 0 14px 0 rgba(255,255,255,.4), 0 28px 0 rgba(255,255,255,.4), 0 42px 0 rgba(255,255,255,.28); }
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 146px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-open { left: 38px; top: 38px; }
+    .button-check { right: 38px; top: 38px; }
+    .button-use { left: 38px; bottom: 38px; }
+    .button-close { right: 38px; bottom: 38px; }
+
+    .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 22px; }
+    .modal:target { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .68); backdrop-filter: blur(6px); }
+    .modal-card { width: min(720px, 100%); max-height: min(86vh, 760px); overflow-y: auto; position: relative; z-index: 2; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 24px; box-shadow: 0 30px 80px rgba(15, 23, 42, .34); padding: 25px; animation: modalIn .24s ease both; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(18px) scale(.965); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+    .modal-title-wrap { display: flex; gap: 12px; align-items: center; }
+    .modal-icon { width: 47px; height: 47px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .modal-title-wrap h3 { margin-bottom: 2px; color: var(--cor-primaria-escura); font-size: 1.24rem; }
+    .modal-title-wrap p { font-size: .87rem; }
+    .modal-close { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); text-decoration: none; font-size: 1.35rem; line-height: 1; flex: 0 0 auto; }
+    .modal-close:hover, .modal-close:focus-visible { background: var(--cor-superficie-destacada); outline: none; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .modal-box { border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); border-radius: 16px; padding: 15px; }
+    .modal-box strong { display: block; color: var(--cor-texto-principal); margin-bottom: 6px; }
+    .modal-box p { font-size: .9rem; }
+    .modal-example { margin-top: 15px; border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; border-radius: 15px; padding: 14px 16px; color: var(--cor-texto-principal); }
+    .modal-example code { color: #78350F; font-weight: 900; }
+
+    .anatomy-layout { display: grid; grid-template-columns: minmax(0, 1.14fr) minmax(300px, .86fr); gap: 18px; align-items: stretch; }
+    .code-window { border: 1px solid #25324A; border-radius: 20px; overflow: hidden; background: var(--codigo-fundo); box-shadow: 0 18px 34px rgba(15,23,42,.12); }
+    .code-top { display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .79rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-title { margin-left: 3px; font-weight: 800; }
+    .code-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      padding: 11px 15px;
+      border-bottom: 1px solid #334155;
+      background: #111C30;
+      color: #CBD5E1;
+      font-size: .76rem;
+    }
+    .legend-label { color: #E2E8F0; font-weight: 800; margin-right: 2px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+    .swatch-open { background: #C4B5FD; }
+    .swatch-check { background: #FDE68A; }
+    .swatch-use { background: #86EFAC; }
+    .swatch-close { background: #F9A8D4; }
+    pre { margin: 0; padding: 19px; overflow-x: auto; color: var(--codigo-texto); font-size: .89rem; line-height: 1.62; tab-size: 4; }
+    .line { display: block; min-width: max-content; }
+    .focus-open { background: rgba(196,181,253,.08); border-left: 3px solid #C4B5FD; margin-left: -12px; padding-left: 9px; }
+    .focus-check { background: rgba(253,230,138,.08); border-left: 3px solid #FDE68A; margin-left: -12px; padding-left: 9px; }
+    .focus-use { background: rgba(134,239,172,.08); border-left: 3px solid #86EFAC; margin-left: -12px; padding-left: 9px; }
+    .focus-close { background: rgba(249,168,212,.08); border-left: 3px solid #F9A8D4; margin-left: -12px; padding-left: 9px; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .annotation-list { display: grid; gap: 11px; }
+    .annotation { display: grid; grid-template-columns: 42px minmax(0,1fr); gap: 11px; align-items: start; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); border-radius: 16px; padding: 13px; }
+    .annotation-number { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .annotation p { font-size: .88rem; }
+    .annotation code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .mode-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .mode-card { border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie); padding: 18px; }
+    .mode-badge { display: inline-grid; place-items: center; min-width: 42px; height: 42px; padding: 0 12px; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font: 900 1rem Consolas, monospace; margin-bottom: 11px; }
+    .mode-card p { font-size: .9rem; }
+    .mode-effect { display: block; margin-top: 10px; padding: 9px 11px; border-radius: 12px; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); font-size: .82rem; }
+    .mode-effect strong { color: var(--cor-primaria-escura); }
+
+    .flow-board { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
+    .flow-card { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .flow-card:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-weight: 900; z-index: 2; }
+    .step-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 10px; font-weight: 900; }
+    .flow-card p { font-size: .88rem; }
+    .flow-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .trace-layout { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 18px; align-items: stretch; }
+    .trace-panel { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 19px; background: var(--cor-superficie-suave); }
+    .trace-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .trace-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .trace-title strong { color: var(--cor-primaria-escura); }
+    .file-preview { border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie); overflow: hidden; }
+    .file-preview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 13px; background: var(--cor-superficie-destacada); border-bottom: 1px solid var(--cor-borda); }
+    .file-preview-head strong { color: var(--cor-primaria-escura); }
+    .file-preview-head span { color: var(--cor-texto-secundario); font-size: .78rem; }
+    .file-content { padding: 15px; font: .9rem/1.75 Consolas, monospace; color: var(--cor-texto-principal); white-space: pre-wrap; }
+    .state-list { display: grid; gap: 9px; }
+    .state-item { display: grid; grid-template-columns: 36px minmax(0,1fr); gap: 10px; align-items: start; border: 1px solid var(--cor-borda); border-radius: 14px; padding: 11px; background: var(--cor-superficie); }
+    .state-number { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .state-item p { font-size: .86rem; }
+    .state-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie); }
+    .mini-table th, .mini-table td { padding: 12px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table td { font-size: .9rem; color: var(--cor-texto-principal); }
+    .mini-table tr:last-child td { border-bottom: 0; }
+    .mini-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .examples-wrap { position: relative; }
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--cor-borda); border-radius: 999px; padding: 9px 14px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .89rem; font-weight: 800; transition: .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.35); color: var(--cor-primaria-escura); }
+    .tab-panel { display: none; animation: tabIn .22s ease both; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    #tab1:checked ~ .tabs label[for="tab1"],
+    #tab2:checked ~ .tabs label[for="tab2"],
+    #tab3:checked ~ .tabs label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    #tab1:checked ~ .panels #panel1,
+    #tab2:checked ~ .panels #panel2,
+    #tab3:checked ~ .panels #panel3 { display: block; }
+    .example-grid { display: grid; grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr); gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .level { display: inline-flex; margin-top: 10px; border-radius: 999px; padding: 5px 9px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; font-weight: 900; }
+    .example-steps { display: grid; gap: 9px; margin-top: 14px; }
+    .example-step { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; background: var(--cor-superficie); font-size: .87rem; color: var(--cor-texto-principal); }
+    .example-step strong { color: var(--cor-primaria-escura); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
+    .error-card { border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .error-card p { font-size: .88rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+    .error-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 13px; padding: 13px; color: var(--cor-texto-principal); }
+    details code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 10px; }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.02rem; max-width: 920px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .anatomy-layout, .trace-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .choice-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; transform: none; width: auto; min-height: 145px; }
+      .map-center { grid-column: 1 / -1; }
+      .map-button:hover, .map-button:focus-visible { transform: translateY(-3px); }
+      .flow-board, .error-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .flow-card:nth-child(2)::after { display: none; }
+      .mode-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 15px 10px; }
+      .hero, .section, .closing { padding: 21px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .hero-cycle { grid-template-columns: 1fr 1fr; }
+      .hero-step:nth-child(2)::after { display: none; }
+      .meta-grid, .choice-map, .flow-board, .error-grid, .modal-grid { grid-template-columns: 1fr; }
+      .choice-map { padding: 14px; }
+      .map-center, .map-button { min-height: auto; }
+      .flow-card::after { display: none; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 19px; border-radius: 20px; }
+      .tabs { display: grid; grid-template-columns: 1fr; }
+      .tab-label { justify-content: center; }
+      .mini-table { display: block; overflow-x: auto; }
+      pre { font-size: .8rem; padding: 15px; }
+      h1 { font-size: 2.1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v4h4M9 11h6M9 15h6"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>O ciclo básico de um arquivo em C</h1>
+          <p class="subtitle">Entenda como abrir, verificar, ler ou escrever e fechar um arquivo com segurança, acompanhando o caminho entre o programa e os dados armazenados.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Resumo visual do ciclo de arquivo">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"/><path d="M8 4h8v5"/></svg></span>
+            <div><strong>Um arquivo tem ciclo de uso</strong><span>Cada etapa prepara a próxima</span></div>
+          </div>
+          <div class="hero-cycle">
+            <div class="hero-step"><span>1</span><strong>Abrir</strong><code>fopen</code></div>
+            <div class="hero-step"><span>2</span><strong>Verificar</strong><code>arquivo != NULL</code></div>
+            <div class="hero-step"><span>3</span><strong>Usar</strong><code>fscanf / fprintf</code></div>
+            <div class="hero-step"><span>4</span><strong>Fechar</strong><code>fclose</code></div>
+          </div>
+          <div class="hero-note"><strong>Regra central:</strong> só leia ou escreva depois de confirmar que a abertura funcionou.</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI13</div><p>Manipular arquivos e persistir dados básicos em programas escritos em C.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI04 e CCI10</div><p>Verificar falhas com condições e organizar o programa em etapas funcionais.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Abrir, ler, escrever e fechar</div><p>Executar o ciclo elementar de acesso a arquivos.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura visual acompanhada de exemplos curtos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Fluxo e rastreamento</div><p>Relaciona comandos, estado do arquivo e efeito nos dados.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 9h8M8 13h5"/></svg>Variáveis e tipos</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg>Condição com <code>if</code></span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Entrada e saída</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M7 4h10v16H7zM10 8h4M10 12h4"/></svg>Noção de texto e números</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>O programa não acessa o arquivo diretamente pelo nome</h3>
+          <p><code>fopen</code> cria uma conexão entre o programa e o arquivo. Essa conexão é representada por um ponteiro do tipo <strong><code>FILE *</code></strong>. Depois de verificar a conexão, o programa pode ler ou escrever e, ao final, deve encerrá-la com <code>fclose</code>.</p>
+          <div class="concept-note"><strong>Sequência segura:</strong> <code>abrir → verificar → usar → fechar</code>.</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Escolha o modo</h3><p>O modo informa se o programa pretende ler, criar, substituir ou acrescentar dados.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Teste a abertura</h3><p>Se <code>fopen</code> falhar, o resultado será <code>NULL</code> e o uso deve ser interrompido.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Encerre o acesso</h3><p><code>fclose</code> libera o recurso e conclui as operações pendentes de escrita.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-do-arquivo">
+      <div class="section-title"><span class="marker"></span><h2>Mapa do ciclo de arquivo</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M5 20h14"/></svg>
+        Clique em cada bloco para abrir uma explicação usando o mesmo arquivo <code>notas.txt</code>.
+      </div>
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="375" y1="260" x2="255" y2="130"/>
+          <line x1="625" y1="260" x2="745" y2="130"/>
+          <line x1="375" y1="360" x2="255" y2="490"/>
+          <line x1="625" y1="360" x2="745" y2="490"/>
+        </svg>
+
+        <div class="map-center">
+          <div><strong>Ciclo seguro</strong><code>notas.txt</code><span>Uma conexão temporária entre programa e arquivo</span><div class="file-mini" aria-hidden="true"></div></div>
+        </div>
+
+        <a class="map-button button-open" href="#modal-open">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"/><path d="M12 13h5M14.5 10.5V15.5"/></svg></span>
+          <h3>Abrir</h3><p>Cria a conexão e define o modo de acesso.</p><span class="map-code">fopen("notas.txt", "r")</span>
+        </a>
+
+        <a class="map-button button-check" href="#modal-check">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/><path d="M4 4h16v16H4"/></svg></span>
+          <h3>Verificar</h3><p>Confirma se o arquivo foi aberto antes de utilizá-lo.</p><span class="map-code">arquivo == NULL</span>
+        </a>
+
+        <a class="map-button button-use" href="#modal-use">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 9h8M8 13h5"/><path d="M16 16l3 3"/></svg></span>
+          <h3>Ler ou escrever</h3><p>Move dados entre o arquivo e as variáveis do programa.</p><span class="map-code">fscanf / fprintf</span>
+        </a>
+
+        <a class="map-button button-close" href="#modal-close-file">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9l6 6M15 9l-6 6"/></svg></span>
+          <h3>Fechar</h3><p>Encerra a conexão e libera o recurso utilizado.</p><span class="map-code">fclose(arquivo)</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="modal" id="modal-open" role="dialog" aria-modal="true" aria-labelledby="title-open">
+      <a class="modal-backdrop" href="#mapa-do-arquivo" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"/><path d="M12 13h5M14.5 10.5V15.5"/></svg></span><div><h3 id="title-open">Abrir com <code>fopen</code></h3><p>Nome do arquivo e modo de acesso</p></div></div><a class="modal-close" href="#mapa-do-arquivo" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Primeiro argumento</strong><p>Indica o caminho ou nome do arquivo, como <code>"notas.txt"</code>.</p></div><div class="modal-box"><strong>Segundo argumento</strong><p>Define a intenção. <code>"r"</code> lê, <code>"w"</code> cria ou substitui, e <code>"a"</code> acrescenta.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> <code>FILE *arquivo = fopen("notas.txt", "r");</code> tenta abrir <code>notas.txt</code> para leitura.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-check" role="dialog" aria-modal="true" aria-labelledby="title-check">
+      <a class="modal-backdrop" href="#mapa-do-arquivo" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/><path d="M4 4h16v16H4"/></svg></span><div><h3 id="title-check">Verificar a abertura</h3><p>Não use uma conexão que não existe</p></div></div><a class="modal-close" href="#mapa-do-arquivo" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Quando falha</strong><p>O arquivo pode não existir, o caminho pode estar incorreto ou o sistema pode negar o acesso.</p></div><div class="modal-box"><strong>Como reconhecer</strong><p>Quando <code>fopen</code> falha, o ponteiro recebe <code>NULL</code>.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> se <code>arquivo == NULL</code>, mostre uma mensagem e encerre o programa antes de chamar <code>fscanf</code>.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-use" role="dialog" aria-modal="true" aria-labelledby="title-use">
+      <a class="modal-backdrop" href="#mapa-do-arquivo" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 9h8M8 13h5"/><path d="M16 16l3 3"/></svg></span><div><h3 id="title-use">Ler ou escrever</h3><p>A operação precisa combinar com o modo escolhido</p></div></div><a class="modal-close" href="#mapa-do-arquivo" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Leitura</strong><p><code>fscanf</code> lê dados formatados. <code>fgets</code> lê uma linha de texto.</p></div><div class="modal-box"><strong>Escrita</strong><p><code>fprintf</code> grava dados formatados. <code>fputs</code> grava uma sequência de caracteres.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> <code>fscanf(arquivo, "%f", &amp;nota);</code> tenta ler uma nota do arquivo já aberto em modo <code>"r"</code>.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-close-file" role="dialog" aria-modal="true" aria-labelledby="title-close-file">
+      <a class="modal-backdrop" href="#mapa-do-arquivo" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M9 9l6 6M15 9l-6 6"/></svg></span><div><h3 id="title-close-file">Fechar com <code>fclose</code></h3><p>O ciclo termina quando o recurso é liberado</p></div></div><a class="modal-close" href="#mapa-do-arquivo" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Por que fechar</strong><p>Libera o recurso mantido pelo sistema e conclui operações de escrita que ainda estejam pendentes.</p></div><div class="modal-box"><strong>Depois de fechar</strong><p>O ponteiro não deve voltar a ser usado sem uma nova chamada a <code>fopen</code>.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> depois de terminar a leitura de <code>notas.txt</code>, execute <code>fclose(arquivo);</code>.</div>
+      </article>
+    </div>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Anatomia do ciclo completo</h2></div>
+      <div class="anatomy-layout">
+        <div class="code-window">
+          <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">leitura.c</span></div>
+          <div class="code-legend" aria-label="Legenda das etapas destacadas no código">
+            <span class="legend-label">Legenda:</span>
+            <span class="legend-item"><span class="legend-swatch swatch-open"></span>Abrir</span>
+            <span class="legend-item"><span class="legend-swatch swatch-check"></span>Verificar</span>
+            <span class="legend-item"><span class="legend-swatch swatch-use"></span>Ler e usar</span>
+            <span class="legend-item"><span class="legend-swatch swatch-close"></span>Fechar</span>
+          </div>
+          <pre><code><span class="line"><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span></span>
+<span class="line">    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span><span class="syn-operator">;</span></span>
+<span class="line">    <span class="syn-type">float</span> <span class="syn-variable">nota</span><span class="syn-operator">;</span></span>
+<span class="line focus-open">    <span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"notas.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"r"</span><span class="syn-operator">);</span></span>
+<span class="line focus-check">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-operator">{</span></span><span class="line focus-check">        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Nao foi possivel abrir o arquivo.\n"</span><span class="syn-operator">);</span></span><span class="line focus-check">        <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span></span><span class="line focus-check">    <span class="syn-operator">}</span></span>
+<span class="line focus-use">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-function">fscanf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota</span><span class="syn-operator">)</span> <span class="syn-operator">==</span> <span class="syn-number">1</span><span class="syn-operator">)</span> <span class="syn-operator">{</span></span><span class="line focus-use">        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Nota: %.1f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">nota</span><span class="syn-operator">);</span></span><span class="line focus-use">    <span class="syn-operator">}</span></span>
+<span class="line focus-close">    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span></span>
+<span class="line">    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="line"><span class="syn-operator">}</span></span></code></pre>
+        </div>
+
+        <div class="annotation-list">
+          <article class="annotation"><span class="annotation-number">1</span><div><h3>Declare a conexão</h3><p><code>FILE *arquivo</code> guarda a referência usada pelas funções de arquivo.</p></div></article>
+          <article class="annotation"><span class="annotation-number">2</span><div><h3>Abra no modo correto</h3><p><code>"r"</code> indica leitura. O arquivo precisa existir.</p></div></article>
+          <article class="annotation"><span class="annotation-number">3</span><div><h3>Interrompa se falhar</h3><p>A condição evita que o programa tente usar um ponteiro <code>NULL</code>.</p></div></article>
+          <article class="annotation"><span class="annotation-number">4</span><div><h3>Valide a operação</h3><p><code>fscanf(...) == 1</code> confirma que um valor foi lido com sucesso.</p></div></article>
+          <article class="annotation"><span class="annotation-number">5</span><div><h3>Feche sempre</h3><p>Depois do uso, <code>fclose</code> conclui o ciclo.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Três modos essenciais</h2></div>
+      <div class="mode-grid">
+        <article class="mode-card"><span class="mode-badge">"r"</span><h3>Ler</h3><p>Abre um arquivo existente para consulta. A abertura falha se o arquivo não existir.</p><span class="mode-effect"><strong>Efeito:</strong> preserva o conteúdo.</span></article>
+        <article class="mode-card"><span class="mode-badge">"w"</span><h3>Escrever do início</h3><p>Cria um arquivo novo ou esvazia um arquivo que já existe antes de gravar.</p><span class="mode-effect"><strong>Atenção:</strong> o conteúdo anterior é substituído.</span></article>
+        <article class="mode-card"><span class="mode-badge">"a"</span><h3>Acrescentar</h3><p>Cria o arquivo se necessário e grava novos dados no final do conteúdo existente.</p><span class="mode-effect"><strong>Efeito:</strong> preserva e amplia o conteúdo.</span></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Fluxo de decisão antes de acessar</h2></div>
+      <div class="flow-board">
+        <article class="flow-card"><span class="step-icon">1</span><h3>Defina a intenção</h3><p>Você precisa <strong>ler</strong>, <strong>substituir</strong> ou <strong>acrescentar</strong> dados?</p></article>
+        <article class="flow-card"><span class="step-icon">2</span><h3>Escolha o modo</h3><p>Use <code>"r"</code>, <code>"w"</code> ou <code>"a"</code> conforme o efeito desejado.</p></article>
+        <article class="flow-card"><span class="step-icon">3</span><h3>Verifique o ponteiro</h3><p>Somente continue quando o resultado de <code>fopen</code> for diferente de <code>NULL</code>.</p></article>
+        <article class="flow-card"><span class="step-icon">4</span><h3>Valide e finalize</h3><p>Confira leitura ou escrita e execute <code>fclose</code> ao concluir.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreamento: do programa para o arquivo</h2></div>
+      <div class="trace-layout">
+        <div class="trace-panel">
+          <div class="trace-title"><span class="trace-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"/><path d="M8 13h8M8 16h6"/></svg></span><div><strong>Conteúdo de notas.txt</strong><p>Estado do arquivo após a escrita.</p></div></div>
+          <div class="file-preview">
+            <div class="file-preview-head"><strong>notas.txt</strong><span>arquivo de texto</span></div>
+            <div class="file-content">Ana 8.5
+Bruno 7.0
+Carla 9.2</div>
+          </div>
+        </div>
+
+        <div class="trace-panel">
+          <div class="trace-title"><span class="trace-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M15 8l4 4-4 4"/><path d="M5 5v14"/></svg></span><div><strong>O que acontece em cada etapa</strong><p>O arquivo só muda durante as operações de escrita.</p></div></div>
+          <div class="state-list">
+            <article class="state-item"><span class="state-number">1</span><p><code>fopen("notas.txt", "w")</code> cria ou esvazia o arquivo.</p></article>
+            <article class="state-item"><span class="state-number">2</span><p>A verificação confirma que o ponteiro é válido.</p></article>
+            <article class="state-item"><span class="state-number">3</span><p>Cada <code>fprintf</code> envia uma linha para o arquivo.</p></article>
+            <article class="state-item"><span class="state-number">4</span><p><code>fclose</code> encerra o acesso e garante a conclusão do ciclo.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Operações frequentes</h2></div>
+      <table class="mini-table">
+        <thead><tr><th>Objetivo</th><th>Função</th><th>Exemplo mínimo</th><th>O que verificar</th></tr></thead>
+        <tbody>
+          <tr><td>Ler um número formatado</td><td><code>fscanf</code></td><td><code>fscanf(arq, "%d", &amp;idade)</code></td><td>Quantidade de itens lidos.</td></tr>
+          <tr><td>Gravar dados formatados</td><td><code>fprintf</code></td><td><code>fprintf(arq, "%s %.1f\n", nome, nota)</code></td><td>Modo permite escrita.</td></tr>
+          <tr><td>Ler uma linha de texto</td><td><code>fgets</code></td><td><code>fgets(linha, 100, arq)</code></td><td>Retorno diferente de <code>NULL</code>.</td></tr>
+          <tr><td>Gravar texto</td><td><code>fputs</code></td><td><code>fputs("Registro salvo\n", arq)</code></td><td>Modo permite escrita.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="examples-wrap">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+
+        <div class="tabs" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">1. Criar um arquivo</label>
+          <label class="tab-label" for="tab2">2. Ler notas e calcular média</label>
+          <label class="tab-label" for="tab3">3. Acrescentar um registro</label>
+        </div>
+
+        <div class="panels">
+          <article class="tab-panel" id="panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h4"/></svg></span><div><h3>Criar mensagem.txt</h3><p>Gravar uma linha simples em um arquivo novo.</p></div></div>
+                <span class="level">Nível básico</span>
+                <div class="example-steps">
+                  <div class="example-step"><strong>Modo:</strong> <code>"w"</code>, pois o objetivo é criar ou substituir.</div>
+                  <div class="example-step"><strong>Escrita:</strong> <code>fprintf</code> envia o texto para o arquivo.</div>
+                  <div class="example-step"><strong>Resultado:</strong> o arquivo contém uma linha.</div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">criar.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"mensagem.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"w"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">fprintf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"Primeiro arquivo em C!\n"</span><span class="syn-operator">);</span>
+    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel" id="panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5zM8 9h8M8 13h5"/><path d="M16 17l3 3"/></svg></span><div><h3>Ler notas até o fim</h3><p>Somar valores existentes e calcular a média.</p></div></div>
+                <span class="level">Nível intermediário</span>
+                <div class="example-steps">
+                  <div class="example-step"><strong>Modo:</strong> <code>"r"</code>, pois o arquivo já deve existir.</div>
+                  <div class="example-step"><strong>Laço seguro:</strong> continua enquanto <code>fscanf</code> conseguir ler um valor.</div>
+                  <div class="example-step"><strong>Resultado:</strong> média calculada apenas com leituras válidas.</div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">media.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"notas.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"r"</span><span class="syn-operator">);</span>
+    <span class="syn-type">float</span> <span class="syn-variable">nota</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+    <span class="syn-type">int</span> <span class="syn-variable">quantidade</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-keyword">while</span> <span class="syn-operator">(</span><span class="syn-function">fscanf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">nota</span><span class="syn-operator">)</span> <span class="syn-operator">==</span> <span class="syn-number">1</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">nota</span><span class="syn-operator">;</span>
+        <span class="syn-variable">quantidade</span><span class="syn-operator">++;</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">quantidade</span> <span class="syn-operator">&gt;</span> <span class="syn-number">0</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Media: %.2f\n"</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span> <span class="syn-operator">/</span> <span class="syn-variable">quantidade</span><span class="syn-operator">);</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel" id="panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"/><path d="M12 13h6M15 10v6"/></svg></span><div><h3>Acrescentar produto ao cadastro</h3><p>Preservar registros existentes e adicionar uma nova linha.</p></div></div>
+                <span class="level">Nível intermediário</span>
+                <div class="example-steps">
+                  <div class="example-step"><strong>Modo:</strong> <code>"a"</code>, pois os registros anteriores devem permanecer.</div>
+                  <div class="example-step"><strong>Formato:</strong> cada produto ocupa uma linha com código, nome e preço.</div>
+                  <div class="example-step"><strong>Resultado:</strong> a nova linha aparece no final do arquivo.</div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">acrescentar.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span><span class="syn-operator">;</span>
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span><span class="syn-operator">;</span>
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span><span class="syn-operator">[</span><span class="syn-number">40</span><span class="syn-operator">];</span>
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d %39s %f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">codigo</span><span class="syn-operator">,</span> <span class="syn-variable">nome</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">preco</span><span class="syn-operator">);</span>
+
+    <span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"produtos.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"a"</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">fprintf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%d %s %.2f\n"</span><span class="syn-operator">,</span>
+            <span class="syn-variable">codigo</span><span class="syn-operator">,</span> <span class="syn-variable">nome</span><span class="syn-operator">,</span> <span class="syn-variable">preco</span><span class="syn-operator">);</span>
+
+    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Não verificar <code>NULL</code></h3><p><strong>Por que acontece:</strong> o aluno presume que <code>fopen</code> sempre funciona.</p><p><strong>Como evitar:</strong> teste o ponteiro imediatamente após a abertura.</p></article>
+        <article class="error-card"><h3>Usar <code>"w"</code> sem perceber</h3><p><strong>Por que acontece:</strong> o modo é escolhido apenas porque permite escrever.</p><p><strong>Como evitar:</strong> lembre que <code>"w"</code> apaga o conteúdo anterior.</p></article>
+        <article class="error-card"><h3>Ler com <code>feof</code> como condição</h3><p><strong>Por que acontece:</strong> o fim do arquivo é testado antes da tentativa de leitura.</p><p><strong>Como evitar:</strong> use o retorno de <code>fscanf</code> ou <code>fgets</code> para controlar o laço.</p></article>
+        <article class="error-card"><h3>Esquecer <code>fclose</code></h3><p><strong>Por que acontece:</strong> o programa parece terminar normalmente mesmo sem fechar.</p><p><strong>Como evitar:</strong> associe cada abertura bem-sucedida a um fechamento.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual modo deve ser usado para consultar um arquivo que já existe sem alterar seu conteúdo?</summary><p>Use <code>"r"</code>, que abre o arquivo para leitura.</p></details>
+        <details><summary>Por que o ponteiro retornado por <code>fopen</code> deve ser comparado com <code>NULL</code>?</summary><p>Porque <code>NULL</code> indica que a abertura falhou. Nesse caso, funções de leitura ou escrita não devem ser chamadas com esse ponteiro.</p></details>
+        <details><summary>Qual é a diferença principal entre os modos <code>"w"</code> e <code>"a"</code>?</summary><p><code>"w"</code> cria ou substitui o conteúdo do arquivo. <code>"a"</code> preserva o conteúdo e acrescenta novos dados no final.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir escolher um modo de abertura, verificar o resultado de <code>fopen</code>, realizar uma leitura ou escrita básica e encerrar corretamente o acesso com <code>fclose</code>.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

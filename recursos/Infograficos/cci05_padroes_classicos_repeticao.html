@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padrões clássicos com repetição</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 280px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .pattern-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 780px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 455px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-sequence { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+    .hero-number { min-width: 48px; padding: 9px 11px; text-align: center; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); border-radius: 13px; font-family: Consolas, monospace; font-weight: 900; color: var(--cor-primaria-escura); }
+
+    .hero-results { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+    .hero-result { border: 1px solid var(--cor-borda); border-radius: 14px; padding: 10px 12px; background: var(--cor-superficie); }
+    .hero-result small { display: block; color: var(--cor-texto-secundario); font-size: .74rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 800; }
+    .hero-result strong { color: var(--cor-primaria-escura); font-family: Consolas, monospace; }
+    .hero-result.wide { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 15px; align-items: center; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .pattern-map {
+      min-height: 660px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .27); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 205px;
+      min-height: 156px;
+      padding: 21px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.15rem; }
+    .map-center span { color: #E0E7FF; font-size: .9rem; }
+
+    .pattern-button {
+      position: absolute;
+      width: 245px;
+      min-height: 150px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .pattern-button:hover, .pattern-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .pattern-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .pattern-button p { font-size: .91rem; }
+    .pattern-formula { display: inline-flex; margin-top: 8px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+
+    .button-sum { left: 28px; top: 30px; }
+    .button-count { right: 28px; top: 30px; }
+    .button-average { left: 28px; top: 255px; }
+    .button-max { right: 28px; top: 255px; }
+    .button-min { left: 50%; transform: translateX(-50%); bottom: 28px; }
+    .button-min:hover, .button-min:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .pattern-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .pattern-step { position: relative; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 17px; padding: 16px; min-height: 145px; }
+    .pattern-step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); z-index: 2; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .step-badge { display: inline-flex; padding: 5px 9px; margin-bottom: 10px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .75rem; font-weight: 900; }
+    .pattern-step p { font-size: .89rem; }
+
+    .trace-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: 18px; align-items: start; }
+    .trace-intro { background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.16); border-radius: 20px; padding: 21px; }
+    .trace-values { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
+    .trace-value { width: 46px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); font-family: Consolas, monospace; font-weight: 900; color: var(--cor-primaria-escura); }
+    .trace-final { padding: 11px 13px; border-radius: 13px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--cor-borda); border-radius: 19px; }
+    .state-table { width: 100%; border-collapse: collapse; min-width: 690px; }
+    .state-table th, .state-table td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--cor-borda); vertical-align: top; }
+    .state-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .state-table tr:last-child td { border-bottom: 0; }
+    .state-table td { color: var(--cor-texto-secundario); font-size: .91rem; }
+    .state-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .choice-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .choice-card { border: 1px solid var(--cor-borda); border-radius: 17px; padding: 16px; background: var(--cor-superficie); }
+    .mini-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .choice-card p { font-size: .88rem; }
+
+    .examples-shell { position: relative; }
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); border-radius: 999px; padding: 9px 14px; font-weight: 800; transition: all .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.32); color: var(--cor-primaria-escura); }
+    #tab1:checked ~ .tabs label[for="tab1"],
+    #tab2:checked ~ .tabs label[for="tab2"],
+    #tab3:checked ~ .tabs label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .example-panel { display: none; animation: panelIn .25s ease both; }
+    #tab1:checked ~ .example-panels .panel1,
+    #tab2:checked ~ .example-panels .panel2,
+    #tab3:checked ~ .example-panels .panel3 { display: block; }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .88fr 1.12fr; gap: 17px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-card.problem { border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; }
+    .example-title { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .example-icon { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .example-data { display: grid; gap: 8px; margin-top: 13px; }
+    .example-row { display: flex; justify-content: space-between; gap: 15px; padding: 9px 11px; border-radius: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); font-size: .89rem; }
+    .example-row strong { color: var(--cor-primaria-escura); }
+
+    .code-window { background: var(--codigo-fundo); border-radius: 18px; overflow: hidden; box-shadow: 0 14px 32px rgba(15,23,42,.16); }
+    .code-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 15px; background: #0B1220; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .code-dots { display: flex; gap: 6px; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; }
+    .code-file { color: #CBD5E1; font-size: .77rem; font-family: Consolas, monospace; }
+    pre { margin: 0; overflow-x: auto; padding: 18px; color: var(--codigo-texto); font-size: .87rem; line-height: 1.6; tab-size: 4; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-var { color: var(--syntax-variable); }
+    .syn-op { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 12px; box-shadow: var(--sombra-suave); }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(15,23,42,.7);
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .2s ease, visibility .2s ease;
+    }
+    .modal-overlay:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-dismiss { position: absolute; inset: 0; cursor: default; }
+    .modal-card {
+      width: min(790px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 2;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255,255,255,.5);
+      border-radius: 25px;
+      padding: 24px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.3);
+      transform: translateY(20px) scale(.96);
+      opacity: 0;
+    }
+    .modal-overlay:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.8,.2,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .modal-title-wrap { display: flex; align-items: center; gap: 12px; }
+    .modal-icon { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-kicker { color: var(--cor-primaria); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 900; }
+    .modal-head h2 { font-size: 1.4rem; }
+    .modal-close { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; line-height: 1; font-weight: 700; }
+    .modal-close:hover, .modal-close:focus-visible { color: var(--cor-primaria); border-color: rgba(79,70,229,.35); outline: none; }
+    .modal-summary { padding: 14px 16px; border-radius: 16px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.16); margin-bottom: 16px; }
+    .modal-summary strong { color: var(--cor-primaria-escura); }
+    .modal-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: 14px; align-items: start; }
+    .modal-facts { display: grid; gap: 10px; }
+    .modal-fact { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 12px; }
+    .modal-fact strong { display: block; color: var(--cor-primaria-escura); margin-bottom: 3px; }
+    .modal-fact p { font-size: .9rem; }
+    .formula-box { background: var(--codigo-fundo); color: #F8FAFC; border-radius: 16px; padding: 17px; font-family: Consolas, monospace; line-height: 1.7; overflow-x: auto; }
+    .formula-box .comment { color: var(--syntax-comment); }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .trace-layout, .example-grid, .modal-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, 1fr); }
+      .concept-points { grid-template-columns: 1fr; }
+      .pattern-strip, .choice-grid { grid-template-columns: repeat(2, 1fr); }
+      .pattern-step:not(:last-child)::after { display: none; }
+
+      .pattern-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .pattern-button { position: static; width: auto; min-height: 145px; transform: none; }
+      .map-center { grid-column: 1 / -1; }
+      .button-min { transform: none; grid-column: 1 / -1; }
+      .button-min:hover, .button-min:focus-visible { transform: translateY(-4px); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .hero-results, .meta-grid, .pattern-strip, .choice-grid, .error-grid, .pattern-map { grid-template-columns: 1fr; }
+      .hero-result.wide, .map-center, .button-min { grid-column: auto; }
+      .tabs { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal-overlay { padding: 10px; }
+      .modal-card { padding: 19px; border-radius: 20px; max-height: 92vh; }
+      .modal-title-wrap { align-items: flex-start; }
+      .modal-icon { width: 40px; height: 40px; }
+      pre { font-size: .78rem; }
+      .state-table { min-width: 650px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Padrões clássicos com repetição</h1>
+          <p class="subtitle">Reconheça modelos que aparecem em muitos problemas com laços: somar, contar, calcular média, encontrar o maior e localizar o menor valor.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Resumo dos padrões sobre a sequência 8, 3, 10 e 6">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M7 15l4-4 3 2 5-7"/></svg></span>
+            <div><strong>Uma sequência, cinco respostas</strong><span>Valores processados pelo mesmo laço</span></div>
+          </div>
+          <div class="hero-sequence">
+            <span class="hero-number">8</span><span class="hero-number">3</span><span class="hero-number">10</span><span class="hero-number">6</span>
+          </div>
+          <div class="hero-results">
+            <div class="hero-result"><small>Soma</small><strong>27</strong></div>
+            <div class="hero-result"><small>Contagem</small><strong>4</strong></div>
+            <div class="hero-result"><small>Média</small><strong>6,75</strong></div>
+            <div class="hero-result"><small>Maior</small><strong>10</strong></div>
+            <div class="hero-result wide"><span><small>Menor</small><strong>3</strong></span><span>O padrão muda, o percurso pode ser o mesmo.</span></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI05</div><p>Construir e controlar soluções que utilizam estruturas de repetição.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI03 e CCI04</div><p>Atualizar estados e aplicar condições durante o processamento.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Padrões com laços</div><p>Soma, contagem, média, maior e menor.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura visual, exploração dos cards e comparação dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Reconhecimento de padrões</div><p>Relacionar perguntas frequentes a modelos de atualização.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg>Laços de repetição</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z"/><path d="M9 9h6M9 13h6"/></svg>Variáveis e atribuição</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg>Expressões aritméticas</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 12h16M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>Condições simples</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>O laço percorre os dados. O padrão define o que muda.</h3>
+          <p>Muitos problemas diferentes compartilham a mesma estrutura: iniciar variáveis, repetir a leitura ou o acesso aos valores, atualizar o resultado parcial e apresentar a resposta final.</p>
+          <div class="central-rule"><span>valor atual</span><span>→</span><strong>atualização do estado</strong><span>→</span><span>novo resultado parcial</span></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Identifique a pergunta</h3><p>O problema pede total, quantidade, média, maior ou menor?</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Escolha a variável</h3><p>Defina o estado que precisa ser atualizado em cada repetição.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Finalize corretamente</h3><p>Alguns resultados, como média, só podem ser calculados depois do laço.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-padroes">
+      <div class="section-title"><span class="marker"></span><h2>Mapa dos padrões clássicos</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 21h14"/></svg>
+        Clique em cada bloco para abrir uma explicação usando a mesma sequência: 8, 3, 10 e 6.
+      </div>
+
+      <div class="pattern-map">
+        <svg class="map-lines" viewBox="0 0 1000 660" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="330" x2="150" y2="105"/>
+          <line x1="500" y1="330" x2="850" y2="105"/>
+          <line x1="500" y1="330" x2="150" y2="330"/>
+          <line x1="500" y1="330" x2="850" y2="330"/>
+          <line x1="500" y1="330" x2="500" y2="575"/>
+        </svg>
+
+        <div class="map-center"><div><strong>Mesmo conjunto de valores</strong><br><span>Cada padrão responde a uma pergunta diferente</span></div></div>
+
+        <a class="pattern-button button-sum" href="#modal-soma">
+          <span class="pattern-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></span>
+          <h3>Soma</h3><p>Reúne todos os valores em um total acumulado.</p><span class="pattern-formula">soma += valor</span>
+        </a>
+
+        <a class="pattern-button button-count" href="#modal-contagem">
+          <span class="pattern-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+          <h3>Contagem</h3><p>Registra quantos valores ou ocorrências foram processados.</p><span class="pattern-formula">quantidade++</span>
+        </a>
+
+        <a class="pattern-button button-average" href="#modal-media">
+          <span class="pattern-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 17h14M8 4l8 16"/></svg></span>
+          <h3>Média</h3><p>Combina uma soma acumulada com a quantidade de valores.</p><span class="pattern-formula">soma / quantidade</span>
+        </a>
+
+        <a class="pattern-button button-max" href="#modal-maior">
+          <span class="pattern-icon"><svg viewBox="0 0 24 24"><path d="M5 17l5-5 3 3 6-8"/><path d="M15 7h4v4"/></svg></span>
+          <h3>Maior</h3><p>Mantém o melhor candidato encontrado até o momento.</p><span class="pattern-formula">se valor &gt; maior</span>
+        </a>
+
+        <a class="pattern-button button-min" href="#modal-menor">
+          <span class="pattern-icon"><svg viewBox="0 0 24 24"><path d="M5 7l5 5 3-3 6 8"/><path d="M15 17h4v-4"/></svg></span>
+          <h3>Menor</h3><p>Mantém o menor candidato encontrado durante o percurso.</p><span class="pattern-formula">se valor &lt; menor</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Estrutura que se repete</h2></div>
+      <div class="pattern-strip">
+        <article class="pattern-step"><span class="step-badge">1. Inicializar</span><h3>Prepare o estado</h3><p>Use 0 para soma e contagem. Para maior e menor, prefira o primeiro valor válido.</p></article>
+        <article class="pattern-step"><span class="step-badge">2. Obter valor</span><h3>Leia ou acesse</h3><p>O valor atual pode vir do teclado, de um vetor ou de outra fonte.</p></article>
+        <article class="pattern-step"><span class="step-badge">3. Filtrar</span><h3>Decida se participa</h3><p>Uma condição pode selecionar apenas valores válidos ou de interesse.</p></article>
+        <article class="pattern-step"><span class="step-badge">4. Atualizar</span><h3>Aplique o padrão</h3><p>Some, conte ou compare o valor atual com o estado armazenado.</p></article>
+        <article class="pattern-step"><span class="step-badge">5. Finalizar</span><h3>Produza a resposta</h3><p>Calcule resultados derivados, como a média, e mostre os valores finais.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreamento visual</h2></div>
+      <div class="trace-layout">
+        <div class="trace-intro">
+          <h3>Acompanhe o estado após cada valor</h3>
+          <p>Considere que o primeiro valor válido inicializa <code>maior</code> e <code>menor</code>. Depois, cada elemento atualiza apenas os estados necessários.</p>
+          <div class="trace-values"><span class="trace-value">8</span><span class="trace-value">3</span><span class="trace-value">10</span><span class="trace-value">6</span></div>
+          <div class="trace-final"><strong>Depois do laço:</strong> média = 27 / 4 = 6,75.</div>
+        </div>
+        <div class="table-wrap">
+          <table class="state-table">
+            <thead><tr><th>Valor atual</th><th>Soma</th><th>Quantidade</th><th>Maior</th><th>Menor</th></tr></thead>
+            <tbody>
+              <tr><td><code>8</code></td><td>8</td><td>1</td><td>8</td><td>8</td></tr>
+              <tr><td><code>3</code></td><td>11</td><td>2</td><td>8</td><td>3</td></tr>
+              <tr><td><code>10</code></td><td>21</td><td>3</td><td>10</td><td>3</td></tr>
+              <tr><td><code>6</code></td><td>27</td><td>4</td><td>10</td><td>3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Qual padrão escolher?</h2></div>
+      <div class="choice-grid">
+        <article class="choice-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></span><h3>Total</h3><p>Use <strong>soma</strong> quando a pergunta for quanto há ao todo.</p></article>
+        <article class="choice-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6"/></svg></span><h3>Quantidade</h3><p>Use <strong>contagem</strong> quando a pergunta começar com quantos.</p></article>
+        <article class="choice-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 17h14M8 4l8 16"/></svg></span><h3>Valor médio</h3><p>Use <strong>soma e contagem</strong>, depois divida fora do laço.</p></article>
+        <article class="choice-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M6 16l5-5 3 3 4-6"/></svg></span><h3>Maior valor</h3><p>Compare cada elemento com o melhor candidato atual.</p></article>
+        <article class="choice-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M6 8l5 5 3-3 4 6"/></svg></span><h3>Menor valor</h3><p>Compare cada elemento com o menor candidato atual.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="examples-shell">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+
+        <div class="tabs" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">1. Soma e contagem</label>
+          <label class="tab-label" for="tab2">2. Média com filtro</label>
+          <label class="tab-label" for="tab3">3. Estatísticas até zero</label>
+        </div>
+
+        <div class="example-panels">
+          <article class="example-panel panel1">
+            <div class="example-grid">
+              <div class="example-card problem">
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></span><div><h3>Somar cinco números</h3><p>Nível básico</p></div></div>
+                <p>Leia cinco números inteiros, calcule a soma e informe quantos valores foram processados.</p>
+                <div class="example-data">
+                  <div class="example-row"><span>Padrões</span><strong>Soma e contagem</strong></div>
+                  <div class="example-row"><span>Inicialização</span><strong>soma = 0, quantidade = 0</strong></div>
+                  <div class="example-row"><span>Atualização</span><strong>soma += numero; quantidade++</strong></div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div><span class="code-file">soma_contagem.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-var">i</span>, <span class="syn-var">numero</span>;
+    <span class="syn-type">int</span> <span class="syn-var">soma</span> <span class="syn-op">=</span> <span class="syn-number">0</span>;
+    <span class="syn-type">int</span> <span class="syn-var">quantidade</span> <span class="syn-op">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-var">i</span> <span class="syn-op">=</span> <span class="syn-number">0</span>; <span class="syn-var">i</span> <span class="syn-op">&lt;</span> <span class="syn-number">5</span>; <span class="syn-var">i</span><span class="syn-op">++</span>) {
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-op">&amp;</span><span class="syn-var">numero</span>);
+        <span class="syn-var">soma</span> <span class="syn-op">+=</span> <span class="syn-var">numero</span>;
+        <span class="syn-var">quantidade</span><span class="syn-op">++</span>;
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Soma: %d\n"</span>, <span class="syn-var">soma</span>);
+    <span class="syn-function">printf</span>(<span class="syn-string">"Quantidade: %d\n"</span>, <span class="syn-var">quantidade</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel2">
+            <div class="example-grid">
+              <div class="example-card problem">
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 17h14M8 4l8 16"/></svg></span><div><h3>Média das notas válidas</h3><p>Nível intermediário</p></div></div>
+                <p>Leia seis notas. Considere apenas valores entre 0 e 10 e calcule a média das notas válidas.</p>
+                <div class="example-data">
+                  <div class="example-row"><span>Filtro</span><strong>nota &gt;= 0 &amp;&amp; nota &lt;= 10</strong></div>
+                  <div class="example-row"><span>Padrões</span><strong>Soma, contagem e média</strong></div>
+                  <div class="example-row"><span>Cuidado</span><strong>Dividir apenas se quantidade &gt; 0</strong></div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div><span class="code-file">media_validas.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-var">i</span>, <span class="syn-var">quantidade</span> <span class="syn-op">=</span> <span class="syn-number">0</span>;
+    <span class="syn-type">float</span> <span class="syn-var">nota</span>, <span class="syn-var">soma</span> <span class="syn-op">=</span> <span class="syn-number">0.0</span>, <span class="syn-var">media</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-var">i</span> <span class="syn-op">=</span> <span class="syn-number">0</span>; <span class="syn-var">i</span> <span class="syn-op">&lt;</span> <span class="syn-number">6</span>; <span class="syn-var">i</span><span class="syn-op">++</span>) {
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-op">&amp;</span><span class="syn-var">nota</span>);
+
+        <span class="syn-keyword">if</span> (<span class="syn-var">nota</span> <span class="syn-op">&gt;=</span> <span class="syn-number">0</span> <span class="syn-op">&amp;&amp;</span> <span class="syn-var">nota</span> <span class="syn-op">&lt;=</span> <span class="syn-number">10</span>) {
+            <span class="syn-var">soma</span> <span class="syn-op">+=</span> <span class="syn-var">nota</span>;
+            <span class="syn-var">quantidade</span><span class="syn-op">++</span>;
+        }
+    }
+
+    <span class="syn-keyword">if</span> (<span class="syn-var">quantidade</span> <span class="syn-op">&gt;</span> <span class="syn-number">0</span>) {
+        <span class="syn-var">media</span> <span class="syn-op">=</span> <span class="syn-var">soma</span> <span class="syn-op">/</span> <span class="syn-var">quantidade</span>;
+        <span class="syn-function">printf</span>(<span class="syn-string">"Media: %.2f\n"</span>, <span class="syn-var">media</span>);
+    } <span class="syn-keyword">else</span> {
+        <span class="syn-function">printf</span>(<span class="syn-string">"Nenhuma nota valida.\n"</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="example-panel panel3">
+            <div class="example-grid">
+              <div class="example-card problem">
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M7 15l4-4 3 2 5-7"/></svg></span><div><h3>Estatísticas até a sentinela zero</h3><p>Nível intermediário</p></div></div>
+                <p>Leia inteiros positivos até que o usuário digite 0. Mostre soma, quantidade, média, maior e menor.</p>
+                <div class="example-data">
+                  <div class="example-row"><span>Parada</span><strong>numero == 0</strong></div>
+                  <div class="example-row"><span>Inicialização de maior e menor</span><strong>Primeiro valor válido</strong></div>
+                  <div class="example-row"><span>Padrões combinados</span><strong>Todos os cinco</strong></div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-bar"><div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div><span class="code-file">estatisticas.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-var">numero</span>, <span class="syn-var">soma</span> <span class="syn-op">=</span> <span class="syn-number">0</span>;
+    <span class="syn-type">int</span> <span class="syn-var">quantidade</span> <span class="syn-op">=</span> <span class="syn-number">0</span>;
+    <span class="syn-type">int</span> <span class="syn-var">maior</span>, <span class="syn-var">menor</span>;
+    <span class="syn-type">float</span> <span class="syn-var">media</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-op">&amp;</span><span class="syn-var">numero</span>);
+
+    <span class="syn-keyword">while</span> (<span class="syn-var">numero</span> <span class="syn-op">!=</span> <span class="syn-number">0</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-var">quantidade</span> <span class="syn-op">==</span> <span class="syn-number">0</span>) {
+            <span class="syn-var">maior</span> <span class="syn-op">=</span> <span class="syn-var">numero</span>;
+            <span class="syn-var">menor</span> <span class="syn-op">=</span> <span class="syn-var">numero</span>;
+        } <span class="syn-keyword">else</span> {
+            <span class="syn-keyword">if</span> (<span class="syn-var">numero</span> <span class="syn-op">&gt;</span> <span class="syn-var">maior</span>) <span class="syn-var">maior</span> <span class="syn-op">=</span> <span class="syn-var">numero</span>;
+            <span class="syn-keyword">if</span> (<span class="syn-var">numero</span> <span class="syn-op">&lt;</span> <span class="syn-var">menor</span>) <span class="syn-var">menor</span> <span class="syn-op">=</span> <span class="syn-var">numero</span>;
+        }
+
+        <span class="syn-var">soma</span> <span class="syn-op">+=</span> <span class="syn-var">numero</span>;
+        <span class="syn-var">quantidade</span><span class="syn-op">++</span>;
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-op">&amp;</span><span class="syn-var">numero</span>);
+    }
+
+    <span class="syn-keyword">if</span> (<span class="syn-var">quantidade</span> <span class="syn-op">&gt;</span> <span class="syn-number">0</span>) {
+        <span class="syn-var">media</span> <span class="syn-op">=</span> (<span class="syn-type">float</span>) <span class="syn-var">soma</span> <span class="syn-op">/</span> <span class="syn-var">quantidade</span>;
+        <span class="syn-function">printf</span>(<span class="syn-string">"Soma: %d | Quantidade: %d\n"</span>, <span class="syn-var">soma</span>, <span class="syn-var">quantidade</span>);
+        <span class="syn-function">printf</span>(<span class="syn-string">"Media: %.2f | Maior: %d | Menor: %d\n"</span>, <span class="syn-var">media</span>, <span class="syn-var">maior</span>, <span class="syn-var">menor</span>);
+    }
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Inicializar maior ou menor com zero</h3><p><strong>Por que acontece:</strong> o aluno repete a inicialização usada na soma.</p><p><strong>Como evitar:</strong> use o primeiro valor válido como candidato inicial.</p></article>
+        <article class="error-card"><h3>Dividir dentro do laço</h3><p><strong>Por que acontece:</strong> soma e quantidade ainda estão incompletas.</p><p><strong>Como evitar:</strong> calcule a média depois que todos os valores forem processados.</p></article>
+        <article class="error-card"><h3>Contar valores que não participam</h3><p><strong>Por que acontece:</strong> o contador é atualizado fora do filtro.</p><p><strong>Como evitar:</strong> some e conte dentro da mesma condição de validade.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Por que a média normalmente é calculada depois do laço?</summary><p>Porque ela depende da soma total e da quantidade final de valores considerados.</p></details>
+        <details><summary>Qual é uma forma segura de inicializar maior e menor?</summary><p>Usar o primeiro valor válido lido como candidato inicial para ambos.</p></details>
+        <details><summary>Se apenas números positivos devem participar, onde soma e contagem devem ser atualizadas?</summary><p>Dentro da condição que verifica se o valor é positivo, para que os dois estados considerem o mesmo conjunto de dados.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir reconhecer qual padrão um problema de repetição exige, inicializar as variáveis adequadamente e atualizar soma, contagem, média, maior e menor de forma coerente.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <div class="modal-overlay" id="modal-soma" role="dialog" aria-modal="true" aria-labelledby="titulo-soma">
+    <a class="modal-dismiss" href="#mapa-padroes" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></span><div><div class="modal-kicker">Acumulador</div><h2 id="titulo-soma">Padrão de soma</h2></div></div>
+        <a class="modal-close" href="#mapa-padroes" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Com 8, 3, 10 e 6:</strong> a soma começa em 0 e passa por 8, 11, 21 e 27.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Inicialização</strong><p>Comece com 0, o elemento neutro da adição.</p></div>
+          <div class="modal-fact"><strong>Atualização</strong><p>O novo total usa o acumulado anterior e o valor atual.</p></div>
+          <div class="modal-fact"><strong>Uso frequente</strong><p>Total de vendas, pontos, idades ou valores lidos.</p></div>
+        </div>
+        <div class="formula-box"><span class="comment">// antes do laço</span><br>soma = 0;<br><br><span class="comment">// dentro do laço</span><br>soma = soma + valor;<br><span class="comment">// forma equivalente</span><br>soma += valor;</div>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-contagem" role="dialog" aria-modal="true" aria-labelledby="titulo-contagem">
+    <a class="modal-dismiss" href="#mapa-padroes" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span><div><div class="modal-kicker">Contador</div><h2 id="titulo-contagem">Padrão de contagem</h2></div></div>
+        <a class="modal-close" href="#mapa-padroes" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Com 8, 3, 10 e 6:</strong> a quantidade começa em 0 e termina em 4, pois quatro valores foram processados.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Inicialização</strong><p>Use 0 para representar nenhuma ocorrência contada.</p></div>
+          <div class="modal-fact"><strong>Atualização</strong><p>Acrescente 1 quando ocorrer o evento que deve ser contado.</p></div>
+          <div class="modal-fact"><strong>Posição da atualização</strong><p>Dentro do filtro, quando apenas alguns valores participam.</p></div>
+        </div>
+        <div class="formula-box"><span class="comment">// contar todos</span><br>quantidade++;<br><br><span class="comment">// contar apenas positivos</span><br>if (valor &gt; 0) {<br>&nbsp;&nbsp;&nbsp;&nbsp;quantidade++;<br>}</div>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-media" role="dialog" aria-modal="true" aria-labelledby="titulo-media">
+    <a class="modal-dismiss" href="#mapa-padroes" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 17h14M8 4l8 16"/></svg></span><div><div class="modal-kicker">Resultado derivado</div><h2 id="titulo-media">Padrão de média</h2></div></div>
+        <a class="modal-close" href="#mapa-padroes" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Com 8, 3, 10 e 6:</strong> soma = 27, quantidade = 4 e média = 27 / 4 = 6,75.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Estados necessários</strong><p>Uma soma acumulada e uma contagem coerente.</p></div>
+          <div class="modal-fact"><strong>Momento do cálculo</strong><p>Normalmente depois do laço, quando os dois valores estão completos.</p></div>
+          <div class="modal-fact"><strong>Segurança</strong><p>Verifique se a quantidade é maior que zero antes da divisão.</p></div>
+        </div>
+        <div class="formula-box">if (quantidade &gt; 0) {<br>&nbsp;&nbsp;&nbsp;&nbsp;media = (float) soma / quantidade;<br>}<br><br><span class="comment">// conversão evita divisão inteira</span></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-maior" role="dialog" aria-modal="true" aria-labelledby="titulo-maior">
+    <a class="modal-dismiss" href="#mapa-padroes" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 17l5-5 3 3 6-8"/><path d="M15 7h4v4"/></svg></span><div><div class="modal-kicker">Seleção por comparação</div><h2 id="titulo-maior">Padrão de maior valor</h2></div></div>
+        <a class="modal-close" href="#mapa-padroes" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Com 8, 3, 10 e 6:</strong> o candidato começa em 8, permanece 8, muda para 10 e termina em 10.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Inicialização segura</strong><p>Use o primeiro valor válido, não um número arbitrário.</p></div>
+          <div class="modal-fact"><strong>Comparação</strong><p>Troque o candidato apenas quando aparecer um valor maior.</p></div>
+          <div class="modal-fact"><strong>Estado mantido</strong><p>Em cada instante, a variável guarda o maior visto até então.</p></div>
+        </div>
+        <div class="formula-box">maior = primeiroValor;<br><br>if (valor &gt; maior) {<br>&nbsp;&nbsp;&nbsp;&nbsp;maior = valor;<br>}</div>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-menor" role="dialog" aria-modal="true" aria-labelledby="titulo-menor">
+    <a class="modal-dismiss" href="#mapa-padroes" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 7l5 5 3-3 6 8"/><path d="M15 17h4v-4"/></svg></span><div><div class="modal-kicker">Seleção por comparação</div><h2 id="titulo-menor">Padrão de menor valor</h2></div></div>
+        <a class="modal-close" href="#mapa-padroes" aria-label="Fechar">×</a>
+      </div>
+      <div class="modal-summary"><strong>Com 8, 3, 10 e 6:</strong> o candidato começa em 8, muda para 3 e permanece 3 até o final.</div>
+      <div class="modal-grid">
+        <div class="modal-facts">
+          <div class="modal-fact"><strong>Inicialização segura</strong><p>Use o primeiro valor válido para funcionar também com números negativos.</p></div>
+          <div class="modal-fact"><strong>Comparação</strong><p>Troque o candidato quando o valor atual for menor.</p></div>
+          <div class="modal-fact"><strong>Estado mantido</strong><p>A variável representa o menor valor já encontrado.</p></div>
+        </div>
+        <div class="formula-box">menor = primeiroValor;<br><br>if (valor &lt; menor) {<br>&nbsp;&nbsp;&nbsp;&nbsp;menor = valor;<br>}</div>
+      </div>
+    </article>
+  </div>
+</body>
+</html>

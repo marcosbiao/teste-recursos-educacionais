@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matriz: dados organizados em linhas e colunas</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 280px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, .92fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 470px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 15px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-matrix-wrap { display: grid; grid-template-columns: 34px 1fr; grid-template-rows: 26px 1fr; gap: 7px; }
+    .hero-col-labels { grid-column: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .hero-row-labels { grid-row: 2; display: grid; grid-template-rows: repeat(3, 1fr); gap: 7px; }
+    .hero-axis-label { display: grid; place-items: center; color: var(--cor-texto-secundario); font-size: .7rem; font-weight: 900; }
+    .hero-matrix { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .hero-cell {
+      min-height: 48px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      background: var(--cor-superficie-suave);
+      color: var(--cor-primaria-escura);
+      font-family: Consolas, monospace;
+      font-weight: 900;
+      position: relative;
+    }
+    .hero-cell.active { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); box-shadow: 0 8px 18px rgba(79,70,229,.22); }
+    .hero-cell.active::after { content: "[1][2]"; position: absolute; bottom: -22px; font-size: .67rem; color: var(--cor-primaria-escura); font-weight: 900; }
+    .hero-loop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 29px; }
+    .hero-loop-item { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px; text-align: center; }
+    .hero-loop-item small { display: block; color: var(--cor-texto-secundario); font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 800; }
+    .hero-loop-item strong { color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .84rem; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .central-rule { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding: 10px 12px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-weight: 800; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .matrix-map {
+      min-height: 590px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .27); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 240px;
+      min-height: 166px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: 1rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 150px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .map-button p { font-size: .91rem; }
+    .map-code { display: inline-flex; margin-top: 8px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-matrix { left: 32px; top: 40px; }
+    .button-row { right: 32px; top: 40px; }
+    .button-column { left: 32px; bottom: 40px; }
+    .button-loops { right: 32px; bottom: 40px; }
+
+    .coordinate-layout { display: grid; grid-template-columns: .74fr 1.26fr; gap: 18px; align-items: start; }
+    .coordinate-intro { background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.16); border-radius: 20px; padding: 21px; }
+    .coordinate-rule { margin-top: 13px; padding: 11px 13px; border-radius: 13px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); font-size: .9rem; }
+    .matrix-board { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 18px; background: var(--cor-superficie-suave); overflow-x: auto; }
+    .matrix-grid-wrap { min-width: 640px; display: grid; grid-template-columns: 54px 1fr; grid-template-rows: 38px 1fr; gap: 8px; }
+    .col-labels { grid-column: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .row-labels { grid-row: 2; display: grid; grid-template-rows: repeat(3, 1fr); gap: 8px; }
+    .axis-label { display: grid; place-items: center; color: var(--cor-texto-secundario); font-size: .78rem; font-weight: 900; }
+    .matrix-grid { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .matrix-cell { min-height: 70px; display: grid; place-items: center; border: 2px solid var(--cor-borda); background: var(--cor-superficie); border-radius: 14px; color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: 1.08rem; font-weight: 900; position: relative; }
+    .matrix-cell.highlight { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); box-shadow: 0 10px 22px rgba(79,70,229,.22); }
+    .matrix-cell.highlight::after { content: "notas[1][2]"; position: absolute; bottom: -28px; color: var(--cor-primaria-escura); font-size: .74rem; font-weight: 900; white-space: nowrap; }
+    .coordinate-caption { margin-top: 36px; padding: 12px 14px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; color: var(--cor-texto-principal); font-size: .92rem; }
+    .coordinate-caption code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .loop-anatomy { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .loop-step { position: relative; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 17px; padding: 17px; min-height: 170px; }
+    .loop-step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); z-index: 2; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .step-badge { display: inline-flex; padding: 5px 9px; margin-bottom: 10px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .75rem; font-weight: 900; }
+    .loop-step p { font-size: .89rem; }
+    .loop-step code { display: inline-block; margin-top: 8px; color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .trace-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 18px; align-items: start; }
+    .trace-left { display: grid; gap: 14px; }
+    .trace-code { border-radius: 19px; overflow: hidden; border: 1px solid #1F2937; background: var(--codigo-fundo); }
+    .code-header { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-bottom: 1px solid #374151; background: #0B1220; color: #CBD5E1; font-size: .78rem; font-weight: 800; }
+    .trace-matrix-card { border: 1px solid var(--cor-borda); border-radius: 19px; padding: 16px; background: var(--cor-superficie-suave); }
+    .trace-matrix-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .trace-matrix-title h3 { margin: 0; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .trace-matrix-title code { padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; }
+    .trace-matrix-grid { display: grid; grid-template-columns: 38px repeat(3, minmax(70px, 1fr)); gap: 7px; align-items: stretch; }
+    .trace-axis-corner, .trace-axis-label { min-height: 30px; display: grid; place-items: center; color: var(--cor-texto-secundario); font-size: .75rem; font-weight: 900; }
+    .trace-axis-label { border-radius: 9px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .trace-matrix-cell { min-height: 66px; display: grid; place-items: center; align-content: center; gap: 2px; border: 1px solid var(--cor-borda); border-radius: 12px; background: var(--cor-superficie); color: var(--cor-primaria-escura); font-weight: 900; box-shadow: 0 7px 16px rgba(15,23,42,.04); }
+    .trace-matrix-cell strong { font-size: 1.08rem; }
+    .trace-matrix-cell small { color: var(--cor-texto-secundario); font-family: Consolas, monospace; font-size: .68rem; font-weight: 700; }
+    .trace-matrix-caption { margin-top: 11px; color: var(--cor-texto-secundario); font-size: .86rem; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; overflow-x: auto; padding: 18px; color: var(--codigo-texto); font-size: .87rem; line-height: 1.6; tab-size: 4; }
+    .trace-table-wrap { overflow-x: auto; border: 1px solid var(--cor-borda); border-radius: 19px; }
+    .state-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    .state-table th, .state-table td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--cor-borda); vertical-align: top; }
+    .state-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .state-table tr:last-child td { border-bottom: none; }
+    .state-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); border-radius: 999px; padding: 9px 14px; font-weight: 800; transition: all .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.32); color: var(--cor-primaria-escura); }
+    .tab-panel { display: none; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); border-color: var(--cor-primaria); color: white; }
+    #tab1:checked ~ .tab-panels .panel-1,
+    #tab2:checked ~ .tab-panels .panel-2,
+    #tab3:checked ~ .tab-panels .panel-3 { display: block; animation: panel-in .28s ease both; }
+    @keyframes panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: stretch; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; overflow: hidden; background: var(--cor-superficie); }
+    .example-info { padding: 20px; background: var(--cor-superficie-suave); }
+    .example-title { display: flex; align-items: center; gap: 10px; margin-bottom: 11px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .level-badge { display: inline-flex; margin-bottom: 10px; padding: 5px 9px; border-radius: 999px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.3); color: #92400E; font-size: .74rem; font-weight: 900; }
+    .example-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .9rem; }
+    .example-table th, .example-table td { padding: 9px 10px; border: 1px solid var(--cor-borda); text-align: left; }
+    .example-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .example-code { background: var(--codigo-fundo); border-color: #1F2937; }
+
+    .tok-directive { color: var(--syntax-directive); }
+    .tok-header { color: var(--syntax-header); }
+    .tok-type { color: var(--syntax-type); }
+    .tok-function { color: var(--syntax-function); }
+    .tok-keyword { color: var(--syntax-keyword); }
+    .tok-string { color: var(--syntax-string); }
+    .tok-number { color: var(--syntax-number); }
+    .tok-comment { color: var(--syntax-comment); font-style: italic; }
+    .tok-variable { color: var(--syntax-variable); }
+    .tok-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .92rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; max-width: 950px; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, .72);
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal-overlay:target { opacity: 1; visibility: visible; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      width: min(100%, 660px);
+      max-height: min(86vh, 760px);
+      overflow-y: auto;
+      position: relative;
+      z-index: 2;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 26px;
+      box-shadow: 0 28px 80px rgba(15, 23, 42, .34);
+      transform: translateY(24px) scale(.96);
+    }
+    .modal-overlay:target .modal-card { transform: translateY(0) scale(1); animation: modal-in .32s ease both; }
+    @keyframes modal-in { 0% { opacity: 0; transform: translateY(26px) scale(.94); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); text-decoration: none; font-size: 1.3rem; font-weight: 900; }
+    .modal-close:hover { background: var(--cor-superficie-destacada); }
+    .modal-title-wrap { display: flex; align-items: center; gap: 12px; padding-right: 44px; margin-bottom: 16px; }
+    .modal-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-kicker { color: var(--cor-primaria); font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 900; }
+    .modal-card h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 15px; border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie-suave); }
+    .modal-example code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-list { margin: 13px 0 0 20px; color: var(--cor-texto-secundario); }
+    .modal-list li { margin-bottom: 6px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .coordinate-layout, .trace-layout, .example { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: repeat(3, 1fr); }
+      .matrix-map { min-height: auto; padding: 18px; display: grid; gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; width: 100%; min-height: auto; transform: none; }
+      .map-center { order: -1; }
+      .loop-anatomy { grid-template-columns: repeat(2, 1fr); }
+      .loop-step:nth-child(2)::after { display: none; }
+      .error-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 18px 12px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .hero-grid { gap: 24px; }
+      .hero-panel { padding: 16px; }
+      .meta-grid, .concept-points, .loop-anatomy, .error-grid { grid-template-columns: 1fr; }
+      .loop-step::after { display: none !important; }
+      .tab-labels { display: grid; }
+      .tab-label { text-align: center; }
+      .example-info { padding: 17px; }
+      pre { font-size: .8rem; padding: 15px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page" id="topo">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M4 10h16M9 5v14M14 5v14"/></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Matriz: dados organizados em linhas e colunas</h1>
+          <p class="subtitle">Entenda como representar uma tabela em C, acessar cada célula com dois índices e percorrer todos os elementos usando laços aninhados.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Representação visual de uma matriz">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16M4 15h16M9 5v14M14 5v14"/></svg></span>
+            <div><strong>Uma célula, duas coordenadas</strong><span>Primeiro linha, depois coluna</span></div>
+          </div>
+          <div class="hero-matrix-wrap">
+            <div class="hero-col-labels"><span class="hero-axis-label">j = 0</span><span class="hero-axis-label">j = 1</span><span class="hero-axis-label">j = 2</span><span class="hero-axis-label">j = 3</span></div>
+            <div class="hero-row-labels"><span class="hero-axis-label">i = 0</span><span class="hero-axis-label">i = 1</span><span class="hero-axis-label">i = 2</span></div>
+            <div class="hero-matrix">
+              <span class="hero-cell">7</span><span class="hero-cell">8</span><span class="hero-cell">6</span><span class="hero-cell">9</span>
+              <span class="hero-cell">5</span><span class="hero-cell">7</span><span class="hero-cell active">9</span><span class="hero-cell">8</span>
+              <span class="hero-cell">6</span><span class="hero-cell">5</span><span class="hero-cell">8</span><span class="hero-cell">7</span>
+            </div>
+          </div>
+          <div class="hero-loop">
+            <div class="hero-loop-item"><small>Linha</small><strong>i = 1</strong></div>
+            <div class="hero-loop-item"><small>Coluna</small><strong>j = 2</strong></div>
+            <div class="hero-loop-item"><small>Acesso</small><strong>notas[i][j]</strong></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI06</div><p>Representar, percorrer e processar coleções indexadas e dados estruturados simples.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI05</div><p>Empregar repetição controlada para visitar linhas e colunas.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Matriz, linha e coluna</div><p>Acesso por dois índices e percurso completo.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura guiada com exploração dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e espacial</div><p>Coordenadas, grade, rastreamento e comparação.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M12 7v10M16 7v10"/></svg>Vetores e índices</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M8 5h8M8 19h8"/><path d="M6 8a6 6 0 0 1 12 0M18 16a6 6 0 0 1-12 0"/></svg>Laço for</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg>Variáveis inteiras</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 5h12v14H6z"/><path d="M9 9h6M9 13h6"/></svg>Índices iniciando em zero</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Uma matriz combina duas dimensões</h3>
+          <p>Cada elemento ocupa o encontro entre uma <strong>linha</strong> e uma <strong>coluna</strong>. Em C, o acesso usa dois índices: o primeiro localiza a linha e o segundo localiza a coluna.</p>
+          <div class="central-rule"><code>matriz[linha][coluna]</code></div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina dimensões</h3><p>Informe quantas linhas e quantas colunas serão armazenadas.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Acesse uma célula</h3><p>Use dois índices para localizar um único valor na grade.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Percorra a grade</h3><p>Use um laço externo para linhas e outro interno para colunas.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-matriz">
+      <div class="section-title"><span class="marker"></span><h2>Como uma matriz funciona</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 8v5M12 17h.01"/></svg>
+        Clique em cada bloco para abrir uma explicação usando a mesma matriz de notas.
+      </div>
+
+      <div class="matrix-map">
+        <svg class="map-lines" viewBox="0 0 1000 590" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="380" y1="255" x2="275" y2="145"/>
+          <line x1="620" y1="255" x2="725" y2="145"/>
+          <line x1="380" y1="335" x2="275" y2="445"/>
+          <line x1="620" y1="335" x2="725" y2="445"/>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Uma célula da matriz</strong>
+            <code>notas[i][j]</code>
+            <span>O valor depende da linha i e da coluna j.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-matrix" href="#modal-matriz">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16M4 15h16M9 5v14M14 5v14"/></svg></span>
+          <h3>Matriz</h3><p>É uma coleção bidimensional organizada como uma tabela.</p><span class="map-code">int notas[3][4]</span>
+        </a>
+
+        <a class="map-button button-row" href="#modal-linha">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/><path d="M2 12h2"/></svg></span>
+          <h3>Linha</h3><p>O primeiro índice seleciona uma faixa horizontal da matriz.</p><span class="map-code">notas[i][j]</span>
+        </a>
+
+        <a class="map-button button-column" href="#modal-coluna">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M7 4v16M12 4v16M17 4v16"/><path d="M12 2v2"/></svg></span>
+          <h3>Coluna</h3><p>O segundo índice seleciona uma faixa vertical da matriz.</p><span class="map-code">notas[i][j]</span>
+        </a>
+
+        <a class="map-button button-loops" href="#modal-lacos">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M8 5h8M8 19h8"/><path d="M6 8a6 6 0 0 1 12 0M18 16a6 6 0 0 1-12 0"/><path d="M9 9h6v6H9z"/></svg></span>
+          <h3>Laços aninhados</h3><p>Um laço escolhe a linha e o outro percorre suas colunas.</p><span class="map-code">for i → for j</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Encontre uma célula pela coordenada</h2></div>
+      <div class="coordinate-layout">
+        <div class="coordinate-intro">
+          <h3>Leia o acesso da esquerda para a direita</h3>
+          <p>Em <code>notas[1][2]</code>, o índice <strong>1</strong> escolhe a segunda linha e o índice <strong>2</strong> escolhe a terceira coluna.</p>
+          <div class="coordinate-rule"><strong>Regra:</strong> posição humana e índice não começam no mesmo número. A primeira linha e a primeira coluna usam índice 0.</div>
+        </div>
+
+        <div class="matrix-board">
+          <div class="matrix-grid-wrap">
+            <div class="col-labels"><span class="axis-label">coluna 0</span><span class="axis-label">coluna 1</span><span class="axis-label">coluna 2</span><span class="axis-label">coluna 3</span></div>
+            <div class="row-labels"><span class="axis-label">linha 0</span><span class="axis-label">linha 1</span><span class="axis-label">linha 2</span></div>
+            <div class="matrix-grid">
+              <span class="matrix-cell">7</span><span class="matrix-cell">8</span><span class="matrix-cell">6</span><span class="matrix-cell">9</span>
+              <span class="matrix-cell">5</span><span class="matrix-cell">7</span><span class="matrix-cell highlight">9</span><span class="matrix-cell">8</span>
+              <span class="matrix-cell">6</span><span class="matrix-cell">5</span><span class="matrix-cell">8</span><span class="matrix-cell">7</span>
+            </div>
+          </div>
+          <div class="coordinate-caption"><code>notas[1][2]</code> localiza o valor <strong>9</strong>: linha de índice 1, coluna de índice 2.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como os laços percorrem a matriz</h2></div>
+      <div class="loop-anatomy">
+        <article class="loop-step"><span class="step-badge">1. Linha atual</span><h3>Inicie o laço externo</h3><p>O índice <code>i</code> escolhe qual linha será percorrida.</p><code>i = 0</code></article>
+        <article class="loop-step"><span class="step-badge">2. Coluna atual</span><h3>Inicie o laço interno</h3><p>Para cada linha, o índice <code>j</code> começa novamente na primeira coluna.</p><code>j = 0</code></article>
+        <article class="loop-step"><span class="step-badge">3. Célula atual</span><h3>Acesse o elemento</h3><p>O par de índices identifica um único valor.</p><code>matriz[i][j]</code></article>
+        <article class="loop-step"><span class="step-badge">4. Avance</span><h3>Complete a linha</h3><p>Quando <code>j</code> termina, <code>i</code> avança e uma nova linha começa.</p><code>j++ → i++</code></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreamento do percurso</h2></div>
+      <div class="trace-layout">
+        <div class="trace-left">
+          <div class="trace-code">
+            <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>percurso.c</div>
+            <pre><code><span class="tok-keyword">for</span> (<span class="tok-variable">i</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">i</span> <span class="tok-operator">&lt;</span> <span class="tok-number">2</span>; <span class="tok-variable">i</span><span class="tok-operator">++</span>) {
+    <span class="tok-keyword">for</span> (<span class="tok-variable">j</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">j</span> <span class="tok-operator">&lt;</span> <span class="tok-number">3</span>; <span class="tok-variable">j</span><span class="tok-operator">++</span>) {
+        <span class="tok-function">printf</span>(<span class="tok-string">"%d "</span>, <span class="tok-variable">m</span>[<span class="tok-variable">i</span>][<span class="tok-variable">j</span>]);
+    }
+}</code></pre>
+          </div>
+
+          <div class="trace-matrix-card" aria-label="Matriz usada no rastreamento">
+            <div class="trace-matrix-title">
+              <h3>Matriz acompanhada</h3>
+              <code>m[2][3]</code>
+            </div>
+            <div class="trace-matrix-grid">
+              <span class="trace-axis-corner" aria-hidden="true"></span>
+              <span class="trace-axis-label">j = 0</span>
+              <span class="trace-axis-label">j = 1</span>
+              <span class="trace-axis-label">j = 2</span>
+
+              <span class="trace-axis-label">i = 0</span>
+              <span class="trace-matrix-cell"><strong>4</strong><small>m[0][0]</small></span>
+              <span class="trace-matrix-cell"><strong>7</strong><small>m[0][1]</small></span>
+              <span class="trace-matrix-cell"><strong>2</strong><small>m[0][2]</small></span>
+
+              <span class="trace-axis-label">i = 1</span>
+              <span class="trace-matrix-cell"><strong>8</strong><small>m[1][0]</small></span>
+              <span class="trace-matrix-cell"><strong>5</strong><small>m[1][1]</small></span>
+              <span class="trace-matrix-cell"><strong>9</strong><small>m[1][2]</small></span>
+            </div>
+            <p class="trace-matrix-caption">Leia a grade por linha. Para cada valor de <code>i</code>, o índice <code>j</code> percorre todas as colunas antes de a próxima linha começar.</p>
+          </div>
+        </div>
+
+        <div class="trace-table-wrap">
+          <table class="state-table">
+            <thead><tr><th>Passo</th><th>i</th><th>j</th><th>Célula</th><th>Valor</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>0</td><td>0</td><td><code>m[0][0]</code></td><td>4</td></tr>
+              <tr><td>2</td><td>0</td><td>1</td><td><code>m[0][1]</code></td><td>7</td></tr>
+              <tr><td>3</td><td>0</td><td>2</td><td><code>m[0][2]</code></td><td>2</td></tr>
+              <tr><td>4</td><td>1</td><td>0</td><td><code>m[1][0]</code></td><td>8</td></tr>
+              <tr><td>5</td><td>1</td><td>1</td><td><code>m[1][1]</code></td><td>5</td></tr>
+              <tr><td>6</td><td>1</td><td>2</td><td><code>m[1][2]</code></td><td>9</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos</h2></div>
+      <div class="tabs">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+
+        <div class="tab-labels" role="tablist" aria-label="Escolha um exemplo">
+          <label class="tab-label" for="tab1">1. Exibir a matriz</label>
+          <label class="tab-label" for="tab2">2. Somar todos os valores</label>
+          <label class="tab-label" for="tab3">3. Maior valor e coordenada</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel-1">
+            <div class="example">
+              <div class="example-card example-info">
+                <span class="level-badge">Nível básico</span>
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 12h16M9 5v14M14 5v14"/></svg></span><div><h3>Exibir uma matriz 2 × 3</h3><p>Visite cada célula e mostre os valores por linha.</p></div></div>
+                <table class="example-table"><tr><th>Parte</th><th>Aplicação</th></tr><tr><td>Linhas</td><td>2, índices 0 e 1</td></tr><tr><td>Colunas</td><td>3, índices 0, 1 e 2</td></tr><tr><td>Acesso</td><td><code>m[i][j]</code></td></tr><tr><td>Saída</td><td>4 7 2 / 8 5 9</td></tr></table>
+              </div>
+              <div class="example-card example-code">
+                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>exibir_matriz.c</div>
+                <pre><code><span class="tok-directive">#include</span> <span class="tok-header">&lt;stdio.h&gt;</span>
+
+<span class="tok-type">int</span> <span class="tok-function">main</span>() {
+    <span class="tok-type">int</span> <span class="tok-variable">m</span>[<span class="tok-number">2</span>][<span class="tok-number">3</span>] <span class="tok-operator">=</span> {{<span class="tok-number">4</span>, <span class="tok-number">7</span>, <span class="tok-number">2</span>}, {<span class="tok-number">8</span>, <span class="tok-number">5</span>, <span class="tok-number">9</span>}};
+    <span class="tok-type">int</span> <span class="tok-variable">i</span>, <span class="tok-variable">j</span>;
+
+    <span class="tok-keyword">for</span> (<span class="tok-variable">i</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">i</span> <span class="tok-operator">&lt;</span> <span class="tok-number">2</span>; <span class="tok-variable">i</span><span class="tok-operator">++</span>) {
+        <span class="tok-keyword">for</span> (<span class="tok-variable">j</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">j</span> <span class="tok-operator">&lt;</span> <span class="tok-number">3</span>; <span class="tok-variable">j</span><span class="tok-operator">++</span>) {
+            <span class="tok-function">printf</span>(<span class="tok-string">"%d "</span>, <span class="tok-variable">m</span>[<span class="tok-variable">i</span>][<span class="tok-variable">j</span>]);
+        }
+        <span class="tok-function">printf</span>(<span class="tok-string">"\n"</span>);
+    }
+
+    <span class="tok-keyword">return</span> <span class="tok-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-2">
+            <div class="example">
+              <div class="example-card example-info">
+                <span class="level-badge">Nível intermediário</span>
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/><path d="M4 4h16v16H4z"/></svg></span><div><h3>Somar todos os elementos</h3><p>Use um acumulador atualizado a cada célula visitada.</p></div></div>
+                <table class="example-table"><tr><th>Elemento</th><th>Papel</th></tr><tr><td><code>i</code></td><td>Seleciona a linha</td></tr><tr><td><code>j</code></td><td>Seleciona a coluna</td></tr><tr><td><code>soma</code></td><td>Acumula cada <code>m[i][j]</code></td></tr><tr><td>Resultado</td><td>35</td></tr></table>
+              </div>
+              <div class="example-card example-code">
+                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>somar_matriz.c</div>
+                <pre><code><span class="tok-directive">#include</span> <span class="tok-header">&lt;stdio.h&gt;</span>
+
+<span class="tok-type">int</span> <span class="tok-function">main</span>() {
+    <span class="tok-type">int</span> <span class="tok-variable">m</span>[<span class="tok-number">2</span>][<span class="tok-number">3</span>] <span class="tok-operator">=</span> {{<span class="tok-number">4</span>, <span class="tok-number">7</span>, <span class="tok-number">2</span>}, {<span class="tok-number">8</span>, <span class="tok-number">5</span>, <span class="tok-number">9</span>}};
+    <span class="tok-type">int</span> <span class="tok-variable">i</span>, <span class="tok-variable">j</span>, <span class="tok-variable">soma</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>;
+
+    <span class="tok-keyword">for</span> (<span class="tok-variable">i</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">i</span> <span class="tok-operator">&lt;</span> <span class="tok-number">2</span>; <span class="tok-variable">i</span><span class="tok-operator">++</span>) {
+        <span class="tok-keyword">for</span> (<span class="tok-variable">j</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">j</span> <span class="tok-operator">&lt;</span> <span class="tok-number">3</span>; <span class="tok-variable">j</span><span class="tok-operator">++</span>) {
+            <span class="tok-variable">soma</span> <span class="tok-operator">=</span> <span class="tok-variable">soma</span> <span class="tok-operator">+</span> <span class="tok-variable">m</span>[<span class="tok-variable">i</span>][<span class="tok-variable">j</span>];
+        }
+    }
+
+    <span class="tok-function">printf</span>(<span class="tok-string">"Soma: %d\n"</span>, <span class="tok-variable">soma</span>);
+    <span class="tok-keyword">return</span> <span class="tok-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel-3">
+            <div class="example">
+              <div class="example-card example-info">
+                <span class="level-badge">Nível intermediário</span>
+                <div class="example-title"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 18L10 13L13 16L19 8"/><path d="M15 8h4v4"/></svg></span><div><h3>Maior valor e sua coordenada</h3><p>Além do maior valor, registre os índices em que ele foi encontrado.</p></div></div>
+                <table class="example-table"><tr><th>Variável</th><th>Conteúdo</th></tr><tr><td><code>maior</code></td><td>Maior valor encontrado</td></tr><tr><td><code>linhaMaior</code></td><td>Índice da linha</td></tr><tr><td><code>colunaMaior</code></td><td>Índice da coluna</td></tr><tr><td>Resultado</td><td>9 em [1][2]</td></tr></table>
+              </div>
+              <div class="example-card example-code">
+                <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>maior_na_matriz.c</div>
+                <pre><code><span class="tok-directive">#include</span> <span class="tok-header">&lt;stdio.h&gt;</span>
+
+<span class="tok-type">int</span> <span class="tok-function">main</span>() {
+    <span class="tok-type">int</span> <span class="tok-variable">m</span>[<span class="tok-number">2</span>][<span class="tok-number">3</span>] <span class="tok-operator">=</span> {{<span class="tok-number">4</span>, <span class="tok-number">7</span>, <span class="tok-number">2</span>}, {<span class="tok-number">8</span>, <span class="tok-number">5</span>, <span class="tok-number">9</span>}};
+    <span class="tok-type">int</span> <span class="tok-variable">maior</span> <span class="tok-operator">=</span> <span class="tok-variable">m</span>[<span class="tok-number">0</span>][<span class="tok-number">0</span>];
+    <span class="tok-type">int</span> <span class="tok-variable">linhaMaior</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>, <span class="tok-variable">colunaMaior</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>;
+    <span class="tok-type">int</span> <span class="tok-variable">i</span>, <span class="tok-variable">j</span>;
+
+    <span class="tok-keyword">for</span> (<span class="tok-variable">i</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">i</span> <span class="tok-operator">&lt;</span> <span class="tok-number">2</span>; <span class="tok-variable">i</span><span class="tok-operator">++</span>) {
+        <span class="tok-keyword">for</span> (<span class="tok-variable">j</span> <span class="tok-operator">=</span> <span class="tok-number">0</span>; <span class="tok-variable">j</span> <span class="tok-operator">&lt;</span> <span class="tok-number">3</span>; <span class="tok-variable">j</span><span class="tok-operator">++</span>) {
+            <span class="tok-keyword">if</span> (<span class="tok-variable">m</span>[<span class="tok-variable">i</span>][<span class="tok-variable">j</span>] <span class="tok-operator">&gt;</span> <span class="tok-variable">maior</span>) {
+                <span class="tok-variable">maior</span> <span class="tok-operator">=</span> <span class="tok-variable">m</span>[<span class="tok-variable">i</span>][<span class="tok-variable">j</span>];
+                <span class="tok-variable">linhaMaior</span> <span class="tok-operator">=</span> <span class="tok-variable">i</span>;
+                <span class="tok-variable">colunaMaior</span> <span class="tok-operator">=</span> <span class="tok-variable">j</span>;
+            }
+        }
+    }
+
+    <span class="tok-function">printf</span>(<span class="tok-string">"Maior: %d em [%d][%d]\n"</span>,
+           <span class="tok-variable">maior</span>, <span class="tok-variable">linhaMaior</span>, <span class="tok-variable">colunaMaior</span>);
+    <span class="tok-keyword">return</span> <span class="tok-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Trocar linha por coluna</h3><p><strong>Por que acontece:</strong> o aluno interpreta os índices em ordem inversa.</p><p><strong>Como evitar:</strong> leia sempre <code>[linha][coluna]</code>.</p></article>
+        <article class="error-card"><h3>Usar o mesmo limite</h3><p><strong>Por que acontece:</strong> o número de linhas é usado também no laço das colunas.</p><p><strong>Como evitar:</strong> cada dimensão deve ter seu próprio limite.</p></article>
+        <article class="error-card"><h3>Usar apenas um laço</h3><p><strong>Por que acontece:</strong> a matriz é tratada como se fosse um vetor.</p><p><strong>Como evitar:</strong> use um laço para linhas e outro para colunas.</p></article>
+        <article class="error-card"><h3>Acessar fora da matriz</h3><p><strong>Por que acontece:</strong> o laço usa <code>&lt;=</code> no lugar de <code>&lt;</code>.</p><p><strong>Como evitar:</strong> para 3 linhas, use índices 0, 1 e 2.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Em <code>dados[2][1]</code>, qual índice representa a coluna?</summary><p>O segundo índice. Nesse acesso, a linha tem índice 2 e a coluna tem índice 1.</p></details>
+        <details><summary>Por que o laço interno reinicia quando uma nova linha começa?</summary><p>Porque cada linha precisa ser percorrida desde a primeira coluna até a última.</p></details>
+        <details><summary>Quais são os índices válidos de uma matriz declarada como <code>int m[3][4]</code>?</summary><p>As linhas usam índices de 0 a 2 e as colunas usam índices de 0 a 3.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir interpretar uma matriz como uma coleção bidimensional, acessar uma célula por linha e coluna e construir laços aninhados que percorram todos os elementos sem ultrapassar seus limites.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <div class="modal-overlay" id="modal-matriz" role="dialog" aria-modal="true" aria-labelledby="titulo-matriz">
+    <a class="modal-backdrop" href="#mapa-matriz" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-matriz" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16M4 15h16M9 5v14M14 5v14"/></svg></span><div><div class="modal-kicker">Coleção bidimensional</div><h2 id="titulo-matriz">A matriz</h2></div></div>
+      <p>Uma matriz armazena valores do mesmo tipo em uma estrutura com linhas e colunas.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> <code>int notas[3][4]</code> reserva 3 linhas e 4 colunas, totalizando 12 elementos.</div>
+      <ul class="modal-list"><li>Primeira dimensão: quantidade de linhas.</li><li>Segunda dimensão: quantidade de colunas.</li><li>Cada célula possui uma coordenada própria.</li></ul>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-linha" role="dialog" aria-modal="true" aria-labelledby="titulo-linha">
+    <a class="modal-backdrop" href="#mapa-matriz" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-matriz" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><div><div class="modal-kicker">Primeiro índice</div><h2 id="titulo-linha">A linha</h2></div></div>
+      <p>O primeiro índice escolhe uma linha horizontal da matriz.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> em <code>notas[1][2]</code>, o índice de linha é <code>1</code>, que corresponde à segunda linha.</div>
+      <ul class="modal-list"><li>Com 3 linhas, os índices válidos são 0, 1 e 2.</li><li>O laço externo normalmente controla esse índice.</li><li>Quando a linha muda, o percurso das colunas começa novamente.</li></ul>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-coluna" role="dialog" aria-modal="true" aria-labelledby="titulo-coluna">
+    <a class="modal-backdrop" href="#mapa-matriz" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-matriz" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M7 4v16M12 4v16M17 4v16"/></svg></span><div><div class="modal-kicker">Segundo índice</div><h2 id="titulo-coluna">A coluna</h2></div></div>
+      <p>O segundo índice escolhe uma coluna vertical dentro da linha atual.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> em <code>notas[1][2]</code>, o índice de coluna é <code>2</code>, que corresponde à terceira coluna.</div>
+      <ul class="modal-list"><li>Com 4 colunas, os índices válidos são 0, 1, 2 e 3.</li><li>O laço interno normalmente controla esse índice.</li><li>O limite das colunas pode ser diferente do limite das linhas.</li></ul>
+    </article>
+  </div>
+
+  <div class="modal-overlay" id="modal-lacos" role="dialog" aria-modal="true" aria-labelledby="titulo-lacos">
+    <a class="modal-backdrop" href="#mapa-matriz" aria-label="Fechar explicação"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-matriz" aria-label="Fechar">×</a>
+      <div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M8 5h8M8 19h8"/><path d="M6 8a6 6 0 0 1 12 0M18 16a6 6 0 0 1-12 0"/><path d="M9 9h6v6H9z"/></svg></span><div><div class="modal-kicker">Percurso completo</div><h2 id="titulo-lacos">Os laços aninhados</h2></div></div>
+      <p>Um laço fica dentro do outro para formar todas as combinações entre linhas e colunas.</p>
+      <div class="modal-example"><strong>Mesmo exemplo:</strong> <code>for (i = 0; i &lt; 3; i++)</code> controla as linhas e <code>for (j = 0; j &lt; 4; j++)</code> controla as colunas.</div>
+      <ul class="modal-list"><li>Para cada valor de <code>i</code>, <code>j</code> percorre todas as colunas.</li><li>O acesso ocorre por <code>notas[i][j]</code>.</li><li>Ao final de uma linha, o laço externo avança para a próxima.</li></ul>
+    </article>
+  </div>
+</body>
+</html>

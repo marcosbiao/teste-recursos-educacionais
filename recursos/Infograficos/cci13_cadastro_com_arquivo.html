@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salvando e recuperando registros</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(350px, .96fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .example-icon svg, .trace-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+    .hero-cycle { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-items: stretch; }
+    .hero-step {
+      min-height: 112px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+      gap: 7px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      background: var(--cor-superficie);
+      padding: 11px 8px;
+      position: relative;
+    }
+    .hero-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cor-destaque-pontual);
+      font-weight: 900;
+      z-index: 2;
+    }
+    .hero-step span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); font-weight: 900; }
+    .hero-step strong { color: var(--cor-primaria-escura); font-size: .83rem; }
+    .hero-step code { color: var(--cor-texto-secundario); font-size: .72rem; font-weight: 800; }
+    .hero-note {
+      margin-top: 14px;
+      border: 1px solid rgba(245,158,11,.33);
+      background: #FFFBEB;
+      border-radius: 14px;
+      padding: 11px 13px;
+      color: var(--cor-texto-principal);
+      font-size: .86rem;
+    }
+    .hero-note strong { color: #92400E; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+    #mapa-do-arquivo { scroll-margin-top: 18px; }
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 620px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .29); stroke-width: 2.5; stroke-dasharray: 8 7; }
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 255px;
+      min-height: 180px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+    .file-mini { width: 82px; height: 96px; margin: 12px auto 0; border: 2px solid rgba(255,255,255,.42); border-radius: 12px; position: relative; background: rgba(255,255,255,.09); }
+    .file-mini::before { content: ""; position: absolute; top: 13px; left: 15px; right: 15px; height: 2px; background: rgba(255,255,255,.55); box-shadow: 0 14px 0 rgba(255,255,255,.4), 0 28px 0 rgba(255,255,255,.4), 0 42px 0 rgba(255,255,255,.28); }
+    .map-button {
+      position: absolute;
+      width: 245px;
+      min-height: 146px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-open { left: 38px; top: 38px; }
+    .button-check { right: 38px; top: 38px; }
+    .button-use { left: 38px; bottom: 38px; }
+    .button-close { right: 38px; bottom: 38px; }
+
+    .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 22px; }
+    .modal:target { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .68); backdrop-filter: blur(6px); }
+    .modal-card { width: min(720px, 100%); max-height: min(86vh, 760px); overflow-y: auto; position: relative; z-index: 2; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 24px; box-shadow: 0 30px 80px rgba(15, 23, 42, .34); padding: 25px; animation: modalIn .24s ease both; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(18px) scale(.965); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+    .modal-title-wrap { display: flex; gap: 12px; align-items: center; }
+    .modal-icon { width: 47px; height: 47px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .modal-title-wrap h3 { margin-bottom: 2px; color: var(--cor-primaria-escura); font-size: 1.24rem; }
+    .modal-title-wrap p { font-size: .87rem; }
+    .modal-close { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); text-decoration: none; font-size: 1.35rem; line-height: 1; flex: 0 0 auto; }
+    .modal-close:hover, .modal-close:focus-visible { background: var(--cor-superficie-destacada); outline: none; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .modal-box { border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); border-radius: 16px; padding: 15px; }
+    .modal-box strong { display: block; color: var(--cor-texto-principal); margin-bottom: 6px; }
+    .modal-box p { font-size: .9rem; }
+    .modal-example { margin-top: 15px; border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; border-radius: 15px; padding: 14px 16px; color: var(--cor-texto-principal); }
+    .modal-example code { color: #78350F; font-weight: 900; }
+
+    .anatomy-layout { display: grid; grid-template-columns: minmax(0, 1.14fr) minmax(300px, .86fr); gap: 18px; align-items: stretch; }
+    .code-window { border: 1px solid #25324A; border-radius: 20px; overflow: hidden; background: var(--codigo-fundo); box-shadow: 0 18px 34px rgba(15,23,42,.12); }
+    .code-top { display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .79rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    .code-title { margin-left: 3px; font-weight: 800; }
+    .code-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      padding: 11px 15px;
+      border-bottom: 1px solid #334155;
+      background: #111C30;
+      color: #CBD5E1;
+      font-size: .76rem;
+    }
+    .legend-label { color: #E2E8F0; font-weight: 800; margin-right: 2px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+    .swatch-open { background: #C4B5FD; }
+    .swatch-check { background: #FDE68A; }
+    .swatch-use { background: #86EFAC; }
+    .swatch-close { background: #F9A8D4; }
+    pre { margin: 0; padding: 19px; overflow-x: auto; color: var(--codigo-texto); font-size: .89rem; line-height: 1.62; tab-size: 4; }
+    .line { display: block; min-width: max-content; }
+    .focus-open { background: rgba(196,181,253,.08); border-left: 3px solid #C4B5FD; margin-left: -12px; padding-left: 9px; }
+    .focus-check { background: rgba(253,230,138,.08); border-left: 3px solid #FDE68A; margin-left: -12px; padding-left: 9px; }
+    .focus-use { background: rgba(134,239,172,.08); border-left: 3px solid #86EFAC; margin-left: -12px; padding-left: 9px; }
+    .focus-close { background: rgba(249,168,212,.08); border-left: 3px solid #F9A8D4; margin-left: -12px; padding-left: 9px; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .annotation-list { display: grid; gap: 11px; }
+    .annotation { display: grid; grid-template-columns: 42px minmax(0,1fr); gap: 11px; align-items: start; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); border-radius: 16px; padding: 13px; }
+    .annotation-number { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .annotation p { font-size: .88rem; }
+    .annotation code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .mode-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .mode-card { border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie); padding: 18px; }
+    .mode-badge { display: inline-grid; place-items: center; min-width: 42px; height: 42px; padding: 0 12px; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font: 900 1rem Consolas, monospace; margin-bottom: 11px; }
+    .mode-card p { font-size: .9rem; }
+    .mode-effect { display: block; margin-top: 10px; padding: 9px 11px; border-radius: 12px; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); font-size: .82rem; }
+    .mode-effect strong { color: var(--cor-primaria-escura); }
+
+    .flow-board { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
+    .flow-card { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .flow-card:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-weight: 900; z-index: 2; }
+    .step-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 10px; font-weight: 900; }
+    .flow-card p { font-size: .88rem; }
+    .flow-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .trace-layout { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 18px; align-items: stretch; }
+    .trace-panel { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 19px; background: var(--cor-superficie-suave); }
+    .trace-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .trace-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .trace-title strong { color: var(--cor-primaria-escura); }
+    .file-preview { border: 1px solid var(--cor-borda); border-radius: 16px; background: var(--cor-superficie); overflow: hidden; }
+    .file-preview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 13px; background: var(--cor-superficie-destacada); border-bottom: 1px solid var(--cor-borda); }
+    .file-preview-head strong { color: var(--cor-primaria-escura); }
+    .file-preview-head span { color: var(--cor-texto-secundario); font-size: .78rem; }
+    .file-content { padding: 15px; font: .9rem/1.75 Consolas, monospace; color: var(--cor-texto-principal); white-space: pre-wrap; }
+    .state-list { display: grid; gap: 9px; }
+    .state-item { display: grid; grid-template-columns: 36px minmax(0,1fr); gap: 10px; align-items: start; border: 1px solid var(--cor-borda); border-radius: 14px; padding: 11px; background: var(--cor-superficie); }
+    .state-number { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .state-item p { font-size: .86rem; }
+    .state-item code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie); }
+    .mini-table th, .mini-table td { padding: 12px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table td { font-size: .9rem; color: var(--cor-texto-principal); }
+    .mini-table tr:last-child td { border-bottom: 0; }
+    .mini-table code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .examples-wrap { position: relative; }
+    .tab-input { position: absolute; opacity: 0; pointer-events: none; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--cor-borda); border-radius: 999px; padding: 9px 14px; background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-size: .89rem; font-weight: 800; transition: .18s ease; }
+    .tab-label:hover { border-color: rgba(79,70,229,.35); color: var(--cor-primaria-escura); }
+    .tab-panel { display: none; animation: tabIn .22s ease both; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    #tab1:checked ~ .tabs label[for="tab1"],
+    #tab2:checked ~ .tabs label[for="tab2"],
+    #tab3:checked ~ .tabs label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    #tab1:checked ~ .panels #panel1,
+    #tab2:checked ~ .panels #panel2,
+    #tab3:checked ~ .panels #panel3 { display: block; }
+    .example-grid { display: grid; grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr); gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .level { display: inline-flex; margin-top: 10px; border-radius: 999px; padding: 5px 9px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; font-weight: 900; }
+    .example-steps { display: grid; gap: 9px; margin-top: 14px; }
+    .example-step { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; background: var(--cor-superficie); font-size: .87rem; color: var(--cor-texto-principal); }
+    .example-step strong { color: var(--cor-primaria-escura); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; }
+    .error-card { border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .error-card p { font-size: .88rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+    .error-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 13px; padding: 13px; color: var(--cor-texto-principal); }
+    details code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 10px; }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.02rem; max-width: 920px; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .anatomy-layout, .trace-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .choice-map { min-height: auto; padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; transform: none; width: auto; min-height: 145px; }
+      .map-center { grid-column: 1 / -1; }
+      .map-button:hover, .map-button:focus-visible { transform: translateY(-3px); }
+      .flow-board, .error-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .flow-card:nth-child(2)::after { display: none; }
+      .mode-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 15px 10px; }
+      .hero, .section, .closing { padding: 21px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .hero-cycle { grid-template-columns: 1fr 1fr; }
+      .hero-step:nth-child(2)::after { display: none; }
+      .meta-grid, .choice-map, .flow-board, .error-grid, .modal-grid { grid-template-columns: 1fr; }
+      .choice-map { padding: 14px; }
+      .map-center, .map-button { min-height: auto; }
+      .flow-card::after { display: none; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 19px; border-radius: 20px; }
+      .tabs { display: grid; grid-template-columns: 1fr; }
+      .tab-label { justify-content: center; }
+      .mini-table { display: block; overflow-x: auto; }
+      pre { font-size: .8rem; padding: 15px; }
+      h1 { font-size: 2.1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  
+
+    /* Componentes específicos deste infográfico */
+    .hero-records { display: grid; gap: 9px; margin-top: 4px; }
+    .hero-record { display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--cor-borda); border-radius: 14px; background: rgba(255,255,255,.82); }
+    .hero-record > span:first-child { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; }
+    .hero-record strong { color: var(--cor-texto-principal); font-size: .9rem; }
+    .hero-record small { color: var(--cor-texto-secundario); }
+    .hero-record code { color: var(--cor-primaria-escura); font-weight: 900; font-size: .8rem; }
+
+    .persistence-strip { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: stretch; }
+    .persistence-node { border: 1px solid var(--cor-borda); border-radius: 19px; padding: 17px; background: var(--cor-superficie); min-width: 0; }
+    .persistence-node.highlight { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.22); }
+    .persistence-node h3 { margin-bottom: 7px; }
+    .persistence-node p { font-size: .9rem; }
+    .persistence-node code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .persist-arrow { display: grid; place-items: center; color: var(--cor-primaria); font-size: 1.55rem; font-weight: 900; }
+
+    .record-file-layout { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 18px; align-items: stretch; }
+    .memory-record { border: 1px solid var(--cor-borda); border-radius: 20px; overflow: hidden; background: var(--cor-superficie); }
+    .memory-record-head { padding: 13px 15px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; display:flex; justify-content:space-between; gap:10px; }
+    .memory-fields { display: grid; gap: 9px; padding: 15px; }
+    .memory-field { display: grid; grid-template-columns: 95px 1fr; gap: 10px; padding: 10px 12px; border: 1px solid var(--cor-borda); border-radius: 13px; background: var(--cor-superficie-suave); }
+    .memory-field span { color: var(--cor-texto-secundario); font-size: .83rem; font-weight: 800; }
+    .memory-field strong { color: var(--cor-texto-principal); }
+    .serialization-arrow { margin: 12px 0; padding: 11px 13px; border-radius: 14px; background: #FFFBEB; border-left: 5px solid var(--cor-destaque-pontual); color: var(--cor-texto-principal); font-size: .9rem; }
+    .file-lines { display: grid; gap: 8px; }
+    .file-line { display: grid; grid-template-columns: 34px 1fr; gap: 9px; align-items: center; padding: 10px 12px; border-radius: 12px; background: #111827; color: #E5E7EB; font-family: Consolas, Monaco, 'Courier New', monospace; font-size: .86rem; }
+    .file-line span { color: #94A3B8; text-align: right; }
+    .file-line.active { outline: 2px solid rgba(79,70,229,.38); background: #172033; }
+
+    .contract-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .contract-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .contract-card span { display: inline-flex; border-radius: 999px; padding: 5px 9px; margin-bottom: 10px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+    .contract-card p { font-size: .89rem; }
+    .contract-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .search-trace { display: grid; grid-template-columns: minmax(280px,.8fr) minmax(0,1.2fr); gap: 18px; align-items: start; }
+    .query-box { border: 1px solid rgba(79,70,229,.23); background: var(--cor-superficie-destacada); border-radius: 18px; padding: 18px; }
+    .query-box h3 { margin-bottom: 8px; }
+    .query-code { display: inline-flex; margin-top: 10px; padding: 8px 11px; border-radius: 11px; background: var(--cor-primaria-escura); color: white; font-weight: 900; }
+    .trace-result { margin-top: 12px; border-radius: 14px; padding: 12px 14px; background: #FFFBEB; border-left: 5px solid var(--cor-destaque-pontual); color: var(--cor-texto-principal); }
+
+    .line.focus-record { border-left-color: #C4B5FD; background: rgba(196,181,253,.09); }
+    .line.focus-open { border-left-color: #A78BFA; background: rgba(167,139,250,.10); }
+    .line.focus-write { border-left-color: #86EFAC; background: rgba(134,239,172,.09); }
+    .line.focus-close { border-left-color: #F9A8D4; background: rgba(249,168,212,.09); }
+    .swatch-record { background: #C4B5FD; }
+    .swatch-write { background: #86EFAC; }
+
+    @media (max-width: 900px) {
+      .persistence-strip { grid-template-columns: 1fr; }
+      .persist-arrow { transform: rotate(90deg); min-height: 20px; }
+      .record-file-layout, .search-trace { grid-template-columns: 1fr; }
+      .contract-grid { grid-template-columns: 1fr; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"></path><path d="M8 4h8v5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Salvando e recuperando registros</h1>
+          <p class="subtitle">Entenda como transformar registros mantidos na memória em dados persistentes e como recuperar essas informações para listar ou consultar um cadastro.</p>
+        </div>
+        <div class="hero-panel" aria-label="Resumo visual da persistência de registros">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M5 4h10l4 4v12H5z"></path><path d="M15 4v5h5M8 13h8M8 17h6"></path></svg></span>
+            <div><strong>O arquivo mantém os dados</strong><span>Mesmo depois que o programa termina</span></div>
+          </div>
+          <div class="hero-records">
+            <div class="hero-record"><span>1</span><div><strong>Produto</strong><small>código 17</small></div><code>Caderno</code></div>
+            <div class="hero-record"><span>2</span><div><strong>Produto</strong><small>código 23</small></div><code>Caneta</code></div>
+            <div class="hero-record"><span>3</span><div><strong>Produto</strong><small>código 31</small></div><code>Mochila</code></div>
+          </div>
+          <div class="hero-note"><strong>Ideia central:</strong> gravar preserva o cadastro; ler reconstrói os registros para uma nova execução.</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI13</div><p>Persistir e recuperar dados básicos por meio de arquivos em programas escritos em C.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI09 e CCI11</div><p>Organizar cadastros e representar registros usando <code>struct</code>.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Cadastro com arquivo</div><p>Salvar registros e consultar os dados armazenados.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">18 a 25 minutos</div><p>Leitura visual com rastreamento e exemplos progressivos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Fluxo e persistência</div><p>Relaciona memória, formato do arquivo e reconstrução do cadastro.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8"></path></svg>Struct e campos</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"></path></svg>Abertura e fechamento</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6zM9 8h6M9 12h6"></path></svg>Leitura e escrita formatada</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 12h12M14 8l4 4-4 4"></path></svg>Laços e busca simples</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>O cadastro em memória desaparece quando o programa termina</h3>
+          <p>Uma variável ou um vetor de <code>structs</code> existe apenas durante a execução. Para conservar os registros, o programa precisa convertê-los para um formato gravável, armazená-los em um arquivo e saber interpretar o mesmo formato ao recuperar os dados.</p>
+          <div class="concept-note"><strong>Ciclo da persistência:</strong> <code>registro → gravar → fechar → abrir → ler → reconstruir ou consultar</code>.</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Defina o formato</h3><p>Escolha a ordem e o tipo dos campos que serão gravados em cada registro.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Grave com consistência</h3><p>Cada linha deve seguir o mesmo contrato para que possa ser lida depois.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Leia e valide</h3><p>Recupere somente registros completos e trate o caso em que a consulta não encontra resultado.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-da-persistencia">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da persistência</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M5 20h14"></path></svg>
+        Clique em cada bloco para acompanhar o mesmo produto entre a memória, o arquivo e a consulta.
+      </div>
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="375" y1="260" x2="255" y2="130"></line>
+          <line x1="625" y1="260" x2="745" y2="130"></line>
+          <line x1="375" y1="360" x2="255" y2="490"></line>
+          <line x1="625" y1="360" x2="745" y2="490"></line>
+        </svg>
+        <div class="map-center"><div><strong>Cadastro persistente</strong><code>produtos.txt</code><span>Os registros sobrevivem ao encerramento do programa</span><div class="file-mini" aria-hidden="true"></div></div></div>
+        <a class="map-button button-open" href="#modal-record">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h6"></path></svg></span>
+          <h3>Registro em memória</h3><p>Uma <code>struct</code> reúne os campos de uma entidade.</p><span class="map-code">produto.codigo = 17</span>
+        </a>
+        <a class="map-button button-check" href="#modal-save">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"></path><path d="M9 13h6M12 10v6"></path></svg></span>
+          <h3>Salvar</h3><p>Converte os campos em uma linha no arquivo.</p><span class="map-code">fprintf(...)</span>
+        </a>
+        <a class="map-button button-use" href="#modal-load">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8"></path><path d="M12 19v3M9 19l3 3 3-3"></path></svg></span>
+          <h3>Recuperar</h3><p>Lê os campos e reconstrói um registro.</p><span class="map-code">fscanf(...) == 3</span>
+        </a>
+        <a class="map-button button-close" href="#modal-query">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="5"></circle><path d="M14 14l6 6"></path></svg></span>
+          <h3>Consultar</h3><p>Percorre os registros até localizar o critério.</p><span class="map-code">codigo == procurado</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="modal" id="modal-record" role="dialog" aria-modal="true" aria-labelledby="title-record">
+      <a class="modal-backdrop" href="#mapa-da-persistencia" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h6"></path></svg></span><div><h3 id="title-record">Registro em memória</h3><p>Os campos pertencem à mesma entidade</p></div></div><a class="modal-close" href="#mapa-da-persistencia" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Tipo do registro</strong><p><code>struct Produto</code> define os campos <code>codigo</code>, <code>nome</code> e <code>preco</code>.</p></div><div class="modal-box"><strong>Instância atual</strong><p>O produto contém <code>17</code>, <code>Caderno</code> e <code>12.50</code>.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> enquanto está apenas na variável <code>produto</code>, o registro será perdido quando a execução terminar.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-save" role="dialog" aria-modal="true" aria-labelledby="title-save">
+      <a class="modal-backdrop" href="#mapa-da-persistencia" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 7h6l2 2h8v10H4z"></path><path d="M9 13h6M12 10v6"></path></svg></span><div><h3 id="title-save">Salvar o registro</h3><p>Os campos são convertidos para o formato do arquivo</p></div></div><a class="modal-close" href="#mapa-da-persistencia" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Modo adequado</strong><p><code>"a"</code> acrescenta o produto sem apagar os registros anteriores.</p></div><div class="modal-box"><strong>Contrato da linha</strong><p><code>%d %s %.2f</code> grava código, nome e preço sempre na mesma ordem.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> o registro se torna a linha <code>17 Caderno 12.50</code> em <code>produtos.txt</code>.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-load" role="dialog" aria-modal="true" aria-labelledby="title-load">
+      <a class="modal-backdrop" href="#mapa-da-persistencia" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8"></path><path d="M12 19v3M9 19l3 3 3-3"></path></svg></span><div><h3 id="title-load">Recuperar um registro</h3><p>A leitura precisa repetir o mesmo contrato</p></div></div><a class="modal-close" href="#mapa-da-persistencia" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Mesma ordem</strong><p><code>fscanf</code> deve ler código, nome e preço na ordem em que foram gravados.</p></div><div class="modal-box"><strong>Leitura completa</strong><p>O retorno <code>3</code> confirma que os três campos foram recuperados.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> a linha <code>17 Caderno 12.50</code> reconstrói os campos da variável <code>produto</code>.</div>
+      </article>
+    </div>
+
+    <div class="modal" id="modal-query" role="dialog" aria-modal="true" aria-labelledby="title-query">
+      <a class="modal-backdrop" href="#mapa-da-persistencia" aria-label="Fechar"></a>
+      <article class="modal-card">
+        <div class="modal-head"><div class="modal-title-wrap"><span class="modal-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="5"></circle><path d="M14 14l6 6"></path></svg></span><div><h3 id="title-query">Consultar o cadastro</h3><p>Cada registro lido é comparado com o critério</p></div></div><a class="modal-close" href="#mapa-da-persistencia" aria-label="Fechar">×</a></div>
+        <div class="modal-grid"><div class="modal-box"><strong>Critério</strong><p>A busca pode usar código, nome ou outra propriedade que identifique o registro.</p></div><div class="modal-box"><strong>Ausência</strong><p>Uma variável como <code>encontrado</code> permite informar quando o arquivo termina sem correspondência.</p></div></div>
+        <div class="modal-example"><strong>Mesmo exemplo:</strong> ao procurar o código <code>17</code>, o laço encontra o produto Caderno e pode encerrar com <code>break</code>.</div>
+      </article>
+    </div>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Do registro ao arquivo</h2></div>
+      <div class="record-file-layout">
+        <div>
+          <div class="memory-record">
+            <div class="memory-record-head"><span>Memória</span><code>struct Produto produto</code></div>
+            <div class="memory-fields">
+              <div class="memory-field"><span>codigo</span><strong>17</strong></div>
+              <div class="memory-field"><span>nome</span><strong>"Caderno"</strong></div>
+              <div class="memory-field"><span>preco</span><strong>12.50</strong></div>
+            </div>
+          </div>
+          <div class="serialization-arrow"><strong>Serializar:</strong> transformar os campos em uma representação que possa ser gravada e lida novamente.</div>
+        </div>
+        <div class="trace-panel">
+          <div class="trace-title"><span class="trace-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h6"></path></svg></span><div><strong>produtos.txt</strong><p>Um registro por linha, com os campos na mesma ordem.</p></div></div>
+          <div class="file-lines">
+            <div class="file-line"><span>1</span><code>12 Borracha 4.90</code></div>
+            <div class="file-line active"><span>2</span><code>17 Caderno 12.50</code></div>
+            <div class="file-line"><span>3</span><code>23 Caneta 3.75</code></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Anatomia de uma gravação</h2></div>
+      <div class="anatomy-layout">
+        <div class="code-window">
+          <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">salvar_produto.c</span></div>
+          <div class="code-legend" aria-label="Legenda das etapas destacadas no código">
+            <span class="legend-label">Legenda:</span>
+            <span class="legend-item"><span class="legend-swatch swatch-record"></span>Registro</span>
+            <span class="legend-item"><span class="legend-swatch swatch-open"></span>Abrir</span>
+            <span class="legend-item"><span class="legend-swatch swatch-write"></span>Gravar</span>
+            <span class="legend-item"><span class="legend-swatch swatch-close"></span>Fechar</span>
+          </div>
+          <pre><code><span class="line"><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span></span>
+<span class="line focus-record"><span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> <span class="syn-operator">{</span></span><span class="line focus-record">    <span class="syn-type">int</span> <span class="syn-variable">codigo</span><span class="syn-operator">;</span></span><span class="line focus-record">    <span class="syn-type">char</span> <span class="syn-variable">nome</span><span class="syn-operator">[</span><span class="syn-number">40</span><span class="syn-operator">];</span></span><span class="line focus-record">    <span class="syn-type">float</span> <span class="syn-variable">preco</span><span class="syn-operator">;</span></span><span class="line focus-record"><span class="syn-operator">};</span></span>
+<span class="line"><span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span></span>
+<span class="line">    <span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> <span class="syn-variable">produto</span> <span class="syn-operator">=</span> <span class="syn-operator">{</span><span class="syn-number">17</span><span class="syn-operator">,</span> <span class="syn-string">"Caderno"</span><span class="syn-operator">,</span> <span class="syn-number">12.50</span><span class="syn-operator">};</span></span>
+<span class="line focus-open">    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"produtos.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"a"</span><span class="syn-operator">);</span></span>
+<span class="line">    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span></span>
+<span class="line focus-write">    <span class="syn-function">fprintf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%d %s %.2f\n"</span><span class="syn-operator">,</span></span><span class="line focus-write">            <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">codigo</span><span class="syn-operator">,</span> <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">nome</span><span class="syn-operator">,</span> <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">preco</span><span class="syn-operator">);</span></span>
+<span class="line focus-close">    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span></span>
+<span class="line">    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span></span>
+<span class="line"><span class="syn-operator">}</span></span></code></pre>
+        </div>
+        <div class="annotation-list">
+          <article class="annotation"><span class="annotation-number">1</span><div><h3>Defina o registro</h3><p>A <code>struct</code> estabelece os campos que formam cada produto.</p></div></article>
+          <article class="annotation"><span class="annotation-number">2</span><div><h3>Escolha o modo</h3><p><code>"a"</code> preserva os produtos já cadastrados e grava no final.</p></div></article>
+          <article class="annotation"><span class="annotation-number">3</span><div><h3>Verifique a abertura</h3><p>Se o ponteiro for <code>NULL</code>, nenhuma gravação deve ser tentada.</p></div></article>
+          <article class="annotation"><span class="annotation-number">4</span><div><h3>Mantenha o contrato</h3><p>O formato e a ordem dos argumentos determinam como a linha será reconstruída.</p></div></article>
+          <article class="annotation"><span class="annotation-number">5</span><div><h3>Feche o arquivo</h3><p><code>fclose</code> conclui a escrita e libera o recurso.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>O contrato entre gravação e leitura</h2></div>
+      <div class="contract-grid">
+        <article class="contract-card"><span>1. Mesma sequência</span><h3>Ordem dos campos</h3><p>Se a escrita usa <code>codigo, nome, preco</code>, a leitura deve recuperar <code>codigo, nome, preco</code>.</p></article>
+        <article class="contract-card"><span>2. Tipos compatíveis</span><h3>Formatadores</h3><p><code>%d</code> lê inteiro, <code>%39s</code> limita o texto e <code>%f</code> lê o preço.</p></article>
+        <article class="contract-card"><span>3. Registro completo</span><h3>Retorno da leitura</h3><p><code>fscanf(...) == 3</code> confirma que os três campos foram lidos antes de usar o registro.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Fluxo para persistir e consultar</h2></div>
+      <div class="flow-board">
+        <article class="flow-card"><span class="step-icon">1</span><h3>Monte o registro</h3><p>Preencha uma <code>struct</code> com os dados recebidos do usuário.</p></article>
+        <article class="flow-card"><span class="step-icon">2</span><h3>Acrescente ao arquivo</h3><p>Abra em <code>"a"</code>, grave uma linha completa e feche.</p></article>
+        <article class="flow-card"><span class="step-icon">3</span><h3>Abra para consulta</h3><p>Use <code>"r"</code> e leia um registro completo por repetição.</p></article>
+        <article class="flow-card"><span class="step-icon">4</span><h3>Compare e responda</h3><p>Mostre o registro encontrado ou informe que não houve correspondência.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Rastreamento de uma consulta</h2></div>
+      <div class="search-trace">
+        <div class="query-box">
+          <h3>Consulta solicitada</h3>
+          <p>O usuário deseja recuperar o produto cujo código é <strong>17</strong>.</p>
+          <span class="query-code">codigoProcurado = 17</span>
+          <div class="trace-result"><strong>Resultado:</strong> o segundo registro corresponde ao critério. A busca pode mostrar <code>Caderno, R$ 12,50</code> e encerrar.</div>
+        </div>
+        <table class="mini-table">
+          <thead><tr><th>Leitura</th><th>Registro recuperado</th><th>Comparação</th><th>Ação</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>12 Borracha 4.90</code></td><td><code>12 == 17</code> é falso</td><td>Continuar</td></tr>
+            <tr><td>2</td><td><code>17 Caderno 12.50</code></td><td><code>17 == 17</code> é verdadeiro</td><td>Mostrar e parar</td></tr>
+            <tr><td>3</td><td><code>23 Caneta 3.75</code></td><td>Não é lido após <code>break</code></td><td>Busca encerrada</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Operações essenciais</h2></div>
+      <table class="mini-table">
+        <thead><tr><th>Objetivo</th><th>Modo</th><th>Operação principal</th><th>Controle seguro</th></tr></thead>
+        <tbody>
+          <tr><td>Adicionar um registro</td><td><code>"a"</code></td><td><code>fprintf</code></td><td>Verificar <code>arquivo != NULL</code></td></tr>
+          <tr><td>Listar todos os registros</td><td><code>"r"</code></td><td><code>fscanf</code> em um laço</td><td>Continuar enquanto o número de campos lidos for o esperado</td></tr>
+          <tr><td>Buscar por código</td><td><code>"r"</code></td><td>Ler e comparar cada registro</td><td>Usar indicador <code>encontrado</code> e tratar ausência</td></tr>
+          <tr><td>Substituir todo o cadastro</td><td><code>"w"</code></td><td>Regravar todos os registros</td><td>Usar somente quando apagar o conteúdo anterior for intencional</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="examples-wrap">
+        <input class="tab-input" type="radio" name="examples" id="tab1" checked>
+        <input class="tab-input" type="radio" name="examples" id="tab2">
+        <input class="tab-input" type="radio" name="examples" id="tab3">
+        <div class="tabs" role="tablist" aria-label="Exemplos de cadastro com arquivo">
+          <label class="tab-label" for="tab1">1. Salvar um aluno</label>
+          <label class="tab-label" for="tab2">2. Listar produtos</label>
+          <label class="tab-label" for="tab3">3. Buscar livro por código</label>
+        </div>
+        <div class="panels">
+          <article class="tab-panel" id="panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h6"></path></svg></span><div><h3>Salvar um aluno</h3><p>Gravar um registro simples em uma linha de texto.</p></div></div>
+                <span class="level">Nível básico</span>
+                <div class="example-steps">
+                  <div class="example-step"><strong>Registro:</strong> matrícula, nome sem espaços e média.</div>
+                  <div class="example-step"><strong>Modo:</strong> <code>"a"</code> para preservar os alunos anteriores.</div>
+                  <div class="example-step"><strong>Linha gerada:</strong> <code>2026 Ana 8.50</code>.</div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">salvar_aluno.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">matricula</span><span class="syn-operator">;</span>
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span><span class="syn-operator">[</span><span class="syn-number">40</span><span class="syn-operator">];</span>
+    <span class="syn-type">float</span> <span class="syn-variable">media</span><span class="syn-operator">;</span>
+<span class="syn-operator">};</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-keyword">struct</span> <span class="syn-type">Aluno</span> <span class="syn-variable">aluno</span> <span class="syn-operator">=</span> <span class="syn-operator">{</span><span class="syn-number">2026</span><span class="syn-operator">,</span> <span class="syn-string">"Ana"</span><span class="syn-operator">,</span> <span class="syn-number">8.5</span><span class="syn-operator">};</span>
+    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"alunos.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"a"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">fprintf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%d %s %.2f\n"</span><span class="syn-operator">,</span>
+            <span class="syn-variable">aluno</span><span class="syn-operator">.</span><span class="syn-variable">matricula</span><span class="syn-operator">,</span> <span class="syn-variable">aluno</span><span class="syn-operator">.</span><span class="syn-variable">nome</span><span class="syn-operator">,</span> <span class="syn-variable">aluno</span><span class="syn-operator">.</span><span class="syn-variable">media</span><span class="syn-operator">);</span>
+    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel" id="panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h6"></path></svg></span><div><h3>Listar produtos armazenados</h3><p>Recuperar todos os registros completos até o fim do arquivo.</p></div></div>
+                <span class="level">Nível intermediário</span>
+                <div class="example-steps">
+                  <div class="example-step"><strong>Modo:</strong> <code>"r"</code> para não alterar o cadastro.</div>
+                  <div class="example-step"><strong>Controle:</strong> o laço continua enquanto três campos forem lidos.</div>
+                  <div class="example-step"><strong>Saída:</strong> cada registro recuperado é mostrado na tela.</div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">listar_produtos.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span><span class="syn-operator">;</span>
+    <span class="syn-type">char</span> <span class="syn-variable">nome</span><span class="syn-operator">[</span><span class="syn-number">40</span><span class="syn-operator">];</span>
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span><span class="syn-operator">;</span>
+<span class="syn-operator">};</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-keyword">struct</span> <span class="syn-type">Produto</span> <span class="syn-variable">produto</span><span class="syn-operator">;</span>
+    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"produtos.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"r"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">while</span> <span class="syn-operator">(</span><span class="syn-function">fscanf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%d %39s %f"</span><span class="syn-operator">,</span>
+                  <span class="syn-operator">&amp;</span><span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">codigo</span><span class="syn-operator">,</span> <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">nome</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">preco</span><span class="syn-operator">)</span> <span class="syn-operator">==</span> <span class="syn-number">3</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"%d - %s - R$ %.2f\n"</span><span class="syn-operator">,</span>
+               <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">codigo</span><span class="syn-operator">,</span> <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">nome</span><span class="syn-operator">,</span> <span class="syn-variable">produto</span><span class="syn-operator">.</span><span class="syn-variable">preco</span><span class="syn-operator">);</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel" id="panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="5"></circle><path d="M14 14l6 6"></path></svg></span><div><h3>Buscar livro pelo código</h3><p>Percorrer os registros até localizar uma chave específica.</p></div></div>
+                <span class="level">Nível intermediário</span>
+                <div class="example-steps">
+                  <div class="example-step"><strong>Critério:</strong> comparar cada <code>livro.codigo</code> com o valor procurado.</div>
+                  <div class="example-step"><strong>Parada:</strong> usar <code>break</code> quando o registro for encontrado.</div>
+                  <div class="example-step"><strong>Ausência:</strong> informar quando o arquivo termina sem correspondência.</div>
+                </div>
+              </div>
+              <div class="code-window">
+                <div class="code-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-title">buscar_livro.c</span></div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-keyword">struct</span> <span class="syn-type">Livro</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span><span class="syn-operator">;</span>
+    <span class="syn-type">char</span> <span class="syn-variable">titulo</span><span class="syn-operator">[</span><span class="syn-number">50</span><span class="syn-operator">];</span>
+    <span class="syn-type">int</span> <span class="syn-variable">ano</span><span class="syn-operator">;</span>
+<span class="syn-operator">};</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-type">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-keyword">struct</span> <span class="syn-type">Livro</span> <span class="syn-variable">livro</span><span class="syn-operator">;</span>
+    <span class="syn-type">int</span> <span class="syn-variable">procurado</span> <span class="syn-operator">=</span> <span class="syn-number">205</span><span class="syn-operator">,</span> <span class="syn-variable">encontrado</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+    <span class="syn-type">FILE</span> <span class="syn-operator">*</span><span class="syn-variable">arquivo</span> <span class="syn-operator">=</span> <span class="syn-function">fopen</span><span class="syn-operator">(</span><span class="syn-string">"livros.txt"</span><span class="syn-operator">,</span> <span class="syn-string">"r"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">arquivo</span> <span class="syn-operator">==</span> <span class="syn-keyword">NULL</span><span class="syn-operator">)</span> <span class="syn-keyword">return</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+
+    <span class="syn-keyword">while</span> <span class="syn-operator">(</span><span class="syn-function">fscanf</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">,</span> <span class="syn-string">"%d %49s %d"</span><span class="syn-operator">,</span>
+                  <span class="syn-operator">&amp;</span><span class="syn-variable">livro</span><span class="syn-operator">.</span><span class="syn-variable">codigo</span><span class="syn-operator">,</span> <span class="syn-variable">livro</span><span class="syn-operator">.</span><span class="syn-variable">titulo</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">livro</span><span class="syn-operator">.</span><span class="syn-variable">ano</span><span class="syn-operator">)</span> <span class="syn-operator">==</span> <span class="syn-number">3</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+        <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">livro</span><span class="syn-operator">.</span><span class="syn-variable">codigo</span> <span class="syn-operator">==</span> <span class="syn-variable">procurado</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+            <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"%s, %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">livro</span><span class="syn-operator">.</span><span class="syn-variable">titulo</span><span class="syn-operator">,</span> <span class="syn-variable">livro</span><span class="syn-operator">.</span><span class="syn-variable">ano</span><span class="syn-operator">);</span>
+            <span class="syn-variable">encontrado</span> <span class="syn-operator">=</span> <span class="syn-number">1</span><span class="syn-operator">;</span>
+            <span class="syn-keyword">break</span><span class="syn-operator">;</span>
+        <span class="syn-operator">}</span>
+    <span class="syn-operator">}</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-operator">!</span><span class="syn-variable">encontrado</span><span class="syn-operator">)</span> <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Livro nao encontrado.\n"</span><span class="syn-operator">);</span>
+    <span class="syn-function">fclose</span><span class="syn-operator">(</span><span class="syn-variable">arquivo</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Abrir com <code>"w"</code> ao cadastrar</h3><p><strong>Por que acontece:</strong> o aluno associa escrita apenas ao modo <code>"w"</code>.</p><p><strong>Como evitar:</strong> use <code>"a"</code> quando os registros anteriores devem permanecer.</p></article>
+        <article class="error-card"><h3>Gravar e ler em ordens diferentes</h3><p><strong>Por que acontece:</strong> os formatadores não seguem o mesmo contrato.</p><p><strong>Como evitar:</strong> documente a sequência dos campos e repita-a na leitura.</p></article>
+        <article class="error-card"><h3>Usar registro incompleto</h3><p><strong>Por que acontece:</strong> o retorno de <code>fscanf</code> não é verificado.</p><p><strong>Como evitar:</strong> processe apenas quando todos os campos esperados forem lidos.</p></article>
+        <article class="error-card"><h3>Confundir memória com persistência</h3><p><strong>Por que acontece:</strong> o vetor de <code>structs</code> parece suficiente durante a execução.</p><p><strong>Como evitar:</strong> grave alterações antes de encerrar e recupere os dados ao iniciar.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Por que um vetor de structs não mantém o cadastro depois que o programa termina?</summary><p>Porque o vetor está na memória de execução. Quando o processo termina, essa memória deixa de representar o cadastro. O arquivo é o meio usado para persistir os registros.</p></details>
+        <details><summary>Por que a escrita e a leitura devem usar a mesma ordem de campos?</summary><p>Porque o arquivo não conhece o significado de cada valor. O programa interpreta a sequência segundo o formato definido. Se a ordem mudar, os dados serão atribuídos aos campos errados ou a leitura falhará.</p></details>
+        <details><summary>Qual modo é mais adequado para adicionar um registro sem apagar os anteriores?</summary><p>O modo <code>"a"</code>, que grava no final do arquivo e preserva o conteúdo existente.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir definir um formato simples para registros, salvar novos dados sem destruir o cadastro, recuperar registros completos e realizar uma consulta por critério em um arquivo de texto.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+</body>
+</html>

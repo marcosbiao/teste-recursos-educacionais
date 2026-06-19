@@ -4,6 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Recursos Educacionais | Introdução à Programação</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="./assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
   <style>
     :root {
       --bg: #f6f8fb;
@@ -583,6 +590,16 @@
       box-shadow: var(--soft-shadow);
     }
 
+    .category-card.category-link {
+      display: block;
+      min-width: 0;
+    }
+
+    .category-card.category-link:focus-visible {
+      outline: 3px solid rgba(79, 70, 229, 0.28);
+      outline-offset: 3px;
+    }
+
     .category-card[open] {
       grid-column: span 2;
       border-color: rgba(79, 70, 229, 0.3);
@@ -595,8 +612,8 @@
     }
 
     .category-card[data-category="erros"] {
-      --accent: var(--orange);
-      --accent-soft: #fff7ed;
+      --accent: #B42318;
+      --accent-soft: #FEF3F2;
     }
 
     .category-card[data-category="desafios"] {
@@ -604,7 +621,8 @@
       --accent-soft: #f5f3ff;
     }
 
-    .category-card summary {
+    .category-card summary,
+    .category-link-content {
       display: grid;
       min-height: 316px;
       padding: 1.2rem;
@@ -700,6 +718,11 @@
 
     .category-card[open] .card-action svg {
       transform: rotate(90deg);
+    }
+
+    .category-link:hover .card-action svg,
+    .category-link:focus-visible .card-action svg {
+      transform: translateX(3px);
     }
 
     .category-body {
@@ -1086,7 +1109,8 @@
         grid-column: span 1;
       }
 
-      .category-card summary {
+      .category-card summary,
+      .category-link-content {
         min-height: 0;
       }
 
@@ -1163,7 +1187,7 @@
             Projeto de Doutorado
           </p>
           <h1>Explore os <span>Recursos Educacionais</span></h1>
-          <p class="hero-subtitle">Recursos desenvolvidos como parte de uma pesquisa de doutorado sobre o uso de recursos educacionais no apoio à aprendizagem em Introdução à Programação.</p>
+
           <div class="hero-actions">
             <a class="btn btn-primary" href="#recursos">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1181,20 +1205,7 @@
             </a>
           </div>
 
-          <div class="metrics" aria-label="Resumo dos recursos">
-            <div class="metric">
-              <strong data-total-count>37</strong>
-              <span>recursos disponíveis</span>
-            </div>
-            <div class="metric">
-              <strong>4</strong>
-              <span>formatos de recurso</span>
-            </div>
-            <div class="metric">
-              <strong>CCI</strong>
-              <span>competências destacadas</span>
-            </div>
-          </div>
+
         </div>
 
         <div class="hero-visual" aria-hidden="true">
@@ -1271,10 +1282,10 @@
             Recursos disponíveis
           </span>
           <h2 id="recursos-titulo">Escolha uma categoria para explorar</h2>
-          <p>Os links foram reorganizados por formato, mantendo as versões e competências CCI indicadas nos títulos originais.</p>
+
         </div>
         <div class="resource-summary">
-          <span><strong data-total-count>37</strong> recursos disponíveis</span>
+          <span><strong data-total-count>58</strong> recursos disponíveis</span>
           <button class="btn btn-ghost" type="button" data-open-all>
             Ver todos
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1286,8 +1297,8 @@
       </div>
 
       <div class="category-grid">
-        <details class="category-card" data-category="infograficos">
-          <summary>
+        <a class="category-card category-link" data-category="infograficos" data-resource-count="35" href="infograficos.html" aria-label="Abrir página de infográficos">
+          <div class="category-link-content">
             <div class="category-head">
               <span class="category-icon" aria-hidden="true">
                 <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
@@ -1297,7 +1308,7 @@
                   <path d="M19 19V4"></path>
                 </svg>
               </span>
-              <span class="category-count" data-category-count>14 recursos</span>
+              <span class="category-count" data-category-count>35 recursos</span>
             </div>
             <h3>Infográficos</h3>
             <p>Recursos visuais para apresentar conceitos, estratégias e estruturas de programação de forma clara e objetiva.</p>
@@ -1313,125 +1324,8 @@
                 <path d="m12 5 7 7-7 7"></path>
               </svg>
             </span>
-          </summary>
-          <div class="category-body">
-            <p class="version-note">Recurso destinado a apresentar conceitos e estratégias de forma expositiva. A versão 1 apresenta uma maior quantidade de texto. Já na versão 2 houve uma redução do texto e adição de algumas animações.</p>
-            <div class="resource-list">
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci01_decomposicao.html">
-                <span class="resource-marker">CCI01</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI01</span> - Decomposição</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci02_Fluxo_EPS.html">
-                <span class="resource-marker">CCI02</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI02</span> - Fluxo EPS</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci03_estado_programa.html">
-                <span class="resource-marker">CCI03</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI03</span> - Estado do programa</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci03_variavel_constante_atribuicao.html">
-                <span class="resource-marker">CCI03</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI03</span> - Variável, constante e atribuição</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci05_qual_laco_usar.html">
-                <span class="resource-marker">CCI05</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI05</span> - Qual laço usar</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci07_funcao_ou_procedimento.html">
-                <span class="resource-marker">CCI07</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI07</span> - Função ou procedimento</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci13_ciclo_arquivo.html">
-                <span class="resource-marker">CCI13</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI13</span> - Ciclo de arquivo</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/Infograficos/cci13_ciclo_arquivo_c.html">
-                <span class="resource-marker">CCI13</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI13</span> - Ciclo de arquivo em C</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci01/index.html">
-                <span class="resource-marker">CCI01</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI01</span> - Decomposição</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci02/index.html">
-                <span class="resource-marker">CCI02</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI02</span> - Fluxo EPS</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infografico</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci03/index.html">
-                <span class="resource-marker">CCI03</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI03</span> - Variável, constante e atribuição</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/CCI07_funcao_ou_procedimento_v2.html">
-                <span class="resource-marker">CCI07</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI07</span> - Função ou procedimento</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/CCI07_escopo_variaveis_v2.html">
-                <span class="resource-marker">CCI07</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI07</span> - Escopo de variáveis</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/Infograficos/cci08/index.html">
-                <span class="resource-marker">CCI08</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI08</span> - Justificativa técnica</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Infográfico</span><span class="meta-pill version">Versão: v2 do infográfico</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-            </div>
           </div>
-        </details>
+        </a>
 
         <details class="category-card" data-category="roteiros">
           <summary>
@@ -1464,7 +1358,7 @@
           <div class="category-body">
             <p class="version-note">Recurso destinado a guiar o aluno pelas etapas do raciocínio necessário para resolver um problema. A versão 1 apresenta questionamentos discursivos, o que dificultou que algumas pessoas respondessem. Na versão dois, retiraram-se questões mais discursivas, deixando questões numéricas, de variável e múltipla escolha. Na versão 2.1, utilizou-se um problema para direcionar o aluno a responder questões mais especificas direcionando a construção do código.</p>
             <div class="resource-list">
-              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci02_teste_de_mesa.html">
+              <a class="resource-item resource-link" href="recursos/roteiroresolucao/cci02_teste_de_mesa.html">
                 <span class="resource-marker">CCI02</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI02</span> - Teste de mesa</span>
@@ -1472,7 +1366,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci03_tipos_variaveis.html">
+              <a class="resource-item resource-link" href="recursos/roteiroresolucao/cci03_tipos_variaveis.html">
                 <span class="resource-marker">CCI03</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI03</span> - Tipos de variaveis</span>
@@ -1480,7 +1374,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci05_laco_contador.html">
+              <a class="resource-item resource-link" href="recursos/roteiroresolucao/cci05_laco_contador.html">
                 <span class="resource-marker">CCI05</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI05</span> - Laco contador</span>
@@ -1488,7 +1382,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link" href="Testes/roteiroresolucao/cci06_vetores.html">
+              <a class="resource-item resource-link" href="recursos/roteiroresolucao/cci06_vetores.html">
                 <span class="resource-marker">CCI06</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI06</span> - Vetores</span>
@@ -1496,7 +1390,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci02_teste_de_mesa_v2.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci02_teste_de_mesa_v2.html">
                 <span class="resource-marker">CCI02</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI02</span> - Teste de mesa</span>
@@ -1504,7 +1398,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci05_laco_contador_v2.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci05_laco_contador_v2.html">
                 <span class="resource-marker">CCI05</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI05</span> - Laco contador</span>
@@ -1512,7 +1406,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci06_vetores_v2.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci06_vetores_v2.html">
                 <span class="resource-marker">CCI06</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI06</span> - Vetores</span>
@@ -1520,7 +1414,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci02_anos_de_vida_v2.1.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci02_anos_de_vida_v2.1.html">
                 <span class="resource-marker">CCI02</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI02</span> - Anos de vida</span>
@@ -1528,7 +1422,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci05_soma_serie_v2.1.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci05_soma_serie_v2.1.html">
                 <span class="resource-marker">CCI05</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI05</span> - Soma de serie</span>
@@ -1536,7 +1430,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci05_altura_v2.1.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci05_altura_v2.1.html">
                 <span class="resource-marker">CCI05</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI05</span> - Altura</span>
@@ -1544,7 +1438,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci06_media_turma_v2.1.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci06_media_turma_v2.1.html">
                 <span class="resource-marker">CCI06</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI06</span> - Media da turma</span>
@@ -1552,7 +1446,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci07_maior_tres_v2.1.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci07_maior_tres_v2.1.html">
                 <span class="resource-marker">CCI07</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI07</span> - Maior de três números</span>
@@ -1560,7 +1454,7 @@
                 </span>
                 <span class="access-pill">Acessar</span>
               </a>
-              <a class="resource-item resource-link is-updated" href="Testes/roteiroresolucao/cci07_multiplos_v2.1.html">
+              <a class="resource-item resource-link is-updated" href="recursos/roteiroresolucao/cci07_multiplos_v2.1.html">
                 <span class="resource-marker">CCI07</span>
                 <span>
                   <span class="resource-title"><span class="cci">CCI07</span> - M.M.C. por múltiplos</span>
@@ -1572,8 +1466,8 @@
           </div>
         </details>
 
-        <details class="category-card" data-category="erros">
-          <summary>
+        <a class="category-card category-link" data-category="erros" data-resource-count="5" href="cards-erros.html" aria-label="Abrir página de cards de erros comuns">
+          <div class="category-link-content">
             <div class="category-head">
               <span class="category-icon" aria-hidden="true">
                 <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
@@ -1582,7 +1476,7 @@
                   <path d="M12 17h.01"></path>
                 </svg>
               </span>
-              <span class="category-count" data-category-count>9 recursos</span>
+              <span class="category-count" data-category-count>11 recursos</span>
             </div>
             <h3>Cards de erros comuns</h3>
             <p>Recursos de diagnóstico para ajudar o aluno a reconhecer, compreender e corrigir erros recorrentes em programação.</p>
@@ -1598,85 +1492,8 @@
                 <path d="m12 5 7 7-7 7"></path>
               </svg>
             </span>
-          </summary>
-          <div class="category-body">
-            <p class="version-note">Recurso destinado a apresentar erros comuns e suas correções. A versão 1 apresenta o que é o erro, compara a forma errada com a correta e explica o raciocinio correto. Na versão 2, é apresentado um codigo com erro logo apos o enunciado, além de exemplos de entrada com suas respectivas saídas. Força o aluno tentar identificar o erro antes de apresentar a explicação e a correção.</p>
-            <div class="resource-list">
-              <a class="resource-item resource-link" href="Testes/carderro/cci01_enunciado.html">
-                <span class="resource-marker">CCI01</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI01</span> - Enunciado</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/carderro/CCI04_condicao_invertida.html">
-                <span class="resource-marker">CCI04</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI04</span> - Condicao invertida</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/carderro/CCI10_correcao_local.html">
-                <span class="resource-marker">CCI10</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI10</span> - Correcao local</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link" href="Testes/carderro/CCI12_recursao_sem_reducao.html">
-                <span class="resource-marker">CCI12</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI12</span> - Recursão sem redução</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v1</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/carderro/cci01_enunciado_v2.html">
-                <span class="resource-marker">CCI01</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI01</span> - Enunciado</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/carderro/CCI04_condicao_invertida_v2.html">
-                <span class="resource-marker">CCI04</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI04</span> - Condicao invertida</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/carderro/cci07_parametros_insuficientes_v2.html">
-                <span class="resource-marker">CCI07</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI07</span> - Parâmetros insuficientes ou desnecessários</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/carderro/CCI10_correcao_local_v2.html">
-                <span class="resource-marker">CCI10</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI10</span> - Correcao local</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-              <a class="resource-item resource-link is-updated" href="Testes/carderro/CCI12_recursao_sem_reducao_v2.html">
-                <span class="resource-marker">CCI12</span>
-                <span>
-                  <span class="resource-title"><span class="cci">CCI12</span> - Recursão sem redução</span>
-                  <span class="resource-meta"><span class="meta-pill">Tipo: Card de erro</span><span class="meta-pill version">Versão: v2 do card</span></span>
-                </span>
-                <span class="access-pill">Acessar</span>
-              </a>
-            </div>
           </div>
-        </details>
+        </a>
 
         <details class="category-card" data-category="desafios">
           <summary>
@@ -1810,14 +1627,27 @@
 
   <script>
     const FORM_URL = "https://forms.gle/P9j7JNMTzRxNfiDh8";
-    const resourceLinks = document.querySelectorAll(".resource-link");
+    const categoryCards = document.querySelectorAll(".category-card");
+
+    function getCategoryCount(card) {
+      const declaredCount = Number(card.dataset.resourceCount);
+      if (Number.isFinite(declaredCount) && declaredCount > 0) {
+        return declaredCount;
+      }
+
+      return card.querySelectorAll(".resource-link").length;
+    }
+
+    const totalResources = Array.from(categoryCards).reduce((total, card) => {
+      return total + getCategoryCount(card);
+    }, 0);
 
     document.querySelectorAll("[data-total-count]").forEach((counter) => {
-      counter.textContent = String(resourceLinks.length);
+      counter.textContent = String(totalResources);
     });
 
-    document.querySelectorAll(".category-card").forEach((card) => {
-      const count = card.querySelectorAll(".resource-link").length;
+    categoryCards.forEach((card) => {
+      const count = getCategoryCount(card);
       const label = count === 1 ? "1 recurso" : `${count} recursos`;
       const counter = card.querySelector("[data-category-count]");
       if (counter) {
@@ -1826,7 +1656,7 @@
     });
 
     document.querySelector("[data-open-all]")?.addEventListener("click", () => {
-      document.querySelectorAll(".category-card").forEach((card) => {
+      document.querySelectorAll("details.category-card").forEach((card) => {
         card.open = true;
       });
       document.querySelector("#recursos")?.scrollIntoView({ behavior: "smooth", block: "start" });

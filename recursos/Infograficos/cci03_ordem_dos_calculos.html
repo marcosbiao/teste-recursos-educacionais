@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A ordem dos cálculos no programa</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    .page { max-width: 1120px; margin: 0 auto; }
+
+    .hero,
+    .section,
+    .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 260px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.16fr) minmax(330px, 0.84fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg,
+    .pill svg,
+    .concept-icon svg,
+    .modal-icon svg,
+    .interaction-note svg,
+    .hero-calc-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.08rem, 5vw, 3.55rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.08rem;
+      max-width: 730px;
+    }
+
+    .hero-calc {
+      min-height: 270px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .calc-window {
+      width: min(100%, 390px);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.14);
+    }
+
+    .calc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .calc-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+    }
+
+    .hero-calc-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      color: var(--cor-primaria);
+      background: var(--cor-superficie-destacada);
+    }
+
+    .calc-chip {
+      color: var(--cor-texto-secundario);
+      font-family: Consolas, Monaco, monospace;
+      font-size: .78rem;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .expression-display {
+      background: var(--codigo-fundo);
+      color: white;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      font-family: Consolas, Monaco, monospace;
+      font-size: clamp(1.15rem, 3vw, 1.65rem);
+      font-weight: 900;
+      letter-spacing: .01em;
+    }
+
+    .expression-display .low { color: #BFDBFE; }
+    .expression-display .high { color: #FDBA74; }
+    .expression-display .number { color: #FDE68A; }
+
+    .calc-stages {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 7px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .calc-stage {
+      min-width: 0;
+      padding: 9px 6px;
+      text-align: center;
+      border-radius: 12px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      font-family: Consolas, Monaco, monospace;
+      font-weight: 800;
+      color: var(--cor-texto-principal);
+    }
+
+    .calc-stage.current {
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79, 70, 229, .23);
+      color: var(--cor-primaria-escura);
+    }
+
+    .calc-arrow { color: var(--cor-primaria); font-weight: 900; }
+    .calc-caption { margin-top: 13px; font-size: .88rem; color: var(--cor-texto-secundario); text-align: center; }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, .16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: .92rem;
+      font-weight: 800;
+    }
+
+    .concept-summary {
+      display: grid;
+      grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .concept-main {
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, .18);
+      border-radius: 21px;
+      padding: 23px;
+    }
+
+    .concept-main strong { color: var(--cor-primaria-escura); }
+
+    .rule-box {
+      display: grid;
+      gap: 11px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 21px;
+      padding: 18px;
+    }
+
+    .rule-row {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      gap: 11px;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      padding: 11px 13px;
+    }
+
+    .rule-number {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--cor-primaria);
+      color: white;
+      font-weight: 900;
+    }
+
+    .rule-row strong { color: var(--cor-texto-principal); }
+    .rule-symbols { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; }
+
+    .interaction-note {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 15px;
+      background: #FFFBEB;
+      border: 1px solid rgba(245, 158, 11, .28);
+      color: var(--cor-texto-principal);
+      font-size: .91rem;
+      margin-bottom: 16px;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .modal-choice { position: fixed; opacity: 0; pointer-events: none; }
+
+    .precedence-map {
+      position: relative;
+      min-height: 470px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      padding: 26px;
+      overflow: hidden;
+    }
+
+    .map-connectors {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .map-connectors line {
+      stroke: rgba(79, 70, 229, .18);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+      stroke-linecap: round;
+    }
+
+    .concept-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 190px;
+      min-height: 142px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      padding: 18px;
+      z-index: 2;
+      box-shadow: 0 18px 36px rgba(49, 46, 129, .2);
+    }
+
+    .concept-center strong { font-size: 1.06rem; }
+    .concept-center span { display: block; color: #E0E7FF; font-size: .87rem; margin-top: 5px; }
+
+    .concept-button {
+      position: absolute;
+      width: min(260px, calc(50% - 42px));
+      min-height: 146px;
+      cursor: pointer;
+      border: 1px solid var(--cor-borda);
+      border-radius: 21px;
+      background: rgba(255,255,255,.97);
+      padding: 17px;
+      z-index: 2;
+      box-shadow: 0 14px 30px rgba(15,23,42,.06);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .concept-button:hover,
+    .concept-button:focus-visible {
+      transform: translateY(-4px);
+      border-color: rgba(79, 70, 229, .34);
+      box-shadow: 0 18px 34px rgba(49,46,129,.12);
+      outline: none;
+    }
+
+    .concept-button:nth-of-type(1) { top: 26px; left: 28px; }
+    .concept-button:nth-of-type(2) { top: 26px; right: 28px; }
+    .concept-button:nth-of-type(3) { bottom: 26px; left: 28px; }
+    .concept-button:nth-of-type(4) { bottom: 26px; right: 28px; }
+
+    .concept-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      display: grid;
+      place-items: center;
+      margin-bottom: 11px;
+    }
+
+    .concept-button h3 { margin-bottom: 5px; }
+    .concept-button p { font-size: .91rem; }
+
+    .concept-alert {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      place-items: center;
+      padding: 22px;
+    }
+
+    #modal-parentheses:checked ~ .concept-alert,
+    #modal-multiplication:checked ~ .concept-alert,
+    #modal-addition:checked ~ .concept-alert,
+    #modal-associativity:checked ~ .concept-alert { display: grid; }
+
+    .concept-alert-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, .64);
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      animation: fade-in .24s ease both;
+    }
+
+    .concept-alert-card {
+      width: min(820px, 100%);
+      max-height: min(88vh, 760px);
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      border-radius: 25px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      box-shadow: 0 28px 80px rgba(15,23,42,.28);
+      animation: alert-in .34s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes alert-in { from { opacity: 0; transform: translateY(18px) scale(.96); } to { opacity: 1; transform: none; } }
+
+    .alert-toolbar { display: flex; justify-content: flex-end; padding: 12px 14px 0; }
+    .alert-close {
+      cursor: pointer;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-texto-principal);
+      font-weight: 900;
+      font-size: 1.25rem;
+      transition: .18s ease;
+    }
+    .alert-close:hover { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+
+    .modal-panel { display: none; padding: 6px 26px 28px; }
+    #modal-parentheses:checked ~ .concept-alert .panel-parentheses,
+    #modal-multiplication:checked ~ .concept-alert .panel-multiplication,
+    #modal-addition:checked ~ .concept-alert .panel-addition,
+    #modal-associativity:checked ~ .concept-alert .panel-associativity { display: block; }
+
+    .modal-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 18px; }
+    .modal-icon { width: 52px; height: 52px; border-radius: 17px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.38rem; margin-bottom: 3px; }
+    .modal-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 18px; }
+    .modal-explanation,
+    .modal-example { border-radius: 18px; padding: 18px; border: 1px solid var(--cor-borda); }
+    .modal-explanation { background: var(--cor-superficie-suave); }
+    .modal-example { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.18); }
+
+    .mini-steps { display: grid; gap: 9px; margin-top: 12px; }
+    .mini-step { display: grid; grid-template-columns: 28px 1fr; gap: 9px; align-items: start; }
+    .mini-step span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: var(--cor-primaria); color: white; font-size: .8rem; font-weight: 900; }
+    .mini-step p { font-size: .92rem; }
+
+    .expression-card {
+      margin-top: 12px;
+      background: var(--codigo-fundo);
+      color: white;
+      border-radius: 15px;
+      padding: 15px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1.08rem;
+      font-weight: 800;
+      overflow-x: auto;
+    }
+
+    .evaluation-line {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+      background: white;
+      border: 1px solid var(--cor-borda);
+      border-radius: 13px;
+      padding: 10px 12px;
+    }
+    .evaluation-line span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; }
+    .evaluation-line code { color: var(--cor-texto-principal); font-weight: 800; }
+
+    .reading-section {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .reading-question {
+      border-radius: 21px;
+      padding: 22px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79,70,229,.18);
+    }
+
+    .reading-question .big-expression {
+      margin: 15px 0;
+      border-radius: 16px;
+      padding: 17px;
+      background: var(--codigo-fundo);
+      color: white;
+      text-align: center;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1.55rem;
+      font-weight: 900;
+    }
+
+    .wrong-answer,
+    .right-answer {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 12px;
+      border-radius: 13px;
+      margin-top: 9px;
+      border: 1px solid var(--cor-borda);
+      background: white;
+      color: var(--cor-texto-secundario);
+      font-size: .92rem;
+    }
+
+    .wrong-answer strong,
+    .right-answer strong { color: var(--cor-texto-principal); }
+    .wrong-answer::before { content: "×"; color: var(--cor-destaque-pontual); font-weight: 900; font-size: 1.2rem; }
+    .right-answer::before { content: "✓"; color: var(--cor-primaria); font-weight: 900; }
+
+    .reading-flow {
+      display: grid;
+      gap: 10px;
+      border-radius: 21px;
+      padding: 20px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--cor-borda);
+      border-radius: 16px;
+      padding: 13px;
+    }
+
+    .flow-step-number { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .flow-step strong { display: block; color: var(--cor-texto-principal); }
+    .flow-step p { font-size: .88rem; }
+    .flow-result { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; white-space: nowrap; }
+
+    .operator-table-wrap { overflow-x: auto; }
+    .operator-table { width: 100%; border-collapse: collapse; min-width: 670px; }
+    .operator-table th,
+    .operator-table td { border: 1px solid var(--cor-borda); padding: 12px; text-align: left; vertical-align: top; }
+    .operator-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .88rem; }
+    .operator-table td { color: var(--cor-texto-secundario); font-size: .92rem; }
+    .operator-table code { color: var(--cor-texto-principal); font-weight: 900; }
+    .priority-chip { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; border-radius: 10px; background: var(--cor-primaria); color: white; font-weight: 900; }
+
+    .example-tabs { position: relative; }
+    .example-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .example-tab-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .example-tab-labels label { cursor: pointer; text-align: center; padding: 12px 13px; border-radius: 14px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; transition: .2s ease; }
+    .example-tab-labels label:hover { transform: translateY(-2px); border-color: rgba(79,70,229,.35); }
+
+    #example-1:checked ~ .example-tab-labels label[for="example-1"],
+    #example-2:checked ~ .example-tab-labels label[for="example-2"],
+    #example-3:checked ~ .example-tab-labels label[for="example-3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); box-shadow: 0 10px 20px rgba(79,70,229,.18); }
+
+    .example-panel { display: none; grid-template-columns: minmax(0,.98fr) minmax(0,1.02fr); gap: 18px; animation: tab-in .34s ease both; }
+    #example-1:checked ~ .example-panels .panel-1,
+    #example-2:checked ~ .example-panels .panel-2,
+    #example-3:checked ~ .example-panels .panel-3 { display: grid; }
+    @keyframes tab-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .example-card { border-radius: 20px; border: 1px solid var(--cor-borda); padding: 20px; background: var(--cor-superficie-suave); }
+    .example-card.accent { border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; }
+    .example-level { display: inline-flex; margin-bottom: 10px; border-radius: 999px; padding: 5px 10px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+
+    .trace-table { width: 100%; border-collapse: collapse; margin-top: 13px; font-size: .86rem; }
+    .trace-table th,
+    .trace-table td { padding: 9px; border: 1px solid var(--cor-borda); text-align: left; vertical-align: top; }
+    .trace-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .trace-table td { background: white; color: var(--cor-texto-secundario); }
+    .trace-table code { color: var(--cor-texto-principal); font-weight: 700; }
+
+    .code-shell { border-radius: 18px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #1F2937; box-shadow: 0 16px 30px rgba(15,23,42,.13); }
+    .code-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid #273244; color: #CBD5E1; font-size: .78rem; }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dots span { width: 9px; height: 9px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; }
+    pre code { display: block; padding: 18px; background: var(--codigo-fundo); color: var(--codigo-texto); overflow-x: auto; line-height: 1.58; font-size: .89rem; tab-size: 4; }
+
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: white; border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; box-shadow: var(--sombra-suave); }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; max-width: 950px; }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .concept-summary,
+      .reading-section,
+      .example-panel,
+      .modal-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .precedence-map { min-height: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-connectors { display: none; }
+      .concept-center { position: static; transform: none; width: auto; grid-column: 1 / -1; min-height: 120px; }
+      .concept-button,
+      .concept-button:nth-of-type(1),
+      .concept-button:nth-of-type(2),
+      .concept-button:nth-of-type(3),
+      .concept-button:nth-of-type(4) { position: static; width: auto; min-height: 150px; }
+      .error-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 16px 10px; }
+      .hero,
+      .section,
+      .closing { padding: 22px; border-radius: 21px; }
+      .hero-grid { gap: 22px; }
+      .hero-calc { min-height: auto; }
+      .meta-grid,
+      .precedence-map,
+      .example-tab-labels { grid-template-columns: 1fr; }
+      .calc-stages { grid-template-columns: 1fr; }
+      .calc-arrow { transform: rotate(90deg); text-align: center; }
+      .flow-step { grid-template-columns: 42px 1fr; }
+      .flow-result { grid-column: 2; }
+      .rule-row { grid-template-columns: 34px 1fr; }
+      .rule-symbols { grid-column: 2; }
+      .concept-alert { padding: 10px; }
+      .concept-alert-card { max-height: 94vh; border-radius: 20px; }
+      .modal-panel { padding: 5px 18px 22px; }
+      .modal-head { align-items: center; }
+      .operator-table { min-width: 620px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>A ordem dos cálculos no programa</h1>
+          <p class="subtitle">Entenda como o C interpreta expressões aritméticas, decide qual operação executar primeiro e como os parênteses tornam a intenção do cálculo mais clara.</p>
+        </div>
+
+        <div class="hero-calc" aria-label="Exemplo visual de precedência">
+          <div class="calc-window">
+            <div class="calc-head">
+              <div class="calc-title">
+                <span class="hero-calc-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h2M14 12h2M8 16h2M14 16h2"></path></svg></span>
+                Leitura da expressão
+              </div>
+              <span class="calc-chip">int resultado</span>
+            </div>
+            <div class="expression-display"><span class="number">2</span> <span class="low">+</span> <span class="number">3</span> <span class="high">*</span> <span class="number">4</span></div>
+            <div class="calc-stages">
+              <div class="calc-stage current">3 × 4</div>
+              <span class="calc-arrow">→</span>
+              <div class="calc-stage">2 + 12</div>
+              <span class="calc-arrow">→</span>
+              <div class="calc-stage current">14</div>
+            </div>
+            <p class="calc-caption">A multiplicação é resolvida antes da adição.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card">
+          <div class="meta-label">Competência principal</div>
+          <div class="meta-value">CCI03</div>
+          <p>Usar dados, operadores e expressões de forma coerente em uma solução.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Competência secundária</div>
+          <div class="meta-value">CCI02</div>
+          <p>Implementar e observar o resultado de expressões em programas básicos.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Item trabalhado</div>
+          <div class="meta-value">Expressões e precedência</div>
+          <p>Ordem de avaliação de operadores aritméticos e parênteses.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Tempo estimado</div>
+          <div class="meta-value">12 a 18 minutos</div>
+          <p>Leitura visual, comparação e execução de exemplos curtos.</p>
+        </article>
+        <article class="meta-card">
+          <div class="meta-label">Estilo associado</div>
+          <div class="meta-value">Visual e analítico</div>
+          <p>Rastreamento passo a passo da transformação da expressão.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h7"></path></svg>Variáveis numéricas</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M6 7h12M12 4v6M7 17h10"></path></svg>Operações básicas</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 5h14v14H5z"></path><path d="m9 12 2 2 4-4"></path></svg>Atribuição</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M8 5H5v14h3M16 5h3v14h-3"></path></svg>Uso de parênteses</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>O C não calcula apenas da esquerda para a direita</h3>
+          <p>Antes de executar uma expressão, o programa observa a <strong>prioridade dos operadores</strong>. Parênteses vêm primeiro. Depois aparecem multiplicação, divisão e resto. Por fim, adição e subtração. Operadores do mesmo nível são avaliados, em geral, da esquerda para a direita.</p>
+        </div>
+        <div class="rule-box" aria-label="Resumo da ordem de precedência">
+          <div class="rule-row"><span class="rule-number">1</span><strong>Parênteses</strong><span class="rule-symbols">( )</span></div>
+          <div class="rule-row"><span class="rule-number">2</span><strong>Multiplicação, divisão e resto</strong><span class="rule-symbols">* / %</span></div>
+          <div class="rule-row"><span class="rule-number">3</span><strong>Adição e subtração</strong><span class="rule-symbols">+ -</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da precedência</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação com exemplo.
+      </div>
+
+      <input class="modal-choice" type="radio" name="precedence-modal" id="modal-none" checked>
+      <input class="modal-choice" type="radio" name="precedence-modal" id="modal-parentheses">
+      <input class="modal-choice" type="radio" name="precedence-modal" id="modal-multiplication">
+      <input class="modal-choice" type="radio" name="precedence-modal" id="modal-addition">
+      <input class="modal-choice" type="radio" name="precedence-modal" id="modal-associativity">
+
+      <div class="precedence-map">
+        <svg class="map-connectors" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="41" y1="43" x2="29" y2="22"></line>
+          <line x1="59" y1="43" x2="71" y2="22"></line>
+          <line x1="41" y1="57" x2="29" y2="78"></line>
+          <line x1="59" y1="57" x2="71" y2="78"></line>
+        </svg>
+        <label class="concept-button" for="modal-parentheses" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 4C6 6 6 18 9 20M15 4c3 2 3 14 0 16"></path></svg></span>
+          <h3>Parênteses</h3>
+          <p>Forçam uma parte da expressão a ser resolvida primeiro.</p>
+        </label>
+
+        <label class="concept-button" for="modal-multiplication" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="m7 7 10 10M17 7 7 17"></path><path d="M4 12h2M18 12h2"></path></svg></span>
+          <h3>Multiplicação, divisão e resto</h3>
+          <p>Possuem prioridade maior que soma e subtração.</p>
+        </label>
+
+        <label class="concept-button" for="modal-addition" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M7 12h10M12 7v10"></path><path d="M6 19h12"></path></svg></span>
+          <h3>Adição e subtração</h3>
+          <p>São avaliadas depois das operações de maior prioridade.</p>
+        </label>
+
+        <label class="concept-button" for="modal-associativity" tabindex="0">
+          <span class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h16"></path><path d="m15 7 5 5-5 5"></path></svg></span>
+          <h3>Mesmo nível</h3>
+          <p>Operadores da mesma prioridade seguem da esquerda para a direita.</p>
+        </label>
+
+        <div class="concept-center">
+          <div><strong>Uma expressão</strong><span>várias operações, uma ordem definida</span></div>
+        </div>
+      </div>
+
+      <div class="concept-alert" role="dialog" aria-modal="true" aria-label="Explicação sobre precedência de operadores">
+        <label class="concept-alert-backdrop" for="modal-none" aria-label="Fechar janela"></label>
+        <div class="concept-alert-card">
+          <div class="alert-toolbar"><label class="alert-close" for="modal-none" aria-label="Fechar">×</label></div>
+
+          <article class="modal-panel panel-parentheses">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M9 4C6 6 6 18 9 20M15 4c3 2 3 14 0 16"></path></svg></span>
+              <div><h3>Parênteses mudam a ordem</h3><p>O conteúdo entre parênteses é tratado como uma unidade prioritária.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Como pensar</h3>
+                <div class="mini-steps">
+                  <div class="mini-step"><span>1</span><p>Localize o par mais interno de parênteses.</p></div>
+                  <div class="mini-step"><span>2</span><p>Resolva essa parte antes das operações externas.</p></div>
+                  <div class="mini-step"><span>3</span><p>Substitua o trecho pelo resultado e continue.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Mesmo cálculo, resultado diferente</h3>
+                <div class="expression-card">(2 + 3) * 4</div>
+                <div class="evaluation-line"><span>1</span><code>(2 + 3) * 4 → 5 * 4</code></div>
+                <div class="evaluation-line"><span>2</span><code>5 * 4 → 20</code></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-multiplication">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="m7 7 10 10M17 7 7 17"></path><path d="M5 4v16M19 4v16"></path></svg></span>
+              <div><h3>Multiplicação, divisão e resto vêm antes</h3><p>Esses operadores pertencem ao mesmo nível de prioridade.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>O que observar</h3>
+                <div class="mini-steps">
+                  <div class="mini-step"><span>1</span><p>Procure <code>*</code>, <code>/</code> e <code>%</code> antes de somas e subtrações.</p></div>
+                  <div class="mini-step"><span>2</span><p>Quando aparecem juntos, avance da esquerda para a direita.</p></div>
+                  <div class="mini-step"><span>3</span><p>Depois, conclua as operações de prioridade menor.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Exemplo</h3>
+                <div class="expression-card">10 + 12 / 3</div>
+                <div class="evaluation-line"><span>1</span><code>12 / 3 → 4</code></div>
+                <div class="evaluation-line"><span>2</span><code>10 + 4 → 14</code></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-addition">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M7 12h10M12 7v10"></path><path d="M6 19h12"></path></svg></span>
+              <div><h3>Adição e subtração encerram o cálculo</h3><p>Elas são avaliadas depois que as operações de prioridade maior já foram reduzidas.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Estratégia</h3>
+                <div class="mini-steps">
+                  <div class="mini-step"><span>1</span><p>Não some imediatamente apenas porque o sinal aparece primeiro.</p></div>
+                  <div class="mini-step"><span>2</span><p>Verifique se há multiplicação, divisão ou resto mais adiante.</p></div>
+                  <div class="mini-step"><span>3</span><p>Somente então resolva <code>+</code> e <code>-</code>.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Exemplo</h3>
+                <div class="expression-card">20 - 4 * 3</div>
+                <div class="evaluation-line"><span>1</span><code>4 * 3 → 12</code></div>
+                <div class="evaluation-line"><span>2</span><code>20 - 12 → 8</code></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-associativity">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h16"></path><path d="m15 7 5 5-5 5"></path></svg></span>
+              <div><h3>Operadores do mesmo nível</h3><p>Quando a prioridade é igual, a leitura aritmética usual segue da esquerda para a direita.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Por que isso importa</h3>
+                <div class="mini-steps">
+                  <div class="mini-step"><span>1</span><p>Divisão e multiplicação possuem a mesma prioridade.</p></div>
+                  <div class="mini-step"><span>2</span><p>Não existe uma regra que faça toda multiplicação vir antes de toda divisão.</p></div>
+                  <div class="mini-step"><span>3</span><p>Leia a sequência da esquerda para a direita.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Exemplo</h3>
+                <div class="expression-card">24 / 3 * 2</div>
+                <div class="evaluation-line"><span>1</span><code>24 / 3 → 8</code></div>
+                <div class="evaluation-line"><span>2</span><code>8 * 2 → 16</code></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Como o C lê uma expressão</h2></div>
+      <div class="reading-section">
+        <div class="reading-question">
+          <h3>Observe a expressão</h3>
+          <div class="big-expression">2 + 3 * 4</div>
+          <p>O primeiro sinal visível é <code>+</code>, mas isso não significa que a soma será executada primeiro.</p>
+          <div class="wrong-answer"><span><strong>Leitura incorreta:</strong> calcular 2 + 3 e depois multiplicar por 4, obtendo 20.</span></div>
+          <div class="right-answer"><span><strong>Leitura do C:</strong> calcular 3 × 4 e depois somar 2, obtendo 14.</span></div>
+        </div>
+
+        <div class="reading-flow">
+          <div class="flow-step"><span class="flow-step-number">1</span><div><strong>Localize a maior prioridade</strong><p>A multiplicação deve ser tratada antes da adição.</p></div><span class="flow-result">3 * 4</span></div>
+          <div class="flow-step"><span class="flow-step-number">2</span><div><strong>Reduza a expressão</strong><p>Substitua a multiplicação pelo valor calculado.</p></div><span class="flow-result">2 + 12</span></div>
+          <div class="flow-step"><span class="flow-step-number">3</span><div><strong>Conclua o nível restante</strong><p>Agora existe apenas uma adição.</p></div><span class="flow-result">14</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Guia rápido de operadores</h2></div>
+      <div class="operator-table-wrap">
+        <table class="operator-table">
+          <thead>
+            <tr><th>Prioridade</th><th>Operadores</th><th>Função</th><th>Exemplo</th><th>Resultado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="priority-chip">1</span></td><td><code>( )</code></td><td>Agrupar e antecipar uma parte da expressão.</td><td><code>(2 + 3) * 4</code></td><td><code>20</code></td></tr>
+            <tr><td><span class="priority-chip">2</span></td><td><code>* / %</code></td><td>Multiplicar, dividir e obter o resto da divisão inteira.</td><td><code>17 % 5</code></td><td><code>2</code></td></tr>
+            <tr><td><span class="priority-chip">3</span></td><td><code>+ -</code></td><td>Somar e subtrair depois das operações anteriores.</td><td><code>10 + 4 - 3</code></td><td><code>11</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="example-tabs">
+        <input type="radio" name="examples" id="example-1" checked>
+        <input type="radio" name="examples" id="example-2">
+        <input type="radio" name="examples" id="example-3">
+
+        <div class="example-tab-labels">
+          <label for="example-1">1. Prioridade básica</label>
+          <label for="example-2">2. Parênteses e níveis</label>
+          <label for="example-3">3. Resto e operações combinadas</label>
+        </div>
+
+        <div class="example-panels">
+          <article class="example-panel panel-1">
+            <div class="example-card accent">
+              <span class="example-level">Exemplo básico</span>
+              <h3>Calcular <code>10 + 2 * 3</code></h3>
+              <p>A multiplicação possui prioridade maior que a adição.</p>
+              <table class="trace-table">
+                <thead><tr><th>Etapa</th><th>Expressão</th><th>Ação</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><code>10 + 2 * 3</code></td><td>Resolver <code>2 * 3</code>.</td></tr>
+                  <tr><td>2</td><td><code>10 + 6</code></td><td>Resolver a adição.</td></tr>
+                  <tr><td>3</td><td><code>16</code></td><td>Armazenar e exibir o resultado.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code-shell">
+              <div class="code-toolbar"><span>exemplo_1.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-keyword">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-number">10</span> <span class="syn-operator">+</span> <span class="syn-number">2</span> <span class="syn-operator">*</span> <span class="syn-number">3</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Resultado: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">resultado</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-2">
+            <div class="example-card accent">
+              <span class="example-level">Exemplo intermediário</span>
+              <h3>Calcular <code>(18 - 6) / 3 + 2</code></h3>
+              <p>Os parênteses antecipam a subtração. A divisão vem antes da adição final.</p>
+              <table class="trace-table">
+                <thead><tr><th>Etapa</th><th>Expressão</th><th>Ação</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><code>(18 - 6) / 3 + 2</code></td><td>Resolver os parênteses.</td></tr>
+                  <tr><td>2</td><td><code>12 / 3 + 2</code></td><td>Resolver a divisão.</td></tr>
+                  <tr><td>3</td><td><code>4 + 2</code></td><td>Resolver a adição.</td></tr>
+                  <tr><td>4</td><td><code>6</code></td><td>Resultado final.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code-shell">
+              <div class="code-toolbar"><span>exemplo_2.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-keyword">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-operator">(</span><span class="syn-number">18</span> <span class="syn-operator">-</span> <span class="syn-number">6</span><span class="syn-operator">)</span> <span class="syn-operator">/</span> <span class="syn-number">3</span> <span class="syn-operator">+</span> <span class="syn-number">2</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Resultado: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">resultado</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-3">
+            <div class="example-card accent">
+              <span class="example-level">Exemplo intermediário</span>
+              <h3>Calcular <code>17 % 5 + 4 * 2</code></h3>
+              <p>Resto e multiplicação possuem a mesma prioridade. Como são blocos independentes, ambos podem ser reduzidos antes da soma.</p>
+              <table class="trace-table">
+                <thead><tr><th>Etapa</th><th>Expressão</th><th>Ação</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><code>17 % 5 + 4 * 2</code></td><td>Calcular o resto: <code>17 % 5 = 2</code>.</td></tr>
+                  <tr><td>2</td><td><code>2 + 4 * 2</code></td><td>Calcular a multiplicação: <code>4 * 2 = 8</code>.</td></tr>
+                  <tr><td>3</td><td><code>2 + 8</code></td><td>Resolver a adição.</td></tr>
+                  <tr><td>4</td><td><code>10</code></td><td>Resultado final.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code-shell">
+              <div class="code-toolbar"><span>exemplo_3.c</span><span class="window-dots"><span></span><span></span><span></span></span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">(</span><span class="syn-keyword">void</span><span class="syn-operator">)</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-number">17</span> <span class="syn-operator">%</span> <span class="syn-number">5</span> <span class="syn-operator">+</span> <span class="syn-number">4</span> <span class="syn-operator">*</span> <span class="syn-number">2</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Resultado: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">resultado</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card">
+          <h3>Calcular apenas da esquerda para a direita</h3>
+          <p><strong>Por que acontece:</strong> o aluno segue a ordem visual dos símbolos e ignora a prioridade.</p>
+          <p><strong>Como evitar:</strong> procure primeiro parênteses e operadores de maior precedência.</p>
+        </article>
+        <article class="error-card">
+          <h3>Usar parênteses sem necessidade clara</h3>
+          <p><strong>Por que acontece:</strong> vários agrupamentos são adicionados sem representar a intenção do cálculo.</p>
+          <p><strong>Como evitar:</strong> use parênteses para alterar ou tornar explícita a ordem desejada.</p>
+        </article>
+        <article class="error-card">
+          <h3>Achar que multiplicação sempre vem antes da divisão</h3>
+          <p><strong>Por que acontece:</strong> a regra é memorizada como uma fila rígida.</p>
+          <p><strong>Como evitar:</strong> lembre que <code>*</code>, <code>/</code> e <code>%</code> estão no mesmo nível e seguem da esquerda para a direita.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details>
+          <summary>Qual é o resultado de <code>5 + 2 * 4</code>?</summary>
+          <p>O resultado é <strong>13</strong>. Primeiro, <code>2 * 4 = 8</code>. Depois, <code>5 + 8 = 13</code>.</p>
+        </details>
+        <details>
+          <summary>Como alterar a expressão anterior para que a soma aconteça primeiro?</summary>
+          <p>Use parênteses: <code>(5 + 2) * 4</code>. O resultado passa a ser <strong>28</strong>.</p>
+        </details>
+        <details>
+          <summary>Em <code>24 / 3 * 2</code>, qual operação ocorre primeiro?</summary>
+          <p>A divisão ocorre primeiro porque divisão e multiplicação têm a mesma prioridade e a leitura segue da esquerda para a direita. O resultado final é <strong>16</strong>.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir prever como o C avaliará uma expressão aritmética, aplicar a precedência dos operadores e usar parênteses para representar com clareza a ordem desejada dos cálculos.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

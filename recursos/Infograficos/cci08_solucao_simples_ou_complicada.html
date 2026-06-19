@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solução simples ou solução complicada?</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(360px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg, .decision-icon svg, .combo-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-path { display: grid; gap: 9px; }
+    .hero-path-row { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: center; gap: 10px; }
+    .hero-path-number { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .hero-path-card { border: 1px solid var(--cor-borda); border-radius: 13px; padding: 10px 12px; background: var(--cor-superficie-suave); }
+    .hero-path-card strong { color: var(--cor-primaria-escura); font-size: .9rem; }
+    .hero-path-card p { font-size: .82rem; }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    #mapa-da-escolha { scroll-margin-top: 18px; }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 710px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 245px;
+      min-height: 185px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 235px;
+      min-height: 145px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+
+    .button-condition { left: 38px; top: 38px; }
+    .button-loop { right: 38px; top: 38px; }
+    .button-vector { left: 38px; bottom: 42px; }
+    .button-matrix { right: 38px; bottom: 42px; }
+    .button-function { left: 50%; bottom: 18px; transform: translateX(-50%); }
+    .button-function:hover, .button-function:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .decision-tree { display: grid; gap: 13px; }
+    .decision-row { display: grid; grid-template-columns: 54px minmax(0, 1fr) 130px; gap: 13px; align-items: center; }
+    .decision-index { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--cor-primaria); color: white; font-weight: 900; }
+    .decision-question { border: 1px solid var(--cor-borda); border-radius: 17px; padding: 15px 17px; background: var(--cor-superficie-suave); }
+    .decision-question strong { color: var(--cor-primaria-escura); }
+    .decision-answer { border-radius: 14px; padding: 11px 12px; text-align: center; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.19); color: var(--cor-primaria-escura); font-weight: 900; font-family: Consolas, Monaco, monospace; font-size: .87rem; }
+    .decision-note { margin-top: 15px; border-left: 5px solid var(--cor-destaque-pontual); border-radius: 15px; background: #FFFBEB; padding: 14px 16px; color: var(--cor-texto-principal); }
+
+    .comparison-wrap { overflow-x: auto; }
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; font-size: .92rem; }
+    .comparison-table th, .comparison-table td { padding: 13px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .comparison-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .77rem; text-transform: uppercase; letter-spacing: .04em; }
+    .comparison-table tr:last-child td { border-bottom: 0; }
+    .comparison-table td:first-child { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; white-space: nowrap; }
+    .clue { display: inline-flex; padding: 4px 8px; border-radius: 999px; margin: 2px 3px 2px 0; background: var(--cor-superficie-suave); color: var(--cor-texto-principal); font-size: .8rem; font-weight: 700; }
+
+    .combination-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .combo-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .combo-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .combo-code { display: block; margin-top: 10px; padding: 8px 10px; border-radius: 11px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-weight: 900; font-size: .79rem; overflow-x: auto; }
+    .combo-card p { font-size: .89rem; }
+
+    .scenario-layout { display: grid; grid-template-columns: .88fr 1.12fr; gap: 18px; align-items: stretch; }
+    .scenario-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .scenario-brief { padding: 14px; border-radius: 15px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); margin-bottom: 14px; }
+    .scenario-brief strong { color: var(--cor-primaria-escura); }
+    .scenario-stack { display: grid; gap: 10px; }
+    .scenario-structure { display: grid; grid-template-columns: 105px minmax(0, 1fr); gap: 10px; align-items: center; padding: 11px 12px; border: 1px solid var(--cor-borda); border-radius: 14px; background: var(--cor-superficie); }
+    .scenario-structure code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .scenario-structure p { font-size: .86rem; }
+
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #1F2937; }
+    .code-toolbar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .75rem; font-weight: 800; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .9rem; line-height: 1.58; tab-size: 2; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .tabs { position: relative; }
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; padding: 10px 15px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; font-size: .9rem; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panels { position: relative; }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .example-level { display: inline-flex; margin-top: 12px; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+    .example-list { margin: 13px 0 0 19px; color: var(--cor-texto-secundario); }
+    .example-list li { margin-bottom: 6px; }
+    .structure-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .structure-tag { display: inline-flex; border-radius: 999px; padding: 5px 9px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-size: .76rem; font-weight: 900; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .91rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; list-style-position: outside; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      width: min(760px, 100%);
+      max-height: min(86vh, 780px);
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      border-radius: 24px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      box-shadow: 0 28px 70px rgba(15,23,42,.28);
+      padding: 25px;
+      transform: translateY(18px) scale(.97);
+      opacity: 0;
+    }
+    .modal:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.75,.25,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; font-weight: 700; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 46px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-head h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 16px; border-radius: 17px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); }
+    .modal-rule { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); }
+    .modal-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+    .modal-box { padding: 13px; border-radius: 14px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .modal-box strong { color: var(--cor-primaria-escura); display: block; margin-bottom: 5px; }
+    .modal-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .scenario-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .choice-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center { position: static; transform: none; width: auto; min-height: 150px; grid-column: 1 / -1; order: 1; }
+      .map-button { position: static; width: auto; min-height: 145px; transform: none; }
+      .map-button:hover, .map-button:focus-visible, .button-function:hover, .button-function:focus-visible { transform: translateY(-4px); }
+      .button-condition { order: 2; }
+      .button-loop { order: 3; }
+      .button-vector { order: 4; }
+      .button-matrix { order: 5; }
+      .button-function { order: 6; grid-column: 1 / -1; }
+      .combination-grid { grid-template-columns: repeat(2, 1fr); }
+      .error-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 12px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .meta-grid, .choice-map, .combination-grid, .error-grid { grid-template-columns: 1fr; }
+      .map-center, .button-function { grid-column: auto; }
+      .decision-row { grid-template-columns: 42px minmax(0, 1fr); }
+      .decision-index { width: 38px; height: 38px; border-radius: 12px; }
+      .decision-answer { grid-column: 2; text-align: left; }
+      .scenario-structure { grid-template-columns: 1fr; }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .comparison-table th, .comparison-table td { padding: 10px; font-size: .83rem; }
+    }
+  
+
+    /* Ajustes específicos deste infográfico */
+    #mapa-da-avaliacao { scroll-margin-top: 18px; }
+    .strategy-map { min-height: 650px; }
+    .strategy-map .map-center { width: 270px; min-height: 205px; }
+    .strategy-map .button-condition { left: 45px; top: 55px; }
+    .strategy-map .button-loop { right: 45px; top: 55px; }
+    .strategy-map .button-vector { left: 45px; bottom: 55px; }
+    .strategy-map .button-matrix { right: 45px; bottom: 55px; }
+
+    .score-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .score-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; background: var(--cor-superficie); position: relative; overflow: hidden; }
+    .score-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--cor-primaria); }
+    .score-card strong { display: block; color: var(--cor-primaria-escura); margin-bottom: 7px; }
+    .score-card p { font-size: .9rem; }
+    .score-card span { display: inline-flex; margin-top: 10px; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+
+    .warning-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .warning-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; background: var(--cor-superficie-suave); }
+    .warning-card .mini-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-destaque-pontual); background: #FFFBEB; margin-bottom: 11px; }
+    .warning-card p { font-size: .9rem; }
+
+    .two-route-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 15px; }
+    .route-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .route-card.complicated { border-left: 5px solid var(--cor-destaque-pontual); }
+    .route-card.simple { border-left: 5px solid var(--cor-primaria); }
+    .route-label { display: inline-flex; margin-bottom: 10px; padding: 5px 9px; border-radius: 999px; font-size: .76rem; font-weight: 900; }
+    .route-card.complicated .route-label { background: #FFFBEB; color: #92400E; }
+    .route-card.simple .route-label { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .route-card ul { margin: 10px 0 0 18px; color: var(--cor-texto-secundario); font-size: .9rem; }
+    .route-card li { margin-bottom: 5px; }
+
+    .verdict { margin-top: 14px; border-radius: 15px; padding: 13px 15px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.18); color: var(--cor-texto-principal); }
+    .verdict strong { color: var(--cor-primaria-escura); }
+
+    .mini-code { display: block; margin-top: 11px; padding: 11px 12px; border-radius: 13px; background: var(--codigo-fundo); color: var(--codigo-texto); overflow-x: auto; font-size: .79rem; line-height: 1.5; }
+
+    @media (max-width: 980px) {
+      .score-grid, .warning-grid { grid-template-columns: repeat(2, 1fr); }
+      .strategy-map { min-height: auto; }
+    }
+    @media (max-width: 640px) {
+      .score-grid, .warning-grid, .two-route-grid { grid-template-columns: 1fr; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Solução simples ou solução complicada?</h1>
+          <p class="subtitle">Aprenda a comparar estratégias de programação pela correção, clareza, adequação e complexidade, sem confundir simplicidade com código curto.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Resumo do processo de avaliação">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 15l3-4 3 2 5-7 2 3"></path></svg></span>
+            <div><strong>A melhor solução não é apenas a menor</strong><span>Ela resolve o problema com justificativa e sem complicações desnecessárias.</span></div>
+          </div>
+          <div class="hero-path">
+            <div class="hero-path-row"><span class="hero-path-number">1</span><div class="hero-path-card"><strong>Verifique a correção</strong><p>A estratégia produz o resultado esperado em todos os casos relevantes?</p></div></div>
+            <div class="hero-path-row"><span class="hero-path-number">2</span><div class="hero-path-card"><strong>Compare a estrutura</strong><p>Há condições, laços, variáveis ou funções sem função clara?</p></div></div>
+            <div class="hero-path-row"><span class="hero-path-number">3</span><div class="hero-path-card"><strong>Justifique a escolha</strong><p>Explique por que a estratégia é clara e adequada ao problema.</p></div></div>
+          </div>
+          <p class="hero-caption"><strong>Ideia-chave:</strong> simplificar é retirar o que não contribui, sem perder correção, legibilidade ou capacidade de manutenção.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI08</div><p>Avaliar e selecionar estratégias adequadas para resolver problemas.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI02, CCI04, CCI05 e CCI07</div><p>Implementação, decisões, repetições e modularização.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Comparação de estratégias</div><p>Clareza, adequação e complexidade da solução.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura, comparação e análise de exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Análise comparativa</div><p>Critérios, evidências e decisão justificada.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg>Leitura de código em C</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M12 3 4 9l8 6 8-6-8-6z"></path><path d="M4 15l8 6 8-6"></path></svg>Condições</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-5"></path><path d="M18 3v5h-5"></path><path d="M20 13a8 8 0 0 1-14 5"></path></svg>Repetições</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 6h7v5H4zM13 13h7v5h-7z"></path><path d="M11 8.5h4a2 2 0 0 1 2 2V13"></path></svg>Funções básicas</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <article class="concept-main">
+          <h3>Simplicidade é uma relação entre problema e solução</h3>
+          <p>Uma solução é simples quando possui apenas os elementos necessários para resolver o problema de forma <strong>correta, compreensível e adequada</strong>. Código curto pode ser difícil de entender. Código um pouco maior pode ser mais claro e seguro.</p>
+          <p class="concept-note">Não pergunte apenas “qual tem menos linhas?”. Pergunte: <code>qual explica melhor a solução sem trabalho desnecessário?</code></p>
+        </article>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Preserve a correção</h3><p>Uma simplificação não pode remover casos ou alterar o resultado.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Reduza o esforço mental</h3><p>O leitor deve acompanhar os dados e as decisões sem reconstruir intenções ocultas.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Use a estrutura certa</h3><p>A estratégia deve combinar com a quantidade de dados e com a ação solicitada.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-da-avaliacao">
+      <div class="section-title"><span class="marker"></span><h2>Mapa da avaliação</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m8 11 4 4 4-4"></path><path d="M5 19h14"></path></svg>
+        Clique em cada critério para ver o que observar ao comparar duas estratégias.
+      </div>
+
+      <div class="choice-map strategy-map">
+        <svg class="map-lines" viewBox="0 0 1000 650" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="325" x2="160" y2="125"></line>
+          <line x1="500" y1="325" x2="840" y2="125"></line>
+          <line x1="500" y1="325" x2="160" y2="530"></line>
+          <line x1="500" y1="325" x2="840" y2="530"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Qual estratégia é melhor?</strong>
+            <code>correta + clara + adequada</code>
+            <span>Com a menor complexidade necessária.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-condition" href="#modal-correcao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+          <h3>Correção</h3>
+          <p>Produz o resultado esperado para os casos relevantes.</p>
+          <span class="map-code">resultado correto?</span>
+        </a>
+
+        <a class="map-button button-loop" href="#modal-clareza">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h6M8 17h4"></path></svg></span>
+          <h3>Clareza</h3>
+          <p>Permite entender intenção, fluxo e estado das variáveis.</p>
+          <span class="map-code">consigo explicar?</span>
+        </a>
+
+        <a class="map-button button-vector" href="#modal-adequacao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 18h16M6 15l4-5 3 3 5-7"></path></svg></span>
+          <h3>Adequação</h3>
+          <p>Usa estruturas coerentes com o tipo e a escala do problema.</p>
+          <span class="map-code">ferramenta certa?</span>
+        </a>
+
+        <a class="map-button button-matrix" href="#modal-complexidade">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6z"></path><path d="M10 8.5h4a3 3 0 0 1 3 3V13"></path><path d="M7 11v5h7"></path></svg></span>
+          <h3>Complexidade</h3>
+          <p>Evita passos, estados e estruturas que não agregam valor.</p>
+          <span class="map-code">o que pode sair?</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Quatro perguntas para comparar soluções</h2></div>
+      <div class="score-grid">
+        <article class="score-card"><strong>1. Funciona?</strong><p>Teste casos comuns, limites e entradas diferentes antes de discutir estilo.</p><span>correção primeiro</span></article>
+        <article class="score-card"><strong>2. É fácil de seguir?</strong><p>Os nomes, blocos e atualizações deixam explícito o raciocínio?</p><span>clareza</span></article>
+        <article class="score-card"><strong>3. Combina com o problema?</strong><p>A estrutura escolhida atende ao volume de dados e ao tipo de tarefa?</p><span>adequação</span></article>
+        <article class="score-card"><strong>4. Há trabalho desnecessário?</strong><p>Existem repetições, variáveis ou decisões que podem ser removidas?</p><span>complexidade</span></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Comparação rápida</h2></div>
+      <div class="comparison-wrap">
+        <table class="comparison-table">
+          <thead><tr><th>Critério</th><th>Sinal de boa estratégia</th><th>Sinal de complicação</th><th>Pergunta útil</th></tr></thead>
+          <tbody>
+            <tr><td>correção</td><td>Cobre os casos e produz saídas esperadas.</td><td>Funciona apenas para o exemplo usado durante a escrita.</td><td>Quais entradas podem revelar um erro?</td></tr>
+            <tr><td>clareza</td><td>Nomes e blocos revelam a intenção.</td><td>É preciso decifrar muitos estados ou condições aninhadas.</td><td>Outro aluno explicaria o fluxo?</td></tr>
+            <tr><td>adequação</td><td>A estrutura corresponde à tarefa e à escala.</td><td>Usa vetor, matriz ou função sem necessidade real.</td><td>Essa ferramenta resolve um requisito concreto?</td></tr>
+            <tr><td>complexidade</td><td>Cada passo contribui para o resultado.</td><td>Há cálculos repetidos, cópias ou percursos extras.</td><td>O que pode ser retirado sem perder qualidade?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Sinais de complicação desnecessária</h2></div>
+      <div class="warning-grid">
+        <article class="warning-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></span><h3>Repetição manual</h3><p>O mesmo comando aparece várias vezes quando um laço expressaria melhor o padrão.</p></article>
+        <article class="warning-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 9l8 6 8-6-8-6z"></path><path d="M4 15l8 6 8-6"></path></svg></span><h3>Condições em excesso</h3><p>Muitos testes repetem a mesma ideia ou criam caminhos difíceis de verificar.</p></article>
+        <article class="warning-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="6" height="6"></rect><rect x="14" y="13" width="6" height="6"></rect><path d="M10 8h4v8"></path></svg></span><h3>Estruturas sem função</h3><p>Vetores, matrizes ou funções aparecem, mas não resolvem uma necessidade do problema.</p></article>
+        <article class="warning-card"><span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M4 18h16M6 15l4-5 3 3 5-7"></path></svg></span><h3>Otimização prematura</h3><p>A solução fica menos legível para ganhar eficiência que o problema não exige.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Mesmo problema, duas estratégias</h2></div>
+      <div class="scenario-layout">
+        <article class="scenario-card">
+          <div class="scenario-brief"><strong>Problema:</strong> ler cinco números e apresentar a soma.</div>
+          <div class="two-route-grid">
+            <article class="route-card complicated">
+              <span class="route-label">Estratégia A</span>
+              <h3>Repetir comandos</h3>
+              <ul><li>Cinco variáveis diferentes.</li><li>Cinco leituras escritas manualmente.</li><li>Difícil ampliar para 20 valores.</li></ul>
+            </article>
+            <article class="route-card simple">
+              <span class="route-label">Estratégia B</span>
+              <h3>Usar laço e acumulador</h3>
+              <ul><li>Uma variável para o valor atual.</li><li>Uma regra de repetição.</li><li>Escala sem duplicar código.</li></ul>
+            </article>
+          </div>
+          <p class="verdict"><strong>Decisão:</strong> a estratégia B é mais adequada porque o problema contém uma ação repetida e não exige guardar os cinco valores.</p>
+        </article>
+
+        <div class="code-window">
+          <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>estrategia_escolhida.c</div>
+          <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">i</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">valor</span>, <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">valor</span>);
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">valor</span>;
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Soma: %.2f\n"</span>, <span class="syn-variable">soma</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="tabs" id="tab1" checked>
+        <input type="radio" name="tabs" id="tab2">
+        <input type="radio" name="tabs" id="tab3">
+        <div class="tab-labels">
+          <label class="tab-label" for="tab1">1. Aplicar desconto</label>
+          <label class="tab-label" for="tab2">2. Somar cinco valores</label>
+          <label class="tab-label" for="tab3">3. Encontrar o maior</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <article class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg></span><div><h3>Desconto de 10%</h3><p>Aplicar desconto somente quando a compra for igual ou superior a R$ 100.</p></div></div>
+                <span class="example-level">Nível básico</span>
+                <div class="two-route-grid">
+                  <article class="route-card complicated"><span class="route-label">Complicada</span><p>Cria variável lógica extra e dois testes para uma única decisão.</p></article>
+                  <article class="route-card simple"><span class="route-label">Mais simples</span><p>Testa diretamente a condição que altera o valor.</p></article>
+                </div>
+                <p class="verdict"><strong>Avaliação:</strong> a condição direta preserva o significado e reduz estados intermediários.</p>
+              </article>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>desconto.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">total</span>;
+
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">total</span>);
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">total</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">100.0</span>) {
+        <span class="syn-variable">total</span> <span class="syn-operator">*=</span> <span class="syn-number">0.90</span>;
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Total: %.2f\n"</span>, <span class="syn-variable">total</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <article class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-5"></path><path d="M18 3v5h-5"></path><path d="M20 13a8 8 0 0 1-14 5"></path></svg></span><div><h3>Soma de cinco valores</h3><p>Ler cinco números e apresentar apenas a soma final.</p></div></div>
+                <span class="example-level">Nível intermediário</span>
+                <ul class="example-list"><li>Não é necessário guardar todos os valores.</li><li>O padrão de leitura e soma se repete cinco vezes.</li><li>Um laço torna a quantidade explícita e ajustável.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">for</span><span class="structure-tag">acumulador</span><span class="structure-tag">sem vetor</span></div>
+                <p class="verdict"><strong>Avaliação:</strong> o laço reduz duplicação e o acumulador guarda somente a informação necessária.</p>
+              </article>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>soma.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">i</span>, <span class="syn-variable">valor</span>, <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+
+    <span class="syn-keyword">for</span> (<span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">5</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">valor</span>);
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">valor</span>;
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"%d\n"</span>, <span class="syn-variable">soma</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <article class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="5" height="10"></rect><rect x="9.5" y="7" width="5" height="10"></rect><rect x="16" y="7" width="5" height="10"></rect></svg></span><div><h3>Maior valor de um vetor</h3><p>Encontrar o maior elemento entre seis números já armazenados.</p></div></div>
+                <span class="example-level">Nível intermediário</span>
+                <ul class="example-list"><li>Comparações par a par geram muitos testes repetidos.</li><li>Um único percurso mantém o maior valor conhecido.</li><li>A inicialização usa o primeiro elemento, não um valor arbitrário.</li></ul>
+                <div class="structure-tags"><span class="structure-tag">vetor</span><span class="structure-tag">for</span><span class="structure-tag">if</span></div>
+                <p class="verdict"><strong>Avaliação:</strong> um percurso linear é claro, escalável e suficiente para a tarefa.</p>
+              </article>
+              <div class="code-window"><div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>maior.c</div><pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">valores</span>[<span class="syn-number">6</span>] <span class="syn-operator">=</span> {<span class="syn-number">8</span>, <span class="syn-number">3</span>, <span class="syn-number">12</span>, <span class="syn-number">5</span>, <span class="syn-number">10</span>, <span class="syn-number">7</span>};
+    <span class="syn-type">int</span> <span class="syn-variable">maior</span> <span class="syn-operator">=</span> <span class="syn-variable">valores</span>[<span class="syn-number">0</span>];
+
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-number">6</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">if</span> (<span class="syn-variable">valores</span>[<span class="syn-variable">i</span>] <span class="syn-operator">&gt;</span> <span class="syn-variable">maior</span>) {
+            <span class="syn-variable">maior</span> <span class="syn-operator">=</span> <span class="syn-variable">valores</span>[<span class="syn-variable">i</span>];
+        }
+    }
+
+    <span class="syn-function">printf</span>(<span class="syn-string">"Maior: %d\n"</span>, <span class="syn-variable">maior</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Confundir simples com curto</h3><p><strong>Por que acontece:</strong> o aluno avalia apenas a quantidade de linhas.</p><p><strong>Como evitar:</strong> considere legibilidade, casos cobertos e facilidade de alteração.</p></article>
+        <article class="error-card"><h3>Adicionar estruturas para parecer completo</h3><p><strong>Por que acontece:</strong> vetor, função ou matriz são usados sem necessidade.</p><p><strong>Como evitar:</strong> associe cada estrutura a um requisito concreto.</p></article>
+        <article class="error-card"><h3>Otimizar antes de compreender</h3><p><strong>Por que acontece:</strong> busca-se desempenho antes de garantir uma solução clara e correta.</p><p><strong>Como evitar:</strong> primeiro construa e teste uma estratégia compreensível.</p></article>
+        <article class="error-card"><h3>Remover etapas importantes</h3><p><strong>Por que acontece:</strong> simplificar é interpretado como apagar validações ou casos.</p><p><strong>Como evitar:</strong> retire apenas o que não contribui para a correção ou compreensão.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>A solução com menos linhas é sempre a mais simples?</summary><p>Não. Menos linhas podem esconder etapas, combinar responsabilidades ou dificultar a leitura. A solução simples é a que resolve o problema com clareza e sem elementos desnecessários.</p></details>
+        <details><summary>Usar uma função sempre torna o programa melhor?</summary><p>Não. Uma função é útil quando separa uma responsabilidade clara, evita repetição ou melhora a leitura. Criar funções pequenas sem propósito pode aumentar a fragmentação.</p></details>
+        <details><summary>Uma solução com dois percursos pode ser aceitável mesmo existindo uma solução com um percurso?</summary><p>Sim. Para dados pequenos e em contexto introdutório, dois percursos claros podem ser adequados. A decisão deve considerar requisitos de desempenho, clareza e facilidade de verificação.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir comparar estratégias, identificar complexidade desnecessária e justificar uma solução com base em correção, clareza e adequação ao problema.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-correcao" role="dialog" aria-modal="true" aria-labelledby="titulo-correcao">
+    <a class="modal-backdrop" href="#mapa-da-avaliacao" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-avaliacao" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path><circle cx="12" cy="12" r="9"></circle></svg></span><div><h2 id="titulo-correcao">Correção é o primeiro filtro</h2><p>Uma estratégia elegante não é adequada se falha em casos relevantes.</p></div></div>
+      <div class="modal-example"><h3>O que observar</h3><div class="modal-grid"><div class="modal-box"><strong>Entradas</strong><span>Casos comuns, limites e valores diferentes.</span></div><div class="modal-box"><strong>Saídas</strong><span>Resultado esperado e comportamento em cada caminho.</span></div></div></div>
+      <p class="modal-rule"><strong>Regra:</strong> compare estilo e complexidade somente depois de confirmar que as estratégias resolvem o mesmo problema.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-clareza" role="dialog" aria-modal="true" aria-labelledby="titulo-clareza">
+    <a class="modal-backdrop" href="#mapa-da-avaliacao" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-avaliacao" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h6M8 17h4"></path></svg></span><div><h2 id="titulo-clareza">Clareza reduz o esforço para entender</h2><p>A intenção deve aparecer nos nomes, na ordem dos passos e na organização dos blocos.</p></div></div>
+      <div class="modal-example"><h3>Teste de leitura</h3><div class="modal-grid"><div class="modal-box"><strong>Explique</strong><span>Você consegue narrar o fluxo sem executar mentalmente cada detalhe?</span></div><div class="modal-box"><strong>Localize</strong><span>É fácil identificar onde cada variável muda?</span></div></div></div>
+      <p class="modal-rule"><strong>Cuidado:</strong> reduzir linhas por meio de expressões difíceis pode diminuir a clareza, mesmo que o programa continue correto.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-adequacao" role="dialog" aria-modal="true" aria-labelledby="titulo-adequacao">
+    <a class="modal-backdrop" href="#mapa-da-avaliacao" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-avaliacao" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 18h16M6 15l4-5 3 3 5-7"></path></svg></span><div><h2 id="titulo-adequacao">Adequação liga a estrutura ao requisito</h2><p>A ferramenta escolhida deve responder a uma necessidade real do problema.</p></div></div>
+      <div class="modal-example"><h3>Exemplo</h3><div class="modal-grid"><div class="modal-box"><strong>Somar e descartar</strong><span>Laço e acumulador podem ser suficientes.</span></div><div class="modal-box"><strong>Consultar depois</strong><span>Um vetor pode ser necessário para manter os valores.</span></div></div></div>
+      <p class="modal-rule"><strong>Regra:</strong> mais estruturas não significam uma solução mais completa. Cada estrutura precisa ter uma responsabilidade identificável.</p>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-complexidade" role="dialog" aria-modal="true" aria-labelledby="titulo-complexidade">
+    <a class="modal-backdrop" href="#mapa-da-avaliacao" aria-label="Fechar alerta"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-da-avaliacao" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6z"></path><path d="M10 8.5h4a3 3 0 0 1 3 3V13"></path><path d="M7 11v5h7"></path></svg></span><div><h2 id="titulo-complexidade">Complexidade aparece em vários lugares</h2><p>Ela pode estar na quantidade de passos, estados, condições, percursos ou dependências.</p></div></div>
+      <div class="modal-example"><h3>Procure excessos</h3><div class="modal-grid"><div class="modal-box"><strong>Estrutural</strong><span>Laços, condições ou funções adicionais.</span></div><div class="modal-box"><strong>Cognitivo</strong><span>Muitas variáveis e caminhos para acompanhar.</span></div></div></div>
+      <p class="modal-rule"><strong>Cuidado:</strong> reduzir complexidade não é eliminar toda abstração. Uma função pode acrescentar um bloco e, ao mesmo tempo, tornar a solução global mais simples.</p>
+    </article>
+  </section>
+</body>
+</html>

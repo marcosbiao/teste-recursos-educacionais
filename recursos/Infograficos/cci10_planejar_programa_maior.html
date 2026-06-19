@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como planejar um programa maior sem se perder</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(360px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .step-icon svg,
+    .module-icon svg, .example-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 510px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-program {
+      display: grid;
+      grid-template-columns: 1fr 38px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .hero-main {
+      border-radius: 16px;
+      padding: 16px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      text-align: center;
+      font-weight: 900;
+    }
+    .hero-main small { display: block; color: #E0E7FF; font-weight: 400; margin-top: 5px; }
+    .hero-arrow { color: var(--cor-primaria); font-size: 1.5rem; font-weight: 900; text-align: center; }
+    .hero-modules { display: grid; gap: 7px; }
+    .hero-module {
+      border: 1px solid var(--cor-borda);
+      border-radius: 12px;
+      background: var(--cor-superficie-suave);
+      padding: 8px 10px;
+      font-size: .78rem;
+      color: var(--cor-texto-principal);
+      font-weight: 800;
+    }
+    .hero-module code { color: var(--cor-primaria-escura); }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    #mapa-do-programa { scroll-margin-top: 18px; }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .choice-map {
+      min-height: 710px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .29); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 260px;
+      min-height: 195px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 238px;
+      min-height: 148px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 10px; }
+    .map-button p { font-size: .88rem; }
+    .map-code { display: inline-flex; margin-top: 7px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .78rem; font-weight: 900; }
+
+    .button-input { left: 38px; top: 38px; }
+    .button-process { right: 38px; top: 38px; }
+    .button-storage { left: 38px; bottom: 42px; }
+    .button-output { right: 38px; bottom: 42px; }
+    .button-coordination { left: 50%; bottom: 18px; transform: translateX(-50%); }
+    .button-coordination:hover, .button-coordination:focus-visible { transform: translateX(-50%) translateY(-4px); }
+
+    .planning-flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .planning-step { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; background: var(--cor-superficie-suave); padding: 17px; min-height: 165px; }
+    .planning-step:not(:last-child)::after { content: "→"; position: absolute; right: -18px; top: 50%; transform: translateY(-50%); color: var(--cor-primaria); font-size: 1.45rem; font-weight: 900; z-index: 2; }
+    .step-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin-bottom: 10px; }
+    .planning-step p { font-size: .88rem; }
+    .planning-step code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .architecture {
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      background: linear-gradient(145deg, var(--cor-superficie-suave), var(--cor-superficie-destacada));
+      padding: 22px;
+    }
+    .architecture-head { text-align: center; margin-bottom: 18px; }
+    .architecture-head code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .architecture-grid {
+      display: grid;
+      grid-template-columns: minmax(190px,.75fr) 46px minmax(0,1.25fr);
+      align-items: center;
+      gap: 12px;
+    }
+    .orchestrator {
+      min-height: 270px;
+      border-radius: 20px;
+      padding: 20px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 16px 32px rgba(49,46,129,.18);
+    }
+    .orchestrator code { color: #FDE68A; font-weight: 900; font-size: 1.05rem; }
+    .orchestrator p { color: #E0E7FF; font-size: .87rem; margin-top: 8px; }
+    .architecture-arrow { text-align: center; color: var(--cor-primaria); font-size: 2rem; font-weight: 900; }
+    .module-stack { display: grid; gap: 10px; }
+    .module-card {
+      display: grid;
+      grid-template-columns: 44px minmax(0,1fr) auto;
+      gap: 11px;
+      align-items: center;
+      border: 1px solid var(--cor-borda);
+      border-radius: 15px;
+      background: white;
+      padding: 11px 13px;
+    }
+    .module-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 13px; background: var(--cor-superficie-destacada); color: var(--cor-primaria); }
+    .module-card strong { display: block; color: var(--cor-texto-principal); font-size: .9rem; }
+    .module-card span { color: var(--cor-texto-secundario); font-size: .78rem; }
+    .module-signature { font-family: Consolas, monospace; color: var(--cor-primaria-escura); font-size: .75rem; font-weight: 900; text-align: right; }
+    .architecture-note { margin-top: 15px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border-left: 5px solid var(--cor-destaque-pontual); color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .comparison-wrap { overflow-x: auto; }
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; font-size: .91rem; }
+    .comparison-table th, .comparison-table td { padding: 13px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--cor-borda); }
+    .comparison-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
+    .comparison-table tr:last-child td { border-bottom: 0; }
+    .comparison-table td:first-child { color: var(--cor-primaria-escura); font-family: Consolas, Monaco, monospace; font-weight: 900; white-space: nowrap; }
+    .comparison-table code { color: var(--cor-primaria-escura); font-weight: 800; }
+
+    .tabs { position: relative; }
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; padding: 10px 15px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; font-size: .9rem; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 17px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-level { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 11px; border-radius: 999px; padding: 6px 10px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); border: 1px solid rgba(79,70,229,.18); font-size: .78rem; font-weight: 900; }
+    .example-list { margin: 13px 0 0 18px; color: var(--cor-texto-secundario); font-size: .91rem; }
+    .example-list li { margin-bottom: 6px; }
+    .structure-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
+    .structure-tag { padding: 5px 8px; border-radius: 8px; background: white; border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .78rem; font-weight: 900; }
+    .example-note { margin-top: 14px; padding: 12px 14px; border-radius: 14px; border-left: 5px solid var(--cor-destaque-pontual); background: #FFFBEB; color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #263244; box-shadow: 0 13px 30px rgba(15,23,42,.12); }
+    .code-toolbar { display: flex; align-items: center; gap: 7px; min-height: 39px; padding: 0 14px; background: #1F2937; color: #CBD5E1; font-family: Consolas, monospace; font-size: .78rem; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .86rem; line-height: 1.58; tab-size: 2; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .error-card { border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 17px; padding: 17px; background: var(--cor-superficie); }
+    .error-card p { font-size: .9rem; margin-bottom: 7px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 11px; }
+    details { border: 1px solid var(--cor-borda); border-radius: 17px; padding: 15px 17px; background: var(--cor-superficie-suave); }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 900; }
+    details p { margin-top: 12px; padding: 13px 14px; border-radius: 13px; background: white; border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .2s ease, visibility .2s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      position: relative;
+      width: min(700px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow-y: auto;
+      border-radius: 24px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      padding: 25px;
+      box-shadow: 0 26px 70px rgba(15,23,42,.28);
+      transform: translateY(18px) scale(.97);
+      opacity: 0;
+    }
+    .modal:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.75,.25,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; font-weight: 700; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 46px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-head h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 16px; border-radius: 17px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); }
+    .modal-rule { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); }
+    .modal-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+    .modal-box { padding: 13px; border-radius: 14px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .modal-box strong { color: var(--cor-primaria-escura); display: block; margin-bottom: 5px; }
+    .modal-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .choice-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px; }
+      .map-lines { display: none; }
+      .map-center, .map-button { position: static; width: auto; min-height: 0; transform: none; }
+      .map-center { grid-column: 1 / -1; min-height: 155px; }
+      .button-coordination { transform: none; grid-column: 1 / -1; }
+      .button-coordination:hover, .button-coordination:focus-visible { transform: translateY(-4px); }
+      .planning-flow { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .planning-step:not(:last-child)::after { display: none; }
+      .architecture-grid { grid-template-columns: 1fr; }
+      .architecture-arrow { transform: rotate(90deg); }
+      .orchestrator { min-height: 170px; }
+      .error-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 10px; }
+      .hero, .section, .closing { padding: 21px; border-radius: 21px; }
+      .meta-grid, .concept-points, .choice-map, .planning-flow, .error-grid { grid-template-columns: 1fr; }
+      .map-center, .button-coordination { grid-column: auto; }
+      .hero-program { grid-template-columns: 1fr; }
+      .hero-arrow { transform: rotate(90deg); }
+      .module-card { grid-template-columns: 42px minmax(0,1fr); }
+      .module-signature { grid-column: 2; text-align: left; }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .comparison-table th, .comparison-table td { padding: 10px; font-size: .82rem; }
+      pre { font-size: .77rem; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Como planejar um programa maior sem se perder</h1>
+          <p class="subtitle">Aprenda a transformar um enunciado amplo em blocos funcionais, definir o papel de cada parte e conectar tudo antes de escrever o código completo.</p>
+        </div>
+
+        <div class="hero-panel" aria-label="Representação resumida de um programa dividido em partes">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M12 3v5"></path><path d="M5 21v-4a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v4"></path><rect x="8" y="8" width="8" height="6" rx="2"></rect><path d="M3 21h18"></path></svg></span>
+            <div><strong>Visão modular</strong><span>O programa principal coordena partes com responsabilidades claras.</span></div>
+          </div>
+          <div class="hero-program">
+            <div class="hero-main"><code>main()</code><small>organiza a sequência</small></div>
+            <div class="hero-arrow">→</div>
+            <div class="hero-modules">
+              <div class="hero-module"><code>lerDados()</code> recebe informações</div>
+              <div class="hero-module"><code>calcular()</code> processa os valores</div>
+              <div class="hero-module"><code>validar()</code> aplica regras</div>
+              <div class="hero-module"><code>exibir()</code> apresenta resultados</div>
+            </div>
+          </div>
+          <div class="hero-caption"><strong>Ideia-chave:</strong> um bloco deve ter um propósito reconhecível, dados de entrada definidos e um resultado esperado.</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI10</div><p>Planejar e organizar programas em partes funcionais articuladas.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI07</div><p>Usar funções, procedimentos, parâmetros e retornos para modularizar.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Divisão do programa em partes</div><p>Separar responsabilidades antes da implementação.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">15 a 20 minutos</div><p>Leitura, exploração do mapa e comparação dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Planejamento modular</div><p>Mapa funcional, fluxo de dados e contratos entre blocos.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h6"></path></svg>Leitura de enunciados</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M8 4h8v5H8z"></path><path d="M5 20h14M12 9v11"></path></svg>Funções e procedimentos</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="m15 7 5 5-5 5"></path></svg>Parâmetros e retorno</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg>Sequência lógica</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <div class="concept-main">
+          <h3>Planejar é definir responsabilidades antes de escrever detalhes</h3>
+          <p>Um programa maior fica mais compreensível quando cada parte responde por uma tarefa específica. Em vez de concentrar leitura, cálculo, validação, armazenamento e saída no <code>main</code>, você cria blocos com <strong>papéis bem definidos</strong>.</p>
+          <div class="concept-note">O objetivo não é criar muitas funções. É criar <strong>partes úteis</strong>, com nomes que expliquem o que fazem e interfaces que deixem claro como os dados circulam.</div>
+        </div>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Reconheça tarefas</h3><p>Marque no enunciado ações como ler, validar, calcular, buscar e exibir.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Agrupe responsabilidades</h3><p>Junte ações relacionadas em blocos que produzam um resultado identificável.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Defina o fluxo</h3><p>Estabeleça o que cada bloco recebe, produz e entrega ao próximo.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-do-programa">
+      <div class="section-title"><span class="marker"></span><h2>Mapa dos blocos funcionais</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"></path><path d="M12 7v5l3 2"></path><path d="M18 3v5h-5"></path></svg>
+        Clique em cada bloco para abrir uma explicação. Todos usam o mesmo exemplo: um programa que lê notas de uma turma e produz um resumo.
+      </div>
+
+      <div class="choice-map">
+        <svg class="map-lines" viewBox="0 0 1000 710" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="500" y1="355" x2="155" y2="115"></line>
+          <line x1="500" y1="355" x2="845" y2="115"></line>
+          <line x1="500" y1="355" x2="155" y2="590"></line>
+          <line x1="500" y1="355" x2="845" y2="590"></line>
+          <line x1="500" y1="355" x2="500" y2="650"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Programa maior</strong>
+            <code>resumo da turma</code>
+            <span>Um objetivo geral dividido em responsabilidades menores.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-input" href="#modal-entrada">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M8 9h8M8 13h5"></path><path d="m14 16 2 2 4-4"></path></svg></span>
+          <h3>Entrada e validação</h3>
+          <p>Receber dados e impedir valores que não atendem às regras.</p>
+          <span class="map-code">lerNotas()</span>
+        </a>
+
+        <a class="map-button button-process" href="#modal-processamento">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"></path><circle cx="8" cy="7" r="2"></circle><circle cx="15" cy="12" r="2"></circle><circle cx="11" cy="17" r="2"></circle></svg></span>
+          <h3>Processamento</h3>
+          <p>Calcular resultados ou aplicar regras aos dados recebidos.</p>
+          <span class="map-code">calcularMedia()</span>
+        </a>
+
+        <a class="map-button button-storage" href="#modal-armazenamento">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="3"></ellipse><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"></path><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"></path></svg></span>
+          <h3>Armazenamento</h3>
+          <p>Organizar os dados que precisam permanecer disponíveis.</p>
+          <span class="map-code">notas[]</span>
+        </a>
+
+        <a class="map-button button-output" href="#modal-saida">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"></path><path d="M8 21h8M12 17v4"></path><path d="M8 8h8M8 12h5"></path></svg></span>
+          <h3>Saída e relatório</h3>
+          <p>Apresentar apenas as informações relevantes para o usuário.</p>
+          <span class="map-code">exibirResumo()</span>
+        </a>
+
+        <a class="map-button button-coordination" href="#modal-coordenacao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M12 3v4"></path><path d="M5 21v-4a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v4"></path><rect x="8" y="7" width="8" height="7" rx="2"></rect><path d="M3 21h18"></path></svg></span>
+          <h3>Coordenação</h3>
+          <p>Definir a ordem das chamadas e conectar os resultados.</p>
+          <span class="map-code">main()</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Do enunciado ao plano</h2></div>
+      <div class="planning-flow">
+        <article class="planning-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span><h3>1. Marque as ações</h3><p>Localize verbos como <code>ler</code>, <code>calcular</code>, <code>validar</code>, <code>buscar</code> e <code>mostrar</code>.</p></article>
+        <article class="planning-step"><span class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="7" rx="2"></rect><rect x="13" y="13" width="8" height="7" rx="2"></rect><path d="m11 8 4 4"></path></svg></span><h3>2. Agrupe por objetivo</h3><p>Ações que trabalham para o mesmo resultado podem formar um único bloco.</p></article>
+        <article class="planning-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h10M5 18h7"></path><path d="m17 15 3 3-3 3"></path></svg></span><h3>3. Dê nomes claros</h3><p>Prefira nomes que expressem ação, como <code>calcularMedia</code> ou <code>buscarProduto</code>.</p></article>
+        <article class="planning-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="m15 7 5 5-5 5"></path><circle cx="6" cy="12" r="2"></circle></svg></span><h3>4. Defina entradas e saídas</h3><p>Decida quais dados o bloco recebe, modifica ou devolve para outra parte.</p></article>
+        <article class="planning-step"><span class="step-icon"><svg viewBox="0 0 24 24"><path d="M12 3v5"></path><path d="M6 21v-4a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v4"></path><rect x="8" y="8" width="8" height="6" rx="2"></rect></svg></span><h3>5. Monte a coordenação</h3><p>Organize no <code>main</code> a ordem das chamadas e o fluxo dos resultados.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Mapa funcional antes do código</h2></div>
+      <div class="architecture">
+        <div class="architecture-head">
+          <h3>Exemplo: resumo das notas de uma turma</h3>
+          <p>O <code>main</code> coordena o fluxo, mas não precisa executar todos os detalhes.</p>
+        </div>
+        <div class="architecture-grid">
+          <div class="orchestrator">
+            <div>
+              <code>main()</code>
+              <p>Declara os dados, chama os blocos na ordem correta e encerra o programa.</p>
+            </div>
+          </div>
+          <div class="architecture-arrow">→</div>
+          <div class="module-stack">
+            <article class="module-card"><span class="module-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><div><strong>Ler e validar notas</strong><span>Preenche o vetor com valores entre 0 e 10.</span></div><div class="module-signature">void lerNotas(...)</div></article>
+            <article class="module-card"><span class="module-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"></path><circle cx="8" cy="7" r="2"></circle></svg></span><div><strong>Calcular média</strong><span>Recebe as notas e devolve um valor calculado.</span></div><div class="module-signature">float calcularMedia(...)</div></article>
+            <article class="module-card"><span class="module-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="m15 7 5 5-5 5"></path><path d="M7 8v8"></path></svg></span><div><strong>Contar aprovações</strong><span>Aplica a regra de nota mínima a todos os elementos.</span></div><div class="module-signature">int contarAprovados(...)</div></article>
+            <article class="module-card"><span class="module-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"></path><path d="M8 21h8M12 17v4"></path></svg></span><div><strong>Exibir resumo</strong><span>Apresenta média e quantidade de aprovados.</span></div><div class="module-signature">void exibirResumo(...)</div></article>
+          </div>
+        </div>
+        <div class="architecture-note"><strong>Leitura do mapa:</strong> as setas representam passagem de dados e ordem das chamadas. Um módulo não precisa conhecer os detalhes internos dos outros.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Contrato de cada bloco</h2></div>
+      <div class="comparison-wrap">
+        <table class="comparison-table">
+          <thead><tr><th>Bloco</th><th>Responsabilidade</th><th>Recebe</th><th>Produz ou modifica</th><th>Evita fazer</th></tr></thead>
+          <tbody>
+            <tr><td>lerNotas</td><td>Ler e validar as notas</td><td>Vetor e tamanho</td><td>Preenche <code>notas[]</code></td><td>Calcular média ou imprimir relatório</td></tr>
+            <tr><td>calcularMedia</td><td>Somar e dividir os valores</td><td>Vetor e tamanho</td><td>Retorna a média</td><td>Ler dados do teclado</td></tr>
+            <tr><td>contarAprovados</td><td>Aplicar a regra de aprovação</td><td>Vetor, tamanho e limite</td><td>Retorna uma contagem</td><td>Alterar as notas</td></tr>
+            <tr><td>exibirResumo</td><td>Apresentar os resultados</td><td>Média, aprovados e total</td><td>Saída formatada</td><td>Refazer cálculos já concluídos</td></tr>
+            <tr><td>main</td><td>Coordenar o fluxo geral</td><td>Resultados das chamadas</td><td>Sequência completa do programa</td><td>Concentrar todos os detalhes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="examples" id="tab1" checked>
+        <input type="radio" name="examples" id="tab2">
+        <input type="radio" name="examples" id="tab3">
+        <div class="tab-labels" role="tablist" aria-label="Exemplos de planejamento modular">
+          <label class="tab-label" for="tab1">1. Conversão de temperatura</label>
+          <label class="tab-label" for="tab2">2. Resumo de notas</label>
+          <label class="tab-label" for="tab3">3. Cadastro com menu</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <span class="example-level"><svg class="example-icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m15 7 5 5-5 5"></path></svg>Nível básico</span>
+                <h3>Converter Celsius para Fahrenheit</h3>
+                <p>Mesmo um problema curto pode ser planejado em três responsabilidades para tornar o fluxo explícito.</p>
+                <ul class="example-list">
+                  <li><strong>Entrada:</strong> ler a temperatura em Celsius.</li>
+                  <li><strong>Processamento:</strong> aplicar a fórmula de conversão.</li>
+                  <li><strong>Saída:</strong> mostrar o resultado formatado.</li>
+                </ul>
+                <div class="structure-tags"><span class="structure-tag">lerCelsius</span><span class="structure-tag">converter</span><span class="structure-tag">mostrar</span></div>
+                <div class="example-note">A divisão é didática. Em um programa real muito curto, algumas partes poderiam permanecer juntas. O importante é reconhecer os papéis.</div>
+              </div>
+              <div class="code-window" aria-label="Código em C do exemplo de conversão">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>conversao.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">float</span> <span class="syn-function">lerCelsius</span>(<span class="syn-type">void</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">c</span>;
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">c</span>);
+    <span class="syn-keyword">return</span> <span class="syn-variable">c</span>;
+}
+
+<span class="syn-type">float</span> <span class="syn-function">converter</span>(<span class="syn-type">float</span> <span class="syn-variable">c</span>) {
+    <span class="syn-keyword">return</span> <span class="syn-variable">c</span> <span class="syn-operator">*</span> <span class="syn-number">1.8f</span> <span class="syn-operator">+</span> <span class="syn-number">32</span>;
+}
+
+<span class="syn-type">void</span> <span class="syn-function">mostrar</span>(<span class="syn-type">float</span> <span class="syn-variable">f</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"Fahrenheit: %.1f\n"</span>, <span class="syn-variable">f</span>);
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>(<span class="syn-type">void</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">celsius</span> <span class="syn-operator">=</span> <span class="syn-function">lerCelsius</span>();
+    <span class="syn-type">float</span> <span class="syn-variable">fahrenheit</span> <span class="syn-operator">=</span> <span class="syn-function">converter</span>(<span class="syn-variable">celsius</span>);
+    <span class="syn-function">mostrar</span>(<span class="syn-variable">fahrenheit</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <span class="example-level"><svg class="example-icon" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>Nível intermediário</span>
+                <h3>Resumo de cinco notas</h3>
+                <p>O vetor é preenchido por um bloco, processado por outros dois e apresentado por um procedimento.</p>
+                <ul class="example-list">
+                  <li><strong>lerNotas:</strong> cuida da entrada.</li>
+                  <li><strong>calcularMedia:</strong> devolve um resultado numérico.</li>
+                  <li><strong>contarAprovados:</strong> aplica uma regra.</li>
+                  <li><strong>exibirResumo:</strong> reúne a saída.</li>
+                </ul>
+                <div class="structure-tags"><span class="structure-tag">vetor</span><span class="structure-tag">for</span><span class="structure-tag">retorno</span><span class="structure-tag">void</span></div>
+                <div class="example-note">Observe que cada bloco usa apenas os dados de que precisa. A nota mínima é recebida como parâmetro, não escondida em uma variável global.</div>
+              </div>
+              <div class="code-window" aria-label="Código em C do exemplo de resumo de notas">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>resumo_notas.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+<span class="syn-directive">#define</span> <span class="syn-variable">N</span> <span class="syn-number">5</span>
+
+<span class="syn-type">void</span> <span class="syn-function">lerNotas</span>(<span class="syn-type">float</span> <span class="syn-variable">notas</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>) {
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>) {
+        <span class="syn-keyword">do</span> {
+            <span class="syn-function">scanf</span>(<span class="syn-string">"%f"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">notas</span>[<span class="syn-variable">i</span>]);
+        } <span class="syn-keyword">while</span> (<span class="syn-variable">notas</span>[<span class="syn-variable">i</span>] <span class="syn-operator">&lt;</span> <span class="syn-number">0</span> <span class="syn-operator">||</span> <span class="syn-variable">notas</span>[<span class="syn-variable">i</span>] <span class="syn-operator">&gt;</span> <span class="syn-number">10</span>);
+    }
+}
+
+<span class="syn-type">float</span> <span class="syn-function">calcularMedia</span>(<span class="syn-type">const float</span> <span class="syn-variable">notas</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>)
+        <span class="syn-variable">soma</span> <span class="syn-operator">+=</span> <span class="syn-variable">notas</span>[<span class="syn-variable">i</span>];
+    <span class="syn-keyword">return</span> <span class="syn-variable">soma</span> <span class="syn-operator">/</span> <span class="syn-variable">n</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">contarAprovados</span>(<span class="syn-type">const float</span> <span class="syn-variable">notas</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>, <span class="syn-type">float</span> <span class="syn-variable">limite</span>) {
+    <span class="syn-type">int</span> <span class="syn-variable">total</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>;
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>)
+        <span class="syn-keyword">if</span> (<span class="syn-variable">notas</span>[<span class="syn-variable">i</span>] <span class="syn-operator">&gt;=</span> <span class="syn-variable">limite</span>) <span class="syn-variable">total</span><span class="syn-operator">++</span>;
+    <span class="syn-keyword">return</span> <span class="syn-variable">total</span>;
+}
+
+<span class="syn-type">void</span> <span class="syn-function">exibirResumo</span>(<span class="syn-type">float</span> <span class="syn-variable">media</span>, <span class="syn-type">int</span> <span class="syn-variable">aprovados</span>) {
+    <span class="syn-function">printf</span>(<span class="syn-string">"Media: %.2f | Aprovados: %d\n"</span>, <span class="syn-variable">media</span>, <span class="syn-variable">aprovados</span>);
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>(<span class="syn-type">void</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">notas</span>[<span class="syn-variable">N</span>];
+    <span class="syn-function">lerNotas</span>(<span class="syn-variable">notas</span>, <span class="syn-variable">N</span>);
+    <span class="syn-type">float</span> <span class="syn-variable">media</span> <span class="syn-operator">=</span> <span class="syn-function">calcularMedia</span>(<span class="syn-variable">notas</span>, <span class="syn-variable">N</span>);
+    <span class="syn-type">int</span> <span class="syn-variable">aprovados</span> <span class="syn-operator">=</span> <span class="syn-function">contarAprovados</span>(<span class="syn-variable">notas</span>, <span class="syn-variable">N</span>, <span class="syn-number">7.0f</span>);
+    <span class="syn-function">exibirResumo</span>(<span class="syn-variable">media</span>, <span class="syn-variable">aprovados</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <span class="example-level"><svg class="example-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></svg>Nível intermediário avançado</span>
+                <h3>Cadastro de produtos com menu</h3>
+                <p>O programa envolve várias operações. O planejamento separa o menu, o cadastro, a busca e a listagem.</p>
+                <ul class="example-list">
+                  <li><strong>exibirMenu:</strong> mostra opções e devolve a escolha.</li>
+                  <li><strong>cadastrarProduto:</strong> preenche um novo registro.</li>
+                  <li><strong>buscarPorCodigo:</strong> devolve a posição encontrada.</li>
+                  <li><strong>listarProdutos:</strong> percorre apenas os registros existentes.</li>
+                </ul>
+                <div class="structure-tags"><span class="structure-tag">struct</span><span class="structure-tag">vetor</span><span class="structure-tag">switch</span><span class="structure-tag">funções</span></div>
+                <div class="example-note">O exemplo mostra a arquitetura principal. Cada operação tem um contrato claro, e o <code>main</code> concentra apenas a coordenação do menu.</div>
+              </div>
+              <div class="code-window" aria-label="Código em C do exemplo de cadastro modular">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>cadastro_modular.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+<span class="syn-directive">#define</span> <span class="syn-variable">MAX</span> <span class="syn-number">20</span>
+
+<span class="syn-keyword">typedef struct</span> {
+    <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+    <span class="syn-type">float</span> <span class="syn-variable">preco</span>;
+} <span class="syn-type">Produto</span>;
+
+<span class="syn-type">int</span> <span class="syn-function">exibirMenu</span>(<span class="syn-type">void</span>) {
+    <span class="syn-type">int</span> <span class="syn-variable">opcao</span>;
+    <span class="syn-function">printf</span>(<span class="syn-string">"1-Cadastrar 2-Buscar 3-Listar 0-Sair\n"</span>);
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">opcao</span>);
+    <span class="syn-keyword">return</span> <span class="syn-variable">opcao</span>;
+}
+
+<span class="syn-type">void</span> <span class="syn-function">cadastrarProduto</span>(<span class="syn-type">Produto</span> <span class="syn-variable">produtos</span>[], <span class="syn-type">int</span> <span class="syn-operator">*</span><span class="syn-variable">quantidade</span>) {
+    <span class="syn-keyword">if</span> (<span class="syn-operator">*</span><span class="syn-variable">quantidade</span> <span class="syn-operator">&gt;=</span> <span class="syn-variable">MAX</span>) <span class="syn-keyword">return</span>;
+    <span class="syn-function">scanf</span>(<span class="syn-string">"%d%f"</span>,
+          <span class="syn-operator">&amp;</span><span class="syn-variable">produtos</span>[<span class="syn-operator">*</span><span class="syn-variable">quantidade</span>].<span class="syn-variable">codigo</span>,
+          <span class="syn-operator">&amp;</span><span class="syn-variable">produtos</span>[<span class="syn-operator">*</span><span class="syn-variable">quantidade</span>].<span class="syn-variable">preco</span>);
+    (<span class="syn-operator">*</span><span class="syn-variable">quantidade</span>)<span class="syn-operator">++</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">buscarPorCodigo</span>(<span class="syn-type">const Produto</span> <span class="syn-variable">produtos</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>, <span class="syn-type">int</span> <span class="syn-variable">codigo</span>) {
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>)
+        <span class="syn-keyword">if</span> (<span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span> <span class="syn-operator">==</span> <span class="syn-variable">codigo</span>) <span class="syn-keyword">return</span> <span class="syn-variable">i</span>;
+    <span class="syn-keyword">return</span> <span class="syn-operator">-</span><span class="syn-number">1</span>;
+}
+
+<span class="syn-type">void</span> <span class="syn-function">listarProdutos</span>(<span class="syn-type">const Produto</span> <span class="syn-variable">produtos</span>[], <span class="syn-type">int</span> <span class="syn-variable">n</span>) {
+    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> <span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>; <span class="syn-variable">i</span> <span class="syn-operator">&lt;</span> <span class="syn-variable">n</span>; <span class="syn-variable">i</span><span class="syn-operator">++</span>)
+        <span class="syn-function">printf</span>(<span class="syn-string">"%d - %.2f\n"</span>, <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">codigo</span>, <span class="syn-variable">produtos</span>[<span class="syn-variable">i</span>].<span class="syn-variable">preco</span>);
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>(<span class="syn-type">void</span>) {
+    <span class="syn-type">Produto</span> <span class="syn-variable">produtos</span>[<span class="syn-variable">MAX</span>];
+    <span class="syn-type">int</span> <span class="syn-variable">quantidade</span> <span class="syn-operator">=</span> <span class="syn-number">0</span>, <span class="syn-variable">opcao</span>;
+
+    <span class="syn-keyword">do</span> {
+        <span class="syn-variable">opcao</span> <span class="syn-operator">=</span> <span class="syn-function">exibirMenu</span>();
+        <span class="syn-keyword">switch</span> (<span class="syn-variable">opcao</span>) {
+            <span class="syn-keyword">case</span> <span class="syn-number">1</span>: <span class="syn-function">cadastrarProduto</span>(<span class="syn-variable">produtos</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">quantidade</span>); <span class="syn-keyword">break</span>;
+            <span class="syn-keyword">case</span> <span class="syn-number">2</span>: {
+                <span class="syn-type">int</span> <span class="syn-variable">codigo</span>;
+                <span class="syn-function">scanf</span>(<span class="syn-string">"%d"</span>, <span class="syn-operator">&amp;</span><span class="syn-variable">codigo</span>);
+                <span class="syn-type">int</span> <span class="syn-variable">pos</span> <span class="syn-operator">=</span> <span class="syn-function">buscarPorCodigo</span>(<span class="syn-variable">produtos</span>, <span class="syn-variable">quantidade</span>, <span class="syn-variable">codigo</span>);
+                <span class="syn-function">printf</span>(<span class="syn-variable">pos</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">0</span> <span class="syn-operator">?</span> <span class="syn-string">"Encontrado\n"</span> <span class="syn-operator">:</span> <span class="syn-string">"Nao encontrado\n"</span>);
+                <span class="syn-keyword">break</span>;
+            }
+            <span class="syn-keyword">case</span> <span class="syn-number">3</span>: <span class="syn-function">listarProdutos</span>(<span class="syn-variable">produtos</span>, <span class="syn-variable">quantidade</span>); <span class="syn-keyword">break</span>;
+        }
+    } <span class="syn-keyword">while</span> (<span class="syn-variable">opcao</span> <span class="syn-operator">!=</span> <span class="syn-number">0</span>);
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Deixar tudo no main</h3><p><strong>Por que acontece:</strong> o código começa pequeno e cresce sem reorganização.</p><p><strong>Como evitar:</strong> identifique responsabilidades independentes e extraia blocos com nomes claros.</p></article>
+        <article class="error-card"><h3>Criar funções sem propósito</h3><p><strong>Por que acontece:</strong> cada linha ou comando vira uma função diferente.</p><p><strong>Como evitar:</strong> agrupe ações que juntas produzem um resultado reconhecível.</p></article>
+        <article class="error-card"><h3>Esconder dados em globais</h3><p><strong>Por que acontece:</strong> parece mais fácil acessar qualquer variável de qualquer lugar.</p><p><strong>Como evitar:</strong> use parâmetros e retornos para tornar o fluxo de dados explícito.</p></article>
+        <article class="error-card"><h3>Misturar responsabilidades</h3><p><strong>Por que acontece:</strong> uma função lê, calcula, altera dados e imprime ao mesmo tempo.</p><p><strong>Como evitar:</strong> descreva a função em uma frase curta. Se precisar de vários verbos desconectados, revise a divisão.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Qual é o papel principal do main em um programa modular?</summary><p>Coordenar a sequência geral: declarar os dados principais, chamar os blocos necessários, receber resultados e encerrar o programa. Os detalhes de cada tarefa ficam nas funções ou procedimentos correspondentes.</p></details>
+        <details><summary>Uma função deve sempre executar apenas uma linha?</summary><p>Não. Ela deve ter uma responsabilidade coerente. Essa responsabilidade pode exigir várias linhas, desde que todas contribuam para o mesmo objetivo.</p></details>
+        <details><summary>Como saber quais dados uma função deve receber?</summary><p>Liste apenas as informações necessárias para ela cumprir sua responsabilidade. Dados que não participam da tarefa não devem ser passados sem necessidade.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir analisar um problema maior, identificar responsabilidades, planejar blocos funcionais e representar como os dados circulam entre eles antes de implementar a solução completa em C.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-entrada" role="dialog" aria-modal="true" aria-labelledby="titulo-entrada">
+    <a class="modal-backdrop" href="#mapa-do-programa" aria-label="Fechar explicação"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-do-programa" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M8 9h8M8 13h5"></path><path d="m14 16 2 2 4-4"></path></svg></span><h2 id="titulo-entrada">Entrada e validação</h2></div>
+      <p>Esse bloco recebe os dados externos e verifica se podem entrar no restante do programa. Ele protege os outros módulos contra valores inválidos.</p>
+      <div class="modal-example">
+        <h3>No programa de notas</h3>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Responsabilidade</strong>Ler cada nota e repetir a leitura enquanto o valor estiver fora de 0 a 10.</div>
+          <div class="modal-box"><strong>Contrato possível</strong><code>void lerNotas(float notas[], int n)</code></div>
+        </div>
+      </div>
+      <div class="modal-rule"><strong>Regra prática:</strong> valide o dado perto do ponto em que ele entra. Assim, os módulos de cálculo podem trabalhar com valores já confiáveis.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-processamento" role="dialog" aria-modal="true" aria-labelledby="titulo-processamento">
+    <a class="modal-backdrop" href="#mapa-do-programa" aria-label="Fechar explicação"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-do-programa" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"></path><circle cx="8" cy="7" r="2"></circle><circle cx="15" cy="12" r="2"></circle><circle cx="11" cy="17" r="2"></circle></svg></span><h2 id="titulo-processamento">Processamento</h2></div>
+      <p>Um bloco de processamento transforma dados ou aplica uma regra. Ele deve receber informações suficientes e produzir um resultado definido.</p>
+      <div class="modal-example">
+        <h3>No programa de notas</h3>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Cálculo</strong><code>calcularMedia(notas, n)</code> soma os elementos e devolve a média.</div>
+          <div class="modal-box"><strong>Decisão repetida</strong><code>contarAprovados(notas, n, 7.0)</code> devolve quantos atingiram o limite.</div>
+        </div>
+      </div>
+      <div class="modal-rule"><strong>Regra prática:</strong> uma função que calcula deve, em geral, devolver o resultado em vez de imprimir diretamente. Isso permite reutilizá-lo em outras decisões.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-armazenamento" role="dialog" aria-modal="true" aria-labelledby="titulo-armazenamento">
+    <a class="modal-backdrop" href="#mapa-do-programa" aria-label="Fechar explicação"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-do-programa" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="3"></ellipse><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"></path><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"></path></svg></span><h2 id="titulo-armazenamento">Armazenamento</h2></div>
+      <p>Planejar o armazenamento significa decidir quais dados precisam continuar disponíveis e qual estrutura os representa melhor.</p>
+      <div class="modal-example">
+        <h3>No programa de notas</h3>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Estrutura</strong>Um vetor <code>float notas[N]</code> mantém todas as notas para diferentes cálculos.</div>
+          <div class="modal-box"><strong>Quantidade</strong>O tamanho deve acompanhar o número de elementos usados pelos módulos.</div>
+        </div>
+      </div>
+      <div class="modal-rule"><strong>Regra prática:</strong> evite copiar a mesma coleção em cada função. Passe o vetor e seu tamanho para os blocos que precisam consultá-lo.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-saida" role="dialog" aria-modal="true" aria-labelledby="titulo-saida">
+    <a class="modal-backdrop" href="#mapa-do-programa" aria-label="Fechar explicação"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-do-programa" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z"></path><path d="M8 21h8M12 17v4"></path><path d="M8 8h8M8 12h5"></path></svg></span><h2 id="titulo-saida">Saída e relatório</h2></div>
+      <p>O bloco de saída recebe resultados já calculados e os apresenta de forma compreensível. Ele não deve repetir regras que pertencem ao processamento.</p>
+      <div class="modal-example">
+        <h3>No programa de notas</h3>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Recebe</strong>Média, quantidade de aprovados e total de alunos.</div>
+          <div class="modal-box"><strong>Apresenta</strong><code>Media: 7.4 | Aprovados: 4 de 5</code></div>
+        </div>
+      </div>
+      <div class="modal-rule"><strong>Regra prática:</strong> se o relatório precisar mudar, a alteração deve ficar concentrada nesse bloco, sem afetar a lógica de cálculo.</div>
+    </div>
+  </section>
+
+  <section class="modal" id="modal-coordenacao" role="dialog" aria-modal="true" aria-labelledby="titulo-coordenacao">
+    <a class="modal-backdrop" href="#mapa-do-programa" aria-label="Fechar explicação"></a>
+    <div class="modal-card">
+      <a class="modal-close" href="#mapa-do-programa" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M12 3v4"></path><path d="M5 21v-4a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v4"></path><rect x="8" y="7" width="8" height="7" rx="2"></rect><path d="M3 21h18"></path></svg></span><h2 id="titulo-coordenacao">Coordenação</h2></div>
+      <p>O bloco coordenador organiza a sequência geral e conecta as saídas de uma função às entradas da próxima. Em programas introdutórios, esse papel costuma ficar no <code>main</code>.</p>
+      <div class="modal-example">
+        <h3>No programa de notas</h3>
+        <div class="modal-grid">
+          <div class="modal-box"><strong>Sequência</strong><code>lerNotas → calcularMedia → contarAprovados → exibirResumo</code></div>
+          <div class="modal-box"><strong>Objetivo</strong>Permitir que a leitura do <code>main</code> mostre o plano geral do programa.</div>
+        </div>
+      </div>
+      <div class="modal-rule"><strong>Regra prática:</strong> ao ler o <code>main</code>, deve ser possível reconhecer o fluxo principal sem examinar todos os detalhes internos.</div>
+    </div>
+  </section>
+</body>
+</html>

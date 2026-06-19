@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onde a variável existe?</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    svg { stroke-linecap: round; stroke-linejoin: round; }
+    .page { max-width: 1120px; margin: 0 auto; }
+    .hero, .section, .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 280px; height: 280px; right: -118px; top: -126px; }
+    .hero::after { width: 150px; height: 150px; right: 300px; bottom: -100px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(360px, .97fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg, .pill svg, .hero-icon svg, .map-icon svg,
+    .modal-icon svg, .interaction-note svg, .example-icon svg,
+    .mini-icon svg, .decision-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.05rem, 5vw, 3.45rem);
+      line-height: 1.06;
+      max-width: 790px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle { color: var(--cor-texto-secundario); font-size: 1.08rem; max-width: 740px; }
+
+    .hero-panel {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, .14);
+    }
+
+    .panel-head { display: flex; align-items: center; gap: 11px; margin-bottom: 17px; }
+    .hero-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .panel-head strong { display: block; color: var(--cor-primaria-escura); font-size: 1rem; }
+    .panel-head span { color: var(--cor-texto-secundario); font-size: .83rem; }
+
+    .hero-compare { display: grid; grid-template-columns: 1fr 46px 1fr; align-items: stretch; gap: 10px; }
+    .hero-choice {
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie-suave);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 165px;
+    }
+    .hero-choice strong { display: block; color: var(--cor-primaria-escura); margin-bottom: 8px; }
+    .hero-choice code { display: inline-block; margin: 6px 0 9px; padding: 5px 8px; border-radius: 8px; background: var(--cor-superficie); color: var(--cor-primaria-escura); font-size: .82rem; font-weight: 900; }
+    .hero-choice p { font-size: .86rem; }
+    .hero-arrow { display: grid; place-items: center; color: var(--cor-primaria); font-size: 1.5rem; font-weight: 900; }
+    .hero-caption { margin-top: 14px; padding: 11px 13px; border-radius: 14px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); color: var(--cor-texto-principal); font-size: .88rem; }
+    .hero-caption strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    #mapa-da-chamada { scroll-margin-top: 18px; }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: .98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: .9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); color: var(--cor-primaria-escura); border-radius: 999px; padding: 9px 13px; font-size: .92rem; font-weight: 800; }
+
+    .concept-summary { display: grid; grid-template-columns: 1.05fr 1.45fr; gap: 18px; align-items: stretch; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, .16); border-radius: 21px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-note { margin-top: 14px; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .89rem; }
+    .concept-note code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .concept-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .concept-point { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); }
+    .concept-number { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-point p { font-size: .92rem; }
+
+    .interaction-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 17px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 158, 11, .38);
+      background: #FFFBEB;
+      color: var(--cor-texto-principal);
+      font-size: .92rem;
+    }
+    .interaction-note svg { color: var(--cor-destaque-pontual); flex: 0 0 auto; }
+
+    .function-map {
+      min-height: 590px;
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      background: linear-gradient(145deg, #F8FAFC, #EEF2FF);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .map-lines line { stroke: rgba(79, 70, 229, .28); stroke-width: 2.5; stroke-dasharray: 8 7; }
+
+    .map-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 238px;
+      min-height: 170px;
+      padding: 22px;
+      border-radius: 25px;
+      background: var(--cor-primaria-escura);
+      color: white;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(49, 46, 129, .2);
+      z-index: 2;
+    }
+    .map-center strong { font-size: 1.17rem; }
+    .map-center code { display: block; margin: 8px 0; color: #FDE68A; font-size: .94rem; }
+    .map-center span { color: #E0E7FF; font-size: .89rem; }
+
+    .map-button {
+      position: absolute;
+      width: 248px;
+      min-height: 154px;
+      border-radius: 21px;
+      border: 1px solid var(--cor-borda);
+      background: rgba(255,255,255,.98);
+      padding: 17px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 13px 30px rgba(15,23,42,.06);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      z-index: 3;
+    }
+    .map-button:hover, .map-button:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(49,46,129,.12); border-color: rgba(79,70,229,.34); outline: none; }
+    .map-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); margin-bottom: 11px; }
+    .map-button p { font-size: .91rem; }
+    .map-code { display: inline-flex; margin-top: 8px; padding: 4px 8px; border-radius: 8px; background: var(--cor-superficie-suave); color: var(--cor-primaria-escura); font-family: Consolas, monospace; font-size: .8rem; font-weight: 900; }
+    .button-return { left: 32px; top: 40px; }
+    .button-void { right: 32px; top: 40px; }
+    .button-parameters { left: 32px; bottom: 40px; }
+    .button-choice { right: 32px; bottom: 40px; }
+
+    .decision-layout { display: grid; grid-template-columns: 1fr 92px 1fr; gap: 16px; align-items: stretch; }
+    .decision-card { border: 1px solid var(--cor-borda); border-radius: 21px; padding: 21px; background: var(--cor-superficie-suave); }
+    .decision-card.primary { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.2); }
+    .decision-head { display: flex; align-items: center; gap: 11px; margin-bottom: 13px; }
+    .decision-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie); border: 1px solid var(--cor-borda); }
+    .decision-card code { display: block; margin: 13px 0; padding: 11px 13px; border-radius: 13px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-weight: 900; overflow-x: auto; }
+    .decision-card ul { margin: 12px 0 0 19px; color: var(--cor-texto-secundario); }
+    .decision-card li { margin-bottom: 6px; }
+    .decision-or { display: grid; place-items: center; }
+    .decision-or span { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: var(--cor-primaria-escura); color: white; font-weight: 900; box-shadow: 0 12px 24px rgba(49,46,129,.18); }
+
+    .cooperation-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; align-items: stretch; }
+    .cooperation-step { position: relative; border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie); min-height: 155px; }
+    .cooperation-step:not(:last-child)::after { content: "›"; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; z-index: 2; }
+    .cooperation-step code { display: inline-block; margin-top: 10px; padding: 5px 8px; border-radius: 8px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; font-size: .8rem; }
+    .cooperation-step p { font-size: .9rem; }
+    .step-badge { display: inline-flex; width: 33px; height: 33px; align-items: center; justify-content: center; border-radius: 11px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 10px; }
+
+    .trace-layout { display: grid; grid-template-columns: .95fr 1.05fr; gap: 18px; align-items: start; }
+    .code-window { border-radius: 19px; overflow: hidden; background: var(--codigo-fundo); border: 1px solid #1F2937; }
+    .code-toolbar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid #334155; color: #CBD5E1; font-size: .75rem; font-weight: 800; }
+    .code-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748B; }
+    pre { margin: 0; padding: 18px; overflow-x: auto; color: var(--codigo-texto); font-size: .9rem; line-height: 1.58; tab-size: 2; }
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .trace-cards { display: grid; gap: 12px; }
+    .trace-card { border: 1px solid var(--cor-borda); border-radius: 18px; padding: 17px; background: var(--cor-superficie-suave); }
+    .trace-card strong { color: var(--cor-primaria-escura); }
+    .trace-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .trace-result { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .mini-table-wrap { overflow-x: auto; }
+    .mini-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--cor-borda); border-radius: 18px; overflow: hidden; font-size: .93rem; }
+    .mini-table th, .mini-table td { padding: 13px 14px; text-align: left; border-bottom: 1px solid var(--cor-borda); }
+    .mini-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+    .mini-table tr:last-child td { border-bottom: 0; }
+    .mini-table td code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .tabs { position: relative; }
+    .tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .tab-labels { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 17px; }
+    .tab-label { cursor: pointer; padding: 10px 15px; border-radius: 999px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; font-size: .9rem; transition: .18s ease; }
+    #tab1:checked ~ .tab-labels label[for="tab1"],
+    #tab2:checked ~ .tab-labels label[for="tab2"],
+    #tab3:checked ~ .tab-labels label[for="tab3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); }
+    .tab-panels { position: relative; }
+    .tab-panel { display: none; animation: tabIn .28s ease both; }
+    #tab1:checked ~ .tab-panels .panel1,
+    #tab2:checked ~ .tab-panels .panel2,
+    #tab3:checked ~ .tab-panels .panel3 { display: block; }
+    @keyframes tabIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .example-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 18px; align-items: start; }
+    .example-card { border: 1px solid var(--cor-borda); border-radius: 20px; padding: 20px; background: var(--cor-superficie-suave); }
+    .example-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .example-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); }
+    .example-level { display: inline-flex; margin-top: 12px; padding: 5px 9px; border-radius: 999px; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-size: .78rem; font-weight: 900; }
+    .example-list { margin: 13px 0 0 19px; color: var(--cor-texto-secundario); }
+    .example-list li { margin-bottom: 6px; }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; list-style-position: outside; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 28px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 10px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(15, 23, 42, .62);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    .modal:target { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal-backdrop { position: absolute; inset: 0; }
+    .modal-card {
+      width: min(720px, 100%);
+      max-height: min(86vh, 760px);
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+      border-radius: 24px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      box-shadow: 0 28px 70px rgba(15,23,42,.28);
+      padding: 25px;
+      transform: translateY(18px) scale(.97);
+      opacity: 0;
+    }
+    .modal:target .modal-card { animation: modalIn .3s cubic-bezier(.2,.75,.25,1) forwards; }
+    @keyframes modalIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+    .modal-close { position: absolute; right: 16px; top: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; text-decoration: none; color: var(--cor-texto-principal); background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); font-size: 1.35rem; font-weight: 700; }
+    .modal-head { display: flex; align-items: center; gap: 12px; padding-right: 46px; margin-bottom: 14px; }
+    .modal-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; color: var(--cor-primaria); background: var(--cor-superficie-destacada); flex: 0 0 auto; }
+    .modal-head h2 { font-size: 1.35rem; }
+    .modal-example { margin-top: 15px; padding: 16px; border-radius: 17px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); }
+    .modal-rule { margin-top: 13px; padding: 12px 14px; border-radius: 14px; background: #FFFBEB; border: 1px solid rgba(245,158,11,.34); color: var(--cor-texto-principal); }
+    .modal-rule code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-call { margin-top: 12px; display: grid; grid-template-columns: 1fr 48px 1fr; gap: 9px; align-items: center; }
+    .modal-box { padding: 13px; border-radius: 14px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); text-align: center; }
+    .modal-box code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .modal-arrow { text-align: center; color: var(--cor-primaria); font-size: 1.45rem; font-weight: 900; }
+
+    @media (max-width: 980px) {
+      .hero-grid, .concept-summary, .trace-layout, .example-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .concept-points { grid-template-columns: 1fr; }
+      .function-map { min-height: auto; padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .map-lines { display: none; }
+      .map-center { position: static; transform: none; width: auto; min-height: 150px; grid-column: 1 / -1; order: 1; }
+      .map-button { position: static; width: auto; min-height: 155px; }
+      .button-return { order: 2; }
+      .button-void { order: 3; }
+      .button-parameters { order: 4; }
+      .button-choice { order: 5; }
+      .cooperation-flow { grid-template-columns: repeat(2, 1fr); }
+      .cooperation-step:not(:last-child)::after { display: none; }
+      .cooperation-step:last-child { grid-column: 1 / -1; }
+      .decision-layout { grid-template-columns: 1fr; }
+      .decision-or span { width: auto; height: auto; padding: 7px 14px; border-radius: 999px; }
+      .error-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 12px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .meta-grid, .function-map, .cooperation-flow { grid-template-columns: 1fr; }
+      .map-center { grid-column: auto; }
+      .cooperation-step:last-child { grid-column: auto; }
+      .hero-compare { grid-template-columns: 1fr; }
+      .hero-arrow { transform: rotate(90deg); }
+      .tab-labels { display: grid; grid-template-columns: 1fr; }
+      .tab-label { text-align: center; }
+      .modal { padding: 10px; }
+      .modal-card { padding: 20px; border-radius: 20px; }
+      .modal-call { grid-template-columns: 1fr; }
+      .modal-arrow { transform: rotate(90deg); }
+      .mini-table th, .mini-table td { padding: 10px; font-size: .84rem; }
+    }
+  
+
+    /* Componentes específicos deste infográfico */
+    #mapa-do-escopo { scroll-margin-top: 18px; }
+
+    .scope-hero {
+      display: grid;
+      gap: 10px;
+      padding: 5px;
+    }
+
+    .scope-layer {
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 13px;
+      background: var(--cor-superficie-suave);
+      position: relative;
+    }
+
+    .scope-layer.function {
+      margin-left: 24px;
+      background: var(--cor-superficie-destacada);
+      border-color: rgba(79,70,229,.22);
+    }
+
+    .scope-layer.block {
+      margin-left: 48px;
+      background: var(--cor-superficie);
+      border-style: dashed;
+      border-color: rgba(79,70,229,.3);
+    }
+
+    .scope-layer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .scope-layer-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--cor-primaria-escura);
+      font-size: .78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .scope-layer-code {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 11px;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-primaria-escura);
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: .81rem;
+      font-weight: 800;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .scope-tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: var(--cor-primaria);
+      color: white;
+      font-size: .7rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .scope-world {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .scope-diagram {
+      border: 1px solid var(--cor-borda);
+      border-radius: 22px;
+      padding: 20px;
+      background: linear-gradient(145deg, var(--cor-superficie-suave), var(--cor-superficie-destacada));
+    }
+
+    .scope-file {
+      border: 2px solid rgba(79,70,229,.22);
+      border-radius: 20px;
+      padding: 16px;
+      min-height: 420px;
+      background: rgba(255,255,255,.72);
+      position: relative;
+    }
+
+    .scope-file > .scope-caption,
+    .scope-function-box > .scope-caption,
+    .scope-block-box > .scope-caption {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      font-size: .76rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .scope-global-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid rgba(245,158,11,.38);
+      background: #FFFBEB;
+      border-radius: 14px;
+      padding: 11px 13px;
+      margin-bottom: 16px;
+    }
+
+    .scope-global-chip code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .scope-global-chip span { color: var(--cor-texto-secundario); font-size: .82rem; }
+
+    .scope-function-box {
+      border: 2px solid rgba(79,70,229,.34);
+      border-radius: 18px;
+      padding: 15px;
+      background: var(--cor-superficie-destacada);
+      margin: 8px 0 0 24px;
+    }
+
+    .scope-local-chip {
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      border-radius: 13px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .scope-local-chip code { color: var(--cor-primaria-escura); font-weight: 900; }
+    .scope-local-chip p { font-size: .84rem; margin-top: 4px; }
+
+    .scope-block-box {
+      border: 2px dashed rgba(79,70,229,.34);
+      border-radius: 16px;
+      padding: 13px;
+      background: var(--cor-superficie);
+      margin-left: 26px;
+    }
+
+    .scope-exit {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 13px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      font-size: .84rem;
+      color: var(--cor-texto-secundario);
+    }
+
+    .scope-exit strong { color: var(--cor-texto-principal); }
+
+    .scope-legend {
+      display: grid;
+      gap: 11px;
+    }
+
+    .legend-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 15px;
+      background: var(--cor-superficie);
+    }
+
+    .legend-card h3 { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--cor-primaria); flex: 0 0 auto; }
+    .legend-card p { font-size: .9rem; }
+    .legend-card code { color: var(--cor-primaria-escura); font-weight: 900; }
+
+    .shadow-layout {
+      display: grid;
+      grid-template-columns: 1fr 78px 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .memory-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      padding: 19px;
+      background: var(--cor-superficie-suave);
+    }
+
+    .memory-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .memory-address {
+      color: var(--cor-texto-secundario);
+      font-family: Consolas, Monaco, monospace;
+      font-size: .74rem;
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    .memory-box {
+      display: grid;
+      grid-template-columns: 1fr 90px;
+      border: 1px solid rgba(79,70,229,.22);
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .memory-name, .memory-value { padding: 13px; }
+    .memory-name { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); font-weight: 900; }
+    .memory-value { background: var(--cor-primaria-escura); color: white; display: grid; place-items: center; font-size: 1.25rem; font-weight: 900; }
+    .memory-card p { font-size: .9rem; }
+    .shadow-separator { display: grid; place-items: center; }
+    .shadow-separator span { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: var(--cor-primaria); color: white; font-weight: 900; font-size: 1.25rem; }
+
+    .decision-card > code { white-space: pre; }
+
+    .global-risk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .risk-card {
+      border: 1px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 17px;
+      background: var(--cor-superficie);
+    }
+
+    .risk-card strong { color: var(--cor-primaria-escura); display: block; margin-bottom: 6px; }
+    .risk-card p { font-size: .9rem; }
+
+    .error-grid.four { grid-template-columns: repeat(4, 1fr); }
+
+    .modal-scope-stack { display: grid; gap: 10px; margin-top: 12px; }
+    .modal-scope-row { display: grid; grid-template-columns: 130px 1fr; gap: 10px; align-items: center; }
+    .modal-scope-row strong { color: var(--cor-primaria-escura); }
+    .modal-scope-row code { padding: 9px 11px; border-radius: 11px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-weight: 900; overflow-x: auto; }
+
+    @media (max-width: 980px) {
+      .scope-world { grid-template-columns: 1fr; }
+      .shadow-layout { grid-template-columns: 1fr; }
+      .shadow-separator span { width: auto; height: auto; border-radius: 999px; padding: 7px 14px; }
+      .decision-card > code { white-space: pre; }
+
+    .global-risk-grid { grid-template-columns: 1fr; }
+      .error-grid.four { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .scope-layer.function { margin-left: 10px; }
+      .scope-layer.block { margin-left: 20px; }
+      .scope-function-box { margin-left: 8px; }
+      .scope-block-box { margin-left: 10px; }
+      .scope-file { padding: 12px; min-height: auto; }
+      .scope-global-chip { align-items: flex-start; flex-direction: column; }
+      .memory-box { grid-template-columns: 1fr 72px; }
+      .error-grid.four { grid-template-columns: 1fr; }
+      .modal-scope-row { grid-template-columns: 1fr; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h5"></path><path d="M16 15h3"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Onde a variável existe?</h1>
+          <p class="subtitle">Entenda como o local da declaração define onde uma variável pode ser usada, por quanto tempo uma variável local comum permanece disponível e por que dados globais devem ser empregados com critério.</p>
+        </div>
+
+        <aside class="hero-panel" aria-label="Resumo visual de escopos aninhados">
+          <div class="panel-head">
+            <span class="hero-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"></path><path d="M7 7h10v10H7z"></path><path d="M10 10h4v4h-4z"></path></svg></span>
+            <div><strong>O programa possui regiões de visibilidade</strong><span>Uma declaração pertence ao bloco em que foi escrita.</span></div>
+          </div>
+
+          <div class="scope-hero">
+            <div class="scope-layer">
+              <div class="scope-layer-head"><span class="scope-layer-label">Arquivo</span><span class="scope-tag">escopo global</span></div>
+              <span class="scope-layer-code">int limite = 100;</span>
+            </div>
+            <div class="scope-layer function">
+              <div class="scope-layer-head"><span class="scope-layer-label">Função ajustar</span><span class="scope-tag">escopo local</span></div>
+              <span class="scope-layer-code">int dobro = valor * 2;</span>
+            </div>
+            <div class="scope-layer block">
+              <div class="scope-layer-head"><span class="scope-layer-label">Bloco if</span><span class="scope-tag">escopo interno</span></div>
+              <span class="scope-layer-code">int excesso = dobro - limite;</span>
+            </div>
+          </div>
+
+          <div class="hero-caption"><strong>Regra visual:</strong> um bloco interno enxerga declarações externas visíveis, mas o bloco externo não enxerga variáveis criadas apenas no interior.</div>
+        </aside>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI07</div><p>Modularizar soluções e controlar a comunicação entre partes do programa.</p></article>
+        <article class="meta-card"><div class="meta-label">Competências secundárias</div><div class="meta-value">CCI02 e CCI03</div><p>Interpretar a estrutura do programa e acompanhar valores armazenados.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Escopo e variáveis locais</div><p>Relacionar declaração, visibilidade, duração e acesso aos dados.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Exploração do mapa, rastreamento e comparação de exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Visual e espacial</div><p>Blocos aninhados, fronteiras de acesso e memória independente.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M6 4h12v16H6z"></path><path d="M9 8h6M9 12h6"></path></svg>Declaração de variáveis</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>Estrutura de funções</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 7h14M8 4v6M16 4v6"></path><path d="M7 14h10v5H7z"></path></svg>Blocos com chaves</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M15 8l4 4-4 4"></path></svg>Parâmetros e argumentos</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-summary">
+        <article class="concept-main">
+          <h3>O local da declaração cria uma fronteira de acesso</h3>
+          <p>O <strong>escopo</strong> indica em quais partes do código um nome pode ser usado. Uma variável declarada dentro de uma função ou de um bloco é <strong>local</strong> àquela região. Uma variável declarada fora das funções possui escopo de arquivo e costuma ser chamada de <strong>global</strong>.</p>
+          <div class="concept-note">Neste infográfico, “duração da variável local” refere-se às variáveis locais comuns, também chamadas de automáticas. Uma variável local declarada com <code>static</code> possui duração diferente.</div>
+        </article>
+        <div class="concept-points">
+          <article class="concept-point"><span class="concept-number">1</span><h3>Localize</h3><p>Observe em qual função ou bloco a variável foi declarada.</p></article>
+          <article class="concept-point"><span class="concept-number">2</span><h3>Delimite</h3><p>Siga as chaves para identificar a região em que o nome está visível.</p></article>
+          <article class="concept-point"><span class="concept-number">3</span><h3>Prefira fluxo explícito</h3><p>Use parâmetros e retornos antes de recorrer a uma variável global.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mapa-do-escopo">
+      <div class="section-title"><span class="marker"></span><h2>Mapa do escopo</h2></div>
+      <div class="interaction-note">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M8 11l4 4 4-4"></path><path d="M5 19h14"></path></svg>
+        Clique em cada bloco para abrir uma explicação. Todos usam o mesmo exemplo da função <code>ajustar</code>.
+      </div>
+
+      <div class="function-map">
+        <svg class="map-lines" viewBox="0 0 1000 590" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="390" y1="250" x2="250" y2="150"></line>
+          <line x1="610" y1="250" x2="750" y2="150"></line>
+          <line x1="390" y1="340" x2="250" y2="445"></line>
+          <line x1="610" y1="340" x2="750" y2="445"></line>
+        </svg>
+
+        <div class="map-center">
+          <div>
+            <strong>Onde este nome pode ser usado?</strong>
+            <code>int ajustar(int valor)</code>
+            <span>a resposta depende do local da declaração e das chaves que delimitam cada bloco.</span>
+          </div>
+        </div>
+
+        <a class="map-button button-return" href="#modal-local-funcao">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg></span>
+          <h3>Variável local</h3>
+          <p>É declarada dentro da função e usada apenas naquele escopo.</p>
+          <span class="map-code">int dobro</span>
+        </a>
+
+        <a class="map-button button-void" href="#modal-bloco">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M7 4H4v16h3M17 4h3v16h-3"></path><path d="M9 9h6v6H9z"></path></svg></span>
+          <h3>Escopo de bloco</h3>
+          <p>Uma variável criada dentro de <code>{ }</code> não existe fora daquele bloco.</p>
+          <span class="map-code">int excesso</span>
+        </a>
+
+        <a class="map-button button-parameters" href="#modal-parametro">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v5H4z"></path><path d="M8 15h8M12 11v8"></path></svg></span>
+          <h3>Parâmetro</h3>
+          <p>É uma variável local criada para receber um argumento da chamada.</p>
+          <span class="map-code">int valor</span>
+        </a>
+
+        <a class="map-button button-choice" href="#modal-global">
+          <span class="map-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16M12 4a13 13 0 0 1 0 16M12 4a13 13 0 0 0 0 16"></path></svg></span>
+          <h3>Variável global</h3>
+          <p>Fica fora das funções e pode criar dependências ocultas.</p>
+          <span class="map-code">int limite</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>O programa como caixas de alcance</h2></div>
+      <div class="scope-world">
+        <article class="scope-diagram">
+          <div class="scope-file">
+            <span class="scope-caption">Arquivo programa.c</span>
+            <div class="scope-global-chip">
+              <code>int limite = 100;</code>
+              <span>visível a partir desta declaração no arquivo</span>
+            </div>
+
+            <div class="scope-function-box">
+              <span class="scope-caption">Função ajustar(int valor)</span>
+              <div class="scope-local-chip"><code>int dobro = valor * 2;</code><p><code>valor</code> e <code>dobro</code> pertencem à função.</p></div>
+
+              <div class="scope-block-box">
+                <span class="scope-caption">Bloco if</span>
+                <div class="scope-local-chip"><code>int excesso = dobro - limite;</code><p><code>excesso</code> só pode ser usado dentro deste bloco.</p></div>
+              </div>
+
+              <div class="scope-exit"><strong>Ao sair do bloco:</strong><span>o nome <code>excesso</code> deixa de estar visível. Ao sair da função, as variáveis locais comuns encerram sua duração.</span></div>
+            </div>
+          </div>
+        </article>
+
+        <aside class="scope-legend">
+          <article class="legend-card"><h3><span class="legend-dot"></span>De fora para dentro</h3><p>Um bloco interno pode usar nomes declarados em regiões externas que ainda estejam visíveis.</p></article>
+          <article class="legend-card"><h3><span class="legend-dot"></span>De dentro para fora</h3><p>O código externo não pode acessar uma variável que nasceu apenas dentro de um bloco interno.</p></article>
+          <article class="legend-card"><h3><span class="legend-dot"></span>Parâmetro é local</h3><p>Em <code>ajustar(int valor)</code>, o nome <code>valor</code> pertence ao corpo da função.</p></article>
+          <article class="legend-card"><h3><span class="legend-dot"></span>Global não significa universal</h3><p>Em C, detalhes como ordem da declaração, arquivos e ligação também afetam a visibilidade. Para iniciantes, pense primeiro no escopo do arquivo atual.</p></article>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Mesmo nome, memórias diferentes</h2></div>
+      <div class="shadow-layout">
+        <article class="memory-card">
+          <div class="memory-head"><h3>Dentro de <code>mostrar</code></h3><span class="memory-address">escopo A</span></div>
+          <div class="memory-box"><div class="memory-name">int valor</div><div class="memory-value">5</div></div>
+          <p>Esta variável existe apenas durante a execução da função <code>mostrar</code>.</p>
+        </article>
+
+        <div class="shadow-separator"><span>≠</span></div>
+
+        <article class="memory-card">
+          <div class="memory-head"><h3>Dentro de <code>main</code></h3><span class="memory-address">escopo B</span></div>
+          <div class="memory-box"><div class="memory-name">int valor</div><div class="memory-value">10</div></div>
+          <p>O nome é igual, mas representa outro espaço de memória em outro escopo.</p>
+        </article>
+      </div>
+      <div class="concept-note">Quando um nome interno oculta temporariamente um nome externo, ocorre <strong>sombreamento</strong>. O código pode ser válido, mas nomes repetidos em escopos aninhados tendem a dificultar a leitura.</div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ciclo de uma variável local comum</h2></div>
+      <div class="cooperation-flow">
+        <article class="cooperation-step"><span class="step-badge">1</span><h3>Entrar no bloco</h3><p>O fluxo alcança a função ou o bloco que contém a declaração.</p><code>if (numero &gt; 0)</code></article>
+        <article class="cooperation-step"><span class="step-badge">2</span><h3>Declarar</h3><p>O nome passa a estar disponível a partir do ponto da declaração.</p><code>int dobro;</code></article>
+        <article class="cooperation-step"><span class="step-badge">3</span><h3>Inicializar e usar</h3><p>A variável recebe um valor e participa dos comandos daquele escopo.</p><code>dobro = numero * 2;</code></article>
+        <article class="cooperation-step"><span class="step-badge">4</span><h3>Sair do bloco</h3><p>O nome deixa de estar visível e a variável automática encerra sua duração.</p><code>}</code></article>
+        <article class="cooperation-step"><span class="step-badge">5</span><h3>Não acessar depois</h3><p>Uma tentativa de usar o nome fora do escopo causa erro de compilação.</p><code>printf("%d", dobro);</code></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Global ou fluxo explícito?</h2></div>
+      <div class="decision-layout">
+        <article class="decision-card">
+          <div class="decision-head"><span class="decision-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16"></path></svg></span><div><h3>Dependência global</h3><p>A função lê ou altera um estado externo sem mostrar isso na assinatura.</p></div></div>
+          <code>int total = 0;
+void somar(int valor) {
+    total += valor;
+}</code>
+          <ul><li>o resultado depende de um dado externo;</li><li>qualquer função com acesso pode alterar o estado;</li><li>testes e reutilização ficam mais difíceis.</li></ul>
+        </article>
+
+        <div class="decision-or"><span>→</span></div>
+
+        <article class="decision-card primary">
+          <div class="decision-head"><span class="decision-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16"></path><path d="M15 7l5 5-5 5"></path><path d="M8 8v8"></path></svg></span><div><h3>Fluxo por parâmetro e retorno</h3><p>A entrada e a saída ficam explícitas na interface da função.</p></div></div>
+          <code>int somar(int total, int valor) {
+    return total + valor;
+}</code>
+          <ul><li>os dados necessários aparecem nos parâmetros;</li><li>o novo valor é produzido pelo retorno;</li><li>a função fica mais previsível e reutilizável.</li></ul>
+        </article>
+      </div>
+
+      <div class="global-risk-grid">
+        <article class="risk-card"><strong>Estado compartilhado</strong><p>Use global apenas quando o dado realmente representar um estado compartilhado do programa e houver justificativa clara.</p></article>
+        <article class="risk-card"><strong>Constantes do programa</strong><p>Valores fixos podem ser centralizados, mas devem ser identificados como constantes e protegidos contra alteração indevida.</p></article>
+        <article class="risk-card"><strong>Regra prática</strong><p>Quando uma função precisa de um dado, tente recebê-lo por parâmetro. Quando produz um resultado, tente devolvê-lo por retorno.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <div class="tabs">
+        <input type="radio" name="examples" id="tab1" checked>
+        <input type="radio" name="examples" id="tab2">
+        <input type="radio" name="examples" id="tab3">
+
+        <div class="tab-labels" role="tablist" aria-label="Exemplos de escopo">
+          <label class="tab-label" for="tab1">1. Bloco interno</label>
+          <label class="tab-label" for="tab2">2. Parâmetro e local</label>
+          <label class="tab-label" for="tab3">3. Mesmo nome, objetos distintos</label>
+        </div>
+
+        <div class="tab-panels">
+          <article class="tab-panel panel1">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M7 4H4v16h3M17 4h3v16h-3"></path><path d="M9 9h6v6H9z"></path></svg></span><div><h3>Variável criada dentro do <code>if</code></h3><p><code>metade</code> só existe no bloco delimitado pelas chaves da condição.</p></div></div>
+                <ul class="example-list"><li><code>numero</code> pertence ao <code>main</code>;</li><li><code>metade</code> pertence apenas ao bloco <code>if</code>;</li><li>usar <code>metade</code> depois da chave final causaria erro.</li></ul>
+                <span class="example-level">Nível básico</span>
+              </div>
+              <div class="code-window">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>bloco_interno.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">numero</span> <span class="syn-operator">=</span> <span class="syn-number">8</span>;
+
+    <span class="syn-keyword">if</span> (<span class="syn-variable">numero</span> <span class="syn-operator">%</span> <span class="syn-number">2</span> <span class="syn-operator">==</span> <span class="syn-number">0</span>) {
+        <span class="syn-type">int</span> <span class="syn-variable">metade</span> <span class="syn-operator">=</span> <span class="syn-variable">numero</span> <span class="syn-operator">/</span> <span class="syn-number">2</span>;
+        <span class="syn-function">printf</span>(<span class="syn-string">"Metade: %d\n"</span>, <span class="syn-variable">metade</span>);
+    }
+
+    <span class="syn-comment">// metade não pode ser usada aqui</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel2">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v5H4z"></path><path d="M8 15h8M12 11v8"></path></svg></span><div><h3>Parâmetros e resultado local</h3><p>Os parâmetros e a variável <code>media</code> pertencem à função <code>calcularMedia</code>.</p></div></div>
+                <ul class="example-list"><li><code>nota1</code> e <code>nota2</code> recebem cópias dos argumentos;</li><li><code>media</code> não pode ser usada no <code>main</code>;</li><li>o resultado atravessa a fronteira por meio de <code>return</code>.</li></ul>
+                <span class="example-level">Nível intermediário</span>
+              </div>
+              <div class="code-window">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>media_local.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">float</span> <span class="syn-function">calcularMedia</span>(<span class="syn-type">float</span> <span class="syn-variable">nota1</span>, <span class="syn-type">float</span> <span class="syn-variable">nota2</span>) {
+    <span class="syn-type">float</span> <span class="syn-variable">media</span> <span class="syn-operator">=</span> (<span class="syn-variable">nota1</span> <span class="syn-operator">+</span> <span class="syn-variable">nota2</span>) <span class="syn-operator">/</span> <span class="syn-number">2.0f</span>;
+    <span class="syn-keyword">return</span> <span class="syn-variable">media</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">float</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-function">calcularMedia</span>(<span class="syn-number">8.0f</span>, <span class="syn-number">6.0f</span>);
+    <span class="syn-function">printf</span>(<span class="syn-string">"Media: %.1f\n"</span>, <span class="syn-variable">resultado</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="tab-panel panel3">
+            <div class="example-grid">
+              <div class="example-card">
+                <div class="example-head"><span class="example-icon"><svg viewBox="0 0 24 24"><path d="M5 5h6v6H5zM13 13h6v6h-6z"></path><path d="M11 8h4v4"></path></svg></span><div><h3>Dois <code>resultado</code>, duas memórias</h3><p>O nome é repetido, mas cada declaração pertence a uma função diferente.</p></div></div>
+                <ul class="example-list"><li>o <code>resultado</code> de <code>aplicarBonus</code> é local à função;</li><li>o <code>resultado</code> do <code>main</code> recebe apenas o valor retornado;</li><li>alterar um deles não altera automaticamente o outro.</li></ul>
+                <span class="example-level">Nível intermediário</span>
+              </div>
+              <div class="code-window">
+                <div class="code-toolbar"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span>nomes_iguais.c</div>
+                <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">aplicarBonus</span>(<span class="syn-type">int</span> <span class="syn-variable">pontos</span>) {
+    <span class="syn-type">int</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-variable">pontos</span> <span class="syn-operator">+</span> <span class="syn-number">10</span>;
+    <span class="syn-keyword">return</span> <span class="syn-variable">resultado</span>;
+}
+
+<span class="syn-type">int</span> <span class="syn-function">main</span>() {
+    <span class="syn-type">int</span> <span class="syn-variable">resultado</span> <span class="syn-operator">=</span> <span class="syn-function">aplicarBonus</span>(<span class="syn-number">50</span>);
+    <span class="syn-function">printf</span>(<span class="syn-string">"Pontos: %d\n"</span>, <span class="syn-variable">resultado</span>);
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span>;
+}</code></pre>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid four">
+        <article class="error-card"><h3>Usar uma variável fora do bloco</h3><p><strong>Por que acontece:</strong> o aluno vê a declaração acima e ignora a chave que encerrou o escopo.</p><p><strong>Como evitar:</strong> trace visualmente o par de chaves que contém a declaração.</p></article>
+        <article class="error-card"><h3>Confundir nomes iguais com a mesma variável</h3><p><strong>Por que acontece:</strong> duas funções usam o mesmo identificador.</p><p><strong>Como evitar:</strong> associe cada declaração ao seu próprio escopo e espaço de memória.</p></article>
+        <article class="error-card"><h3>Usar global por conveniência</h3><p><strong>Por que acontece:</strong> parece mais simples acessar o dado de qualquer função.</p><p><strong>Como evitar:</strong> prefira parâmetros e retornos para tornar o fluxo explícito.</p></article>
+        <article class="error-card"><h3>Ler variável local sem inicializar</h3><p><strong>Por que acontece:</strong> declarar uma variável local comum não atribui automaticamente um valor confiável.</p><p><strong>Como evitar:</strong> inicialize antes da primeira leitura.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Uma variável declarada dentro de um <code>if</code> pode ser usada depois da chave final?</summary><p>Não. O nome pertence ao bloco do <code>if</code> e deixa de estar visível quando esse bloco termina.</p></details>
+        <details><summary>Um parâmetro é uma variável global?</summary><p>Não. O parâmetro é local à função e recebe um valor quando a função é chamada.</p></details>
+        <details><summary>Variáveis globais são sempre proibidas?</summary><p>Não. Elas podem representar estado realmente compartilhado, mas devem ser justificadas. Para comunicação comum entre funções, parâmetros e retornos costumam produzir código mais claro e previsível.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir determinar onde uma variável está visível, distinguir parâmetros e variáveis locais de dados globais, acompanhar a duração de uma variável local comum e escolher formas explícitas de comunicação entre funções.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <section class="modal" id="modal-local-funcao" role="dialog" aria-modal="true" aria-labelledby="titulo-local-funcao">
+    <a class="modal-backdrop" href="#mapa-do-escopo" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-escopo" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"></path><path d="M8 9h8M8 13h5"></path></svg></span><div><h2 id="titulo-local-funcao">A variável local pertence à função</h2><p>Ela só pode ser referenciada no corpo em que foi declarada.</p></div></div>
+      <div class="modal-example">
+        <h3>Mesmo exemplo: função <code>ajustar</code></h3>
+        <div class="modal-scope-stack">
+          <div class="modal-scope-row"><strong>Declaração</strong><code>int dobro = valor * 2;</code></div>
+          <div class="modal-scope-row"><strong>Visível</strong><code>do ponto da declaração até o fim da função</code></div>
+          <div class="modal-scope-row"><strong>Não visível</strong><code>em main ou em outra função</code></div>
+        </div>
+      </div>
+      <div class="modal-rule">Variáveis locais comuns ajudam a manter o estado próximo do código que o utiliza e reduzem alterações acidentais por outras funções.</div>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-bloco" role="dialog" aria-modal="true" aria-labelledby="titulo-bloco">
+    <a class="modal-backdrop" href="#mapa-do-escopo" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-escopo" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M7 4H4v16h3M17 4h3v16h-3"></path><path d="M9 9h6v6H9z"></path></svg></span><div><h2 id="titulo-bloco">Cada par de chaves pode criar um novo escopo</h2><p>Isso ocorre em blocos de decisão, repetição e outros blocos compostos.</p></div></div>
+      <div class="modal-example">
+        <h3>Mesmo exemplo: variável <code>excesso</code></h3>
+        <div class="modal-call"><div class="modal-box"><code>if (dobro &gt; limite) {</code><p>entrada no bloco</p></div><div class="modal-arrow">→</div><div class="modal-box"><code>int excesso = ...;</code><p>nome local ao bloco</p></div></div>
+      </div>
+      <div class="modal-rule">Depois da chave <code>}</code> que encerra o <code>if</code>, o identificador <code>excesso</code> não pode mais ser usado.</div>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-parametro" role="dialog" aria-modal="true" aria-labelledby="titulo-parametro">
+    <a class="modal-backdrop" href="#mapa-do-escopo" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-escopo" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16v5H4z"></path><path d="M8 15h8M12 11v8"></path></svg></span><div><h2 id="titulo-parametro">O parâmetro é uma variável local especial</h2><p>Ele recebe um argumento no início da chamada e pode ser usado no corpo da função.</p></div></div>
+      <div class="modal-example">
+        <h3>Mesmo exemplo: parâmetro <code>valor</code></h3>
+        <div class="modal-call"><div class="modal-box"><code>ajustar(70)</code><p>argumento enviado</p></div><div class="modal-arrow">→</div><div class="modal-box"><code>int valor = 70</code><p>parâmetro local</p></div></div>
+      </div>
+      <div class="modal-rule">O nome <code>valor</code> não precisa existir no código que fez a chamada. Ele é definido pela assinatura da função.</div>
+    </article>
+  </section>
+
+  <section class="modal" id="modal-global" role="dialog" aria-modal="true" aria-labelledby="titulo-global">
+    <a class="modal-backdrop" href="#mapa-do-escopo" aria-label="Fechar"></a>
+    <article class="modal-card">
+      <a class="modal-close" href="#mapa-do-escopo" aria-label="Fechar">×</a>
+      <div class="modal-head"><span class="modal-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16M12 4a13 13 0 0 1 0 16"></path></svg></span><div><h2 id="titulo-global">A variável global vive fora das funções</h2><p>Ela pode ser acessada por diferentes funções do arquivo, respeitando as regras de declaração e ligação de C.</p></div></div>
+      <div class="modal-example">
+        <h3>Mesmo exemplo: <code>limite</code></h3>
+        <div class="modal-scope-stack">
+          <div class="modal-scope-row"><strong>Declaração</strong><code>int limite = 100;</code></div>
+          <div class="modal-scope-row"><strong>Uso oculto</strong><code>if (dobro &gt; limite)</code></div>
+          <div class="modal-scope-row"><strong>Alternativa</strong><code>ajustar(valor, limite)</code></div>
+        </div>
+      </div>
+      <div class="modal-rule">O uso global não é automaticamente errado, mas aumenta o acoplamento. Quando o dado é uma entrada da função, passá-lo como parâmetro torna a dependência explícita.</div>
+    </article>
+  </section>
+</body>
+</html>

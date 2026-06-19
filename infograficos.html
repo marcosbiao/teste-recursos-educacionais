@@ -1,0 +1,1507 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Infográficos | Recursos Educacionais</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="./assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --sombra-minima: 0 10px 26px rgba(15, 23, 42, 0.05);
+      --raio: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--cor-texto-principal);
+      background:
+        linear-gradient(180deg, #ffffff 0, var(--cor-fundo) 520px),
+        var(--cor-fundo);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -4rem;
+      z-index: 20;
+      padding: 0.75rem 1rem;
+      color: #ffffff;
+      background: var(--cor-primaria-escura);
+      border-radius: 999px;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner,
+    .page-section,
+    .footer-inner {
+      width: min(1160px, calc(100% - 2rem));
+      margin-inline: auto;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 78px;
+      padding: 0.75rem 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-width: max-content;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      color: var(--cor-primaria);
+      border: 1px solid rgba(79, 70, 229, 0.28);
+      border-radius: var(--raio);
+      background: var(--cor-superficie-destacada);
+    }
+
+    .brand-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 850;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 0.2rem;
+      color: var(--cor-texto-secundario);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .nav-links a,
+    .back-link,
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 42px;
+      border-radius: 8px;
+      font-weight: 850;
+      transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-links a {
+      padding: 0.4rem 0.8rem;
+      color: #1e293b;
+      font-size: 0.92rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible,
+    .nav-links a[aria-current="page"] {
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie-destacada);
+      outline: none;
+    }
+
+    .nav-links a[aria-current="page"] {
+      box-shadow: inset 0 -2px 0 var(--cor-primaria);
+    }
+
+    .back-link {
+      padding: 0.55rem 0.85rem;
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.24);
+      background: #ffffff;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible,
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible {
+      border-color: rgba(79, 70, 229, 0.46);
+      background: var(--cor-superficie-destacada);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      margin-top: 1.25rem;
+      padding: clamp(2rem, 5vw, 4.1rem);
+      border: 1px solid rgba(79, 70, 229, 0.14);
+      border-radius: var(--raio);
+      background:
+        radial-gradient(circle at 86% 20%, rgba(79, 70, 229, 0.14), transparent 26%),
+        linear-gradient(135deg, #ffffff 0%, var(--cor-superficie-destacada) 100%);
+      box-shadow: var(--sombra-minima);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -52px -86px auto;
+      width: 250px;
+      height: 250px;
+      opacity: 0.22;
+      background:
+        linear-gradient(90deg, transparent 47%, var(--cor-primaria) 48%, var(--cor-primaria) 52%, transparent 53%),
+        linear-gradient(transparent 47%, var(--cor-primaria) 48%, var(--cor-primaria) 52%, transparent 53%);
+      background-size: 34px 34px;
+      transform: rotate(-8deg);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.85fr);
+      gap: clamp(2rem, 5vw, 4rem);
+      align-items: center;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+      padding: 0.42rem 0.72rem;
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      background: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 720px;
+      margin-bottom: 1.1rem;
+      font-size: clamp(2.7rem, 6vw, 5rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin-bottom: 1.25rem;
+      color: var(--cor-texto-secundario);
+      font-size: 1.05rem;
+    }
+
+    .objective-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.9rem;
+      align-items: start;
+      max-width: 660px;
+      padding: 1rem;
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: var(--raio);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 12px 28px rgba(79, 70, 229, 0.08);
+    }
+
+    .objective-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      color: #ffffff;
+      border-radius: var(--raio);
+      background: var(--cor-primaria);
+    }
+
+    .objective-card h2 {
+      margin-bottom: 0.2rem;
+      color: var(--cor-primaria-escura);
+      font-size: 1.02rem;
+      line-height: 1.25;
+    }
+
+    .objective-card p {
+      margin-bottom: 0;
+      color: var(--cor-texto-secundario);
+      font-size: 0.94rem;
+    }
+
+    .infographic-visual {
+      position: relative;
+      min-height: 370px;
+    }
+
+    .visual-sheet {
+      position: absolute;
+      right: 6%;
+      top: 4%;
+      width: min(310px, 76%);
+      min-height: 330px;
+      padding: 1.15rem;
+      border: 1px solid rgba(79, 70, 229, 0.22);
+      border-radius: var(--raio);
+      background: #ffffff;
+      box-shadow: 0 24px 45px rgba(49, 46, 129, 0.18);
+      transform: rotate(6deg);
+    }
+
+    .sheet-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      margin: -1.15rem -1.15rem 1rem;
+      padding: 0.8rem 1rem;
+      color: #ffffff;
+      border-radius: var(--raio) var(--raio) 0 0;
+      background: var(--cor-primaria);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: 0.75fr 1fr;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-pie {
+      width: 104px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--cor-primaria) 0 38%, #A78BFA 38% 68%, #DDD6FE 68% 100%);
+      box-shadow: inset 0 0 0 12px #ffffff;
+    }
+
+    .line-stack,
+    .sheet-lines {
+      display: grid;
+      gap: 0.48rem;
+    }
+
+    .line-stack span,
+    .sheet-lines span {
+      display: block;
+      height: 9px;
+      border-radius: 999px;
+      background: #C7D2FE;
+    }
+
+    .bars {
+      display: flex;
+      align-items: end;
+      gap: 0.5rem;
+      height: 92px;
+      margin: 1.1rem 0;
+      padding-left: 0.2rem;
+    }
+
+    .bars span {
+      width: 22px;
+      border-radius: 6px 6px 0 0;
+      background: var(--cor-primaria);
+    }
+
+    .visual-chip {
+      position: absolute;
+      display: grid;
+      width: 78px;
+      height: 78px;
+      place-items: center;
+      color: var(--cor-primaria);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 12px 28px rgba(49, 46, 129, 0.12);
+    }
+
+    .chip-eye {
+      left: 4%;
+      top: 35%;
+    }
+
+    .chip-code {
+      right: 0;
+      bottom: 8%;
+    }
+
+    .page-section {
+      margin-top: clamp(2rem, 5vw, 3.4rem);
+    }
+
+    .listing-intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+      gap: 1.5rem;
+      align-items: end;
+      margin-bottom: 1.1rem;
+    }
+
+    .listing-intro h2 {
+      margin-bottom: 0.35rem;
+      font-size: clamp(1.8rem, 3vw, 2.45rem);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .listing-intro p,
+    .result-count {
+      color: var(--cor-texto-secundario);
+    }
+
+    .result-count {
+      display: block;
+      margin-top: 0.65rem;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.42fr);
+      gap: 0.75rem;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+
+    .field label {
+      color: var(--cor-texto-principal);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap svg {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      color: #64748B;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 48px;
+      color: var(--cor-texto-principal);
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio);
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input {
+      padding: 0.78rem 1rem 0.78rem 2.65rem;
+    }
+
+    select {
+      padding: 0.78rem 0.85rem;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(79, 70, 229, 0.62);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+    }
+
+    .infographic-table {
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio);
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: var(--sombra-minima);
+      overflow: hidden;
+    }
+
+    .table-head,
+    .info-row {
+      display: grid;
+      grid-template-columns: minmax(190px, 1.08fr) minmax(220px, 1.18fr) minmax(280px, 1.65fr) minmax(128px, 0.44fr);
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .table-head {
+      padding: 0.95rem 1.15rem;
+      color: #ffffff;
+      background: var(--cor-primaria);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .head-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 0;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .info-row {
+      position: relative;
+      padding: 1.05rem 1.15rem;
+      border-top: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .info-row:hover {
+      z-index: 1;
+      background: #FDFEFF;
+      box-shadow: inset 4px 0 0 var(--cor-primaria);
+    }
+
+    .mobile-label {
+      display: none;
+      margin-bottom: 0.25rem;
+      color: var(--cor-texto-secundario);
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .competence-cell {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+      min-width: 0;
+    }
+
+    .competence-badge {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      place-items: center;
+      color: var(--cor-primaria);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: var(--raio);
+      background: var(--cor-superficie-destacada);
+      font-size: 0.82rem;
+      font-weight: 950;
+    }
+
+    .competence-name {
+      display: block;
+      color: var(--cor-texto-principal);
+      font-size: 0.94rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .info-title {
+      color: var(--cor-primaria-escura);
+      font-size: 1.08rem;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .info-description {
+      margin: 0;
+      color: var(--cor-texto-secundario);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .open-link {
+      justify-self: end;
+      min-width: 112px;
+      min-height: 42px;
+      padding: 0.62rem 0.8rem;
+      color: #ffffff;
+      border-radius: var(--raio);
+      background: var(--cor-primaria);
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .open-link:hover,
+    .open-link:focus-visible {
+      background: var(--cor-primaria-escura);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .open-link svg {
+      flex: 0 0 auto;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda);
+      background: #ffffff;
+    }
+
+    .empty-state.is-visible {
+      display: block;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 0.25rem;
+      font-size: 1.28rem;
+    }
+
+    .empty-state p {
+      color: var(--cor-texto-secundario);
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 0.7rem 0.95rem;
+      border: 1px solid rgba(79, 70, 229, 0.28);
+      color: var(--cor-primaria-escura);
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      border-color: var(--cor-primaria);
+      background: var(--cor-superficie-destacada);
+    }
+
+    .closing {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding: clamp(1.2rem, 3vw, 1.7rem);
+      color: #ffffff;
+      border-radius: var(--raio);
+      background:
+        radial-gradient(circle at 96% 12%, rgba(255, 255, 255, 0.16), transparent 26%),
+        var(--cor-primaria-escura);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .closing::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      bottom: -50px;
+      width: 190px;
+      height: 190px;
+      opacity: 0.16;
+      background:
+        linear-gradient(90deg, transparent 47%, #ffffff 48%, #ffffff 52%, transparent 53%),
+        linear-gradient(transparent 47%, #ffffff 48%, #ffffff 52%, transparent 53%);
+      background-size: 28px 28px;
+      transform: rotate(-8deg);
+    }
+
+    .closing-icon {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 68px;
+      height: 68px;
+      place-items: center;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: var(--raio);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .closing-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .closing h2 {
+      margin-bottom: 0.3rem;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      line-height: 1.15;
+    }
+
+    .closing p {
+      max-width: 760px;
+      margin-bottom: 0;
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .site-footer {
+      padding: 1.3rem 0 1.6rem;
+      border-top: 1px solid var(--cor-borda);
+      background: #ffffff;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.2rem;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--cor-texto-secundario);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .footer-inner a {
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+    }
+
+    .footer-inner a:hover,
+    .footer-inner a:focus-visible {
+      text-decoration: underline;
+      outline: none;
+    }
+
+    @media (max-width: 960px) {
+      .header-inner,
+      .listing-intro,
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+      }
+
+      .nav-actions {
+        flex: 1 1 100%;
+        justify-content: space-between;
+      }
+
+      .infographic-visual {
+        min-height: 300px;
+      }
+
+      .visual-sheet {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) rotate(4deg);
+      }
+
+      .table-head,
+      .info-row {
+        grid-template-columns: minmax(160px, 0.95fr) minmax(190px, 1fr) minmax(230px, 1.35fr) minmax(116px, 0.42fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .header-inner,
+      .page-section,
+      .footer-inner {
+        width: min(100% - 1rem, 1160px);
+      }
+
+      .site-header {
+        position: relative;
+      }
+
+      .nav-actions,
+      .nav-links,
+      .filters {
+        width: 100%;
+      }
+
+      .nav-actions,
+      .filters {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+      }
+
+      .nav-actions {
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: space-between;
+        gap: 0.25rem;
+      }
+
+      .nav-links a,
+      .back-link {
+        flex: 1 1 auto;
+        padding-inline: 0.45rem;
+        font-size: 0.82rem;
+      }
+
+      .hero {
+        padding: 1.4rem;
+      }
+
+      .objective-card,
+      .closing {
+        grid-template-columns: 1fr;
+      }
+
+      .infographic-visual {
+        min-height: 255px;
+      }
+
+      .visual-sheet {
+        top: 0;
+        width: min(260px, 82%);
+        min-height: 270px;
+      }
+
+      .visual-chip {
+        width: 58px;
+        height: 58px;
+      }
+
+      .chip-eye {
+        left: 0;
+        top: 38%;
+      }
+
+      .chip-code {
+        right: 0;
+        bottom: 0;
+      }
+
+      .table-head {
+        display: none;
+      }
+
+      .infographic-table {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .info-list {
+        gap: 0.8rem;
+      }
+
+      .info-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        padding: 1rem;
+        border: 1px solid var(--cor-borda);
+        border-radius: var(--raio);
+        box-shadow: var(--sombra-minima);
+      }
+
+      .info-row:hover {
+        box-shadow: var(--sombra-minima);
+      }
+
+      .mobile-label {
+        display: block;
+      }
+
+      .open-link {
+        justify-self: stretch;
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Recursos Educacionais - página inicial">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="13" rx="2"></rect>
+            <path d="M8 21h8"></path>
+            <path d="M12 17v4"></path>
+            <path d="m10 9-2 2 2 2"></path>
+            <path d="m14 9 2 2-2 2"></path>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-title">Recursos Educacionais</span>
+          <span class="brand-subtitle">Introdução à Programação</span>
+        </span>
+      </a>
+
+      <div class="nav-actions" aria-label="Navegação principal">
+        <nav class="nav-links">
+          <a href="index.html">Início</a>
+        </nav>
+        <a class="back-link" href="index.html#recursos">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+          </svg>
+          Voltar para recursos
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero page-section" aria-labelledby="hero-titulo">
+      <div class="hero-grid">
+        <div>
+          <span class="section-tag">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19V5"></path>
+              <path d="M9 19V9"></path>
+              <path d="M14 19v-6"></path>
+              <path d="M19 19V4"></path>
+            </svg>
+            Infográficos
+          </span>
+          <h1 id="hero-titulo">Informação que conecta e ensina</h1>
+          <p class="hero-copy">Os infográficos apresentam conceitos de programação por meio de estruturas visuais claras, exemplos progressivos e relações entre ideias. Eles ajudam o estudante a compreender, organizar e revisar conteúdos essenciais da disciplina.</p>
+
+          <div class="objective-card">
+            <span class="objective-icon" aria-hidden="true">
+              <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l4 2"></path>
+              </svg>
+            </span>
+            <div>
+              <h2>Objetivo dos infográficos</h2>
+              <p>Apresentar conceitos, processos e relações de forma visual, apoiando a compreensão, a memorização e a revisão dos conteúdos.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="infographic-visual" aria-hidden="true">
+          <div class="visual-chip chip-eye">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </div>
+          <div class="visual-sheet">
+            <div class="sheet-top">Infográfico</div>
+            <div class="sheet-grid">
+              <div class="chart-pie"></div>
+              <div class="line-stack">
+                <span style="width: 92%;"></span>
+                <span style="width: 78%;"></span>
+                <span style="width: 86%;"></span>
+                <span style="width: 62%;"></span>
+              </div>
+            </div>
+            <div class="bars">
+              <span style="height: 42%;"></span>
+              <span style="height: 56%;"></span>
+              <span style="height: 74%;"></span>
+              <span style="height: 92%;"></span>
+            </div>
+            <div class="sheet-lines">
+              <span style="width: 95%;"></span>
+              <span style="width: 88%;"></span>
+              <span style="width: 70%;"></span>
+            </div>
+          </div>
+          <div class="visual-chip chip-code">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m8 9-4 3 4 3"></path>
+              <path d="m16 9 4 3-4 3"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" aria-labelledby="lista-titulo">
+      <div class="listing-intro">
+        <div>
+          <span class="section-tag">Catálogo</span>
+          <h2 id="lista-titulo">Nossos infográficos</h2>
+          <p>Explore os infográficos disponíveis e selecione o conteúdo que deseja estudar ou revisar.</p>
+          <span class="result-count" data-result-count aria-live="polite"></span>
+        </div>
+
+        <form class="filters" role="search" aria-label="Busca e filtro de infográficos">
+          <div class="field">
+            <label for="busca-infografico">Buscar infográfico</label>
+            <div class="input-wrap">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              <input id="busca-infografico" type="search" autocomplete="off" placeholder="Título, tema ou CCI">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="filtro-competencia">Competência</label>
+            <select id="filtro-competencia">
+              <option value="">Todas</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="infographic-table">
+        <div class="table-head" aria-hidden="true">
+          <span class="head-cell">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="8"></circle>
+              <path d="M12 8v4l3 2"></path>
+            </svg>
+            Competência trabalhada
+          </span>
+          <span class="head-cell">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path>
+              <path d="M14 2v6h6"></path>
+            </svg>
+            Título
+          </span>
+          <span class="head-cell">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+            </svg>
+            Este recurso aborda
+          </span>
+          <span>Ação</span>
+        </div>
+
+        <div class="info-list" data-infographic-list></div>
+
+        <div class="empty-state" data-empty-state>
+          <h3>Nenhum infográfico encontrado</h3>
+          <p>Tente buscar por outro título, tema ou competência.</p>
+          <button class="btn" type="button" data-clear-search>Limpar busca</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section closing" aria-labelledby="fechamento-titulo">
+      <span class="closing-icon" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19V5"></path>
+          <path d="M9 19V9"></path>
+          <path d="M14 19v-6"></path>
+          <path d="M19 19V4"></path>
+        </svg>
+      </span>
+      <div class="closing-content">
+        <h2 id="fechamento-titulo">Aprender também é enxergar conexões</h2>
+        <p>Use os infográficos para revisar conceitos, relacionar ideias e acompanhar visualmente o funcionamento dos programas.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Projeto de Doutorado - Introdução à Programação</span>
+      <a href="index.html#recursos">Voltar para a página principal</a>
+    </div>
+  </footer>
+
+  <script>
+    const infograficos = [
+      {
+        competenciaCodigo: "CCI01",
+        competenciaNome: "Representar problemas por soluções algorítmicas claras.",
+        itemTrabalhado: "Entrada, processamento e saída",
+        titulo: "Como enxergar um problema de programação",
+        descricao: "Aprenda a ler um enunciado como um caminho de informação: o que entra, o que será calculado ou decidido e o que deve sair como resposta.",
+        url: "recursos/Infograficos/cci01_como_enxergar_um_problema_de_programacao.html"
+      },
+      {
+        competenciaCodigo: "CCI01",
+        competenciaNome: "Representar problemas por soluções algorítmicas claras.",
+        itemTrabalhado: "Formas de representação",
+        titulo: "Antes do código: escolha uma forma de representar a solução",
+        descricao: "Compare linguagem natural, pseudocódigo e fluxograma para organizar um algoritmo antes de transformá-lo em comandos da linguagem C.",
+        url: "recursos/Infograficos/cci01_formas_de_representacao.html"
+      },
+      {
+        competenciaCodigo: "CCI01",
+        competenciaNome: "Representar problemas por soluções algorítmicas claras.",
+        itemTrabalhado: "Decomposição",
+        titulo: "Quebrando um problema em partes menores",
+        descricao: "Explore diferentes caminhos para transformar um problema grande em partes menores, claras e programáveis antes de escrever o código em C.",
+        url: "recursos/Infograficos/cci01_quebrando_problema_em_partes_menores.html"
+      },
+      {
+        competenciaCodigo: "CCI02",
+        competenciaNome: "Implementar algoritmos simples em uma linguagem de programação.",
+        itemTrabalhado: "Estrutura básica de um programa em C",
+        titulo: "Anatomia de um programa em C",
+        descricao: "Reconheça como biblioteca, função main, variáveis, comandos e retorno se organizam para formar um programa executável.",
+        url: "recursos/Infograficos/cci02_anatomia_programa_c.html"
+      },
+      {
+        competenciaCodigo: "CCI02",
+        competenciaNome: "Implementar e verificar programas introdutórios em linguagem C.",
+        itemTrabalhado: "Teste com valores simples",
+        titulo: "Como saber se meu programa funciona?",
+        descricao: "Aprenda a testar programas básicos com entradas pequenas, prever a resposta correta e comparar o resultado esperado com o que o código realmente produz.",
+        url: "recursos/Infograficos/cci02_como_saber_se_programa_funciona.html"
+      },
+      {
+        competenciaCodigo: "CCI02",
+        competenciaNome: "Implementar soluções algorítmicas em programas introdutórios.",
+        itemTrabalhado: "Entrada, processamento e saída",
+        titulo: "O fluxo E P S: entrada, processamento e saída",
+        descricao: "Visualize como um programa recebe dados, transforma ou decide algo e produz uma resposta compreensível para o usuário.",
+        url: "recursos/Infograficos/cci02_fluxo_eps.html"
+      },
+      {
+        competenciaCodigo: "CCI02",
+        competenciaNome: "Implementar soluções introdutórias usando elementos básicos da linguagem C.",
+        itemTrabalhado: "Variável, constante e atribuição",
+        titulo: "Variável não é número solto: é memória com nome",
+        descricao: "Entenda como um programa guarda valores, identifica cada espaço de memória e modifica seu estado por meio de atribuições.",
+        url: "recursos/Infograficos/cci02_variavel_memoria_com_nome.html"
+      },
+      {
+        competenciaCodigo: "CCI03",
+        competenciaNome: "Manipular valores, expressões e mudanças de estado em programas introdutórios.",
+        itemTrabalhado: "Estado do programa",
+        titulo: "O valor da variável muda: acompanhe o estado",
+        descricao: "Aprenda a seguir a execução linha por linha e registrar o valor atual de cada variável após atribuições, cálculos e atualizações.",
+        url: "recursos/Infograficos/cci03_estado_programa.html"
+      },
+      {
+        competenciaCodigo: "CCI03",
+        competenciaNome: "Usar dados, operadores e expressões de forma coerente em uma solução.",
+        itemTrabalhado: "Expressões e precedência",
+        titulo: "A ordem dos cálculos no programa",
+        descricao: "Entenda como o C interpreta expressões aritméticas, decide qual operação executar primeiro e como os parênteses tornam a intenção do cálculo mais clara.",
+        url: "recursos/Infograficos/cci03_ordem_dos_calculos.html"
+      },
+      {
+        competenciaCodigo: "CCI04",
+        competenciaNome: "Controlar o fluxo por decisões condicionais e expressões lógicas corretas.",
+        itemTrabalhado: "Fronteiras e cobertura",
+        titulo: "Sua condição cobre todos os casos?",
+        descricao: "Aprenda a testar limites, localizar lacunas, evitar sobreposição de faixas e tratar entradas que não pertencem a nenhum caso esperado.",
+        url: "recursos/Infograficos/cci04_cobertura_casos.html"
+      },
+      {
+        competenciaCodigo: "CCI04",
+        competenciaNome: "Controlar o fluxo por decisões condicionais e expressões lógicas corretas.",
+        itemTrabalhado: "Operadores relacionais e lógicos",
+        titulo: "Como escrever uma condição correta",
+        descricao: "Aprenda a comparar valores, combinar regras e prever quando uma expressão em C será verdadeira ou falsa.",
+        url: "recursos/Infograficos/cci04_condicao_correta.html"
+      },
+      {
+        competenciaCodigo: "CCI04",
+        competenciaNome: "Controlar o fluxo por estruturas de decisão adequadas à regra do problema.",
+        itemTrabalhado: "if else versus switch case",
+        titulo: "Quando usar if e quando usar switch",
+        descricao: "Compare duas formas de controlar decisões em C e escolha a estrutura mais clara para cada tipo de regra.",
+        url: "recursos/Infograficos/cci04_if_else_switch_case.html"
+      },
+      {
+        competenciaCodigo: "CCI05",
+        competenciaNome: "Construir e controlar estruturas de repetição.",
+        itemTrabalhado: "Condição de parada",
+        titulo: "Como evitar laço infinito",
+        descricao: "Entenda como inicialização, teste, atualização e parada segura trabalham juntas para garantir que uma repetição termine.",
+        url: "recursos/Infograficos/cci05_como_evitar_laco_infinito.html"
+      },
+      {
+        competenciaCodigo: "CCI05",
+        competenciaNome: "Construir e controlar soluções que utilizam estruturas de repetição.",
+        itemTrabalhado: "Padrões com laços",
+        titulo: "Padrões clássicos com repetição",
+        descricao: "Reconheça modelos que aparecem em muitos problemas com laços: somar, contar, calcular média, encontrar o maior e localizar o menor valor.",
+        url: "recursos/Infograficos/cci05_padroes_classicos_repeticao.html"
+      },
+      {
+        competenciaCodigo: "CCI05",
+        competenciaNome: "Controlar processamento iterativo com repetição, atualização de estado e paradas seguras.",
+        itemTrabalhado: "for, while e do while",
+        titulo: "Qual laço usar?",
+        descricao: "Compare for, while e do while para escolher a estrutura de repetição que deixa a lógica mais clara e adequada ao problema.",
+        url: "recursos/Infograficos/cci05_qual_laco_usar.html"
+      },
+      {
+        competenciaCodigo: "CCI05",
+        competenciaNome: "Construir e controlar processos de repetição.",
+        itemTrabalhado: "Contador, acumulador e controle",
+        titulo: "As três variáveis mais importantes da repetição",
+        descricao: "Entenda como contador, acumulador e variável de controle registram o que acontece dentro de um laço e ajudam o programa a saber quanto repetiu, o que reuniu e quando deve parar.",
+        url: "recursos/Infograficos/cci05_tres_variaveis_repeticao.html"
+      },
+      {
+        competenciaCodigo: "CCI06",
+        competenciaNome: "Representar, percorrer e processar coleções indexadas e dados estruturados simples.",
+        itemTrabalhado: "Erros com índice",
+        titulo: "Cuidado com o índice fora do limite",
+        descricao: "Aprenda a reconhecer posições válidas, corrigir limites de laços e impedir acessos indevidos em vetores e matrizes.",
+        url: "recursos/Infograficos/cci06_indice_fora_limite.html"
+      },
+      {
+        competenciaCodigo: "CCI06",
+        competenciaNome: "Representar, percorrer e processar coleções indexadas e dados estruturados simples.",
+        itemTrabalhado: "Matriz, linha e coluna",
+        titulo: "Matriz: dados organizados em linhas e colunas",
+        descricao: "Entenda como representar uma tabela em C, acessar cada célula com dois índices e percorrer todos os elementos usando laços aninhados.",
+        url: "recursos/Infograficos/cci06_matriz_linhas_colunas.html"
+      },
+      {
+        competenciaCodigo: "CCI06",
+        competenciaNome: "Representar, percorrer e processar coleções indexadas simples.",
+        itemTrabalhado: "Percorrer vetor com laço",
+        titulo: "Como visitar todos os elementos de um vetor",
+        descricao: "Entenda como o laço for, o índice e o tamanho do vetor trabalham juntos para acessar cada posição uma única vez.",
+        url: "recursos/Infograficos/cci06_visitar_elementos_vetor.html"
+      },
+      {
+        competenciaCodigo: "CCI07",
+        competenciaNome: "Modularizar soluções e controlar a comunicação entre partes do programa.",
+        itemTrabalhado: "Escopo e variáveis locais",
+        titulo: "Onde a variável existe?",
+        descricao: "Entenda como o local da declaração define onde uma variável pode ser usada, por quanto tempo uma variável local comum permanece disponível e por que dados globais devem ser empregados com critério.",
+        url: "recursos/Infograficos/cci07_escopo_variaveis_locais.html"
+      },
+      {
+        competenciaCodigo: "CCI07",
+        competenciaNome: "Modularizar soluções por funções ou procedimentos.",
+        itemTrabalhado: "Função e procedimento",
+        titulo: "Função ou procedimento? Entenda a diferença",
+        descricao: "Compare estruturas que devolvem um valor com estruturas void que executam uma ação, e escolha a forma adequada para cada parte do programa.",
+        url: "recursos/Infograficos/cci07_funcao_ou_procedimento.html"
+      },
+      {
+        competenciaCodigo: "CCI07",
+        competenciaNome: "Modularizar soluções e comunicar dados entre módulos.",
+        itemTrabalhado: "Parâmetros e argumentos",
+        titulo: "Como uma função recebe informações",
+        descricao: "Entenda onde aparecem os parâmetros, quais valores são enviados como argumentos e como uma chamada conecta o fluxo principal ao corpo da função.",
+        url: "recursos/Infograficos/cci07_parametros_argumentos.html"
+      },
+      {
+        competenciaCodigo: "CCI08",
+        competenciaNome: "Selecionar e combinar estruturas adequadas ao tipo de problema.",
+        itemTrabalhado: "Escolha de estruturas",
+        titulo: "Qual estrutura resolve melhor este problema?",
+        descricao: "Aprenda a reconhecer o tipo de tarefa descrita no enunciado e a escolher entre condição, repetição, vetor, matriz e função.",
+        url: "recursos/Infograficos/cci08_qual_estrutura_resolve_melhor.html"
+      },
+      {
+        competenciaCodigo: "CCI08",
+        competenciaNome: "Avaliar e selecionar estratégias adequadas para resolver problemas.",
+        itemTrabalhado: "Comparação de estratégias",
+        titulo: "Solução simples ou solução complicada?",
+        descricao: "Aprenda a comparar estratégias de programação pela correção, clareza, adequação e complexidade, sem confundir simplicidade com código curto.",
+        url: "recursos/Infograficos/cci08_solucao_simples_ou_complicada.html"
+      },
+      {
+        competenciaCodigo: "CCI09",
+        competenciaNome: "Representar e manipular registros simples em programas introdutórios.",
+        itemTrabalhado: "Cadastro simples",
+        titulo: "Como organizar um cadastro em C",
+        descricao: "Aprenda a agrupar os dados de cada pessoa, produto ou livro em um registro e a armazenar vários registros de forma organizada.",
+        url: "recursos/Infograficos/cci09_como_organizar_cadastro_c.html"
+      },
+      {
+        competenciaCodigo: "CCI09",
+        competenciaNome: "Organizar e manipular dados estruturados em cadastros simples.",
+        itemTrabalhado: "Consulta e filtro",
+        titulo: "Como procurar informações em um cadastro",
+        descricao: "Aprenda a consultar registros por código, nome ou posição e a filtrar todos os elementos que atendem a um critério.",
+        url: "recursos/Infograficos/cci09_consulta_filtro.html"
+      },
+      {
+        competenciaCodigo: "CCI10",
+        competenciaNome: "Planejar e organizar programas em partes funcionais articuladas.",
+        itemTrabalhado: "Divisão do programa em partes",
+        titulo: "Como planejar um programa maior sem se perder",
+        descricao: "Aprenda a transformar um enunciado amplo em blocos funcionais, definir o papel de cada parte e conectar tudo antes de escrever o código completo.",
+        url: "recursos/Infograficos/cci10_planejar_programa_maior.html"
+      },
+      {
+        competenciaCodigo: "CCI10",
+        competenciaNome: "Testar e integrar partes de programas com múltiplas responsabilidades.",
+        itemTrabalhado: "Teste por partes",
+        titulo: "Teste primeiro as partes, depois o todo",
+        descricao: "Aprenda a verificar funções, laços, consultas e saídas separadamente para localizar erros antes de integrar o programa completo.",
+        url: "recursos/Infograficos/cci10_teste_por_partes.html"
+      },
+      {
+        competenciaCodigo: "CCI11",
+        competenciaNome: "Representar e manipular dados compostos por meio de estruturas.",
+        itemTrabalhado: "Conceito de struct",
+        titulo: "Struct: quando várias informações formam uma entidade",
+        descricao: "Entenda como a linguagem C agrupa dados relacionados em um único tipo composto e por que isso torna o programa mais organizado.",
+        url: "recursos/Infograficos/cci11_conceito_struct.html"
+      },
+      {
+        competenciaCodigo: "CCI11",
+        competenciaNome: "Organizar e manipular coleções de dados compostos.",
+        itemTrabalhado: "Vetor de structs",
+        titulo: "Vários registros organizados em uma coleção",
+        descricao: "Entenda como um vetor de structs permite armazenar e percorrer vários alunos, produtos ou livros com a mesma organização.",
+        url: "recursos/Infograficos/cci11_vetor_de_structs.html"
+      },
+      {
+        competenciaCodigo: "CCI12",
+        competenciaNome: "Compreender e construir soluções recursivas com término garantido.",
+        itemTrabalhado: "Caso base e passo recursivo",
+        titulo: "Toda recursão precisa de uma saída",
+        descricao: "Entenda como o caso base interrompe as chamadas e como o passo recursivo reduz o problema até alcançar essa saída.",
+        url: "recursos/Infograficos/cci12_caso_base_passo_recursivo.html"
+      },
+      {
+        competenciaCodigo: "CCI12",
+        competenciaNome: "Compreender e rastrear soluções recursivas.",
+        itemTrabalhado: "Pilha de chamadas",
+        titulo: "O que acontece quando uma função chama ela mesma",
+        descricao: "Visualize como cada chamada recursiva ocupa uma posição na pilha, aguarda sua resposta e retorna na ordem inversa.",
+        url: "recursos/Infograficos/cci12_pilha_de_chamadas.html"
+      },
+      {
+        competenciaCodigo: "CCI13",
+        competenciaNome: "Persistir e recuperar dados básicos por meio de arquivos em programas escritos em C.",
+        itemTrabalhado: "Cadastro com arquivo",
+        titulo: "Salvando e recuperando registros",
+        descricao: "Entenda como transformar registros mantidos na memória em dados persistentes e como recuperar essas informações para listar ou consultar um cadastro.",
+        url: "recursos/Infograficos/cci13_cadastro_com_arquivo.html"
+      },
+      {
+        competenciaCodigo: "CCI13",
+        competenciaNome: "Manipular arquivos e persistir dados básicos em programas escritos em C.",
+        itemTrabalhado: "Abrir, ler, escrever e fechar",
+        titulo: "O ciclo básico de um arquivo em C",
+        descricao: "Entenda como abrir, verificar, ler ou escrever e fechar um arquivo com segurança, acompanhando o caminho entre o programa e os dados armazenados.",
+        url: "recursos/Infograficos/cci13_ciclo_basico_arquivo_c.html"
+      },
+      {
+        competenciaCodigo: "CCI13",
+        competenciaNome: "Manipular arquivos com leitura, escrita, verificação e fechamento seguro.",
+        itemTrabalhado: "Modos de abertura",
+        titulo: "Cuidado: o modo de abertura pode apagar seus dados",
+        descricao: "Entenda como r, w e a alteram o comportamento de um arquivo e escolha o modo adequado antes de ler ou gravar informações.",
+        url: "recursos/Infograficos/cci13_modos_de_abertura.html"
+      }
+    ];
+
+    const list = document.querySelector("[data-infographic-list]");
+    const searchInput = document.querySelector("#busca-infografico");
+    const competenceFilter = document.querySelector("#filtro-competencia");
+    const resultCount = document.querySelector("[data-result-count]");
+    const emptyState = document.querySelector("[data-empty-state]");
+    const clearSearchButton = document.querySelector("[data-clear-search]");
+    const filtersForm = document.querySelector(".filters");
+
+    function normalizeText(value) {
+      return String(value)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function buildSearchText(infografico) {
+      return normalizeText([
+        infografico.competenciaCodigo,
+        infografico.competenciaNome,
+        infografico.itemTrabalhado,
+        infografico.titulo,
+        infografico.descricao
+      ].join(" "));
+    }
+
+    function populateCompetenceFilter() {
+      const codes = [...new Set(infograficos.map((infografico) => infografico.competenciaCodigo))].sort();
+
+      codes.forEach((code) => {
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = code;
+        competenceFilter.append(option);
+      });
+    }
+
+    function renderInfographics() {
+      const query = normalizeText(searchInput.value.trim());
+      const selectedCompetence = competenceFilter.value;
+
+      const filteredInfographics = infograficos.filter((infografico) => {
+        const matchesSearch = !query || buildSearchText(infografico).includes(query);
+        const matchesCompetence = !selectedCompetence || infografico.competenciaCodigo === selectedCompetence;
+        return matchesSearch && matchesCompetence;
+      });
+
+      list.innerHTML = filteredInfographics.map((infografico) => {
+        const title = escapeHTML(infografico.titulo);
+        const code = escapeHTML(infografico.competenciaCodigo);
+        const competenceName = escapeHTML(infografico.competenciaNome);
+        const description = escapeHTML(infografico.descricao);
+        const url = escapeHTML(infografico.url);
+
+        return `
+          <article class="info-row">
+            <div class="row-section">
+              <span class="mobile-label">Competência</span>
+              <div class="competence-cell">
+                <span class="competence-badge">${code}</span>
+                <span>
+                  <span class="competence-name">${competenceName}</span>
+                </span>
+              </div>
+            </div>
+            <div class="row-section">
+              <span class="mobile-label">Título</span>
+              <div class="info-title">${title}</div>
+            </div>
+            <div class="row-section">
+              <span class="mobile-label">O que aborda</span>
+              <p class="info-description">${description}</p>
+            </div>
+            <a class="open-link" href="${url}" aria-label="Abrir infográfico: ${title}">
+              Abrir
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </article>
+        `;
+      }).join("");
+
+      const visibleCount = filteredInfographics.length;
+      const label = visibleCount === 1
+        ? "1 infográfico"
+        : `${visibleCount} infográficos`;
+
+      resultCount.textContent = label;
+      emptyState.classList.toggle("is-visible", visibleCount === 0);
+    }
+
+    clearSearchButton.addEventListener("click", () => {
+      searchInput.value = "";
+      competenceFilter.value = "";
+      renderInfographics();
+      searchInput.focus();
+    });
+
+    searchInput.addEventListener("input", renderInfographics);
+    competenceFilter.addEventListener("change", renderInfographics);
+    filtersForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
+
+    populateCompetenceFilter();
+    renderInfographics();
+  </script>
+</body>
+</html>

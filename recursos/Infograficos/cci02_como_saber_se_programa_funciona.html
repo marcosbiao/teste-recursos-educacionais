@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como saber se meu programa funciona?</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/favicon/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../assets/favicon/icon-512.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+  <style>
+    :root {
+      --cor-primaria: #4F46E5;
+      --cor-primaria-escura: #312E81;
+      --cor-destaque-pontual: #F59E0B;
+      --cor-fundo: #F8FAFC;
+      --cor-superficie: #FFFFFF;
+      --cor-superficie-suave: #F1F5F9;
+      --cor-superficie-destacada: #EEF2FF;
+      --cor-texto-principal: #0F172A;
+      --cor-texto-secundario: #475569;
+      --cor-borda: #E2E8F0;
+      --sombra-suave: 0 14px 34px rgba(15, 23, 42, 0.055);
+      --codigo-fundo: #111827;
+      --codigo-texto: #E5E7EB;
+      --syntax-directive: #C084FC;
+      --syntax-header: #F9A8D4;
+      --syntax-type: #67E8F9;
+      --syntax-function: #FDE68A;
+      --syntax-keyword: #C4B5FD;
+      --syntax-string: #86EFAC;
+      --syntax-number: #FDBA74;
+      --syntax-comment: #94A3B8;
+      --syntax-variable: #BFDBFE;
+      --syntax-operator: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto-principal);
+      line-height: 1.6;
+      padding: 32px 18px;
+    }
+
+    input, button { font: inherit; }
+    code { font-family: Consolas, Monaco, "Courier New", monospace; }
+    .page { max-width: 1120px; margin: 0 auto; }
+
+    .hero,
+    .section,
+    .closing { border-radius: 26px; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--cor-superficie), var(--cor-superficie-destacada));
+      border: 1px solid var(--cor-borda);
+      padding: 38px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::before { width: 270px; height: 270px; right: -110px; top: -120px; }
+    .hero::after { width: 145px; height: 145px; right: 250px; bottom: -96px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+      gap: 32px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria-escura);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .tag svg,
+    .pill svg,
+    .cycle-icon svg,
+    .modal-icon svg,
+    .hero-icon svg,
+    .interaction-note svg,
+    .value-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      color: var(--cor-primaria-escura);
+      font-size: clamp(2.08rem, 5vw, 3.55rem);
+      line-height: 1.06;
+      max-width: 760px;
+      margin-bottom: 16px;
+      letter-spacing: -0.045em;
+    }
+
+    .subtitle {
+      color: var(--cor-texto-secundario);
+      font-size: 1.08rem;
+      max-width: 740px;
+    }
+
+    .hero-test {
+      min-height: 250px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .hero-test-card {
+      width: min(100%, 360px);
+      background: rgba(255,255,255,.94);
+      border: 1px solid var(--cor-borda);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(49, 46, 129, 0.12);
+    }
+
+    .hero-test-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cor-primaria-escura);
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .hero-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      flex: 0 0 auto;
+    }
+
+    .hero-test-flow { display: grid; gap: 10px; }
+    .hero-test-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--cor-borda);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: var(--cor-superficie-suave);
+    }
+    .hero-test-row span { color: var(--cor-texto-secundario); font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .hero-test-row strong { color: var(--cor-texto-principal); }
+    .hero-test-row.final { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.2); }
+    .hero-test-row.final strong { color: var(--cor-primaria-escura); }
+
+    .section {
+      background: var(--cor-superficie);
+      border: 1px solid var(--cor-borda);
+      padding: 29px;
+      margin-bottom: 24px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .section-title { display: flex; align-items: center; gap: 12px; margin-bottom: 21px; }
+    .marker { width: 12px; height: 33px; background: var(--cor-primaria); border-radius: 999px; flex: 0 0 auto; }
+    h2 { color: var(--cor-primaria-escura); font-size: 1.47rem; line-height: 1.2; }
+    h3 { color: var(--cor-texto-principal); font-size: 1.05rem; line-height: 1.35; margin-bottom: 8px; }
+    p { color: var(--cor-texto-secundario); }
+
+    .meta-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .meta-card { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; min-height: 145px; }
+    .meta-label { color: var(--cor-texto-secundario); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; margin-bottom: 8px; }
+    .meta-value { color: var(--cor-texto-principal); font-weight: 800; font-size: 0.98rem; margin-bottom: 5px; }
+    .meta-card p { font-size: 0.9rem; }
+
+    .pill-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      color: var(--cor-primaria-escura);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .concept-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.4fr); gap: 18px; }
+    .concept-main { background: var(--cor-superficie-destacada); border: 1px solid rgba(79, 70, 229, 0.17); border-radius: 22px; padding: 24px; }
+    .concept-main strong { color: var(--cor-primaria-escura); }
+    .concept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .concept-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 18px; }
+    .concept-number { display: inline-grid; place-items: center; width: 35px; height: 35px; border-radius: 12px; background: var(--cor-primaria); color: white; font-weight: 900; margin-bottom: 11px; }
+    .concept-card p { font-size: 0.92rem; }
+
+    .explore-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: var(--cor-superficie-suave);
+      border: 1px solid var(--cor-borda);
+      border-radius: 17px;
+      padding: 15px 17px;
+      margin-bottom: 18px;
+    }
+
+    .interaction-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cor-primaria-escura);
+      background: var(--cor-superficie-destacada);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .cycle-stage {
+      background: linear-gradient(180deg, #F8FAFC, #EEF2FF);
+      border: 1px solid var(--cor-borda);
+      border-radius: 25px;
+      padding: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cycle-stage::before {
+      content: "";
+      position: absolute;
+      inset: 50% 8% auto;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, rgba(79,70,229,.25) 0 9px, transparent 9px 18px);
+      z-index: 0;
+    }
+
+    .cycle-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cycle-card {
+      cursor: pointer;
+      min-height: 245px;
+      border-radius: 22px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+      outline: none;
+    }
+
+    .cycle-card:hover,
+    .cycle-card:focus {
+      transform: translateY(-5px);
+      border-color: rgba(79,70,229,.4);
+      box-shadow: 0 18px 34px rgba(49,46,129,.11);
+    }
+
+    .cycle-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--cor-superficie-destacada);
+      color: var(--cor-primaria);
+      margin-bottom: 14px;
+    }
+
+    .cycle-step { color: var(--cor-primaria); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+    .cycle-card h3 { color: var(--cor-primaria-escura); font-size: 1.16rem; }
+    .cycle-question { border-top: 1px solid var(--cor-borda); padding-top: 12px; margin-top: 12px; color: var(--cor-texto-principal); font-size: .88rem; font-weight: 700; }
+    .cycle-click { margin-top: auto; padding-top: 14px; color: var(--cor-primaria); font-size: .83rem; font-weight: 800; }
+
+    .modal-choice { position: fixed; opacity: 0; pointer-events: none; }
+    .test-alert { position: fixed; inset: 0; z-index: 1000; display: none; place-items: center; padding: 22px; }
+
+    #modal-values:checked ~ .test-alert,
+    #modal-predict:checked ~ .test-alert,
+    #modal-run:checked ~ .test-alert,
+    #modal-compare:checked ~ .test-alert { display: grid; }
+
+    .test-alert-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.66);
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      animation: fade-in .25s ease both;
+    }
+
+    .test-alert-dialog {
+      width: min(900px, 94vw);
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--cor-superficie);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 25px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 34px 90px rgba(15,23,42,.32);
+      animation: alert-in .34s cubic-bezier(.2,.75,.25,1.12) both;
+    }
+
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes alert-in { from { opacity: 0; transform: translateY(26px) scale(.94); } to { opacity: 1; transform: none; } }
+
+    .alert-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--cor-borda);
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(8px);
+      z-index: 2;
+    }
+
+    .alert-kicker { color: var(--cor-primaria-escura); font-size: .82rem; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; }
+    .alert-close { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-texto-principal); font-size: 1.42rem; cursor: pointer; }
+    .alert-close:hover { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+
+    .modal-panel { display: none; padding: 25px; }
+    #modal-values:checked ~ .test-alert .panel-values,
+    #modal-predict:checked ~ .test-alert .panel-predict,
+    #modal-run:checked ~ .test-alert .panel-run,
+    #modal-compare:checked ~ .test-alert .panel-compare { display: block; }
+
+    .modal-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 18px; }
+    .modal-icon { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); flex: 0 0 auto; }
+    .modal-head h3 { color: var(--cor-primaria-escura); font-size: 1.35rem; margin-bottom: 3px; }
+    .modal-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 18px; }
+    .modal-explanation, .modal-example { border-radius: 18px; padding: 18px; border: 1px solid var(--cor-borda); }
+    .modal-explanation { background: var(--cor-superficie-suave); }
+    .modal-example { background: var(--cor-superficie-destacada); border-color: rgba(79,70,229,.18); }
+    .modal-list { display: grid; gap: 10px; margin-top: 12px; }
+    .modal-list div { display: grid; grid-template-columns: 28px 1fr; gap: 9px; align-items: start; }
+    .modal-list span { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: var(--cor-primaria); color: white; font-size: .8rem; font-weight: 900; }
+    .modal-list p { font-size: .92rem; }
+
+    .test-case {
+      display: grid;
+      gap: 9px;
+      margin-top: 13px;
+    }
+    .test-case-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 10px;
+      align-items: center;
+      background: white;
+      border: 1px solid rgba(79,70,229,.16);
+      border-radius: 13px;
+      padding: 10px 12px;
+    }
+    .test-case-row span { color: var(--cor-texto-secundario); font-size: .8rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
+    .test-case-row strong { color: var(--cor-texto-principal); }
+    .test-case-row.attention { border-left: 4px solid var(--cor-destaque-pontual); }
+
+    .value-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 14px;
+    }
+
+    .value-card {
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-superficie);
+      border-radius: 19px;
+      padding: 18px;
+      position: relative;
+      min-height: 190px;
+    }
+    .value-card::before { content: ""; position: absolute; left: 18px; top: 0; width: 44px; height: 4px; background: var(--cor-primaria); border-radius: 0 0 999px 999px; }
+    .value-icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: var(--cor-superficie-destacada); color: var(--cor-primaria); margin: 6px 0 12px; }
+    .value-example { margin-top: 12px; display: inline-flex; border-radius: 999px; padding: 6px 10px; background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); color: var(--cor-primaria-escura); font-size: .8rem; font-weight: 900; }
+
+    .record-layout { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 18px; align-items: stretch; }
+    .record-intro { background: var(--cor-superficie-destacada); border: 1px solid rgba(79,70,229,.17); border-radius: 20px; padding: 21px; }
+    .record-intro strong { color: var(--cor-primaria-escura); }
+
+    .test-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    .test-table th, .test-table td { padding: 10px; border: 1px solid var(--cor-borda); text-align: left; vertical-align: top; }
+    .test-table th { color: var(--cor-primaria-escura); background: var(--cor-superficie-destacada); }
+    .test-table td { color: var(--cor-texto-secundario); background: white; }
+    .status-cell { font-weight: 900; color: var(--cor-primaria-escura) !important; }
+
+    .examples-intro { margin-bottom: 16px; }
+    .example-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .example-tab-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .example-tab-labels label { cursor: pointer; text-align: center; padding: 12px 13px; border-radius: 14px; border: 1px solid var(--cor-borda); background: var(--cor-superficie-suave); color: var(--cor-texto-secundario); font-weight: 800; transition: .2s ease; }
+    .example-tab-labels label:hover { transform: translateY(-2px); border-color: rgba(79,70,229,.35); }
+
+    #example-1:checked ~ .example-tab-labels label[for="example-1"],
+    #example-2:checked ~ .example-tab-labels label[for="example-2"],
+    #example-3:checked ~ .example-tab-labels label[for="example-3"] { background: var(--cor-primaria); color: white; border-color: var(--cor-primaria); box-shadow: 0 10px 20px rgba(79,70,229,.18); }
+
+    .example-panel { display: none; grid-template-columns: minmax(0,.98fr) minmax(0,1.02fr); gap: 18px; animation: tab-in .34s ease both; }
+    #example-1:checked ~ .example-panels .panel-example-1,
+    #example-2:checked ~ .example-panels .panel-example-2,
+    #example-3:checked ~ .example-panels .panel-example-3 { display: grid; }
+    @keyframes tab-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .example-problem, .example-code { border: 1px solid var(--cor-borda); border-radius: 19px; overflow: hidden; }
+    .example-problem { padding: 20px; background: var(--cor-superficie-suave); }
+    .example-level { display: inline-flex; background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); border-radius: 999px; padding: 6px 10px; font-size: .78rem; font-weight: 900; margin-bottom: 10px; }
+    .example-note { margin: 13px 0; padding: 12px 14px; border-left: 4px solid var(--cor-destaque-pontual); background: #FFFBEB; border-radius: 12px; color: var(--cor-texto-principal); font-size: .9rem; }
+
+    .mini-test-table { width: 100%; border-collapse: collapse; margin-top: 13px; font-size: .86rem; }
+    .mini-test-table th, .mini-test-table td { padding: 9px; border: 1px solid var(--cor-borda); text-align: left; vertical-align: top; }
+    .mini-test-table th { background: var(--cor-superficie-destacada); color: var(--cor-primaria-escura); }
+    .mini-test-table td { background: white; color: var(--cor-texto-secundario); }
+
+    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; background: #0B1220; border-bottom: 1px solid rgba(255,255,255,.08); border-radius: 18px 18px 0 0; }
+    .window-dots { display: flex; gap: 6px; }
+    .window-dots span { width: 9px; height: 9px; border-radius: 50%; background: #64748B; }
+    .code-file { color: #CBD5E1; font-family: Consolas, Monaco, "Courier New", monospace; font-size: .8rem; }
+    pre { margin: 0; }
+    .example-code { background: var(--codigo-fundo); }
+    pre code { display: block; padding: 18px; background: var(--codigo-fundo); color: var(--codigo-texto); overflow-x: auto; line-height: 1.58; font-size: .89rem; tab-size: 4; }
+
+    .syn-directive { color: var(--syntax-directive); }
+    .syn-header { color: var(--syntax-header); }
+    .syn-type { color: var(--syntax-type); }
+    .syn-function { color: var(--syntax-function); }
+    .syn-keyword { color: var(--syntax-keyword); }
+    .syn-string { color: var(--syntax-string); }
+    .syn-number { color: var(--syntax-number); }
+    .syn-comment { color: var(--syntax-comment); font-style: italic; }
+    .syn-variable { color: var(--syntax-variable); }
+    .syn-operator { color: var(--syntax-operator); }
+
+    .error-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .error-card { background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-left: 5px solid var(--cor-destaque-pontual); border-radius: 18px; padding: 18px; }
+    .error-card p { font-size: .93rem; margin-bottom: 8px; }
+    .error-card p:last-child { margin-bottom: 0; }
+
+    .question-list { display: grid; gap: 12px; }
+    details { background: var(--cor-superficie-suave); border: 1px solid var(--cor-borda); border-radius: 18px; padding: 16px 18px; }
+    summary { cursor: pointer; color: var(--cor-texto-principal); font-weight: 800; }
+    details p { margin-top: 12px; background: var(--cor-superficie); border: 1px solid var(--cor-borda); border-radius: 14px; padding: 14px; color: var(--cor-texto-principal); }
+
+    .closing { background: var(--cor-primaria-escura); color: white; padding: 29px; margin-bottom: 12px; }
+    .closing h2 { color: white; margin-bottom: 9px; }
+    .closing p { color: #E0E7FF; font-size: 1.04rem; }
+
+    @media (max-width: 1020px) {
+      .hero-grid,
+      .concept-layout,
+      .record-layout { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .cycle-grid, .value-map { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .cycle-stage::before { display: none; }
+    }
+
+    @media (max-width: 780px) {
+      .concept-cards,
+      .error-grid,
+      .example-panel,
+      .modal-grid { grid-template-columns: 1fr; }
+      .example-tab-labels { grid-template-columns: 1fr; }
+      .explore-intro { align-items: flex-start; flex-direction: column; }
+      .interaction-note { white-space: normal; }
+      .test-table { display: block; overflow-x: auto; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 11px; }
+      .hero, .section, .closing { padding: 22px; border-radius: 22px; }
+      .meta-grid, .cycle-grid, .value-map { grid-template-columns: 1fr; }
+      .hero-test { min-height: auto; margin-top: 6px; }
+      .hero-test-row, .test-case-row { grid-template-columns: 1fr; gap: 3px; }
+      .cycle-card { min-height: 205px; }
+      .test-alert { padding: 10px; }
+      .test-alert-dialog { width: 100%; max-height: 94vh; border-radius: 20px; }
+      .modal-panel { padding: 19px; }
+      .modal-head { align-items: center; }
+      .mini-test-table { display: block; overflow-x: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    .resource-credit {
+      width: min(100%, 1120px);
+      margin: 18px auto 0;
+      padding: 18px 20px;
+      text-align: center;
+      border-top: 1px solid var(--cor-borda, #E2E8F0);
+      color: var(--cor-texto-secundario, #475569);
+      font-size: 0.88rem;
+    }
+
+    .resource-credit p {
+      margin: 0;
+    }
+
+    .resource-credit a {
+      color: var(--cor-primaria, #4F46E5);
+      font-weight: 700;
+      text-decoration: none;
+      text-underline-offset: 3px;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .resource-credit a:focus-visible {
+      outline: 3px solid var(--cor-primaria, #4F46E5);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" aria-hidden="true"><path d="M9 3h6l1 3h3v15H5V6h3l1-3Z"></path><path d="m9 14 2 2 4-5"></path></svg>
+            Infográfico educacional por competências
+          </div>
+          <h1>Como saber se meu programa funciona?</h1>
+          <p class="subtitle">Aprenda a testar programas básicos com entradas pequenas, prever a resposta correta e comparar o resultado esperado com o que o código realmente produz.</p>
+        </div>
+
+        <div class="hero-test" aria-label="Resumo visual de um caso de teste">
+          <div class="hero-test-card">
+            <div class="hero-test-title">
+              <span class="hero-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path><path d="m15 16 1.5 1.5L20 14"></path></svg></span>
+              Um teste controlado
+            </div>
+            <div class="hero-test-flow">
+              <div class="hero-test-row"><span>Entrada</span><strong>4</strong></div>
+              <div class="hero-test-row"><span>Previsão</span><strong>dobro de 4 = 8</strong></div>
+              <div class="hero-test-row"><span>Programa</span><strong>produziu 8</strong></div>
+              <div class="hero-test-row final"><span>Comparação</span><strong>resultado compatível</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Identificação pedagógica</h2></div>
+      <div class="meta-grid">
+        <article class="meta-card"><div class="meta-label">Competência principal</div><div class="meta-value">CCI02</div><p>Implementar e verificar programas introdutórios em linguagem C.</p></article>
+        <article class="meta-card"><div class="meta-label">Competência secundária</div><div class="meta-value">CCI01</div><p>Interpretar entradas, operações e respostas descritas no problema.</p></article>
+        <article class="meta-card"><div class="meta-label">Item trabalhado</div><div class="meta-value">Teste com valores simples</div><p>Usar casos pequenos para verificar o comportamento do programa.</p></article>
+        <article class="meta-card"><div class="meta-label">Tempo estimado</div><div class="meta-value">12 a 18 minutos</div><p>Leitura, exploração do ciclo e análise dos exemplos.</p></article>
+        <article class="meta-card"><div class="meta-label">Estilo associado</div><div class="meta-value">Predição e comparação</div><p>Antecipar a resposta antes de executar o código.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Pré requisitos mínimos</h2></div>
+      <div class="pill-list">
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v14H4zM8 9h8M8 13h5"></path></svg>Estrutura básica em C</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 12h14M12 5v14"></path></svg>Operações simples</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 7h16M7 4v6M17 14v6M4 17h16"></path></svg>Variáveis, leitura e saída</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="m5 12 4 4L19 6"></path></svg>Noção de resultado esperado</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Ideia central</h2></div>
+      <div class="concept-layout">
+        <div class="concept-main">
+          <h3>Executar não é o mesmo que testar</h3>
+          <p>Um programa pode compilar e ainda produzir uma resposta incorreta. Para testar de forma consciente, escolha uma <strong>entrada que você consegue calcular manualmente</strong>, defina o <strong>resultado esperado antes da execução</strong> e depois compare com a saída observada.</p>
+        </div>
+        <div class="concept-cards">
+          <article class="concept-card"><span class="concept-number">1</span><h3>Escolha</h3><p>Use valores pequenos, claros e fáceis de acompanhar.</p></article>
+          <article class="concept-card"><span class="concept-number">2</span><h3>Preveja</h3><p>Calcule manualmente qual resposta deveria aparecer.</p></article>
+          <article class="concept-card"><span class="concept-number">3</span><h3>Compare</h3><p>Verifique se resultado esperado e resultado observado coincidem.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Explore o ciclo de teste</h2></div>
+      <div class="explore-intro">
+        <p>Os quatro passos usam o mesmo exemplo: um programa que recebe um número inteiro e deve mostrar o seu dobro.</p>
+        <span class="interaction-note"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v12M8 11l4 4 4-4"></path><path d="M5 21h14"></path></svg>Clique em cada card para abrir a explicação</span>
+      </div>
+
+      <input class="modal-choice" type="radio" name="test-modal" id="modal-none" checked>
+      <input class="modal-choice" type="radio" name="test-modal" id="modal-values">
+      <input class="modal-choice" type="radio" name="test-modal" id="modal-predict">
+      <input class="modal-choice" type="radio" name="test-modal" id="modal-run">
+      <input class="modal-choice" type="radio" name="test-modal" id="modal-compare">
+
+      <div class="cycle-stage">
+        <div class="cycle-grid">
+          <label class="cycle-card" for="modal-values" tabindex="0">
+            <span class="cycle-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v14H4z"></path><path d="M8 9h3M8 13h8"></path></svg></span>
+            <span class="cycle-step">Passo 1</span>
+            <h3>Escolha uma entrada pequena</h3>
+            <p>Prefira um valor que facilite o cálculo e permita acompanhar cada operação.</p>
+            <p class="cycle-question">Qual valor torna o comportamento fácil de prever?</p>
+            <span class="cycle-click">Abrir exemplo</span>
+          </label>
+
+          <label class="cycle-card" for="modal-predict" tabindex="0">
+            <span class="cycle-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"></path><path d="M9 22h6M9 10h6"></path></svg></span>
+            <span class="cycle-step">Passo 2</span>
+            <h3>Preveja a resposta</h3>
+            <p>Faça o cálculo manualmente antes de executar o programa.</p>
+            <p class="cycle-question">O que deveria aparecer na tela?</p>
+            <span class="cycle-click">Abrir exemplo</span>
+          </label>
+
+          <label class="cycle-card" for="modal-run" tabindex="0">
+            <span class="cycle-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M8 5v14l11-7-11-7Z"></path><path d="M3 5v14"></path></svg></span>
+            <span class="cycle-step">Passo 3</span>
+            <h3>Execute e registre</h3>
+            <p>Use a entrada escolhida e anote exatamente o resultado produzido.</p>
+            <p class="cycle-question">Qual foi a saída observada?</p>
+            <span class="cycle-click">Abrir exemplo</span>
+          </label>
+
+          <label class="cycle-card" for="modal-compare" tabindex="0">
+            <span class="cycle-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 7h14M5 17h14"></path><path d="m9 3-4 4 4 4M15 13l4 4-4 4"></path></svg></span>
+            <span class="cycle-step">Passo 4</span>
+            <h3>Compare e investigue</h3>
+            <p>Confronte a previsão com a saída e localize a etapa responsável por qualquer diferença.</p>
+            <p class="cycle-question">Esperado e observado são iguais?</p>
+            <span class="cycle-click">Abrir exemplo</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="test-alert" role="dialog" aria-modal="true" aria-label="Explicação do ciclo de teste">
+        <label class="test-alert-backdrop" for="modal-none" aria-label="Fechar janela"></label>
+        <div class="test-alert-dialog">
+          <div class="alert-toolbar">
+            <span class="alert-kicker">Teste guiado com a entrada 4</span>
+            <label class="alert-close" for="modal-none" aria-label="Fechar">×</label>
+          </div>
+
+          <article class="modal-panel panel-values">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 5h16v14H4z"></path><path d="M8 9h3M8 13h8"></path></svg></span>
+              <div><h3>1. Escolha uma entrada pequena</h3><p>O primeiro teste deve reduzir o esforço mental, não criar mais dificuldade.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>O que observar</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>O valor deve ser válido para o problema.</p></div>
+                  <div><span>2</span><p>O cálculo manual deve ser rápido e confiável.</p></div>
+                  <div><span>3</span><p>Evite começar com números grandes ou decimais desnecessários.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Caso usado</h3>
+                <div class="test-case">
+                  <div class="test-case-row"><span>Regra</span><strong>mostrar o dobro do número</strong></div>
+                  <div class="test-case-row"><span>Entrada escolhida</span><strong>4</strong></div>
+                  <div class="test-case-row attention"><span>Por que é útil?</span><strong>o dobro pode ser calculado imediatamente</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-predict">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"></path><path d="M9 22h6M9 10h6"></path></svg></span>
+              <div><h3>2. Preveja a resposta</h3><p>A previsão transforma a execução em um teste verificável.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Faça o rastreamento</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Entrada recebida: <strong>numero = 4</strong>.</p></div>
+                  <div><span>2</span><p>Operação: <strong>dobro = numero × 2</strong>.</p></div>
+                  <div><span>3</span><p>Resultado previsto: <strong>dobro = 8</strong>.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Resultado esperado</h3>
+                <div class="test-case">
+                  <div class="test-case-row"><span>Entrada</span><strong>4</strong></div>
+                  <div class="test-case-row"><span>Cálculo manual</span><strong>4 × 2</strong></div>
+                  <div class="test-case-row attention"><span>Saída esperada</span><strong>Dobro: 8</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-run">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M8 5v14l11-7-11-7Z"></path><path d="M3 5v14"></path></svg></span>
+              <div><h3>3. Execute e registre</h3><p>Não dependa da memória. Anote a saída que apareceu.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Durante a execução</h3>
+                <div class="modal-list">
+                  <div><span>1</span><p>Digite exatamente a entrada planejada.</p></div>
+                  <div><span>2</span><p>Observe números, textos, casas decimais e ordem da saída.</p></div>
+                  <div><span>3</span><p>Registre o que o programa produziu, mesmo que pareça errado.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Registro do teste</h3>
+                <div class="test-case">
+                  <div class="test-case-row"><span>Entrada executada</span><strong>4</strong></div>
+                  <div class="test-case-row"><span>Saída observada</span><strong>Dobro: 8</strong></div>
+                  <div class="test-case-row attention"><span>Observação</span><strong>o programa terminou sem mensagens inesperadas</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="modal-panel panel-compare">
+            <div class="modal-head">
+              <span class="modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M5 7h14M5 17h14"></path><path d="m9 3-4 4 4 4M15 13l4 4-4 4"></path></svg></span>
+              <div><h3>4. Compare e investigue</h3><p>A comparação mostra se o comportamento está de acordo com a regra do problema.</p></div>
+            </div>
+            <div class="modal-grid">
+              <div class="modal-explanation">
+                <h3>Dois resultados possíveis</h3>
+                <div class="modal-list">
+                  <div><span>=</span><p>Se esperado e observado coincidem, o caso de teste foi atendido.</p></div>
+                  <div><span>≠</span><p>Se diferem, rastreie leitura, fórmula, condição e impressão.</p></div>
+                  <div><span>+</span><p>Um teste correto aumenta a confiança, mas não prova sozinho que todos os casos funcionam.</p></div>
+                </div>
+              </div>
+              <div class="modal-example">
+                <h3>Comparação final</h3>
+                <div class="test-case">
+                  <div class="test-case-row"><span>Esperado</span><strong>8</strong></div>
+                  <div class="test-case-row"><span>Observado</span><strong>8</strong></div>
+                  <div class="test-case-row attention"><span>Conclusão</span><strong>o programa passou neste caso de teste</strong></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Que valores devo escolher?</h2></div>
+      <div class="value-map">
+        <article class="value-card">
+          <span class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 12h16M12 4v16"></path></svg></span>
+          <h3>Valor pequeno comum</h3>
+          <p>Verifica o comportamento mais esperado com uma entrada fácil de calcular.</p>
+          <span class="value-example">Exemplo: 4</span>
+        </article>
+        <article class="value-card">
+          <span class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="8"></circle><path d="M8 12h8"></path></svg></span>
+          <h3>Valor neutro</h3>
+          <p>O zero ajuda a revelar inicializações erradas, divisões indevidas e resultados acumulados.</p>
+          <span class="value-example">Exemplo: 0</span>
+        </article>
+        <article class="value-card">
+          <span class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 18 12 6l8 12H4Z"></path><path d="M12 10v4M12 17h.01"></path></svg></span>
+          <h3>Valor no limite</h3>
+          <p>Quando existe uma condição, teste exatamente o ponto em que a decisão muda.</p>
+          <span class="value-example">Exemplo: média 7,0</span>
+        </article>
+        <article class="value-card">
+          <span class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M7 4v16M17 4v16M4 8h6M14 16h6"></path></svg></span>
+          <h3>Caminho contrastante</h3>
+          <p>Teste valores que fazem o programa seguir respostas diferentes.</p>
+          <span class="value-example">Exemplo: 6,9 e 7,0</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Registre o caso de teste</h2></div>
+      <div class="record-layout">
+        <div class="record-intro">
+          <h3>Um teste precisa deixar evidências</h3>
+          <p>Use uma linha para registrar <strong>entrada</strong>, <strong>resultado esperado</strong>, <strong>resultado observado</strong> e <strong>conclusão</strong>. Isso ajuda a repetir o teste depois de corrigir o código.</p>
+        </div>
+        <div>
+          <table class="test-table">
+            <thead><tr><th>Entrada</th><th>Esperado</th><th>Observado</th><th>Conclusão</th></tr></thead>
+            <tbody>
+              <tr><td>4</td><td>8</td><td>8</td><td class="status-cell">Compatível</td></tr>
+              <tr><td>0</td><td>0</td><td>0</td><td class="status-cell">Compatível</td></tr>
+              <tr><td>−2</td><td>−4</td><td>−4</td><td class="status-cell">Compatível</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Exemplos progressivos</h2></div>
+      <p class="examples-intro">Em cada exemplo, primeiro observe os casos de teste planejados. Depois confira o programa em C.</p>
+
+      <div class="example-tabs">
+        <input type="radio" name="example-tab" id="example-1" checked>
+        <input type="radio" name="example-tab" id="example-2">
+        <input type="radio" name="example-tab" id="example-3">
+
+        <div class="example-tab-labels" role="tablist" aria-label="Exemplos de teste">
+          <label for="example-1">1. Calcular o dobro</label>
+          <label for="example-2">2. Verificar aprovação</label>
+          <label for="example-3">3. Somar de 1 até n</label>
+        </div>
+
+        <div class="example-panels">
+          <article class="example-panel panel-example-1">
+            <div class="example-problem">
+              <span class="example-level">Nível básico</span>
+              <h3>Calcular o dobro de um número</h3>
+              <p>O programa recebe um inteiro e mostra o valor multiplicado por 2.</p>
+              <p class="example-note">Como não há decisão, use valores comuns, zero e um valor negativo.</p>
+              <table class="mini-test-table">
+                <thead><tr><th>Entrada</th><th>Resultado esperado</th><th>O que verifica</th></tr></thead>
+                <tbody>
+                  <tr><td>4</td><td>8</td><td>Cálculo comum</td></tr>
+                  <tr><td>0</td><td>0</td><td>Valor neutro</td></tr>
+                  <tr><td>−2</td><td>−4</td><td>Sinal do resultado</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">dobro.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">numero</span><span class="syn-operator">,</span> <span class="syn-variable">dobro</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">numero</span><span class="syn-operator">);</span>
+    <span class="syn-variable">dobro</span> <span class="syn-operator">=</span> <span class="syn-variable">numero</span> <span class="syn-operator">*</span> <span class="syn-number">2</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Dobro: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">dobro</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-example-2">
+            <div class="example-problem">
+              <span class="example-level">Nível intermediário</span>
+              <h3>Informar aprovação pela média</h3>
+              <p>O programa recebe a média. Valores maiores ou iguais a 7,0 devem produzir “Aprovado”; os demais, “Reprovado”.</p>
+              <p class="example-note">Aqui o valor de limite é essencial, porque o operador usado é <code>&gt;=</code>.</p>
+              <table class="mini-test-table">
+                <thead><tr><th>Entrada</th><th>Resultado esperado</th><th>O que verifica</th></tr></thead>
+                <tbody>
+                  <tr><td>8,0</td><td>Aprovado</td><td>Acima do limite</td></tr>
+                  <tr><td>7,0</td><td>Aprovado</td><td>Exatamente no limite</td></tr>
+                  <tr><td>6,9</td><td>Reprovado</td><td>Abaixo do limite</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">aprovacao.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">float</span> <span class="syn-variable">media</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%f"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">media</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">if</span> <span class="syn-operator">(</span><span class="syn-variable">media</span> <span class="syn-operator">&gt;=</span> <span class="syn-number">7.0</span><span class="syn-operator">)</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Aprovado\n"</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">else</span>
+        <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Reprovado\n"</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+
+          <article class="example-panel panel-example-3">
+            <div class="example-problem">
+              <span class="example-level">Nível intermediário</span>
+              <h3>Somar os números de 1 até n</h3>
+              <p>O programa recebe um inteiro não negativo e acumula os valores de 1 até n.</p>
+              <p class="example-note">Com valores pequenos, é possível acompanhar cada repetição e conferir o acumulador.</p>
+              <table class="mini-test-table">
+                <thead><tr><th>Entrada</th><th>Resultado esperado</th><th>O que verifica</th></tr></thead>
+                <tbody>
+                  <tr><td>3</td><td>6</td><td>1 + 2 + 3</td></tr>
+                  <tr><td>1</td><td>1</td><td>Uma única repetição</td></tr>
+                  <tr><td>0</td><td>0</td><td>Laço não executado</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="example-code">
+              <div class="code-toolbar"><div class="window-dots"><span></span><span></span><span></span></div><span class="code-file">soma.c</span></div>
+              <pre><code><span class="syn-directive">#include</span> <span class="syn-header">&lt;stdio.h&gt;</span>
+
+<span class="syn-type">int</span> <span class="syn-function">main</span><span class="syn-operator">()</span> <span class="syn-operator">{</span>
+    <span class="syn-type">int</span> <span class="syn-variable">n</span><span class="syn-operator">,</span> <span class="syn-variable">i</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">scanf</span><span class="syn-operator">(</span><span class="syn-string">"%d"</span><span class="syn-operator">,</span> <span class="syn-operator">&amp;</span><span class="syn-variable">n</span><span class="syn-operator">);</span>
+
+    <span class="syn-keyword">for</span> <span class="syn-operator">(</span><span class="syn-variable">i</span> <span class="syn-operator">=</span> <span class="syn-number">1</span><span class="syn-operator">;</span> <span class="syn-variable">i</span> <span class="syn-operator">&lt;=</span> <span class="syn-variable">n</span><span class="syn-operator">;</span> <span class="syn-variable">i</span><span class="syn-operator">++)</span>
+        <span class="syn-variable">soma</span> <span class="syn-operator">=</span> <span class="syn-variable">soma</span> <span class="syn-operator">+</span> <span class="syn-variable">i</span><span class="syn-operator">;</span>
+
+    <span class="syn-function">printf</span><span class="syn-operator">(</span><span class="syn-string">"Soma: %d\n"</span><span class="syn-operator">,</span> <span class="syn-variable">soma</span><span class="syn-operator">);</span>
+    <span class="syn-keyword">return</span> <span class="syn-number">0</span><span class="syn-operator">;</span>
+<span class="syn-operator">}</span></code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Erros comuns</h2></div>
+      <div class="error-grid">
+        <article class="error-card"><h3>Executar sem prever</h3><p><strong>Por que acontece:</strong> o aluno observa qualquer saída e assume que ela está correta.</p><p><strong>Como evitar:</strong> escreva o resultado esperado antes de rodar o programa.</p></article>
+        <article class="error-card"><h3>Testar somente um valor</h3><p><strong>Por que acontece:</strong> um caso comum funciona, mas outros caminhos permanecem sem verificação.</p><p><strong>Como evitar:</strong> inclua valor comum, limite e caminho contrastante quando houver decisão.</p></article>
+        <article class="error-card"><h3>Alterar código e entrada ao mesmo tempo</h3><p><strong>Por que acontece:</strong> muitas mudanças dificultam saber o que corrigiu ou criou o erro.</p><p><strong>Como evitar:</strong> repita os mesmos casos de teste depois de cada alteração.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title"><span class="marker"></span><h2>Perguntas rápidas</h2></div>
+      <div class="question-list">
+        <details><summary>Se o programa compilou, isso significa que o resultado está correto?</summary><p>Não. A compilação indica que o código pôde ser traduzido, mas não garante que a lógica implementada corresponde ao problema.</p></details>
+        <details><summary>Por que calcular a resposta antes de executar?</summary><p>Porque o resultado esperado funciona como referência. Sem ele, não existe uma comparação objetiva para decidir se a saída está correta.</p></details>
+        <details><summary>Um caso de teste que passou prova que o programa sempre funciona?</summary><p>Não. Ele mostra apenas que o programa se comportou como esperado naquela entrada. Outros valores podem percorrer operações ou decisões diferentes.</p></details>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Fechamento pedagógico</h2>
+      <p>Depois de estudar este infográfico, o aluno deve conseguir planejar casos de teste simples, prever manualmente os resultados e comparar a saída observada com a resposta esperada para identificar possíveis falhas no programa.</p>
+    </section>
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>
