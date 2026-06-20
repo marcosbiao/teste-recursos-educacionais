@@ -15,6 +15,10 @@
     :root {
       --cor-primaria: #4F46E5;
       --cor-primaria-escura: #312E81;
+      --resource-primary: #4F46E5;
+      --resource-primary-hover: #4338CA;
+      --resource-focus: rgba(79, 70, 229, 0.28);
+      --resource-shadow: rgba(49, 46, 129, 0.18);
       --cor-destaque-pontual: #F59E0B;
       --cor-fundo: #F8FAFC;
       --cor-superficie: #FFFFFF;
@@ -511,7 +515,7 @@
     .table-head,
     .info-row {
       display: grid;
-      grid-template-columns: minmax(190px, 1.08fr) minmax(220px, 1.18fr) minmax(280px, 1.65fr) minmax(128px, 0.44fr);
+      grid-template-columns: minmax(190px, 1.08fr) minmax(220px, 1.18fr) minmax(280px, 1.65fr) 132px;
       gap: 1rem;
       align-items: center;
     }
@@ -602,29 +606,6 @@
       color: var(--cor-texto-secundario);
       font-size: 0.94rem;
       line-height: 1.55;
-    }
-
-    .open-link {
-      justify-self: end;
-      min-width: 112px;
-      min-height: 42px;
-      padding: 0.62rem 0.8rem;
-      color: #ffffff;
-      border-radius: var(--raio);
-      background: var(--cor-primaria);
-      font-size: 0.86rem;
-      font-weight: 900;
-    }
-
-    .open-link:hover,
-    .open-link:focus-visible {
-      background: var(--cor-primaria-escura);
-      outline: none;
-      transform: translateY(-1px);
-    }
-
-    .open-link svg {
-      flex: 0 0 auto;
     }
 
     .empty-state {
@@ -781,7 +762,7 @@
 
       .table-head,
       .info-row {
-        grid-template-columns: minmax(160px, 0.95fr) minmax(190px, 1fr) minmax(230px, 1.35fr) minmax(116px, 0.42fr);
+        grid-template-columns: minmax(160px, 0.95fr) minmax(190px, 1fr) minmax(230px, 1.35fr) 112px;
       }
     }
 
@@ -890,10 +871,6 @@
         display: block;
       }
 
-      .open-link {
-        justify-self: stretch;
-        width: 100%;
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -907,6 +884,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="./assets/resource-action.css">
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -930,8 +908,11 @@
       </a>
 
       <div class="nav-actions" aria-label="Navegação principal">
-        <nav class="nav-links">
+        <nav class="nav-links" aria-label="Seções de recursos">
           <a href="index.html">Início</a>
+          <a href="infograficos.html" aria-current="page">Infográficos</a>
+          <a href="roteiros.html">Roteiros</a>
+          <a href="cards-erros.html">Cards de erros</a>
         </nav>
         <a class="back-link" href="index.html#recursos">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1467,13 +1448,15 @@
               <span class="mobile-label">O que aborda</span>
               <p class="info-description">${description}</p>
             </div>
-            <a class="open-link" href="${url}" aria-label="Abrir infográfico: ${title}">
-              Abrir
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
+            <div class="resource-action-cell">
+              <a class="resource-action" href="${url}" aria-label="Abrir infográfico: ${title}">
+                Abrir
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
           </article>
         `;
       }).join("");

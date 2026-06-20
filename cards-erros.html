@@ -18,6 +18,10 @@
       --red-strong: #991B1B;
       --red-700: #B42318;
       --red-600: #D92D20;
+      --resource-primary: #C6281D;
+      --resource-primary-hover: #B42318;
+      --resource-focus: rgba(198, 40, 29, 0.28);
+      --resource-shadow: rgba(127, 29, 29, 0.18);
       --red-100: #FEE4E2;
       --red-50: #FEF3F2;
       --green-700: #067647;
@@ -598,7 +602,7 @@
     .table-head,
     .info-row {
       display: grid;
-      grid-template-columns: minmax(190px, 1.08fr) minmax(220px, 1.18fr) minmax(280px, 1.65fr) minmax(86px, 0.34fr);
+      grid-template-columns: minmax(190px, 1.08fr) minmax(220px, 1.18fr) minmax(280px, 1.65fr) 132px;
       gap: 1rem;
       align-items: center;
     }
@@ -772,40 +776,6 @@
       color: var(--blue-700);
       border: 1px solid rgba(23, 92, 211, 0.18);
       background: var(--blue-100);
-    }
-
-    .open-link {
-      display: inline-flex;
-      justify-self: end;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      width: 46px;
-      min-width: 46px;
-      min-height: 46px;
-      color: #ffffff;
-      border-radius: 999px;
-      background: var(--red-700);
-      font-size: 0.86rem;
-      font-weight: 900;
-      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .open-link:hover,
-    .open-link:focus-visible {
-      background: var(--red-dark);
-      outline: 3px solid rgba(217, 45, 32, 0.24);
-      outline-offset: 3px;
-      transform: translateY(-1px);
-      box-shadow: 0 14px 24px rgba(69, 10, 10, 0.18);
-    }
-
-    .open-link svg {
-      flex: 0 0 auto;
-    }
-
-    .open-link-label {
-      display: none;
     }
 
     .empty-state {
@@ -996,7 +966,7 @@
 
       .table-head,
       .info-row {
-        grid-template-columns: minmax(160px, 0.95fr) minmax(190px, 1fr) minmax(230px, 1.35fr) minmax(76px, 0.32fr);
+        grid-template-columns: minmax(160px, 0.95fr) minmax(190px, 1fr) minmax(230px, 1.35fr) 112px;
       }
 
       .filters {
@@ -1142,17 +1112,6 @@
         display: block;
       }
 
-      .open-link {
-        justify-self: stretch;
-        width: 100%;
-        min-height: 46px;
-        border-radius: var(--raio);
-      }
-
-      .open-link-label {
-        display: inline;
-      }
-
       .closing-flow {
         grid-template-columns: 1fr;
         justify-items: stretch;
@@ -1187,6 +1146,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="./assets/resource-action.css">
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -1210,9 +1170,10 @@
       </a>
 
       <div class="nav-actions" aria-label="Navegação principal">
-        <nav class="nav-links">
+        <nav class="nav-links" aria-label="Seções de recursos">
           <a href="index.html">Início</a>
           <a href="infograficos.html">Infográficos</a>
+          <a href="roteiros.html">Roteiros</a>
           <a href="cards-erros.html" aria-current="page">Cards de erros</a>
         </nav>
         <a class="back-link" href="index.html#recursos">
@@ -1676,13 +1637,15 @@
                 <span class="severity-badge severity-${severityModifier}">${severityIcon()} Gravidade ${severity.toLowerCase()}</span>
               </div>
             </div>
-            <a class="open-link" href="${url}" aria-label="Abrir card ${title}">
-              <span class="open-link-label">Abrir card</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </a>
+            <div class="resource-action-cell">
+              <a class="resource-action" href="${url}" aria-label="Abrir card ${title}">
+                Abrir
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
           </article>
         `;
       }).join("");
