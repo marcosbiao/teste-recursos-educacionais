@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acompanhando o estoque da cantina — missões</title>
+  <title>Atualizando o saldo do cartão de transporte — missões</title>
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
@@ -1361,42 +1361,42 @@
         <div class="badge-row">
           <span class="badge">Roteiro por missões</span>
           <span class="badge">CCI03</span>
-          <span class="badge">Variáveis, estoque e estado</span>
+          <span class="badge">Variáveis e estado</span>
         </div>
-        <h1>Acompanhando o estoque da cantina</h1>
-        <p class="hero-description">Acompanhe vendas, entradas e itens danificados para descobrir como cada operação altera o estoque atual da cantina.</p>
+        <h1>Atualizando o saldo do cartão de transporte</h1>
+        <p class="hero-description">Acompanhe uma recarga e duas passagens para observar como o saldo atual do cartão muda após cada atribuição.</p>
       </div>
 
-      <div class="hero-flow state-preview" aria-label="Fluxo resumido do rastreamento">
-        <div class="flow-chip"><small>estoque inicial</small><strong>30 unidades</strong></div>
-        <div class="flow-chip"><small>primeira saída</small><strong>− 4 unidades</strong></div>
-        <div class="flow-chip"><small>novo estoque</small><strong>26 unidades</strong></div>
+      <div class="hero-flow state-preview" aria-label="Fluxo resumido das movimentações">
+        <div class="flow-chip"><small>saldo inicial</small><strong>R$ 15,00</strong></div>
+        <div class="flow-chip"><small>após a recarga</small><strong>R$ 35,00</strong></div>
+        <div class="flow-chip"><small>após 2 passagens</small><strong>R$ 25,00</strong></div>
       </div>
     </header>
 
     <section class="context-card" aria-label="Contexto da atividade">
       <article>
         <p class="kicker">Problema a resolver</p>
-        <h2>Atualizar o estoque após vendas, reposição e perdas</h2>
+        <h2>Acompanhar o saldo durante um dia de deslocamentos</h2>
         <div class="problem-statement">
-          Uma cantina começa o turno com 30 garrafas de água. Há 4 saídas já registradas e uma remessa de 10 unidades prevista. Durante o turno, ocorrem mais 3 vendas e 2 unidades da remessa são descartadas por estarem danificadas. Analise o código que atualiza esses registros e determine o estado final.
-          <small>Pergunta central: depois de cada operação, qual é o novo valor de <code>estoque</code>, <code>entradas</code> e <code>saidas</code>?</small>
+          Ana começa o dia com R$ 15,00 no cartão de transporte. Antes de sair, faz uma recarga de R$ 20,00. Em seguida, utiliza o cartão em duas passagens de R$ 5,00 cada. Analise as atribuições e determine o saldo depois de cada movimentação.
+          <small>Pergunta central: depois de cada linha, qual é o novo valor de <code>saldo</code>?</small>
         </div>
 
-        <div class="variable-board" aria-label="Trecho de código analisado">
-          <article class="variable-card"><small>Quantidade disponível</small><strong>estoque</strong></article>
-          <article class="variable-card"><small>Remessa aceita</small><strong>entradas</strong></article>
-          <article class="variable-card"><small>Total vendido</small><strong>saidas</strong></article>
+        <div class="variable-board" aria-label="Variáveis analisadas">
+          <article class="variable-card"><small>Valor disponível</small><strong>saldo</strong></article>
+          <article class="variable-card"><small>Valor adicionado</small><strong>recarga</strong></article>
+          <article class="variable-card"><small>Valor de cada viagem</small><strong>tarifa</strong></article>
         </div>
       </article>
 
       <aside class="meta-stack">
         <p class="kicker">Resumo pedagógico</p>
         <h2>Competência trabalhada</h2>
-        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI03</strong><p>Manipular dados simples, variáveis, constantes e expressões preservando a coerência do estado</p></div></div>
-        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões contextualizadas no controle de estoque.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI03</strong><p>Manipular dados, variáveis e expressões preservando coerência do estado.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>10 a 14 minutos</strong><p>Três missões centradas em atribuições sucessivas.</p></div></div>
         <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Variável, operador de atribuição e expressões aritméticas simples.</p></div></div>
-        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>Tabela de estado correta e justificativa das mudanças.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>Saldo atualizado corretamente e justificativa das mudanças.</p></div></div>
       </aside>
     </section>
 
@@ -1417,44 +1417,44 @@
     <section class="mission active open" data-mission="1">
       <button class="mission-toggle" type="button" aria-expanded="true">
         <span class="mission-icon">1</span>
-        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Reconhecer o estoque inicial</h2><p>Identifique os registros da cantina, seus valores de partida e o significado de uma atualização.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Reconhecer o estado inicial</h2><p>Identifique as variáveis, os valores de partida e o significado de uma atribuição.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>3 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Construir a primeira fotografia do estoque antes das movimentações do turno.</p></div><span class="seal-preview">Selo: Estoque reconhecido</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Construir a primeira fotografia do cartão antes das movimentações.</p></div><span class="seal-preview">Selo: Estado reconhecido</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Identifique os registros do estoque</h3><p>Escolha somente os nomes que armazenam quantidades da cantina.</p></div></div>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Identifique as variáveis do problema</h3><p>Escolha somente os nomes que armazenam valores usados no cálculo.</p></div></div>
           <div class="choice-grid" role="radiogroup" aria-label="Conjunto de variáveis">
-            <label class="choice"><input type="radio" name="m1_vars" value="xyz"><span class="choice-letter">A</span><span class="choice-copy"><strong>estoque, entradas e saidas</strong><span>Três registros que guardam quantidades durante o turno.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_vars" value="xyprintf"><span class="choice-letter">B</span><span class="choice-copy"><strong>estoque, entradas e printf</strong><span>Mistura registros com um comando de saída.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_vars" value="five"><span class="choice-letter">C</span><span class="choice-copy"><strong>estoque, entradas, saidas, 3 e 2</strong><span>Inclui quantidades literais como se fossem variáveis.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_vars" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>saldo, recarga e tarifa</strong><span>Três valores que participam das movimentações do cartão.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_vars" value="printf"><span class="choice-letter">B</span><span class="choice-copy"><strong>saldo, recarga e printf</strong><span>Mistura variáveis com um comando de saída.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_vars" value="numbers"><span class="choice-letter">C</span><span class="choice-copy"><strong>saldo, 20 e 5</strong><span>Inclui valores numéricos como se fossem nomes de variáveis.</span></span><span class="radio-mark"></span></label>
           </div>
           <div class="branch" id="m1_vars_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Registre o estado inicial da cantina</h3><p>Use as três primeiras declarações do código.</p></div></div>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Registre os valores iniciais</h3><p>Use as declarações do trecho de código.</p></div></div>
           <div class="initial-state-grid">
-            <article class="state-input-card"><strong>estoque</strong><small>int estoque = 30;</small><input id="m1_x" type="number" placeholder="Quantidade inicial"></article>
-            <article class="state-input-card"><strong>entradas</strong><small>int entradas = 10;</small><input id="m1_y" type="number" placeholder="Remessa prevista"></article>
-            <article class="state-input-card"><strong>saidas</strong><small>int saidas = 4;</small><input id="m1_z" type="number" placeholder="Saídas registradas"></article>
+            <article class="state-input-card"><strong>saldo</strong><small>double saldo = 15.0;</small><input id="m1_saldo" type="number" step="0.01" placeholder="15,00"></article>
+            <article class="state-input-card"><strong>recarga</strong><small>double recarga = 20.0;</small><input id="m1_recarga" type="number" step="0.01" placeholder="20,00"></article>
+            <article class="state-input-card"><strong>tarifa</strong><small>double tarifa = 5.0;</small><input id="m1_tarifa" type="number" step="0.01" placeholder="5,00"></article>
           </div>
           <div class="branch" id="m1_initial_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Interprete a primeira atualização</h3><p>O símbolo <code>=</code> calcula a expressão e grava o novo estado no registro da esquerda.</p></div></div>
+          <div class="task-head"><span class="task-index">3</span><div><h3>Interprete a recarga</h3><p>Observe como o valor antigo participa da construção do novo saldo.</p></div></div>
           <div class="assignment-demo">
-            <div class="assignment-box"><small>Antes da linha</small><strong>estoque vale 30</strong></div>
+            <div class="assignment-box"><small>Antes da linha</small><strong>saldo vale 15,00</strong></div>
             <div class="assignment-arrow">→</div>
-            <div class="assignment-box"><small>Linha executada</small><strong>estoque = estoque - saidas;</strong></div>
+            <div class="assignment-box"><small>Linha executada</small><strong>saldo = saldo + recarga;</strong></div>
           </div>
           <div class="choice-grid" style="margin-top: 10px" role="radiogroup" aria-label="Significado da atribuição">
-            <label class="choice"><input type="radio" name="m1_assign" value="compare"><span class="choice-letter">A</span><span class="choice-copy"><strong>Comparar estoque com estoque - saidas</strong><span>A linha apenas verifica se os dois lados são iguais.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_assign" value="update"><span class="choice-letter">B</span><span class="choice-copy"><strong>Calcular 30 - 4 e guardar 26 em estoque</strong><span>O valor anterior é usado no cálculo e depois substituído.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_assign" value="keep"><span class="choice-letter">C</span><span class="choice-copy"><strong>Manter estoque com 30 unidades</strong><span>A venda não altera a quantidade disponível.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_assign" value="compare"><span class="choice-letter">A</span><span class="choice-copy"><strong>Comparar saldo com saldo + recarga</strong><span>A linha apenas verifica uma igualdade.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_assign" value="update"><span class="choice-letter">B</span><span class="choice-copy"><strong>Calcular 15 + 20 e guardar 35 em saldo</strong><span>O valor antigo é usado e depois substituído pelo resultado.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_assign" value="keep"><span class="choice-letter">C</span><span class="choice-copy"><strong>Manter saldo com 15</strong><span>A recarga não altera o valor armazenado.</span></span><span class="radio-mark"></span></label>
           </div>
           <div class="branch" id="m1_assign_branch" aria-live="polite"></div>
         </div>
@@ -1462,51 +1462,61 @@
         <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você identificou os registros da cantina, anotou o estado inicial e distinguiu atualização de igualdade matemática.</p></div><span class="seal">Selo conquistado<br>Estoque reconhecido</span></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você reconheceu as variáveis, os valores iniciais e o sentido da atribuição.</p></div><span class="seal">Selo conquistado<br>Estado reconhecido</span></div>
       </div>
     </section>
 
     <section class="mission locked" data-mission="2">
       <button class="mission-toggle" type="button" aria-expanded="false" disabled>
         <span class="mission-icon">2</span>
-        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Rastrear as movimentações</h2><p>Execute as cinco operações na ordem e atualize somente o registro afetado.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>5 atualizações</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Rastrear as movimentações</h2><p>Execute a recarga e as duas passagens usando sempre o saldo atual.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>4 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Manter uma fotografia coerente do estoque após cada movimentação.</p></div><span class="seal-preview">Selo: Estoque rastreado</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Manter uma fotografia coerente do saldo após cada movimentação.</p></div><span class="seal-preview">Selo: Saldo rastreado</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Execute as movimentações em sequência</h3><p>Informe o novo valor do registro alterado em cada linha.</p></div></div>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Execute as movimentações em sequência</h3><p>Informe o novo valor de <code>saldo</code> em cada linha.</p></div></div>
           <div class="state-trace">
-            <article class="state-step"><span class="state-step-number">1</span><div class="state-code">estoque = estoque - saidas;<small>As 4 saídas iniciais reduzem o estoque disponível.</small></div><div class="state-current"><span class="state-token">antes: estoque=30</span><span class="state-token">entradas=10</span><span class="state-token">saidas=4</span></div><div class="state-answer"><label for="m2_x1">Novo estoque</label><input id="m2_x1" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">2</span><div class="state-code">saidas = saidas + 3;<small>Mais 3 unidades foram vendidas.</small></div><div class="state-answer"><label for="m2_y2">Novas saidas</label><input id="m2_y2" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">3</span><div class="state-code">estoque = estoque - 3;<small>Retire do estoque as 3 vendas adicionais.</small></div><div class="state-answer"><label for="m2_z3">Novo estoque</label><input id="m2_z3" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">4</span><div class="state-code">entradas = entradas - 2;<small>Duas unidades da remessa estavam danificadas.</small></div><div class="state-answer"><label for="m2_x4">Entradas aceitas</label><input id="m2_x4" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">5</span><div class="state-code">estoque = estoque + entradas;<small>Use a entrada já corrigida após o descarte.</small></div><div class="state-answer"><label for="m2_y5">Estoque final</label><input id="m2_y5" type="number" placeholder="?"></div></article>
+            <article class="state-step">
+              <span class="state-step-number">1</span>
+              <div class="state-code">saldo = saldo + recarga;<small>A recarga aumenta o valor disponível.</small></div>
+              <div class="state-current"><span class="state-token">antes: saldo=15</span><span class="state-token">recarga=20</span><span class="state-token">tarifa=5</span></div>
+              <div class="state-answer"><label for="m2_s1">Novo saldo</label><input id="m2_s1" type="number" step="0.01" placeholder="?"></div>
+            </article>
+            <article class="state-step no-snapshot">
+              <span class="state-step-number">2</span>
+              <div class="state-code">saldo = saldo - tarifa;<small>Primeira passagem registrada.</small></div>
+              <div class="state-answer"><label for="m2_s2">Saldo após a 1ª passagem</label><input id="m2_s2" type="number" step="0.01" placeholder="?"></div>
+            </article>
+            <article class="state-step no-snapshot">
+              <span class="state-step-number">3</span>
+              <div class="state-code">saldo = saldo - tarifa;<small>Segunda passagem registrada.</small></div>
+              <div class="state-answer"><label for="m2_s3">Saldo após a 2ª passagem</label><input id="m2_s3" type="number" step="0.01" placeholder="?"></div>
+            </article>
           </div>
           <div class="branch" id="m2_trace_branch" aria-live="polite"></div>
 
-          <div class="state-summary" id="stateSummary" aria-label="Tabela completa de estado">
+          <div class="state-summary" id="stateSummary">
             <table>
-              <thead><tr><th>Momento</th><th>Operação executada</th><th>estoque</th><th>entradas</th><th>saidas</th></tr></thead>
+              <thead><tr><th>Momento</th><th>saldo</th><th>recarga</th><th>tarifa</th></tr></thead>
               <tbody>
-                <tr><td>Inicial</td><td>registros iniciais</td><td>30</td><td>10</td><td>4</td></tr>
-                <tr><td>1</td><td>estoque = estoque - saidas</td><td>26</td><td>10</td><td>4</td></tr>
-                <tr><td>2</td><td>saidas = saidas + 3</td><td>26</td><td>10</td><td>7</td></tr>
-                <tr><td>3</td><td>estoque = estoque - 3</td><td>23</td><td>10</td><td>7</td></tr>
-                <tr><td>4</td><td>entradas = entradas - 2</td><td>23</td><td>8</td><td>7</td></tr>
-                <tr><td>5</td><td>estoque = estoque + entradas</td><td>31</td><td>8</td><td>7</td></tr>
+                <tr><td>Estado inicial</td><td>15,00</td><td>20,00</td><td>5,00</td></tr>
+                <tr><td>Após a recarga</td><td>35,00</td><td>20,00</td><td>5,00</td></tr>
+                <tr><td>Após a 1ª passagem</td><td>30,00</td><td>20,00</td><td>5,00</td></tr>
+                <tr><td>Após a 2ª passagem</td><td>25,00</td><td>20,00</td><td>5,00</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Verifique a ordem das operações</h3><p>Escolha qual valor de <code>entradas</code> deve ser usado em <code>estoque = estoque + entradas</code>.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Valor usado na segunda atribuição">
-            <label class="choice"><input type="radio" name="m2_order" value="old"><span class="choice-letter">A</span><span class="choice-copy"><strong>entradas = 10</strong><span>Usar o valor previsto antes da inspeção da remessa.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m2_order" value="current"><span class="choice-letter">B</span><span class="choice-copy"><strong>entradas = 8</strong><span>Usar o estado atualizado após descartar 2 unidades.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Verifique qual saldo é usado na segunda passagem</h3><p>A segunda subtração deve usar o valor produzido pela linha anterior.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Saldo usado na segunda passagem">
+            <label class="choice"><input type="radio" name="m2_order" value="initial"><span class="choice-letter">A</span><span class="choice-copy"><strong>R$ 15,00</strong><span>Recuperar o saldo inicial antes de descontar a passagem.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_order" value="after_recharge"><span class="choice-letter">B</span><span class="choice-copy"><strong>R$ 35,00</strong><span>Ignorar que a primeira passagem já foi descontada.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_order" value="current"><span class="choice-letter">C</span><span class="choice-copy"><strong>R$ 30,00</strong><span>Usar o saldo atual gerado após a primeira passagem.</span></span><span class="radio-mark"></span></label>
           </div>
           <div class="branch" id="m2_order_branch" aria-live="polite"></div>
         </div>
@@ -1514,46 +1524,46 @@
         <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você processou vendas, perdas e reposição na ordem correta, sem recuperar quantidades antigas.</p></div><span class="seal">Selo conquistado<br>Estoque rastreado</span></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você executou as três atribuições sem recuperar valores antigos.</p></div><span class="seal">Selo conquistado<br>Saldo rastreado</span></div>
       </div>
     </section>
 
     <section class="mission locked" data-mission="3">
       <button class="mission-toggle" type="button" aria-expanded="false" disabled>
         <span class="mission-icon">3</span>
-        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Validar o fechamento do estoque</h2><p>Confirme as quantidades finais e diagnostique interpretações incorretas das atualizações.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 casos</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Validar o estado final</h2><p>Confirme os valores finais, resolva novos casos e diagnostique erros de interpretação.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>5 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Consolidar as quantidades finais e explicar por que cada movimentação alterou o estoque.</p></div><span class="seal-preview">Selo: Estoque validado</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Justificar o saldo final e transferir a estratégia para outras sequências de atribuições.</p></div><span class="seal-preview">Selo: Estado validado</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Indique o estado final da cantina</h3><p>Preencha as quantidades existentes após a quinta operação.</p></div></div>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Confirme a fotografia final</h3><p>Informe o valor armazenado em cada variável depois das três movimentações.</p></div></div>
           <div class="final-state-grid">
-            <article class="state-input-card"><strong>estoque final</strong><small>Após adicionar a remessa aceita</small><input id="m3_x" type="number" placeholder="?"></article>
-            <article class="state-input-card"><strong>entradas finais</strong><small>Após retirar as unidades danificadas</small><input id="m3_y" type="number" placeholder="?"></article>
-            <article class="state-input-card"><strong>saidas finais</strong><small>Após registrar as 3 vendas adicionais</small><input id="m3_z" type="number" placeholder="?"></article>
+            <article class="state-input-card"><strong>saldo</strong><small>Valor final disponível</small><input id="m3_saldo" type="number" step="0.01" placeholder="?"></article>
+            <article class="state-input-card"><strong>recarga</strong><small>Não recebeu nova atribuição</small><input id="m3_recarga" type="number" step="0.01" placeholder="?"></article>
+            <article class="state-input-card"><strong>tarifa</strong><small>Não recebeu nova atribuição</small><input id="m3_tarifa" type="number" step="0.01" placeholder="?"></article>
           </div>
           <div class="branch" id="m3_final_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Teste três situações</h3><p>Use Reconheça, Aplique e Analise para transferir a estratégia.</p></div></div>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Teste três situações</h3><p>Use Reconheça, Aplique e Analise para transferir o raciocínio.</p></div></div>
           <div class="test-grid">
-            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>Estoque</strong><span>caixas = 12; caixas = caixas - 2;</span></div><label class="sr-only" for="m3_case1">Quantidade final de caixas</label><select id="m3_case1"><option value="">Quantidade final?</option><option value="5">12</option><option value="7">10</option><option value="2">2</option></select></article>
-            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Caixa</strong><span>saldo=50; venda=20; saldo=saldo+venda; venda=venda+5;</span></div><label class="sr-only" for="m3_case2">Estado final de saldo e venda</label><select id="m3_case2"><option value="">Estado final?</option><option value="14_7">saldo=70 e venda=25</option><option value="6_7">saldo=75 e venda=25</option><option value="14_3">saldo=70 e venda=20</option></select></article>
-            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Afirmação</strong><span>“estoque = estoque + entradas não pode ser verdadeira.”</span></div><label class="sr-only" for="m3_case3">Diagnóstico da afirmação</label><select id="m3_case3"><option value="">Qual é o erro?</option><option value="equality">Confundir atribuição com igualdade</option><option value="old">Manter o valor antigo</option><option value="order">Ignorar a ordem das linhas</option></select></article>
+            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>Uma passagem</strong><span>saldo=40; tarifa=6; saldo=saldo-tarifa;</span></div><label class="sr-only" for="m3_case1">Saldo final</label><select id="m3_case1"><option value="">Saldo final?</option><option value="34">34</option><option value="40">40</option><option value="6">6</option></select></article>
+            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Outro cartão</strong><span>saldo=10; recarga=18; tarifa=4; recarrega e usa 2 passagens</span></div><label class="sr-only" for="m3_case2">Saldo final do outro cartão</label><select id="m3_case2"><option value="">Saldo final?</option><option value="20">20</option><option value="24">24</option><option value="12">12</option></select></article>
+            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Afirmação</strong><span>“saldo = saldo - tarifa não pode ser verdadeira.”</span></div><label class="sr-only" for="m3_case3">Diagnóstico</label><select id="m3_case3"><option value="">Qual é o erro?</option><option value="assignment">Confundir atribuição com igualdade</option><option value="old">Manter o valor antigo</option><option value="order">Ignorar a ordem das linhas</option></select></article>
           </div>
           <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha a justificativa correta</h3><p>Explique por que a última operação adiciona 8 unidades, e não 10.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Justificativa do valor final de y">
-            <label class="choice"><input type="radio" name="m3_why" value="old"><span class="choice-letter">A</span><span class="choice-copy"><strong>A remessa sempre continua com 10 unidades</strong><span>O descarte não altera o valor guardado em entradas.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m3_why" value="correct"><span class="choice-letter">B</span><span class="choice-copy"><strong>entradas passou de 10 para 8 antes da reposição</strong><span>A última linha usa o valor atual produzido pela operação anterior.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m3_why" value="initial"><span class="choice-letter">C</span><span class="choice-copy"><strong>O estoque usa sempre os valores iniciais</strong><span>As atualizações intermediárias podem ser ignoradas.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha a justificativa correta</h3><p>Explique por que o saldo final é R$ 25,00.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Justificativa do saldo final">
+            <label class="choice"><input type="radio" name="m3_why" value="reset"><span class="choice-letter">A</span><span class="choice-copy"><strong>Cada linha começa novamente com R$ 15,00</strong><span>As atribuições anteriores não influenciam as seguintes.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_why" value="correct"><span class="choice-letter">B</span><span class="choice-copy"><strong>O saldo evolui 15 → 35 → 30 → 25</strong><span>Cada linha usa o valor atual produzido pela anterior.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_why" value="same"><span class="choice-letter">C</span><span class="choice-copy"><strong>As duas passagens usam simultaneamente o saldo de R$ 35,00</strong><span>A ordem das subtrações pode ser ignorada.</span></span><span class="radio-mark"></span></label>
           </div>
           <div class="branch" id="m3_why_branch" aria-live="polite"></div>
         </div>
@@ -1561,34 +1571,30 @@
         <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir missão</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você confirmou o fechamento do estoque e justificou as mudanças usando as quantidades atuais.</p></div><span class="seal">Selo conquistado<br>Estoque validado</span></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você confirmou o saldo final e justificou as mudanças usando o estado atual.</p></div><span class="seal">Selo conquistado<br>Estado validado</span></div>
       </div>
     </section>
 
     <section class="final-code" id="finalCodeBlock" hidden>
       <div class="task-block">
-        <div class="task-head"><span class="task-index">✓</span><div><h3>Código do controle de estoque</h3><p>Compare o programa com a tabela de movimentações construída durante o roteiro.</p></div></div>
+        <div class="task-head"><span class="task-index">✓</span><div><h3>Código do cartão de transporte</h3><p>Compare o programa com a sequência de estados construída durante o roteiro.</p></div></div>
         <div class="code-window" aria-label="Código final em C">
-          <div class="ide-bar"><span>estoque_cantina.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+          <div class="ide-bar"><span>cartao_transporte.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
           <div class="code-body">
             <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;stdio.h&gt;</span></span></div>
             <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
             <div class="code-line entry"><span class="line-number">3</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
-            <div class="code-line entry"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">int</span> estoque = <span class="tok-num">30</span>;</span></div>
-            <div class="code-line entry"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">int</span> entradas = <span class="tok-num">10</span>;</span></div>
-            <div class="code-line entry"><span class="line-number">6</span><span class="line-code">    <span class="tok-type">int</span> saidas = <span class="tok-num">4</span>;</span></div>
+            <div class="code-line entry"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">double</span> saldo = <span class="tok-num">15.0</span>;</span></div>
+            <div class="code-line entry"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">double</span> recarga = <span class="tok-num">20.0</span>;</span></div>
+            <div class="code-line entry"><span class="line-number">6</span><span class="line-code">    <span class="tok-type">double</span> tarifa = <span class="tok-num">5.0</span>;</span></div>
             <div class="code-line"><span class="line-number">7</span><span class="line-code"></span></div>
-            <div class="code-line process"><span class="line-number">8</span><span class="line-code">    estoque = estoque - saidas;    <span class="tok-comment">// 30 → 26</span></span></div>
-            <div class="code-line process"><span class="line-number">9</span><span class="line-code">    saidas = saidas + <span class="tok-num">3</span>;        <span class="tok-comment">// 4 → 7</span></span></div>
-            <div class="code-line process"><span class="line-number">10</span><span class="line-code">    estoque = estoque - <span class="tok-num">3</span>;     <span class="tok-comment">// 26 → 23</span></span></div>
-            <div class="code-line process"><span class="line-number">11</span><span class="line-code">    entradas = entradas - <span class="tok-num">2</span>;   <span class="tok-comment">// 10 → 8</span></span></div>
-            <div class="code-line process"><span class="line-number">12</span><span class="line-code">    estoque = estoque + entradas; <span class="tok-comment">// 23 → 31</span></span></div>
-            <div class="code-line"><span class="line-number">13</span><span class="line-code"></span></div>
-            <div class="code-line output"><span class="line-number">14</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Estoque: %d, entradas: %d, saidas: %d
-"</span>,</span></div>
-            <div class="code-line output"><span class="line-number">15</span><span class="line-code">           estoque, entradas, saidas);</span></div>
-            <div class="code-line"><span class="line-number">16</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
-            <div class="code-line"><span class="line-number">17</span><span class="line-code">}</span></div>
+            <div class="code-line process"><span class="line-number">8</span><span class="line-code">    saldo = saldo + recarga; <span class="tok-comment">// 15 → 35</span></span></div>
+            <div class="code-line process"><span class="line-number">9</span><span class="line-code">    saldo = saldo - tarifa;  <span class="tok-comment">// 35 → 30</span></span></div>
+            <div class="code-line process"><span class="line-number">10</span><span class="line-code">    saldo = saldo - tarifa; <span class="tok-comment">// 30 → 25</span></span></div>
+            <div class="code-line"><span class="line-number">11</span><span class="line-code"></span></div>
+            <div class="code-line output"><span class="line-number">12</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Saldo final: R$ %.2f\n"</span>, saldo);</span></div>
+            <div class="code-line"><span class="line-number">13</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
+            <div class="code-line"><span class="line-number">14</span><span class="line-code">}</span></div>
           </div>
           <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Estado inicial</span><span class="legend-item"><i class="legend-dot process-dot"></i>Atribuições sucessivas</span><span class="legend-item"><i class="legend-dot output-dot"></i>Estado final</span></div>
         </div>
@@ -1597,12 +1603,12 @@
 
     <section class="completion" id="completionPanel" aria-live="polite">
       <span class="completion-label">Percurso concluído</span>
-      <h2>Fechamento: estoque = 31, entradas = 8 e saidas = 7</h2>
-      <p>Cada movimentação foi executada usando as quantidades atuais. Vendas, descarte e reposição alteraram os registros na ordem em que ocorreram.</p>
+      <h2>Saldo final: R$ 25,00</h2>
+      <p>A recarga e as duas passagens foram executadas em ordem. Cada atribuição utilizou o saldo atual e produziu um novo estado.</p>
       <div class="completion-grid">
-        <article class="completion-item"><strong>Estoque reconhecido</strong><span>Registros, quantidades iniciais e significado de atualização foram identificados.</span></article>
-        <article class="completion-item"><strong>Movimentações rastreadas</strong><span>As cinco operações foram executadas em ordem, sem recuperar quantidades antigas.</span></article>
-        <article class="completion-item"><strong>Fechamento validado</strong><span>As quantidades finais e os erros comuns de interpretação foram verificados.</span></article>
+        <article class="completion-item"><strong>Estado reconhecido</strong><span>Variáveis, valores iniciais e significado da atribuição foram identificados.</span></article>
+        <article class="completion-item"><strong>Saldo rastreado</strong><span>As três movimentações foram executadas sem recuperar valores antigos.</span></article>
+        <article class="completion-item"><strong>Estado validado</strong><span>O saldo final e os erros comuns de interpretação foram verificados.</span></article>
       </div>
       <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer o roteiro</button></div>
     </section>
@@ -1615,19 +1621,19 @@
     const hintState = { 1: 0, 2: 0, 3: 0 };
     const hints = {
       1: [
-        ["Pista", "Os registros estoque, entradas e saidas armazenam quantidades; comandos e números literais não são variáveis."],
-        ["Pergunta guia", "Quais quantidades aparecem nas declarações iniciais de estoque, entradas e saidas?"],
-        ["Regra central", "Em estoque = estoque - saidas, calcule primeiro 30 - 4 e depois substitua estoque por 26."]
+        ["Pista", "saldo, recarga e tarifa armazenam valores. Comandos e números isolados não são variáveis."],
+        ["Pergunta guia", "Quais valores aparecem nas três declarações antes das movimentações?"],
+        ["Regra central", "Em saldo = saldo + recarga, calcule primeiro 15 + 20 e depois substitua saldo por 35."]
       ],
       2: [
-        ["Pista", "Cada operação altera apenas o registro que aparece à esquerda do sinal de atribuição."],
-        ["Pergunta guia", "Na última linha, entradas ainda vale 10 ou já foi reduzida para 8?"],
-        ["Estratégia", "Depois de cada operação, escreva uma nova fotografia completa: estoque, entradas e saidas."]
+        ["Pista", "Cada linha começa com o saldo produzido pela linha anterior."],
+        ["Pergunta guia", "Depois da primeira passagem, saldo ainda vale 35 ou já passou a valer 30?"],
+        ["Estratégia", "Escreva a sequência completa: 15 → 35 → 30 → 25."]
       ],
       3: [
-        ["Pista", "O fechamento do estoque é a última fotografia produzida pela sequência inteira."],
-        ["Pergunta guia", "Qual era o valor de entradas imediatamente antes da reposição final?"],
-        ["Diagnóstico", "Se uma resposta adiciona 10 na última linha, ela ignorou o descarte anterior de 2 unidades."]
+        ["Pista", "recarga e tarifa não recebem novas atribuições; apenas saldo muda."],
+        ["Pergunta guia", "Qual valor de saldo existe imediatamente antes da segunda passagem?"],
+        ["Diagnóstico", "Se uma resposta volta para 15 ou 35, ela ignorou um estado produzido anteriormente."]
       ]
     };
 
@@ -1639,6 +1645,7 @@
       const raw = value(id).replace(",", ".");
       return raw === "" ? NaN : Number(raw);
     };
+    const closeTo = (a, b) => Number.isFinite(a) && Math.abs(a - b) < 0.001;
 
     function setBranch(id, title = "", text = "") {
       const box = document.getElementById(id);
@@ -1655,76 +1662,78 @@
 
     function validateMission1(live = false) {
       const vars = radio("m1_vars");
-      const x = numberValue("m1_x"), y = numberValue("m1_y"), z = numberValue("m1_z");
+      const saldo = numberValue("m1_saldo");
+      const recarga = numberValue("m1_recarga");
+      const tarifa = numberValue("m1_tarifa");
       const assign = radio("m1_assign");
 
-      if (vars && vars !== "xyz") {
-        setBranch("m1_vars_branch", vars === "xyprintf" ? "Comando não é variável" : "Quantidades literais não são variáveis", vars === "xyprintf" ? "printf apenas mostra o fechamento; ele não armazena quantidade." : "3 e 2 são valores usados nas movimentações, não nomes de registros.");
+      if (vars && vars !== "correct") {
+        setBranch("m1_vars_branch", vars === "printf" ? "Comando não é variável" : "Número não é nome de variável", vars === "printf" ? "printf apenas exibe informações; ele não armazena o saldo." : "20 e 5 são valores literais usados nas expressões.");
       } else setBranch("m1_vars_branch");
 
-      const initialFilled = [x, y, z].every(Number.isFinite);
-      const initialOk = initialFilled && x === 30 && y === 10 && z === 4;
-      if (initialFilled && !initialOk) setBranch("m1_initial_branch", "Estado inicial incorreto", "Leia as declarações: estoque recebe 30, entradas recebe 10 e saidas recebe 4.");
+      const initialFilled = [saldo, recarga, tarifa].every(Number.isFinite);
+      const initialOk = initialFilled && closeTo(saldo, 15) && closeTo(recarga, 20) && closeTo(tarifa, 5);
+      if (initialFilled && !initialOk) setBranch("m1_initial_branch", "Estado inicial incorreto", "Leia as declarações: saldo recebe 15, recarga recebe 20 e tarifa recebe 5.");
       else setBranch("m1_initial_branch");
 
       if (assign && assign !== "update") {
-        setBranch("m1_assign_branch", assign === "compare" ? "Atribuição não é igualdade matemática" : "O estoque precisa mudar", assign === "compare" ? "O operador = calcula o lado direito e guarda o resultado no registro da esquerda." : "Depois da linha, estoque deixa de valer 30 e passa a valer 26.");
+        setBranch("m1_assign_branch", assign === "compare" ? "Atribuição não é igualdade matemática" : "A recarga precisa alterar o saldo", assign === "compare" ? "O operador = calcula o lado direito e grava o resultado na variável da esquerda." : "Depois da recarga, saldo deixa de valer 15 e passa a valer 35.");
       } else setBranch("m1_assign_branch");
 
-      const complete = vars === "xyz" && initialOk && assign === "update";
+      const complete = vars === "correct" && initialOk && assign === "update";
       if (!live && !complete) showFeedback(1, "Complete as três decisões ou use as pistas antes de concluir.");
       return complete;
     }
 
     function validateMission2(live = false) {
-      const answers = [numberValue("m2_x1"), numberValue("m2_y2"), numberValue("m2_z3"), numberValue("m2_x4"), numberValue("m2_y5")];
-      const expected = [26, 7, 23, 8, 31];
+      const answers = [numberValue("m2_s1"), numberValue("m2_s2"), numberValue("m2_s3")];
+      const expected = [35, 30, 25];
       const filled = answers.every(Number.isFinite);
-      const traceOk = filled && answers.every((item, index) => item === expected[index]);
+      const traceOk = filled && answers.every((item, index) => closeTo(item, expected[index]));
       const order = radio("m2_order");
 
       if (filled && !traceOk) {
-        const firstWrong = answers.findIndex((item, index) => item !== expected[index]);
+        const firstWrong = answers.findIndex((item, index) => !closeTo(item, expected[index]));
         const messages = [
-          "Na primeira operação, estoque passa de 30 para 26 após retirar 4 saídas.",
-          "Na segunda operação, saidas passa de 4 para 7 após registrar mais 3 vendas.",
-          "Na terceira operação, estoque passa de 26 para 23.",
-          "Na quarta operação, entradas passa de 10 para 8 após descartar 2 unidades.",
-          "Na quinta operação, estoque recebe 23 + 8, portanto 31."
+          "Na recarga, saldo passa de 15 para 35.",
+          "Na primeira passagem, saldo passa de 35 para 30.",
+          "Na segunda passagem, saldo passa de 30 para 25."
         ];
-        setBranch("m2_trace_branch", `Revise a atualização ${firstWrong + 1}`, messages[firstWrong]);
+        setBranch("m2_trace_branch", `Revise a movimentação ${firstWrong + 1}`, messages[firstWrong]);
       } else setBranch("m2_trace_branch");
 
-      if (order && order !== "current") setBranch("m2_order_branch", "Quantidade antiga recuperada", "As operações são sequenciais. A reposição usa entradas = 8, valor produzido após o descarte.");
+      if (order && order !== "current") setBranch("m2_order_branch", "Valor antigo recuperado", "A segunda passagem usa saldo = 30, valor produzido depois da primeira passagem.");
       else setBranch("m2_order_branch");
 
       const complete = traceOk && order === "current";
-      if (!live && !complete) showFeedback(2, "Preencha as cinco movimentações e confirme qual valor de entradas é usado na reposição.");
+      if (!live && !complete) showFeedback(2, "Preencha as três movimentações e confirme qual saldo é usado na segunda passagem.");
       return complete;
     }
 
     function validateMission3(live = false) {
-      const x = numberValue("m3_x"), y = numberValue("m3_y"), z = numberValue("m3_z");
-      const finalFilled = [x, y, z].every(Number.isFinite);
-      const finalOk = finalFilled && x === 31 && y === 8 && z === 7;
-      const casesOk = value("m3_case1") === "7" && value("m3_case2") === "14_7" && value("m3_case3") === "equality";
+      const saldo = numberValue("m3_saldo");
+      const recarga = numberValue("m3_recarga");
+      const tarifa = numberValue("m3_tarifa");
+      const finalFilled = [saldo, recarga, tarifa].every(Number.isFinite);
+      const finalOk = finalFilled && closeTo(saldo, 25) && closeTo(recarga, 20) && closeTo(tarifa, 5);
+      const casesOk = value("m3_case1") === "34" && value("m3_case2") === "20" && value("m3_case3") === "assignment";
       const why = radio("m3_why");
 
-      if (finalFilled && !finalOk) setBranch("m3_final_branch", "Fechamento incoerente", "Retome a última fotografia: estoque = 31, entradas = 8 e saidas = 7.");
+      if (finalFilled && !finalOk) setBranch("m3_final_branch", "Estado final incoerente", "Retome a sequência: saldo = 25, recarga = 20 e tarifa = 5.");
       else setBranch("m3_final_branch");
 
-      if (["m3_case1","m3_case2","m3_case3"].some(id => value(id)) && !casesOk) {
-        if (value("m3_case1") === "5") setBranch("m3_cases_branch", "Quantidade antiga mantida", "caixas recebe um novo valor: 12 - 2 = 10.");
-        else if (value("m3_case2") === "6_7") setBranch("m3_cases_branch", "Movimentação contada duas vezes", "saldo recebeu apenas a venda inicial de 20; o acréscimo posterior altera venda, não retroativamente o saldo.");
-        else if (value("m3_case3") && value("m3_case3") !== "equality") setBranch("m3_cases_branch", "Diagnóstico diferente", "A frase trata = como igualdade matemática, mas no código ele representa atualização.");
-        else setBranch("m3_cases_branch", "Revise os três casos", "Atualize o registro, respeite a ordem e diferencie atribuição de igualdade.");
+      if (["m3_case1", "m3_case2", "m3_case3"].some(id => value(id)) && !casesOk) {
+        if (value("m3_case1") && value("m3_case1") !== "34") setBranch("m3_cases_branch", "A passagem altera o saldo", "40 - 6 produz 34, que substitui o valor anterior de saldo.");
+        else if (value("m3_case2") && value("m3_case2") !== "20") setBranch("m3_cases_branch", "Execute as operações em ordem", "10 + 18 - 4 - 4 resulta em 20.");
+        else if (value("m3_case3") && value("m3_case3") !== "assignment") setBranch("m3_cases_branch", "Diagnóstico diferente", "A frase interpreta = como igualdade matemática, mas no programa ele representa atribuição.");
+        else setBranch("m3_cases_branch", "Revise os três casos", "Atualize o saldo, respeite a ordem e diferencie atribuição de igualdade.");
       } else setBranch("m3_cases_branch");
 
-      if (why && why !== "correct") setBranch("m3_why_branch", "Justificativa incompleta", why === "old" ? "entradas foi atualizada de 10 para 8 antes da reposição." : "O estoque final depende das quantidades produzidas durante as operações, não apenas dos valores iniciais.");
+      if (why && why !== "correct") setBranch("m3_why_branch", "Justificativa incorreta", why === "reset" ? "As atribuições não reiniciam a variável. O valor atual continua para a próxima linha." : "A segunda passagem usa 30, não 35, porque a primeira já alterou o saldo.");
       else setBranch("m3_why_branch");
 
       const complete = finalOk && casesOk && why === "correct";
-      if (!live && !complete) showFeedback(3, "Confirme o fechamento do estoque, resolva os três casos e selecione a justificativa correta.");
+      if (!live && !complete) showFeedback(3, "Confirme o estado final, resolva os três casos e selecione a justificativa correta.");
       return complete;
     }
 
@@ -1836,5 +1845,4 @@
     document.getElementById('restartButton').addEventListener('click', () => location.reload());
   </script>
 </body>
-
 </html>

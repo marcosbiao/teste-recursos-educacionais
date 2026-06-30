@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acompanhando o estoque da cantina — missões</title>
+  <title>Verificando direito a auxílio estudantil — missões</title>
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
@@ -1351,6 +1351,272 @@
       .assignment-arrow { transform: rotate(90deg); }
       .state-step { grid-template-columns: 34px minmax(0, 1fr); padding: 11px; }
     }
+
+
+    .reading-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .reading-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+      text-align: center;
+    }
+    .reading-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .reading-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--slate-900);
+      font-size: 1.16rem;
+      font-weight: 950;
+    }
+    .reading-card.result {
+      border-color: var(--emerald-100);
+      background: var(--emerald-50);
+    }
+    .reading-card.result strong { color: var(--emerald-800); }
+
+    .two-field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .field-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+    .field-card label {
+      color: var(--slate-900);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .decomposition-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .decomposition-item {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+    .decomposition-item:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -13px;
+      top: 50%;
+      z-index: 2;
+      transform: translateY(-50%);
+      color: var(--mission-color);
+      font-weight: 950;
+    }
+    .decomposition-item small {
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .decomposition-item strong {
+      color: var(--slate-900);
+      font-size: .85rem;
+    }
+
+    .formula-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 15px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .formula-value {
+      padding: 11px;
+      border: 1px solid var(--slate-200);
+      border-radius: 11px;
+      background: white;
+      text-align: center;
+    }
+    .formula-value small { display: block; color: var(--slate-500); font-size: .67rem; font-weight: 850; }
+    .formula-value strong { color: var(--slate-900); font-size: 1rem; }
+    .formula-symbol { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    @media (max-width: 920px) {
+      .decomposition-strip { grid-template-columns: 1fr 1fr; }
+      .decomposition-item:not(:last-child)::after { display: none; }
+    }
+    @media (max-width: 660px) {
+      .reading-board,
+      .two-field-grid,
+      .decomposition-strip { grid-template-columns: 1fr; }
+      .formula-card { grid-template-columns: 1fr; }
+      .formula-symbol { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .eligibility-preview {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .eligibility-preview .flow-chip:last-child {
+      border-color: rgba(190, 242, 100, .38);
+      background: rgba(190, 242, 100, .12);
+    }
+
+    .rule-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .rule-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .rule-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .69rem;
+      font-weight: 900;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+
+    .rule-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--slate-900);
+      font-size: .97rem;
+    }
+
+    .rule-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-600);
+      font-size: .79rem;
+    }
+
+    .logic-preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .logic-preview-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+
+    .logic-preview-card small {
+      color: var(--slate-500);
+      font-size: .69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .logic-preview-card strong {
+      color: var(--slate-900);
+      font-size: .9rem;
+    }
+
+    .logic-preview-card select {
+      margin-top: 2px;
+    }
+
+    .truth-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .truth-item {
+      display: grid;
+      gap: 5px;
+      padding: 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 11px;
+      background: white;
+    }
+
+    .truth-item small {
+      color: var(--slate-500);
+      font-size: .66rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .truth-item strong {
+      color: var(--slate-900);
+      font-size: .84rem;
+    }
+
+    .case-facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .case-fact {
+      padding: 7px 8px;
+      border: 1px solid var(--slate-200);
+      border-radius: 9px;
+      background: white;
+      color: var(--slate-700);
+      font: 800 .73rem Consolas, Monaco, monospace;
+      text-align: center;
+    }
+
+    @media (max-width: 920px) {
+      .eligibility-preview,
+      .rule-board,
+      .logic-preview,
+      .truth-strip { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .eligibility-preview,
+      .rule-board,
+      .logic-preview,
+      .truth-strip { grid-template-columns: 1fr; }
+      .case-facts { grid-template-columns: 1fr; }
+    }
+
 </style>
 </head>
 
@@ -1360,43 +1626,44 @@
       <div>
         <div class="badge-row">
           <span class="badge">Roteiro por missões</span>
-          <span class="badge">CCI03</span>
-          <span class="badge">Variáveis, estoque e estado</span>
+          <span class="badge">CCI04</span>
+          <span class="badge">Condições compostas e casos de fronteira</span>
         </div>
-        <h1>Acompanhando o estoque da cantina</h1>
-        <p class="hero-description">Acompanhe vendas, entradas e itens danificados para descobrir como cada operação altera o estoque atual da cantina.</p>
+        <h1>Verificando direito a auxílio estudantil</h1>
+        <p class="hero-description">Transforme regras institucionais em uma expressão lógica correta e verifique candidatos sem conceder ou negar o benefício por engano.</p>
       </div>
 
-      <div class="hero-flow state-preview" aria-label="Fluxo resumido do rastreamento">
-        <div class="flow-chip"><small>estoque inicial</small><strong>30 unidades</strong></div>
-        <div class="flow-chip"><small>primeira saída</small><strong>− 4 unidades</strong></div>
-        <div class="flow-chip"><small>novo estoque</small><strong>26 unidades</strong></div>
+      <div class="hero-flow eligibility-preview" aria-label="Resumo do caso inicial">
+        <div class="flow-chip"><small>renda por pessoa</small><strong>R$ 1.420</strong></div>
+        <div class="flow-chip"><small>frequência</small><strong>82%</strong></div>
+        <div class="flow-chip"><small>documentos</small><strong>Entregues</strong></div>
+        <div class="flow-chip"><small>resultado</small><strong>Elegível</strong></div>
       </div>
     </header>
 
     <section class="context-card" aria-label="Contexto da atividade">
       <article>
         <p class="kicker">Problema a resolver</p>
-        <h2>Atualizar o estoque após vendas, reposição e perdas</h2>
+        <h2>Analisar uma solicitação de auxílio permanência</h2>
         <div class="problem-statement">
-          Uma cantina começa o turno com 30 garrafas de água. Há 4 saídas já registradas e uma remessa de 10 unidades prevista. Durante o turno, ocorrem mais 3 vendas e 2 unidades da remessa são descartadas por estarem danificadas. Analise o código que atualiza esses registros e determine o estado final.
-          <small>Pergunta central: depois de cada operação, qual é o novo valor de <code>estoque</code>, <code>entradas</code> e <code>saidas</code>?</small>
+          Para esta atividade didática, um estudante recebe o auxílio somente quando atende simultaneamente a três critérios: renda familiar por pessoa de até R$ 1.500, frequência acadêmica de pelo menos 75% e documentação obrigatória entregue.
+          <small>As regras são fictícias e foram definidas apenas para o exercício de programação.</small>
         </div>
 
-        <div class="variable-board" aria-label="Trecho de código analisado">
-          <article class="variable-card"><small>Quantidade disponível</small><strong>estoque</strong></article>
-          <article class="variable-card"><small>Remessa aceita</small><strong>entradas</strong></article>
-          <article class="variable-card"><small>Total vendido</small><strong>saidas</strong></article>
+        <div class="rule-board" aria-label="Regras do auxílio">
+          <article class="rule-card"><small>Critério 1</small><strong>Renda ≤ R$ 1.500</strong><span>O limite de R$ 1.500 está incluído.</span></article>
+          <article class="rule-card"><small>Critério 2</small><strong>Frequência ≥ 75%</strong><span>Exatamente 75% atende ao requisito.</span></article>
+          <article class="rule-card"><small>Critério 3</small><strong>Documentação entregue</strong><span>Todos os documentos obrigatórios precisam estar disponíveis.</span></article>
         </div>
       </article>
 
       <aside class="meta-stack">
         <p class="kicker">Resumo pedagógico</p>
         <h2>Competência trabalhada</h2>
-        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI03</strong><p>Manipular dados simples, variáveis, constantes e expressões preservando a coerência do estado</p></div></div>
-        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões contextualizadas no controle de estoque.</p></div></div>
-        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Variável, operador de atribuição e expressões aritméticas simples.</p></div></div>
-        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>Tabela de estado correta e justificativa das mudanças.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI04</strong><p>Controlar decisões condicionais simples e compostas de forma logicamente correta.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões com interpretação, expressão lógica e validação.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Variáveis, operadores relacionais, valores lógicos e estrutura if/else.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>Expressão com limites corretos, operador lógico adequado e casos de fronteira validados.</p></div></div>
       </aside>
     </section>
 
@@ -1406,9 +1673,9 @@
         <span>Conclua a missão ativa para desbloquear a próxima.</span>
       </div>
       <div class="map-line">
-        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Reconhecer</strong><small>Em andamento</small></span></div>
+        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Interpretar</strong><small>Em andamento</small></span></div>
         <div class="map-connector" data-connector="1"></div>
-        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Rastrear</strong><small>Bloqueada</small></span></div>
+        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Construir</strong><small>Bloqueada</small></span></div>
         <div class="map-connector" data-connector="2"></div>
         <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Validar</strong><small>Bloqueada</small></span></div>
       </div>
@@ -1417,192 +1684,203 @@
     <section class="mission active open" data-mission="1">
       <button class="mission-toggle" type="button" aria-expanded="true">
         <span class="mission-icon">1</span>
-        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Reconhecer o estoque inicial</h2><p>Identifique os registros da cantina, seus valores de partida e o significado de uma atualização.</p></span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Interpretar as regras do benefício</h2><p>Reconheça os limites, a relação entre os critérios e o resultado do caso inicial.</p></span>
         <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Construir a primeira fotografia do estoque antes das movimentações do turno.</p></div><span class="seal-preview">Selo: Estoque reconhecido</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Traduzir cada regra verbal para uma condição verificável.</p></div><span class="seal-preview">Selo: Regras interpretadas</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Identifique os registros do estoque</h3><p>Escolha somente os nomes que armazenam quantidades da cantina.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Conjunto de variáveis">
-            <label class="choice"><input type="radio" name="m1_vars" value="xyz"><span class="choice-letter">A</span><span class="choice-copy"><strong>estoque, entradas e saidas</strong><span>Três registros que guardam quantidades durante o turno.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_vars" value="xyprintf"><span class="choice-letter">B</span><span class="choice-copy"><strong>estoque, entradas e printf</strong><span>Mistura registros com um comando de saída.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_vars" value="five"><span class="choice-letter">C</span><span class="choice-copy"><strong>estoque, entradas, saidas, 3 e 2</strong><span>Inclui quantidades literais como se fossem variáveis.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Escolha os operadores relacionais</h3><p>Os limites precisam incluir os valores indicados no regulamento do exercício.</p></div></div>
+          <div class="logic-preview">
+            <article class="logic-preview-card"><small>Renda por pessoa</small><strong>renda ___ 1500</strong><select id="m1_income"><option value="">Operador</option><option value="lt">&lt;</option><option value="le">&lt;=</option><option value="gt">&gt;</option><option value="ge">&gt;=</option></select></article>
+            <article class="logic-preview-card"><small>Frequência</small><strong>frequencia ___ 75</strong><select id="m1_frequency"><option value="">Operador</option><option value="lt">&lt;</option><option value="le">&lt;=</option><option value="gt">&gt;</option><option value="ge">&gt;=</option></select></article>
+            <article class="logic-preview-card"><small>Documentação</small><strong>documentacao ___ 'S'</strong><select id="m1_docs"><option value="">Operador</option><option value="eq">==</option><option value="neq">!=</option><option value="assign">=</option></select></article>
           </div>
-          <div class="branch" id="m1_vars_branch" aria-live="polite"></div>
+          <div class="branch" id="m1_rules_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Registre o estado inicial da cantina</h3><p>Use as três primeiras declarações do código.</p></div></div>
-          <div class="initial-state-grid">
-            <article class="state-input-card"><strong>estoque</strong><small>int estoque = 30;</small><input id="m1_x" type="number" placeholder="Quantidade inicial"></article>
-            <article class="state-input-card"><strong>entradas</strong><small>int entradas = 10;</small><input id="m1_y" type="number" placeholder="Remessa prevista"></article>
-            <article class="state-input-card"><strong>saidas</strong><small>int saidas = 4;</small><input id="m1_z" type="number" placeholder="Saídas registradas"></article>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Defina como os critérios se relacionam</h3><p>O estudante precisa atender aos três requisitos, não apenas a um deles.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Operador lógico entre critérios">
+            <label class="choice"><input type="radio" name="m1_logic" value="and"><span class="choice-letter">A</span><span class="choice-copy"><strong>Usar E lógico entre as condições</strong><span>O benefício só é concedido quando todas as condições são verdadeiras.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_logic" value="or"><span class="choice-letter">B</span><span class="choice-copy"><strong>Usar OU lógico entre as condições</strong><span>Bastaria cumprir apenas um dos critérios para receber o auxílio.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_logic" value="separate"><span class="choice-letter">C</span><span class="choice-copy"><strong>Testar apenas a renda</strong><span>Frequência e documentação seriam informações sem efeito na decisão.</span></span><span class="radio-mark"></span></label>
           </div>
-          <div class="branch" id="m1_initial_branch" aria-live="polite"></div>
+          <div class="branch" id="m1_logic_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Interprete a primeira atualização</h3><p>O símbolo <code>=</code> calcula a expressão e grava o novo estado no registro da esquerda.</p></div></div>
-          <div class="assignment-demo">
-            <div class="assignment-box"><small>Antes da linha</small><strong>estoque vale 30</strong></div>
-            <div class="assignment-arrow">→</div>
-            <div class="assignment-box"><small>Linha executada</small><strong>estoque = estoque - saidas;</strong></div>
+          <div class="task-head"><span class="task-index">3</span><div><h3>Avalie o caso de Marina</h3><p>Renda de R$ 1.420, frequência de 82% e documentação entregue.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Resultado do caso inicial">
+            <label class="choice"><input type="radio" name="m1_result" value="eligible"><span class="choice-letter">A</span><span class="choice-copy"><strong>Elegível</strong><span>Os três critérios são atendidos simultaneamente.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_result" value="not"><span class="choice-letter">B</span><span class="choice-copy"><strong>Não elegível</strong><span>Ao menos uma das regras impediria a concessão.</span></span><span class="radio-mark"></span></label>
           </div>
-          <div class="choice-grid" style="margin-top: 10px" role="radiogroup" aria-label="Significado da atribuição">
-            <label class="choice"><input type="radio" name="m1_assign" value="compare"><span class="choice-letter">A</span><span class="choice-copy"><strong>Comparar estoque com estoque - saidas</strong><span>A linha apenas verifica se os dois lados são iguais.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_assign" value="update"><span class="choice-letter">B</span><span class="choice-copy"><strong>Calcular 30 - 4 e guardar 26 em estoque</strong><span>O valor anterior é usado no cálculo e depois substituído.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_assign" value="keep"><span class="choice-letter">C</span><span class="choice-copy"><strong>Manter estoque com 30 unidades</strong><span>A venda não altera a quantidade disponível.</span></span><span class="radio-mark"></span></label>
-          </div>
-          <div class="branch" id="m1_assign_branch" aria-live="polite"></div>
+          <div class="branch" id="m1_result_branch" aria-live="polite"></div>
         </div>
 
         <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você identificou os registros da cantina, anotou o estado inicial e distinguiu atualização de igualdade matemática.</p></div><span class="seal">Selo conquistado<br>Estoque reconhecido</span></div>
+        <div class="mission-result" id="m1_result_box"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você interpretou os limites e reconheceu que os três critérios são obrigatórios.</p></div><span class="seal">Selo conquistado<br>Regras interpretadas</span></div>
       </div>
     </section>
 
     <section class="mission locked" data-mission="2">
       <button class="mission-toggle" type="button" aria-expanded="false" disabled>
         <span class="mission-icon">2</span>
-        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Rastrear as movimentações</h2><p>Execute as cinco operações na ordem e atualize somente o registro afetado.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>5 atualizações</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Construir a expressão lógica</h2><p>Monte a condição composta e acompanhe o valor lógico de cada parte.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 construções</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Manter uma fotografia coerente do estoque após cada movimentação.</p></div><span class="seal-preview">Selo: Estoque rastreado</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Produzir uma decisão composta sem excluir limites válidos ou aceitar candidatos incompletos.</p></div><span class="seal-preview">Selo: Condição construída</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Execute as movimentações em sequência</h3><p>Informe o novo valor do registro alterado em cada linha.</p></div></div>
-          <div class="state-trace">
-            <article class="state-step"><span class="state-step-number">1</span><div class="state-code">estoque = estoque - saidas;<small>As 4 saídas iniciais reduzem o estoque disponível.</small></div><div class="state-current"><span class="state-token">antes: estoque=30</span><span class="state-token">entradas=10</span><span class="state-token">saidas=4</span></div><div class="state-answer"><label for="m2_x1">Novo estoque</label><input id="m2_x1" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">2</span><div class="state-code">saidas = saidas + 3;<small>Mais 3 unidades foram vendidas.</small></div><div class="state-answer"><label for="m2_y2">Novas saidas</label><input id="m2_y2" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">3</span><div class="state-code">estoque = estoque - 3;<small>Retire do estoque as 3 vendas adicionais.</small></div><div class="state-answer"><label for="m2_z3">Novo estoque</label><input id="m2_z3" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">4</span><div class="state-code">entradas = entradas - 2;<small>Duas unidades da remessa estavam danificadas.</small></div><div class="state-answer"><label for="m2_x4">Entradas aceitas</label><input id="m2_x4" type="number" placeholder="?"></div></article>
-            <article class="state-step no-snapshot"><span class="state-step-number">5</span><div class="state-code">estoque = estoque + entradas;<small>Use a entrada já corrigida após o descarte.</small></div><div class="state-answer"><label for="m2_y5">Estoque final</label><input id="m2_y5" type="number" placeholder="?"></div></article>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Complete a expressão em C</h3><p>Escolha os trechos que preservam exatamente as regras do problema.</p></div></div>
+          <div class="expression-builder">
+            <div class="ide-bar"><span>criterios_auxilio.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+            <div class="expression-lines">
+              <div class="expression-line"><span class="expression-label">condicao =</span><select id="m2_income"><option value="">condição da renda</option><option value="le">rendaPerCapita &lt;= 1500.0</option><option value="lt">rendaPerCapita &lt; 1500.0</option><option value="ge">rendaPerCapita &gt;= 1500.0</option></select></div>
+              <div class="expression-line"><span class="expression-label">operador</span><select id="m2_join1"><option value="">entre renda e frequência</option><option value="and">&&</option><option value="or">||</option></select></div>
+              <div class="expression-line"><span class="expression-label">continua</span><select id="m2_frequency"><option value="">condição da frequência</option><option value="ge">frequencia &gt;= 75.0</option><option value="gt">frequencia &gt; 75.0</option><option value="le">frequencia &lt;= 75.0</option></select></div>
+              <div class="expression-line"><span class="expression-label">operador</span><select id="m2_join2"><option value="">entre frequência e documentos</option><option value="and">&&</option><option value="or">||</option></select></div>
+              <div class="expression-line"><span class="expression-label">continua</span><select id="m2_docs"><option value="">condição da documentação</option><option value="eq">documentacao == 'S'</option><option value="neq">documentacao != 'S'</option><option value="assign">documentacao = 'S'</option></select></div>
+            </div>
           </div>
-          <div class="branch" id="m2_trace_branch" aria-live="polite"></div>
-
-          <div class="state-summary" id="stateSummary" aria-label="Tabela completa de estado">
-            <table>
-              <thead><tr><th>Momento</th><th>Operação executada</th><th>estoque</th><th>entradas</th><th>saidas</th></tr></thead>
-              <tbody>
-                <tr><td>Inicial</td><td>registros iniciais</td><td>30</td><td>10</td><td>4</td></tr>
-                <tr><td>1</td><td>estoque = estoque - saidas</td><td>26</td><td>10</td><td>4</td></tr>
-                <tr><td>2</td><td>saidas = saidas + 3</td><td>26</td><td>10</td><td>7</td></tr>
-                <tr><td>3</td><td>estoque = estoque - 3</td><td>23</td><td>10</td><td>7</td></tr>
-                <tr><td>4</td><td>entradas = entradas - 2</td><td>23</td><td>8</td><td>7</td></tr>
-                <tr><td>5</td><td>estoque = estoque + entradas</td><td>31</td><td>8</td><td>7</td></tr>
-              </tbody>
-            </table>
-          </div>
+          <div class="branch" id="m2_expression_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Verifique a ordem das operações</h3><p>Escolha qual valor de <code>entradas</code> deve ser usado em <code>estoque = estoque + entradas</code>.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Valor usado na segunda atribuição">
-            <label class="choice"><input type="radio" name="m2_order" value="old"><span class="choice-letter">A</span><span class="choice-copy"><strong>entradas = 10</strong><span>Usar o valor previsto antes da inspeção da remessa.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m2_order" value="current"><span class="choice-letter">B</span><span class="choice-copy"><strong>entradas = 8</strong><span>Usar o estado atualizado após descartar 2 unidades.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Acompanhe os valores lógicos</h3><p>Use o caso de Marina para identificar o resultado de cada condição.</p></div></div>
+          <div class="truth-strip">
+            <article class="truth-item"><small>1. Renda</small><strong>1420 ≤ 1500</strong><select id="m2_truth1"><option value="">Resultado</option><option value="true">Verdadeiro</option><option value="false">Falso</option></select></article>
+            <article class="truth-item"><small>2. Frequência</small><strong>82 ≥ 75</strong><select id="m2_truth2"><option value="">Resultado</option><option value="true">Verdadeiro</option><option value="false">Falso</option></select></article>
+            <article class="truth-item"><small>3. Documentos</small><strong>'S' == 'S'</strong><select id="m2_truth3"><option value="">Resultado</option><option value="true">Verdadeiro</option><option value="false">Falso</option></select></article>
+            <article class="truth-item"><small>Condição final</small><strong>V && V && V</strong><select id="m2_final"><option value="">Resultado</option><option value="true">Verdadeiro</option><option value="false">Falso</option></select></article>
           </div>
-          <div class="branch" id="m2_order_branch" aria-live="polite"></div>
+          <div class="branch" id="m2_truth_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha a estrutura de decisão</h3><p>O resultado precisa ser apresentado nos dois caminhos possíveis.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Estrutura condicional">
+            <label class="choice"><input type="radio" name="m2_structure" value="ifelse"><span class="choice-letter">A</span><span class="choice-copy"><strong>if com else</strong><span>Mostra “elegível” quando a condição é verdadeira e “não elegível” nos demais casos.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_structure" value="threeif"><span class="choice-letter">B</span><span class="choice-copy"><strong>Três if independentes concedendo o auxílio</strong><span>Cada critério poderia liberar o benefício isoladamente.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_structure" value="loop"><span class="choice-letter">C</span><span class="choice-copy"><strong>Laço de repetição</strong><span>Repete a verificação até todos os critérios se tornarem verdadeiros.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m2_structure_branch" aria-live="polite"></div>
         </div>
 
         <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você processou vendas, perdas e reposição na ordem correta, sem recuperar quantidades antigas.</p></div><span class="seal">Selo conquistado<br>Estoque rastreado</span></div>
+        <div class="mission-result" id="m2_result_box"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você construiu a condição composta e acompanhou seu resultado lógico.</p></div><span class="seal">Selo conquistado<br>Condição construída</span></div>
       </div>
     </section>
 
     <section class="mission locked" data-mission="3">
       <button class="mission-toggle" type="button" aria-expanded="false" disabled>
         <span class="mission-icon">3</span>
-        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Validar o fechamento do estoque</h2><p>Confirme as quantidades finais e diagnostique interpretações incorretas das atualizações.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 casos</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Validar casos e diagnosticar erros</h2><p>Teste os limites das regras e identifique uma expressão permissiva demais.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>3 níveis</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Consolidar as quantidades finais e explicar por que cada movimentação alterou o estoque.</p></div><span class="seal-preview">Selo: Estoque validado</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Confirmar que a expressão aceita os limites válidos e rejeita qualquer caso com critério não atendido.</p></div><span class="seal-preview">Selo: Decisão validada</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Indique o estado final da cantina</h3><p>Preencha as quantidades existentes após a quinta operação.</p></div></div>
-          <div class="final-state-grid">
-            <article class="state-input-card"><strong>estoque final</strong><small>Após adicionar a remessa aceita</small><input id="m3_x" type="number" placeholder="?"></article>
-            <article class="state-input-card"><strong>entradas finais</strong><small>Após retirar as unidades danificadas</small><input id="m3_y" type="number" placeholder="?"></article>
-            <article class="state-input-card"><strong>saidas finais</strong><small>Após registrar as 3 vendas adicionais</small><input id="m3_z" type="number" placeholder="?"></article>
-          </div>
-          <div class="branch" id="m3_final_branch" aria-live="polite"></div>
-        </div>
-
-        <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Teste três situações</h3><p>Use Reconheça, Aplique e Analise para transferir a estratégia.</p></div></div>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Teste Reconheça, Aplique e Analise</h3><p>Classifique cada solicitação de acordo com as três regras.</p></div></div>
           <div class="test-grid">
-            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>Estoque</strong><span>caixas = 12; caixas = caixas - 2;</span></div><label class="sr-only" for="m3_case1">Quantidade final de caixas</label><select id="m3_case1"><option value="">Quantidade final?</option><option value="5">12</option><option value="7">10</option><option value="2">2</option></select></article>
-            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Caixa</strong><span>saldo=50; venda=20; saldo=saldo+venda; venda=venda+5;</span></div><label class="sr-only" for="m3_case2">Estado final de saldo e venda</label><select id="m3_case2"><option value="">Estado final?</option><option value="14_7">saldo=70 e venda=25</option><option value="6_7">saldo=75 e venda=25</option><option value="14_3">saldo=70 e venda=20</option></select></article>
-            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Afirmação</strong><span>“estoque = estoque + entradas não pode ser verdadeira.”</span></div><label class="sr-only" for="m3_case3">Diagnóstico da afirmação</label><select id="m3_case3"><option value="">Qual é o erro?</option><option value="equality">Confundir atribuição com igualdade</option><option value="old">Manter o valor antigo</option><option value="order">Ignorar a ordem das linhas</option></select></article>
+            <article class="test-card">
+              <span class="case-level">Reconheça</span>
+              <h3>Caso no limite</h3>
+              <div class="case-facts"><span class="case-fact">renda=1500</span><span class="case-fact">freq=75</span><span class="case-fact">docs='S'</span></div>
+              <select id="m3_case1"><option value="">Resultado</option><option value="eligible">Elegível</option><option value="not">Não elegível</option></select>
+            </article>
+            <article class="test-card">
+              <span class="case-level">Aplique</span>
+              <h3>Renda acima do limite</h3>
+              <div class="case-facts"><span class="case-fact">renda=1500.01</span><span class="case-fact">freq=90</span><span class="case-fact">docs='S'</span></div>
+              <select id="m3_case2"><option value="">Resultado</option><option value="eligible">Elegível</option><option value="not">Não elegível</option></select>
+            </article>
+            <article class="test-card">
+              <span class="case-level">Analise</span>
+              <h3>Frequência insuficiente</h3>
+              <div class="case-facts"><span class="case-fact">renda=900</span><span class="case-fact">freq=74.9</span><span class="case-fact">docs='S'</span></div>
+              <select id="m3_case3"><option value="">Resultado</option><option value="eligible">Elegível</option><option value="not">Não elegível</option></select>
+            </article>
           </div>
           <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha a justificativa correta</h3><p>Explique por que a última operação adiciona 8 unidades, e não 10.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Justificativa do valor final de y">
-            <label class="choice"><input type="radio" name="m3_why" value="old"><span class="choice-letter">A</span><span class="choice-copy"><strong>A remessa sempre continua com 10 unidades</strong><span>O descarte não altera o valor guardado em entradas.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m3_why" value="correct"><span class="choice-letter">B</span><span class="choice-copy"><strong>entradas passou de 10 para 8 antes da reposição</strong><span>A última linha usa o valor atual produzido pela operação anterior.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m3_why" value="initial"><span class="choice-letter">C</span><span class="choice-copy"><strong>O estoque usa sempre os valores iniciais</strong><span>As atualizações intermediárias podem ser ignoradas.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Verifique a documentação ausente</h3><p>Renda e frequência atendem aos limites, mas os documentos não foram entregues.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Caso sem documentação">
+            <label class="choice"><input type="radio" name="m3_docs_case" value="not"><span class="choice-letter">A</span><span class="choice-copy"><strong>Não elegível</strong><span>Uma condição falsa torna toda a expressão com E lógico falsa.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_docs_case" value="eligible"><span class="choice-letter">B</span><span class="choice-copy"><strong>Elegível</strong><span>Renda e frequência compensariam a documentação ausente.</span></span><span class="radio-mark"></span></label>
           </div>
-          <div class="branch" id="m3_why_branch" aria-live="polite"></div>
+          <div class="branch" id="m3_docs_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Diagnostique a expressão incorreta</h3><p>Considere o código: <code>renda &lt;= 1500 || frequencia &gt;= 75 || documentacao == 'S'</code>.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Diagnóstico do uso de OU">
+            <label class="choice"><input type="radio" name="m3_diagnosis" value="or"><span class="choice-letter">A</span><span class="choice-copy"><strong>O operador OU torna a decisão permissiva demais</strong><span>Qualquer condição verdadeira pode conceder o benefício, mesmo com as demais falsas.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_diagnosis" value="limits"><span class="choice-letter">B</span><span class="choice-copy"><strong>O problema está apenas nos valores 1500 e 75</strong><span>Os operadores lógicos poderiam permanecer como OU.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_diagnosis" value="none"><span class="choice-letter">C</span><span class="choice-copy"><strong>A expressão está correta</strong><span>Atender a um dos critérios seria suficiente.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m3_diagnosis_branch" aria-live="polite"></div>
         </div>
 
         <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir missão</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você confirmou o fechamento do estoque e justificou as mudanças usando as quantidades atuais.</p></div><span class="seal">Selo conquistado<br>Estoque validado</span></div>
+        <div class="mission-result" id="m3_result_box"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você validou os limites e identificou por que o operador OU produz concessões incorretas.</p></div><span class="seal">Selo conquistado<br>Decisão validada</span></div>
       </div>
     </section>
 
     <section class="final-code" id="finalCodeBlock" hidden>
       <div class="task-block">
-        <div class="task-head"><span class="task-index">✓</span><div><h3>Código do controle de estoque</h3><p>Compare o programa com a tabela de movimentações construída durante o roteiro.</p></div></div>
+        <div class="task-head"><span class="task-index">✓</span><div><h3>Implementação final em C</h3><p>A decisão preserva os limites inclusivos e exige que os três critérios sejam verdadeiros.</p></div></div>
         <div class="code-window" aria-label="Código final em C">
-          <div class="ide-bar"><span>estoque_cantina.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+          <div class="ide-bar"><span>auxilio_estudantil.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
           <div class="code-body">
-            <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;stdio.h&gt;</span></span></div>
-            <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+            <div class="code-line entry"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> &lt;stdio.h&gt;</span></div>
+            <div class="code-line entry"><span class="line-number">2</span><span class="line-code"></span></div>
             <div class="code-line entry"><span class="line-number">3</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
-            <div class="code-line entry"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">int</span> estoque = <span class="tok-num">30</span>;</span></div>
-            <div class="code-line entry"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">int</span> entradas = <span class="tok-num">10</span>;</span></div>
-            <div class="code-line entry"><span class="line-number">6</span><span class="line-code">    <span class="tok-type">int</span> saidas = <span class="tok-num">4</span>;</span></div>
-            <div class="code-line"><span class="line-number">7</span><span class="line-code"></span></div>
-            <div class="code-line process"><span class="line-number">8</span><span class="line-code">    estoque = estoque - saidas;    <span class="tok-comment">// 30 → 26</span></span></div>
-            <div class="code-line process"><span class="line-number">9</span><span class="line-code">    saidas = saidas + <span class="tok-num">3</span>;        <span class="tok-comment">// 4 → 7</span></span></div>
-            <div class="code-line process"><span class="line-number">10</span><span class="line-code">    estoque = estoque - <span class="tok-num">3</span>;     <span class="tok-comment">// 26 → 23</span></span></div>
-            <div class="code-line process"><span class="line-number">11</span><span class="line-code">    entradas = entradas - <span class="tok-num">2</span>;   <span class="tok-comment">// 10 → 8</span></span></div>
-            <div class="code-line process"><span class="line-number">12</span><span class="line-code">    estoque = estoque + entradas; <span class="tok-comment">// 23 → 31</span></span></div>
-            <div class="code-line"><span class="line-number">13</span><span class="line-code"></span></div>
-            <div class="code-line output"><span class="line-number">14</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Estoque: %d, entradas: %d, saidas: %d
-"</span>,</span></div>
-            <div class="code-line output"><span class="line-number">15</span><span class="line-code">           estoque, entradas, saidas);</span></div>
-            <div class="code-line"><span class="line-number">16</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
-            <div class="code-line"><span class="line-number">17</span><span class="line-code">}</span></div>
+            <div class="code-line entry"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">double</span> rendaPerCapita, frequencia;</span></div>
+            <div class="code-line entry"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">char</span> documentacao;</span></div>
+            <div class="code-line entry"><span class="line-number">6</span><span class="line-code"></span></div>
+            <div class="code-line entry"><span class="line-number">7</span><span class="line-code">    scanf(<span class="tok-str">"%lf"</span>, &amp;rendaPerCapita);</span></div>
+            <div class="code-line entry"><span class="line-number">8</span><span class="line-code">    scanf(<span class="tok-str">"%lf"</span>, &amp;frequencia);</span></div>
+            <div class="code-line entry"><span class="line-number">9</span><span class="line-code">    scanf(<span class="tok-str">" %c"</span>, &amp;documentacao);</span></div>
+            <div class="code-line process"><span class="line-number">10</span><span class="line-code"></span></div>
+            <div class="code-line process"><span class="line-number">11</span><span class="line-code">    <span class="tok-pre">if</span> (rendaPerCapita &lt;= <span class="tok-num">1500.0</span> &amp;&amp;</span></div>
+            <div class="code-line process"><span class="line-number">12</span><span class="line-code">        frequencia &gt;= <span class="tok-num">75.0</span> &amp;&amp;</span></div>
+            <div class="code-line process"><span class="line-number">13</span><span class="line-code">        documentacao == <span class="tok-str">'S'</span>) {</span></div>
+            <div class="code-line output"><span class="line-number">14</span><span class="line-code">        printf(<span class="tok-str">"Elegivel ao auxilio.\n"</span>);</span></div>
+            <div class="code-line process"><span class="line-number">15</span><span class="line-code">    } <span class="tok-pre">else</span> {</span></div>
+            <div class="code-line output"><span class="line-number">16</span><span class="line-code">        printf(<span class="tok-str">"Nao elegivel ao auxilio.\n"</span>);</span></div>
+            <div class="code-line process"><span class="line-number">17</span><span class="line-code">    }</span></div>
+            <div class="code-line output"><span class="line-number">18</span><span class="line-code"></span></div>
+            <div class="code-line output"><span class="line-number">19</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
+            <div class="code-line output"><span class="line-number">20</span><span class="line-code">}</span></div>
           </div>
-          <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Estado inicial</span><span class="legend-item"><i class="legend-dot process-dot"></i>Atribuições sucessivas</span><span class="legend-item"><i class="legend-dot output-dot"></i>Estado final</span></div>
+          <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Entrada</span><span class="legend-item"><i class="legend-dot process-dot"></i>Decisão e processamento</span><span class="legend-item"><i class="legend-dot output-dot"></i>Saída</span></div>
         </div>
       </div>
     </section>
 
     <section class="completion" id="completionPanel" aria-live="polite">
       <span class="completion-label">Percurso concluído</span>
-      <h2>Fechamento: estoque = 31, entradas = 8 e saidas = 7</h2>
-      <p>Cada movimentação foi executada usando as quantidades atuais. Vendas, descarte e reposição alteraram os registros na ordem em que ocorreram.</p>
+      <h2>Decisão composta validada</h2>
+      <p>As regras foram traduzidas para condições inclusivas, combinadas com E lógico e verificadas em casos normais e de fronteira.</p>
       <div class="completion-grid">
-        <article class="completion-item"><strong>Estoque reconhecido</strong><span>Registros, quantidades iniciais e significado de atualização foram identificados.</span></article>
-        <article class="completion-item"><strong>Movimentações rastreadas</strong><span>As cinco operações foram executadas em ordem, sem recuperar quantidades antigas.</span></article>
-        <article class="completion-item"><strong>Fechamento validado</strong><span>As quantidades finais e os erros comuns de interpretação foram verificados.</span></article>
+        <article class="completion-item"><strong>Regras interpretadas</strong><span>Os limites de renda e frequência foram reconhecidos como inclusivos.</span></article>
+        <article class="completion-item"><strong>Condição construída</strong><span>Os três critérios foram combinados com operadores relacionais e lógicos coerentes.</span></article>
+        <article class="completion-item"><strong>Decisão validada</strong><span>Casos de fronteira e uma expressão com OU foram analisados.</span></article>
       </div>
       <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer o roteiro</button></div>
     </section>
@@ -1615,19 +1893,19 @@
     const hintState = { 1: 0, 2: 0, 3: 0 };
     const hints = {
       1: [
-        ["Pista", "Os registros estoque, entradas e saidas armazenam quantidades; comandos e números literais não são variáveis."],
-        ["Pergunta guia", "Quais quantidades aparecem nas declarações iniciais de estoque, entradas e saidas?"],
-        ["Regra central", "Em estoque = estoque - saidas, calcule primeiro 30 - 4 e depois substitua estoque por 26."]
+        ["Pista", "As palavras 'até' e 'pelo menos' indicam que os valores de limite devem ser incluídos."],
+        ["Pergunta guia", "O benefício pode ser concedido quando apenas um dos três critérios é atendido?"],
+        ["Regra central", "Use renda <= 1500, frequência >= 75, documentação igual a 'S' e ligue tudo com E lógico."]
       ],
       2: [
-        ["Pista", "Cada operação altera apenas o registro que aparece à esquerda do sinal de atribuição."],
-        ["Pergunta guia", "Na última linha, entradas ainda vale 10 ou já foi reduzida para 8?"],
-        ["Estratégia", "Depois de cada operação, escreva uma nova fotografia completa: estoque, entradas e saidas."]
+        ["Pista", "Em C, comparação de igualdade usa dois sinais: ==."],
+        ["Pergunta guia", "Qual operador lógico só produz verdadeiro quando todas as partes são verdadeiras?"],
+        ["Estratégia", "Monte uma única condição com <=, >=, == e dois operadores &&."]
       ],
       3: [
-        ["Pista", "O fechamento do estoque é a última fotografia produzida pela sequência inteira."],
-        ["Pergunta guia", "Qual era o valor de entradas imediatamente antes da reposição final?"],
-        ["Diagnóstico", "Se uma resposta adiciona 10 na última linha, ela ignorou o descarte anterior de 2 unidades."]
+        ["Pista", "Teste primeiro exatamente os valores de limite: 1500 e 75."],
+        ["Pergunta guia", "O que acontece com uma expressão ligada por && quando uma das condições é falsa?"],
+        ["Diagnóstico", "O operador || concede o benefício quando qualquer condição é verdadeira; por isso não representa a regra do exercício."]
       ]
     };
 
@@ -1635,10 +1913,6 @@
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
     const value = id => (document.getElementById(id)?.value || "").trim();
     const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
-    const numberValue = id => {
-      const raw = value(id).replace(",", ".");
-      return raw === "" ? NaN : Number(raw);
-    };
 
     function setBranch(id, title = "", text = "") {
       const box = document.getElementById(id);
@@ -1654,77 +1928,86 @@
     }
 
     function validateMission1(live = false) {
-      const vars = radio("m1_vars");
-      const x = numberValue("m1_x"), y = numberValue("m1_y"), z = numberValue("m1_z");
-      const assign = radio("m1_assign");
+      const income = value("m1_income");
+      const frequency = value("m1_frequency");
+      const docs = value("m1_docs");
+      const logic = radio("m1_logic");
+      const result = radio("m1_result");
 
-      if (vars && vars !== "xyz") {
-        setBranch("m1_vars_branch", vars === "xyprintf" ? "Comando não é variável" : "Quantidades literais não são variáveis", vars === "xyprintf" ? "printf apenas mostra o fechamento; ele não armazena quantidade." : "3 e 2 são valores usados nas movimentações, não nomes de registros.");
-      } else setBranch("m1_vars_branch");
+      const rulesFilled = [income, frequency, docs].every(Boolean);
+      const rulesOk = income === "le" && frequency === "ge" && docs === "eq";
+      if (rulesFilled && !rulesOk) {
+        if (income === "lt") setBranch("m1_rules_branch", "Limite de renda excluído", "Com <, uma renda exatamente igual a R$ 1.500 seria rejeitada, embora o texto diga 'até'.");
+        else if (frequency === "gt") setBranch("m1_rules_branch", "Limite de frequência excluído", "Com >, um estudante com exatamente 75% seria rejeitado, embora o texto diga 'pelo menos'.");
+        else if (docs === "assign") setBranch("m1_rules_branch", "Atribuição não é comparação", "Um único sinal = altera a variável; para comparar em C, use ==.");
+        else setBranch("m1_rules_branch", "Revise os operadores", "Renda deve usar <=, frequência deve usar >= e documentação deve usar ==.");
+      } else setBranch("m1_rules_branch");
 
-      const initialFilled = [x, y, z].every(Number.isFinite);
-      const initialOk = initialFilled && x === 30 && y === 10 && z === 4;
-      if (initialFilled && !initialOk) setBranch("m1_initial_branch", "Estado inicial incorreto", "Leia as declarações: estoque recebe 30, entradas recebe 10 e saidas recebe 4.");
-      else setBranch("m1_initial_branch");
+      if (logic && logic !== "and") {
+        setBranch("m1_logic_branch", logic === "or" ? "Regra permissiva demais" : "Critérios ignorados", logic === "or" ? "Com OU, cumprir apenas um requisito poderia liberar o auxílio." : "A decisão precisa considerar renda, frequência e documentação.");
+      } else setBranch("m1_logic_branch");
 
-      if (assign && assign !== "update") {
-        setBranch("m1_assign_branch", assign === "compare" ? "Atribuição não é igualdade matemática" : "O estoque precisa mudar", assign === "compare" ? "O operador = calcula o lado direito e guarda o resultado no registro da esquerda." : "Depois da linha, estoque deixa de valer 30 e passa a valer 26.");
-      } else setBranch("m1_assign_branch");
+      if (result && result !== "eligible") setBranch("m1_result_branch", "Revise o caso", "R$ 1.420 atende ao limite, 82% supera a frequência mínima e a documentação foi entregue.");
+      else setBranch("m1_result_branch");
 
-      const complete = vars === "xyz" && initialOk && assign === "update";
-      if (!live && !complete) showFeedback(1, "Complete as três decisões ou use as pistas antes de concluir.");
+      const complete = rulesOk && logic === "and" && result === "eligible";
+      if (!live && !complete) showFeedback(1, "Complete os operadores, a relação entre critérios e o resultado do caso inicial.");
       return complete;
     }
 
     function validateMission2(live = false) {
-      const answers = [numberValue("m2_x1"), numberValue("m2_y2"), numberValue("m2_z3"), numberValue("m2_x4"), numberValue("m2_y5")];
-      const expected = [26, 7, 23, 8, 31];
-      const filled = answers.every(Number.isFinite);
-      const traceOk = filled && answers.every((item, index) => item === expected[index]);
-      const order = radio("m2_order");
+      const income = value("m2_income");
+      const join1 = value("m2_join1");
+      const frequency = value("m2_frequency");
+      const join2 = value("m2_join2");
+      const docs = value("m2_docs");
+      const truths = [value("m2_truth1"), value("m2_truth2"), value("m2_truth3"), value("m2_final")];
+      const structure = radio("m2_structure");
 
-      if (filled && !traceOk) {
-        const firstWrong = answers.findIndex((item, index) => item !== expected[index]);
-        const messages = [
-          "Na primeira operação, estoque passa de 30 para 26 após retirar 4 saídas.",
-          "Na segunda operação, saidas passa de 4 para 7 após registrar mais 3 vendas.",
-          "Na terceira operação, estoque passa de 26 para 23.",
-          "Na quarta operação, entradas passa de 10 para 8 após descartar 2 unidades.",
-          "Na quinta operação, estoque recebe 23 + 8, portanto 31."
-        ];
-        setBranch("m2_trace_branch", `Revise a atualização ${firstWrong + 1}`, messages[firstWrong]);
-      } else setBranch("m2_trace_branch");
+      const exprFilled = [income, join1, frequency, join2, docs].every(Boolean);
+      const exprOk = income === "le" && join1 === "and" && frequency === "ge" && join2 === "and" && docs === "eq";
+      if (exprFilled && !exprOk) {
+        if (join1 === "or" || join2 === "or") setBranch("m2_expression_branch", "Operador lógico inadequado", "Os três critérios são obrigatórios; use && entre todas as condições.");
+        else if (docs === "assign") setBranch("m2_expression_branch", "Um único = altera o dado", "Para comparar documentacao com 'S', use ==.");
+        else if (income === "lt" || frequency === "gt") setBranch("m2_expression_branch", "Caso de fronteira excluído", "Os limites 1500 e 75 precisam ser aceitos com <= e >=.");
+        else setBranch("m2_expression_branch", "Expressão ainda incoerente", "Revise os operadores relacionais e lógicos.");
+      } else setBranch("m2_expression_branch");
 
-      if (order && order !== "current") setBranch("m2_order_branch", "Quantidade antiga recuperada", "As operações são sequenciais. A reposição usa entradas = 8, valor produzido após o descarte.");
-      else setBranch("m2_order_branch");
+      const truthFilled = truths.every(Boolean);
+      const truthOk = truthFilled && truths.every(item => item === "true");
+      if (truthFilled && !truthOk) setBranch("m2_truth_branch", "Avaliação lógica incorreta", "No caso de Marina, as três comparações e a condição composta resultam em verdadeiro.");
+      else setBranch("m2_truth_branch");
 
-      const complete = traceOk && order === "current";
-      if (!live && !complete) showFeedback(2, "Preencha as cinco movimentações e confirme qual valor de entradas é usado na reposição.");
+      if (structure && structure !== "ifelse") {
+        setBranch("m2_structure_branch", structure === "threeif" ? "Critérios não podem conceder isoladamente" : "Repetição não é necessária", structure === "threeif" ? "A decisão deve ser tomada por uma única condição composta." : "Os dados são verificados uma vez; um if/else representa os dois resultados possíveis.");
+      } else setBranch("m2_structure_branch");
+
+      const complete = exprOk && truthOk && structure === "ifelse";
+      if (!live && !complete) showFeedback(2, "Complete a expressão, avalie os valores lógicos e escolha a estrutura condicional.");
       return complete;
     }
 
     function validateMission3(live = false) {
-      const x = numberValue("m3_x"), y = numberValue("m3_y"), z = numberValue("m3_z");
-      const finalFilled = [x, y, z].every(Number.isFinite);
-      const finalOk = finalFilled && x === 31 && y === 8 && z === 7;
-      const casesOk = value("m3_case1") === "7" && value("m3_case2") === "14_7" && value("m3_case3") === "equality";
-      const why = radio("m3_why");
+      const cases = [value("m3_case1"), value("m3_case2"), value("m3_case3")];
+      const casesFilled = cases.every(Boolean);
+      const casesOk = casesFilled && cases[0] === "eligible" && cases[1] === "not" && cases[2] === "not";
+      const docsCase = radio("m3_docs_case");
+      const diagnosis = radio("m3_diagnosis");
 
-      if (finalFilled && !finalOk) setBranch("m3_final_branch", "Fechamento incoerente", "Retome a última fotografia: estoque = 31, entradas = 8 e saidas = 7.");
-      else setBranch("m3_final_branch");
-
-      if (["m3_case1","m3_case2","m3_case3"].some(id => value(id)) && !casesOk) {
-        if (value("m3_case1") === "5") setBranch("m3_cases_branch", "Quantidade antiga mantida", "caixas recebe um novo valor: 12 - 2 = 10.");
-        else if (value("m3_case2") === "6_7") setBranch("m3_cases_branch", "Movimentação contada duas vezes", "saldo recebeu apenas a venda inicial de 20; o acréscimo posterior altera venda, não retroativamente o saldo.");
-        else if (value("m3_case3") && value("m3_case3") !== "equality") setBranch("m3_cases_branch", "Diagnóstico diferente", "A frase trata = como igualdade matemática, mas no código ele representa atualização.");
-        else setBranch("m3_cases_branch", "Revise os três casos", "Atualize o registro, respeite a ordem e diferencie atribuição de igualdade.");
+      if (casesFilled && !casesOk) {
+        if (cases[0] !== "eligible") setBranch("m3_cases_branch", "O limite deve ser aceito", "Renda 1500 e frequência 75 atendem às regras inclusivas, com documentação entregue.");
+        else if (cases[1] !== "not") setBranch("m3_cases_branch", "Renda acima do limite", "R$ 1.500,01 já torna a primeira condição falsa.");
+        else setBranch("m3_cases_branch", "Frequência abaixo do mínimo", "74,9% não alcança os 75% exigidos.");
       } else setBranch("m3_cases_branch");
 
-      if (why && why !== "correct") setBranch("m3_why_branch", "Justificativa incompleta", why === "old" ? "entradas foi atualizada de 10 para 8 antes da reposição." : "O estoque final depende das quantidades produzidas durante as operações, não apenas dos valores iniciais.");
-      else setBranch("m3_why_branch");
+      if (docsCase && docsCase !== "not") setBranch("m3_docs_branch", "Uma condição falsa impede a concessão", "Com &&, documentação ausente torna o resultado final falso, mesmo quando renda e frequência atendem.");
+      else setBranch("m3_docs_branch");
 
-      const complete = finalOk && casesOk && why === "correct";
-      if (!live && !complete) showFeedback(3, "Confirme o fechamento do estoque, resolva os três casos e selecione a justificativa correta.");
+      if (diagnosis && diagnosis !== "or") setBranch("m3_diagnosis_branch", "O problema está no operador lógico", "A regra exige os três critérios. O operador || aceita qualquer caso com pelo menos uma condição verdadeira.");
+      else setBranch("m3_diagnosis_branch");
+
+      const complete = casesOk && docsCase === "not" && diagnosis === "or";
+      if (!live && !complete) showFeedback(3, "Resolva os casos de fronteira, verifique a documentação ausente e diagnostique a expressão com OU.");
       return complete;
     }
 
@@ -1770,12 +2053,10 @@
       mission.classList.add("completed");
       mission.classList.remove("active");
       $("[data-state]", mission).textContent = "Concluída";
-      document.getElementById(`m${number}_result`).classList.add("show");
+      document.getElementById(`m${number}_result_box`).classList.add("show");
       button.textContent = "Missão concluída";
       button.disabled = true;
       showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
-
-      if (number === 2) document.getElementById("stateSummary").classList.add("show");
 
       if (number < 3) {
         unlockMission(number + 1);
@@ -1799,10 +2080,6 @@
     }));
 
     $$('input, select').forEach(field => field.addEventListener('change', () => {
-      const mission = field.closest('.mission');
-      if (mission) validators[Number(mission.dataset.mission)](true);
-    }));
-    $$('input[type="number"]').forEach(field => field.addEventListener('input', () => {
       const mission = field.closest('.mission');
       if (mission) validators[Number(mission.dataset.mission)](true);
     }));
@@ -1836,5 +2113,4 @@
     document.getElementById('restartButton').addEventListener('click', () => location.reload());
   </script>
 </body>
-
 </html>

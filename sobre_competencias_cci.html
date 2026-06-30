@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Conheça as Competências Consolidadas Integradas (CCI), sua origem, organização e uso nos recursos educacionais de Introdução à Programação.">
+  <title>Sobre as competências CCI</title>
+  <style>
+    :root {
+      --primary-900: #312e81;
+      --primary-800: #3730a3;
+      --primary-700: #4338ca;
+      --primary-600: #4f46e5;
+      --primary-100: #e0e7ff;
+      --primary-50: #eef2ff;
+      --cyan-700: #0e7490;
+      --cyan-100: #cffafe;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --emerald-700: #047857;
+      --emerald-100: #d1fae5;
+      --rose-700: #be123c;
+      --rose-100: #ffe4e6;
+      --slate-950: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 18px 50px rgba(49, 46, 129, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 15px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 5% 0%, rgba(79, 70, 229, 0.10), transparent 28rem),
+        radial-gradient(circle at 95% 12%, rgba(14, 116, 144, 0.08), transparent 24rem),
+        var(--slate-50);
+      color: var(--slate-950);
+      line-height: 1.6;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(79, 70, 229, 0.30);
+      outline-offset: 3px;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 20px 0 44px;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .back-link,
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 800;
+      transition: 0.18s ease;
+    }
+
+    .back-link {
+      color: var(--primary-800);
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-link {
+      color: var(--slate-600);
+    }
+
+    .back-link:hover,
+    .nav-link:hover {
+      transform: translateY(-1px);
+      color: var(--primary-800);
+      background: var(--primary-50);
+    }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding: clamp(28px, 5vw, 52px);
+      border-radius: var(--radius-xl);
+      color: var(--white);
+      background:
+        linear-gradient(135deg, rgba(49, 46, 129, 0.98), rgba(67, 56, 202, 0.95) 58%, rgba(14, 116, 144, 0.92));
+      box-shadow: var(--shadow-md);
+      margin-bottom: 22px;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero::before {
+      width: 320px;
+      height: 320px;
+      right: -100px;
+      top: -145px;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .hero::after {
+      width: 210px;
+      height: 210px;
+      left: 48%;
+      bottom: -160px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      color: #eef2ff;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      font-size: 0.82rem;
+      font-weight: 850;
+      letter-spacing: 0.03em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 850px;
+      margin-bottom: 16px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .hero-text {
+      max-width: 790px;
+      color: #e0e7ff;
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 26px;
+      max-width: 870px;
+    }
+
+    .hero-metric {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-metric strong {
+      display: block;
+      color: var(--white);
+      font-size: 1.1rem;
+      margin-bottom: 2px;
+    }
+
+    .hero-metric span {
+      color: #dbeafe;
+      font-size: 0.86rem;
+    }
+
+    .section {
+      margin-bottom: 22px;
+      padding: clamp(22px, 4vw, 32px);
+      border-radius: 24px;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .section-marker {
+      width: 11px;
+      height: 34px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: linear-gradient(var(--primary-600), var(--cyan-700));
+    }
+
+    .section-kicker {
+      color: var(--primary-700);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.72rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    h2 {
+      color: var(--primary-900);
+      font-size: clamp(1.35rem, 3vw, 1.9rem);
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+
+    h3 {
+      color: var(--slate-950);
+      font-size: 1.05rem;
+      line-height: 1.3;
+    }
+
+    p {
+      color: var(--slate-600);
+    }
+
+    .definition-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .definition-card {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--primary-50);
+      border: 1px solid var(--primary-100);
+    }
+
+    .definition-card strong {
+      color: var(--primary-900);
+    }
+
+    .equation {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1.15fr;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .equation-item,
+    .equation-result {
+      display: grid;
+      place-items: center;
+      min-height: 118px;
+      padding: 16px 12px;
+      border-radius: 17px;
+      text-align: center;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+    }
+
+    .equation-item small,
+    .equation-result small {
+      display: block;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+      font-size: 0.68rem;
+      margin-bottom: 5px;
+    }
+
+    .equation-item strong,
+    .equation-result strong {
+      display: block;
+      font-size: 0.91rem;
+      line-height: 1.35;
+    }
+
+    .equation-result {
+      color: var(--white);
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--primary-700), var(--cyan-700));
+    }
+
+    .equation-result small {
+      color: #cffafe;
+    }
+
+    .equation-result strong {
+      color: var(--white);
+    }
+
+    .operator {
+      display: grid;
+      place-items: center;
+      color: var(--primary-600);
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .example-note {
+      margin-top: 16px;
+      padding: 15px 17px;
+      border-radius: 15px;
+      color: var(--slate-700);
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      font-size: 0.94rem;
+    }
+
+    .example-note strong {
+      color: #92400e;
+    }
+
+    .method-intro {
+      max-width: 860px;
+      margin-bottom: 20px;
+    }
+
+    .method-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .method-step {
+      position: relative;
+      min-height: 200px;
+      padding: 18px;
+      border-radius: 18px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .method-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -19px;
+      top: 50%;
+      z-index: 2;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      color: var(--primary-700);
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      font-weight: 900;
+    }
+
+    .method-number {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 13px;
+      border-radius: 13px;
+      color: var(--white);
+      background: var(--primary-600);
+      font-weight: 900;
+    }
+
+    .method-step h3 {
+      margin-bottom: 7px;
+    }
+
+    .method-step p {
+      font-size: 0.9rem;
+    }
+
+    .criteria-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .criterion {
+      padding: 13px 14px;
+      border-radius: 15px;
+      color: var(--slate-700);
+      background: var(--primary-50);
+      border: 1px solid var(--primary-100);
+      font-size: 0.88rem;
+    }
+
+    .criterion strong {
+      display: block;
+      color: var(--primary-900);
+      margin-bottom: 2px;
+    }
+
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .group-card {
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+      border-radius: 19px;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+    }
+
+    .group-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: var(--group-color);
+    }
+
+    .group-card.nuclear {
+      --group-color: var(--primary-600);
+      --group-bg: var(--primary-50);
+    }
+
+    .group-card.application {
+      --group-color: var(--cyan-700);
+      --group-bg: #ecfeff;
+    }
+
+    .group-card.deepening {
+      --group-color: var(--rose-700);
+      --group-bg: #fff1f2;
+    }
+
+    .group-tag {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: var(--group-color);
+      background: var(--group-bg);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 900;
+    }
+
+    .group-card h3 {
+      margin-bottom: 7px;
+    }
+
+    .group-card p {
+      font-size: 0.9rem;
+    }
+
+    .group-range {
+      display: block;
+      margin-top: 12px;
+      color: var(--slate-500);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .catalog-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-button {
+      min-height: 39px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: var(--slate-600);
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      font-size: 0.84rem;
+      font-weight: 850;
+      cursor: pointer;
+      transition: 0.16s ease;
+    }
+
+    .filter-button:hover,
+    .filter-button.active {
+      color: var(--white);
+      background: var(--primary-700);
+      border-color: var(--primary-700);
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1 1 280px;
+      max-width: 390px;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      color: var(--slate-500);
+      pointer-events: none;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 43px;
+      padding: 10px 13px 10px 41px;
+      border-radius: 13px;
+      color: var(--slate-950);
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-600);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.10);
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .competency-card {
+      --card-color: var(--primary-600);
+      --card-soft: var(--primary-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: var(--white);
+      overflow: hidden;
+      transition: 0.18s ease;
+    }
+
+    .competency-card[data-group="application"] {
+      --card-color: var(--cyan-700);
+      --card-soft: #ecfeff;
+    }
+
+    .competency-card[data-group="deepening"] {
+      --card-color: var(--rose-700);
+      --card-soft: #fff1f2;
+    }
+
+    .competency-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--slate-300);
+    }
+
+    .competency-card[hidden] {
+      display: none;
+    }
+
+    .competency-card summary {
+      display: grid;
+      grid-template-columns: 62px 1fr 26px;
+      gap: 13px;
+      align-items: center;
+      min-height: 112px;
+      padding: 17px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .competency-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .competency-code {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      color: var(--card-color);
+      background: var(--card-soft);
+      border: 1px solid color-mix(in srgb, var(--card-color) 20%, transparent);
+      font-size: 0.88rem;
+      font-weight: 950;
+    }
+
+    .competency-heading {
+      min-width: 0;
+    }
+
+    .competency-type {
+      display: inline-flex;
+      margin-bottom: 5px;
+      color: var(--card-color);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 0.66rem;
+      font-weight: 950;
+    }
+
+    .competency-heading h3 {
+      font-size: 0.99rem;
+    }
+
+    .expand-icon {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--card-color);
+      background: var(--card-soft);
+      font-weight: 900;
+      transition: transform 0.18s ease;
+    }
+
+    .competency-card[open] .expand-icon {
+      transform: rotate(45deg);
+    }
+
+    .competency-content {
+      padding: 0 17px 18px 92px;
+    }
+
+    .competency-description {
+      padding-top: 15px;
+      border-top: 1px solid var(--slate-200);
+      font-size: 0.93rem;
+    }
+
+    .competency-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 13px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 29px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: var(--slate-700);
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      color: var(--slate-600);
+      background: var(--slate-50);
+      border: 1px dashed var(--slate-300);
+    }
+
+    .empty-state.show {
+      display: block;
+    }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .resource-card {
+      padding: 19px;
+      border-radius: 18px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .resource-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 13px;
+      border-radius: 14px;
+      color: var(--primary-800);
+      background: var(--primary-50);
+      border: 1px solid var(--primary-100);
+      font-size: 1.1rem;
+      font-weight: 950;
+    }
+
+    .resource-card h3 {
+      margin-bottom: 6px;
+    }
+
+    .resource-card p {
+      font-size: 0.9rem;
+    }
+
+    .alignment-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .alignment-main,
+    .code-explainer {
+      padding: 22px;
+      border-radius: 18px;
+    }
+
+    .alignment-main {
+      background: var(--primary-50);
+      border: 1px solid var(--primary-100);
+    }
+
+    .alignment-main h3,
+    .code-explainer h3 {
+      margin-bottom: 8px;
+    }
+
+    .alignment-main p + p {
+      margin-top: 9px;
+    }
+
+    .code-explainer {
+      color: var(--white);
+      background: linear-gradient(135deg, var(--slate-950), var(--slate-800));
+    }
+
+    .code-explainer h3 {
+      color: var(--white);
+    }
+
+    .code-explainer p {
+      color: var(--slate-300);
+      font-size: 0.92rem;
+    }
+
+    .code-anatomy {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 10px;
+    }
+
+    .code-chip {
+      display: inline-flex;
+      padding: 10px 13px;
+      border-radius: 12px;
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 1.05rem;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+    }
+
+    .code-parts {
+      display: grid;
+      gap: 5px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+    }
+
+    .code-parts strong {
+      color: var(--white);
+    }
+
+    .notice {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 15px;
+      color: var(--slate-700);
+      background: var(--amber-100);
+      border: 1px solid #fde68a;
+      font-size: 0.9rem;
+    }
+
+    .notice strong {
+      color: #92400e;
+    }
+
+    .closing {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: clamp(24px, 4vw, 34px);
+      border-radius: 24px;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--primary-900), var(--slate-950));
+      box-shadow: var(--shadow-md);
+    }
+
+    .closing h2 {
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .closing p {
+      max-width: 780px;
+      color: #cbd5e1;
+    }
+
+    .closing-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 17px;
+      border-radius: 13px;
+      color: var(--primary-900);
+      background: var(--white);
+      text-decoration: none;
+      font-weight: 900;
+      white-space: nowrap;
+      transition: 0.18s ease;
+    }
+
+    .closing-link:hover {
+      transform: translateY(-1px);
+      background: var(--primary-50);
+    }
+
+    .footer {
+      padding: 18px 10px 0;
+      text-align: center;
+      color: var(--slate-500);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 980px) {
+      .method-flow,
+      .groups-grid,
+      .resources-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .method-step:not(:last-child)::after {
+        display: none;
+      }
+
+      .criteria-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .definition-layout,
+      .alignment-box {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+        padding-top: 10px;
+      }
+
+      .top-nav {
+        align-items: flex-start;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .hero-metrics,
+      .catalog-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .equation {
+        grid-template-columns: 1fr;
+      }
+
+      .operator {
+        min-height: 24px;
+      }
+
+      .operator.plus::before {
+        content: "+";
+      }
+
+      .operator.equal::before {
+        content: "=";
+      }
+
+      .operator {
+        font-size: 0;
+      }
+
+      .operator::before {
+        font-size: 1.3rem;
+      }
+
+      .competency-card summary {
+        grid-template-columns: 54px 1fr 24px;
+        min-height: 104px;
+        padding: 14px;
+      }
+
+      .competency-code {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        font-size: 0.78rem;
+      }
+
+      .competency-content {
+        padding: 0 14px 16px;
+      }
+
+      .catalog-tools {
+        align-items: stretch;
+      }
+
+      .search-box {
+        order: -1;
+        max-width: none;
+        flex-basis: 100%;
+      }
+
+      .closing {
+        grid-template-columns: 1fr;
+      }
+
+      .closing-link {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .method-flow,
+      .groups-grid,
+      .resources-grid,
+      .criteria-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .section,
+      .closing {
+        border-radius: 20px;
+      }
+
+      .filter-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+      }
+
+      .filter-button {
+        width: 100%;
+      }
+
+      .competency-heading h3 {
+        font-size: 0.92rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <nav class="top-nav" aria-label="Navegação da página">
+      <a class="back-link" href="index.html" aria-label="Voltar para a página de recursos">
+        <span aria-hidden="true">←</span>
+        Voltar aos recursos
+      </a>
+      <a class="nav-link" href="#catalogo">Explorar as 13 competências</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-content">
+        <span class="eyebrow">Catálogo CCI · Introdução à Programação</span>
+        <h1>Competências que orientam a aprendizagem e os recursos educacionais</h1>
+        <p class="hero-text">
+          As Competências Consolidadas Integradas organizam o que o estudante precisa compreender, realizar e demonstrar ao resolver problemas introdutórios de programação.
+        </p>
+
+        <div class="hero-metrics" aria-label="Resumo do catálogo">
+          <article class="hero-metric">
+            <strong>13 competências</strong>
+            <span>Da representação de problemas à persistência em arquivos.</span>
+          </article>
+          <article class="hero-metric">
+            <strong>3 catálogos analisados</strong>
+            <span>Produzidos a partir de materiais de professores distintos.</span>
+          </article>
+          <article class="hero-metric">
+            <strong>Alinhamento curricular</strong>
+            <span>Correlação com tópicos de Software Development Fundamentals do CS2023.</span>
+          </article>
+        </div>
+      </div>
+    </header>
+
+    <section class="section" id="conceito">
+      <div class="section-header">
+        <span class="section-marker" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">Conceito central</p>
+          <h2>O que significa desenvolver uma competência?</h2>
+        </div>
+      </div>
+
+      <div class="definition-layout">
+        <article class="definition-card">
+          <h3>Competência não é apenas conhecer um conteúdo</h3>
+          <p>
+            Desenvolver uma competência significa mobilizar conhecimentos e habilidades para agir de maneira adequada diante de um problema. Em programação, isso envolve compreender a situação, escolher uma estratégia, construir a solução e verificar se o resultado corresponde ao que foi solicitado.
+          </p>
+          <div class="example-note">
+            <strong>Exemplo:</strong> conhecer a estrutura <code>if</code> é um conhecimento. Formular uma condição lógica coerente com o problema e usá-la para controlar o fluxo do programa é uma demonstração de competência.
+          </div>
+        </article>
+
+        <div class="equation" aria-label="Composição de uma competência">
+          <article class="equation-item">
+            <div>
+              <small>Conhecer</small>
+              <strong>Conceitos, regras e estruturas</strong>
+            </div>
+          </article>
+          <span class="operator plus" aria-hidden="true">+</span>
+          <article class="equation-item">
+            <div>
+              <small>Saber fazer</small>
+              <strong>Ações e procedimentos</strong>
+            </div>
+          </article>
+          <span class="operator plus" aria-hidden="true">+</span>
+          <article class="equation-item">
+            <div>
+              <small>Mobilizar</small>
+              <strong>Escolhas adequadas ao problema</strong>
+            </div>
+          </article>
+          <span class="operator equal" aria-hidden="true">=</span>
+          <article class="equation-result">
+            <div>
+              <small>Demonstrar</small>
+              <strong>Competência em contexto</strong>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="construcao">
+      <div class="section-header">
+        <span class="section-marker" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">Origem do catálogo</p>
+          <h2>Como as competências CCI foram construídas?</h2>
+        </div>
+      </div>
+
+      <p class="method-intro">
+        O catálogo não foi produzido como uma lista isolada de conteúdos. Ele resulta de um processo de análise, comparação e consolidação de competências identificadas em materiais educacionais de Introdução à Programação.
+      </p>
+
+      <div class="method-flow">
+        <article class="method-step">
+          <span class="method-number">1</span>
+          <h3>Análise dos materiais</h3>
+          <p>Foram examinadas atividades e tarefas de Introdução à Programação utilizadas por três professores.</p>
+        </article>
+        <article class="method-step">
+          <span class="method-number">2</span>
+          <h3>Aplicação do modelo CSP</h3>
+          <p>Os conhecimentos e as ações exigidas pelas tarefas foram identificados e organizados em competências.</p>
+        </article>
+        <article class="method-step">
+          <span class="method-number">3</span>
+          <h3>Comparação dos catálogos</h3>
+          <p>As competências encontradas foram comparadas para reconhecer recorrências, diferenças e sobreposições.</p>
+        </article>
+        <article class="method-step">
+          <span class="method-number">4</span>
+          <h3>Consolidação e integração</h3>
+          <p>Competências semelhantes foram reunidas, redundâncias foram reduzidas e capacidades específicas foram preservadas.</p>
+        </article>
+        <article class="method-step">
+          <span class="method-number">5</span>
+          <h3>Alinhamento curricular</h3>
+          <p>O conjunto consolidado foi relacionado aos tópicos de fundamentos de desenvolvimento de software do CS2023.</p>
+        </article>
+      </div>
+
+      <div class="criteria-strip" aria-label="Critérios de consolidação">
+        <article class="criterion"><strong>Recorrência</strong>Manter capacidades presentes em mais de um catálogo.</article>
+        <article class="criterion"><strong>Preservação</strong>Conservar competências específicas previstas no escopo da disciplina.</article>
+        <article class="criterion"><strong>Redução de redundância</strong>Fundir formulações que descrevem capacidades equivalentes.</article>
+        <article class="criterion"><strong>Granularidade adequada</strong>Evitar tratar conhecimentos isolados como competências independentes.</article>
+      </div>
+    </section>
+
+    <section class="section" id="organizacao">
+      <div class="section-header">
+        <span class="section-marker" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">Estrutura do catálogo</p>
+          <h2>Como as 13 competências estão organizadas?</h2>
+        </div>
+      </div>
+
+      <div class="groups-grid">
+        <article class="group-card nuclear">
+          <span class="group-tag">Nucleares</span>
+          <h3>Fundamentos recorrentes</h3>
+          <p>Capacidades essenciais que aparecem de forma contínua nas tarefas introdutórias de programação.</p>
+          <span class="group-range">CCI01 a CCI08 · 8 competências</span>
+        </article>
+        <article class="group-card application">
+          <span class="group-tag">Aplicação ampliada</span>
+          <h3>Aplicação em situações mais completas</h3>
+          <p>Ampliam o uso das competências nucleares na organização de informações e na articulação de múltiplas estruturas em uma mesma solução.</p>
+          <span class="group-range">CCI09 e CCI10 · 2 competências</span>
+        </article>
+        <article class="group-card deepening">
+          <span class="group-tag">Aprofundamento</span>
+          <h3>Ampliação do repertório</h3>
+          <p>Estendem os fundamentos para a modelagem de dados compostos, a construção de soluções recursivas e a persistência em arquivos.</p>
+          <span class="group-range">CCI11 a CCI13 · 3 competências</span>
+        </article>
+      </div>
+
+      <div class="notice">
+        <strong>Importante:</strong> essa organização não representa uma sequência rígida de pré-requisitos. As competências podem ser mobilizadas em conjunto, de acordo com a complexidade e o contexto da tarefa.
+      </div>
+    </section>
+
+    <section class="section" id="catalogo">
+      <div class="section-header">
+        <span class="section-marker" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">Catálogo interativo</p>
+          <h2>Conheça as 13 competências CCI</h2>
+        </div>
+      </div>
+
+      <div class="catalog-tools">
+        <div class="filter-buttons" role="group" aria-label="Filtrar competências por tipo">
+          <button class="filter-button active" type="button" data-filter="all">Todas</button>
+          <button class="filter-button" type="button" data-filter="nuclear">Nucleares</button>
+          <button class="filter-button" type="button" data-filter="application">Aplicação ampliada</button>
+          <button class="filter-button" type="button" data-filter="deepening">Aprofundamento</button>
+        </div>
+
+        <label class="search-box">
+          <span class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Pesquisar competências</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path></svg>
+          <input id="competencySearch" type="search" placeholder="Pesquisar por código, tema ou conceito">
+        </label>
+      </div>
+
+      <div class="catalog-grid" id="competencyGrid">
+        <details class="competency-card" data-group="nuclear" data-search="cci01 representar problemas introdutórios soluções algorítmicas claras algoritmos pseudocódigo fluxogramas entradas saídas regras etapas analisar criar">
+          <summary>
+            <span class="competency-code">CCI01</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Representar problemas introdutórios por meio de soluções algorítmicas claras</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Interpretar problemas introdutórios, identificar entradas, saídas, regras e etapas essenciais e representá-los por algoritmos, pseudocódigo, fluxogramas ou formas equivalentes.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Analisar</span><span class="meta-pill">Apoio: Criar</span><span class="meta-pill">K01 · K03 · K06</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci02 implementar programas introdutórios fluxo verificável entrada processamento saída implementação linguagem c comportamento aplicar criar">
+          <summary>
+            <span class="competency-code">CCI02</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Implementar programas introdutórios com fluxo verificável de entrada, processamento e saída</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Construir programas básicos que leem dados, processam informações e produzem saídas verificáveis, mantendo coerência entre enunciado, comandos implementados e comportamento observado.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">Apoio: Criar</span><span class="meta-pill">K01 · K02 · K03 · K06</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci03 manipular dados simples variáveis constantes expressões coerência estado tipos primitivos aritmética aplicar analisar">
+          <summary>
+            <span class="competency-code">CCI03</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Manipular dados simples, variáveis, constantes e expressões preservando a coerência do estado</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Representar e transformar dados simples por variáveis, constantes, tipos primitivos e expressões aritméticas, mantendo consistência entre operações, valores intermediários e estado final do programa.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">Apoio: Analisar</span><span class="meta-pill">K01 · K03 · K04</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci04 controlar fluxo decisões condicionais expressões lógicas corretas condições seleção caminhos classificação cálculo aplicar analisar">
+          <summary>
+            <span class="competency-code">CCI04</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Controlar o fluxo por decisões condicionais e expressões lógicas corretas</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Formular expressões lógicas e relacionais coerentes com as regras do problema e utilizá-las em estruturas condicionais para selecionar caminhos de execução, classificar casos ou aplicar regras de cálculo.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">Apoio: Analisar</span><span class="meta-pill">K03 · K05 · K06 · K07</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci05 controlar processamento iterativo repetição atualização estado paradas seguras laços contadores acumuladores critérios parada aplicar analisar">
+          <summary>
+            <span class="competency-code">CCI05</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Controlar processamento iterativo com repetição, atualização de estado e paradas seguras</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Utilizar laços para processar múltiplas ocorrências, controlar critérios de parada, atualizar contadores, acumuladores e variáveis de estado e produzir processamento repetitivo correto e verificável.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">Apoio: Analisar</span><span class="meta-pill">K01 · K04 · K05 · K08</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci06 representar percorrer processar coleções indexadas dados estruturados simples vetores matrizes strings índices armazenar acessar atualizar transformar aplicar">
+          <summary>
+            <span class="competency-code">CCI06</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Representar, percorrer e processar coleções indexadas e dados estruturados simples</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Utilizar vetores, matrizes, strings ou coleções indexadas para armazenar, acessar, percorrer, atualizar e transformar múltiplos dados, preservando correspondência posicional e consistência dos índices.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">K03 · K04 · K08 · K09</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci07 modularizar soluções funções procedimentos interfaces coerentes parâmetros tipos retorno fluxo principal criar aplicar">
+          <summary>
+            <span class="competency-code">CCI07</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Modularizar soluções por funções ou procedimentos com interfaces coerentes</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Decompor soluções em funções ou procedimentos coesos, definindo parâmetros, tipos, retorno e integração ao fluxo principal de modo verificável.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Criar</span><span class="meta-pill">Apoio: Aplicar</span><span class="meta-pill">K03 · K06 · K10</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="nuclear" data-search="cci08 analisar justificar selecionar estruturas estratégias adequadas problema alternativas solução escolhas técnicas estado fluxo dados acesso comportamento avaliar">
+          <summary>
+            <span class="competency-code">CCI08</span>
+            <span class="competency-heading"><span class="competency-type">Nuclear</span><h3>Analisar, justificar e selecionar estruturas ou estratégias adequadas ao problema</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Analisar o problema, comparar alternativas de solução, selecionar estruturas ou estratégias adequadas e justificar tecnicamente as escolhas com base em estado, fluxo, dados, forma de acesso e comportamento esperado.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Analisar e Avaliar</span><span class="meta-pill">K01 · K03 · K05 · K07 · K08 · K09</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="application" data-search="cci09 organizar cadastros saídas consolidadas consultas relatórios verificáveis listagens clareza completude aplicar aplicação ampliada">
+          <summary>
+            <span class="competency-code">CCI09</span>
+            <span class="competency-heading"><span class="competency-type">Aplicação ampliada</span><h3>Organizar cadastros, saídas consolidadas, consultas e relatórios verificáveis</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Organizar dados coletados ou processados em saídas consolidadas, listagens, cadastros, consultas ou relatórios simples, garantindo clareza, completude e correspondência com o processamento realizado.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">K03 · K06 · K08 · K09</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="application" data-search="cci10 integrar múltiplas estruturas soluções introdutórias complexas decomposição entrada saída cálculo decisão repetição coleções consultas indicadores criar aplicação ampliada">
+          <summary>
+            <span class="competency-code">CCI10</span>
+            <span class="competency-heading"><span class="competency-type">Aplicação ampliada</span><h3>Integrar múltiplas estruturas em soluções introdutórias mais complexas</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Implementar soluções introdutórias que articulam, em um mesmo programa, decomposição de requisitos, entrada e saída, cálculo, decisão, repetição, coleções, consultas e indicadores verificáveis.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Criar</span><span class="meta-pill">K01 · K03 · K04 · K05 · K06 · K07 · K08 · K09 · K10</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="deepening" data-search="cci11 modelar organizar dados compostos programas introdutórios entidades campos registros structs atributos tipos interfaces aplicar aprofundamento">
+          <summary>
+            <span class="competency-code">CCI11</span>
+            <span class="competency-heading"><span class="competency-type">Aprofundamento</span><h3>Modelar e organizar dados compostos em programas introdutórios</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Representar entidades compostas por múltiplos campos, como registros ou structs, organizando atributos, tipos e interfaces de uso de modo coerente com o processamento realizado.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Aplicar</span><span class="meta-pill">K03 · K09 · K10</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="deepening" data-search="cci12 construir subprogramas recursivos progressão verificável caso base passo recursivo término fluxo chamadas criar aprofundamento recursão">
+          <summary>
+            <span class="competency-code">CCI12</span>
+            <span class="competency-heading"><span class="competency-type">Aprofundamento</span><h3>Construir subprogramas recursivos com progressão verificável</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Projetar e implementar subprogramas recursivos com caso base, passo recursivo e progresso para término, explicando a coerência da recursão com a estrutura do problema.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Criar</span><span class="meta-pill">K01 · K10 · K11</span></div>
+          </div>
+        </details>
+
+        <details class="competency-card" data-group="deepening" data-search="cci13 desenvolver soluções persistência consulta arquivos leitura escrita recuperar atualizar dados estado execução criar analisar aprofundamento">
+          <summary>
+            <span class="competency-code">CCI13</span>
+            <span class="competency-heading"><span class="competency-type">Aprofundamento</span><h3>Desenvolver soluções com persistência e consulta em arquivos</h3></span>
+            <span class="expand-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="competency-content">
+            <p class="competency-description">Persistir, recuperar, consultar e atualizar dados em arquivos, integrando operações de arquivo ao fluxo do programa e justificando seu comportamento em termos de estado, execução e persistência.</p>
+            <div class="competency-meta"><span class="meta-pill">Bloom: Criar</span><span class="meta-pill">Apoio: Analisar</span><span class="meta-pill">K01 · K06 · K09 · K12</span></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="empty-state" id="emptyState" role="status">Nenhuma competência corresponde ao filtro ou termo pesquisado.</div>
+    </section>
+
+    <section class="section" id="recursos">
+      <div class="section-header">
+        <span class="section-marker" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">Aplicação pedagógica</p>
+          <h2>Como as competências aparecem nos recursos?</h2>
+        </div>
+      </div>
+
+      <div class="resources-grid">
+        <article class="resource-card">
+          <span class="resource-icon" aria-hidden="true">I</span>
+          <h3>Infográficos</h3>
+          <p>Apresentam, organizam e sintetizam conceitos que sustentam o desenvolvimento de uma competência.</p>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon" aria-hidden="true">R</span>
+          <h3>Roteiros de resolução</h3>
+          <p>Conduzem o estudante pelas ações necessárias para mobilizar a competência durante a resolução de um problema.</p>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon" aria-hidden="true">E</span>
+          <h3>Cards de erro</h3>
+          <p>Ajudam a observar, diagnosticar, compreender e corrigir dificuldades relacionadas à competência.</p>
+        </article>
+        <article class="resource-card">
+          <span class="resource-icon" aria-hidden="true">D</span>
+          <h3>Desafios guiados</h3>
+          <p>Propõem situações práticas nas quais diferentes conhecimentos e habilidades precisam ser articulados.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="alinhamento">
+      <div class="section-header">
+        <span class="section-marker" aria-hidden="true"></span>
+        <div>
+          <p class="section-kicker">Rastreabilidade e referência</p>
+          <h2>O que significa a sigla CCI?</h2>
+        </div>
+      </div>
+
+      <div class="alignment-box">
+        <article class="alignment-main">
+          <h3>Competências Consolidadas Integradas</h3>
+          <p>A sigla CCI indica que as competências resultam da consolidação e integração de diferentes catálogos, e não da simples adoção de uma única fonte.</p>
+          <p>Essa convenção preserva a rastreabilidade da proposta e diferencia as competências unificadas das formulações originais encontradas nos materiais analisados.</p>
+        </article>
+
+        <article class="code-explainer">
+          <h3>Como ler o código</h3>
+          <div class="code-anatomy">
+            <span class="code-chip">CCI06</span>
+            <div class="code-parts">
+              <span><strong>CCI</strong> · Competências Consolidadas Integradas</span>
+              <span><strong>06</strong> · posição da competência no catálogo</span>
+            </div>
+          </div>
+          <p>O número identifica a competência, mas não indica dificuldade, nota ou nível de proficiência.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div>
+        <h2>Das competências aos recursos de aprendizagem</h2>
+        <p>Ao identificar a competência mobilizada, o estudante compreende melhor o objetivo do recurso e o professor pode selecionar materiais de acordo com a capacidade que deseja desenvolver ou avaliar.</p>
+      </div>
+      <a class="closing-link" href="index.html">Explorar os recursos</a>
+    </section>
+
+    <footer class="footer">
+      <p>Catálogo CCI de competências em Introdução à Programação · Concepção e desenvolvimento: Marcos Bião.</p>
+    </footer>
+  </main>
+
+  <script>
+    const filterButtons = [...document.querySelectorAll(".filter-button")];
+    const competencyCards = [...document.querySelectorAll(".competency-card")];
+    const searchInput = document.getElementById("competencySearch");
+    const emptyState = document.getElementById("emptyState");
+
+    let activeFilter = "all";
+
+    function normalizeText(value) {
+      return value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function updateCatalog() {
+      const query = normalizeText(searchInput.value);
+      let visibleCount = 0;
+
+      competencyCards.forEach((card) => {
+        const matchesFilter = activeFilter === "all" || card.dataset.group === activeFilter;
+        const searchableText = normalizeText(card.dataset.search || card.textContent);
+        const matchesSearch = !query || searchableText.includes(query);
+        const shouldShow = matchesFilter && matchesSearch;
+
+        card.hidden = !shouldShow;
+        if (shouldShow) visibleCount += 1;
+      });
+
+      emptyState.classList.toggle("show", visibleCount === 0);
+    }
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach((item) => item.classList.toggle("active", item === button));
+        updateCatalog();
+      });
+    });
+
+    searchInput.addEventListener("input", updateCatalog);
+  </script>
+</body>
+</html>

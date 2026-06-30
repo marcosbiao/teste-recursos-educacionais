@@ -535,6 +535,138 @@
       color: var(--muted);
     }
 
+    .competencies-callout {
+      overflow: hidden;
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(238, 242, 255, 0.94), rgba(255, 255, 255, 0.96) 54%, rgba(236, 253, 245, 0.72));
+      box-shadow: var(--soft-shadow);
+    }
+
+    .competencies-callout-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: clamp(1.25rem, 3vw, 2rem);
+      align-items: center;
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+    }
+
+    .competencies-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      color: var(--primary-dark);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .competencies-callout h2 {
+      margin-bottom: 0.65rem;
+      font-size: clamp(1.55rem, 3vw, 2.1rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .competencies-callout p {
+      max-width: 720px;
+      margin-bottom: 1rem;
+      color: var(--muted);
+    }
+
+    .competencies-callout .btn {
+      white-space: normal;
+      text-align: center;
+    }
+
+    .competencies-indicators {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .competencies-indicator {
+      min-width: 0;
+      padding: 0.75rem 0.85rem;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .competencies-indicator strong,
+    .competencies-indicator span {
+      display: block;
+      line-height: 1.25;
+    }
+
+    .competencies-indicator strong {
+      color: var(--primary-dark);
+      font-size: 0.95rem;
+    }
+
+    .competencies-indicator span {
+      margin-top: 0.22rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .competencies-visual {
+      display: grid;
+      gap: 0.75rem;
+      min-width: 0;
+      padding: 1rem;
+      border: 1px solid rgba(229, 231, 235, 0.95);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .competencies-visual-title {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .competencies-visual-title svg {
+      flex: 0 0 auto;
+    }
+
+    .competencies-track {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .competencies-track span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 42px;
+      padding: 0.65rem 0.75rem;
+      color: #1f2937;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 8px;
+      background: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .competencies-track em {
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 700;
+    }
+
     .section-heading {
       display: flex;
       align-items: end;
@@ -869,6 +1001,7 @@
       }
 
       .hero-grid,
+      .competencies-callout-grid,
       .evaluation-grid {
         grid-template-columns: 1fr;
       }
@@ -931,6 +1064,20 @@
 
       .metrics {
         grid-template-columns: 1fr;
+      }
+
+      .competencies-callout-grid {
+        padding: 1rem;
+      }
+
+      .competencies-indicators {
+        grid-template-columns: 1fr;
+      }
+
+      .competencies-track span {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.2rem;
       }
 
       .hero-visual {
@@ -1117,6 +1264,62 @@
       </div>
     </section>
 
+    <section class="section" aria-labelledby="competencias-chamada-titulo">
+      <div class="competencies-callout">
+        <div class="competencies-callout-grid">
+          <div>
+            <span class="competencies-tag">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m12 3 7 4v5c0 4.4-2.7 7.2-7 9-4.3-1.8-7-4.6-7-9V7l7-4Z"></path>
+                <path d="m9 12 2 2 4-5"></path>
+              </svg>
+              Fundamentação pedagógica
+            </span>
+            <h2 id="competencias-chamada-titulo">Recursos organizados por competências</h2>
+            <p>Os recursos desta plataforma estão organizados a partir do Catálogo CCI de competências em Introdução à Programação. Conheça o que essas competências representam, como foram construídas e de que forma orientam o desenvolvimento dos recursos educacionais.</p>
+            <a class="btn btn-primary" href="sobre_competencias_cci.html">
+              Conheça as competências CCI
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+            <div class="competencies-indicators" aria-label="Resumo do catálogo CCI">
+              <div class="competencies-indicator">
+                <strong>13 competências CCI</strong>
+                <span>Catálogo consolidado</span>
+              </div>
+              <div class="competencies-indicator">
+                <strong>3 categorias</strong>
+                <span>Nucleares, aplicação ampliada e aprofundamento</span>
+              </div>
+              <div class="competencies-indicator">
+                <strong>Recursos alinhados às competências</strong>
+                <span>Infográficos, roteiros e cards</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="competencies-visual" aria-hidden="true">
+            <div class="competencies-visual-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Z"></path>
+                <path d="M8 7h6"></path>
+                <path d="M8 11h8"></path>
+                <path d="M8 15h5"></path>
+              </svg>
+              Catálogo CCI
+            </div>
+            <div class="competencies-track">
+              <span>Nucleares <em>CCI01-CCI08</em></span>
+              <span>Aplicação ampliada <em>CCI09-CCI10</em></span>
+              <span>Aprofundamento <em>CCI11-CCI13</em></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="sobre" aria-labelledby="sobre-titulo">
       <div class="info-panel">
         <span class="info-icon" aria-hidden="true">
@@ -1221,7 +1424,7 @@
           </div>
         </a>
 
-        <a class="category-card category-link" data-category="erros" data-resource-count="5" href="cards-erros.html" aria-label="Abrir página de cards de erros comuns">
+        <a class="category-card category-link" data-category="erros" data-resource-count="28" href="cards-erros.html" aria-label="Abrir página de cards de erros comuns">
           <div class="category-link-content">
             <div class="category-head">
               <span class="category-icon" aria-hidden="true">
