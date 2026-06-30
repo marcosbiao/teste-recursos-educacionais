@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do hidrômetro ao consumo mensal — CCI01</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <style>
+
+    :root {
+      --emerald-950: #022c22;
+      --emerald-900: #064e3b;
+      --emerald-800: #065f46;
+      --emerald-700: #047857;
+      --emerald-600: #059669;
+      --emerald-100: #d1fae5;
+      --emerald-50: #ecfdf5;
+      --teal-700: #0f766e;
+      --teal-100: #ccfbf1;
+      --lime-600: #65a30d;
+      --lime-100: #ecfccb;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --amber-50: #fffbeb;
+      --red-700: #b91c1c;
+      --red-100: #fee2e2;
+      --red-50: #fef2f2;
+      --blue-700: #1d4ed8;
+      --blue-100: #dbeafe;
+      --slate-950: #0f172a;
+      --slate-900: #172033;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
+      --shadow-md: 0 20px 55px rgba(15, 23, 42, .11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-950);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(5, 150, 105, .11), transparent 30rem),
+        radial-gradient(circle at 94% 13%, rgba(101, 163, 13, .08), transparent 28rem),
+        var(--slate-50);
+      padding: 24px 16px 46px;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(5, 150, 105, .32);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 26px;
+      align-items: center;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 84% 15%, rgba(255,255,255,.11), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900) 58%, var(--emerald-700));
+      box-shadow: 0 24px 60px rgba(2, 44, 34, .23);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #34d399, #a3e635, #2dd4bf);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.11);
+      color: #ecfdf5;
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      color: var(--white);
+      font-size: clamp(2rem, 4.8vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .hero-description { max-width: 760px; color: #d1fae5; font-size: 1.02rem; }
+
+    .hero-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.35fr;
+      gap: 12px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(9px);
+    }
+
+    .flow-chip {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,.10);
+      text-align: center;
+    }
+    .flow-chip strong { display: block; color: white; font-size: 1.05rem; }
+    .flow-chip small { color: #a7f3d0; font-weight: 700; }
+    .flow-arrow { color: #bef264; font-size: 1.35rem; text-align: center; }
+    .flow-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .context-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kicker {
+      margin-bottom: 6px;
+      color: var(--emerald-700);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    h2 { color: var(--slate-950); font-size: 1.35rem; line-height: 1.2; letter-spacing: -.02em; }
+    h3 { color: var(--slate-900); font-size: 1.02rem; line-height: 1.25; }
+    p { color: var(--slate-600); }
+
+    .problem-statement {
+      margin-top: 13px;
+      padding: 16px 17px;
+      border: 1px solid var(--emerald-100);
+      border-left: 5px solid var(--emerald-600);
+      border-radius: var(--radius-md);
+      background: var(--emerald-50);
+      color: var(--slate-950);
+      font-weight: 780;
+    }
+
+    .problem-statement small { display: block; margin-top: 7px; color: var(--slate-600); font-weight: 600; }
+
+    .meta-stack { display: grid; gap: 9px; }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+    }
+    .meta-icon {
+      width: 31px; height: 31px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      font-weight: 900;
+    }
+    .meta-row strong { display: block; color: var(--slate-900); font-size: .86rem; }
+    .meta-row span { color: var(--slate-600); font-size: .83rem; }
+
+    .mission-map {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      padding: 15px 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .map-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .map-top strong { color: var(--slate-900); font-size: .93rem; }
+    .map-top span { color: var(--slate-500); font-size: .83rem; }
+    .map-line { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: center; }
+    .map-connector { height: 3px; border-radius: 999px; background: var(--slate-200); transition: background .3s ease; }
+    .map-connector.done { background: linear-gradient(90deg, var(--emerald-600), #84cc16); }
+    .map-node {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      transition: .25s ease;
+    }
+    .map-node-number {
+      width: 30px; height: 30px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border: 2px solid var(--slate-300);
+      border-radius: 50%;
+      background: var(--white);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .map-node strong { display: block; color: inherit; font-size: .83rem; line-height: 1.12; }
+    .map-node small { display: block; margin-top: 2px; color: inherit; font-size: .68rem; text-transform: uppercase; font-weight: 850; letter-spacing: .04em; }
+    .map-node.active { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); box-shadow: 0 0 0 3px rgba(5,150,105,.07); }
+    .map-node.active .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.done { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); }
+    .map-node.done .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.locked { opacity: .62; }
+
+    .mission {
+      --mission-color: var(--emerald-600);
+      --mission-soft: var(--emerald-50);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--mission-color);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+    }
+    .mission[data-mission="2"] { --mission-color: var(--teal-700); --mission-soft: #f0fdfa; }
+    .mission[data-mission="3"] { --mission-color: var(--lime-600); --mission-soft: #f7fee7; }
+    .mission.locked { opacity: .72; }
+    .mission.active { box-shadow: var(--shadow-md); }
+    .mission.completed { border-color: var(--emerald-100); }
+
+    .mission-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 20px 22px;
+      background: var(--white);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mission.locked .mission-toggle { cursor: not-allowed; }
+    .mission-icon {
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 17px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 24%, transparent);
+      font-size: 1.25rem;
+      font-weight: 950;
+    }
+    .mission-heading small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--mission-color);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mission-heading h2 { margin: 0; font-size: 1.35rem; }
+    .mission-heading p { margin-top: 4px; font-size: .9rem; }
+    .mission-side { display: flex; align-items: center; gap: 10px; }
+    .mission-meta {
+      display: grid;
+      gap: 3px;
+      justify-items: end;
+      color: var(--slate-500);
+      font-size: .77rem;
+      white-space: nowrap;
+    }
+    .mission-meta strong { color: var(--slate-800); font-size: .82rem; }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .mission.active .state-pill { background: var(--mission-soft); color: var(--mission-color); }
+    .mission.completed .state-pill { background: var(--emerald-50); color: var(--emerald-800); }
+    .chevron { color: var(--slate-400); font-size: 1.15rem; transition: transform .22s ease; }
+    .mission.open .chevron { transform: rotate(180deg); }
+
+    .mission-content { display: none; padding: 0 22px 24px; }
+    .mission.open .mission-content { display: grid; gap: 22px; }
+
+    .mission-objective {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: var(--mission-soft);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 20%, transparent);
+    }
+    .objective-icon {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 11px; background: white; color: var(--mission-color); font-weight: 950;
+    }
+    .mission-objective strong { display: block; color: var(--slate-900); font-size: .88rem; }
+    .mission-objective p { font-size: .84rem; }
+    .seal-preview { color: var(--mission-color); font-size: .76rem; font-weight: 900; text-align: right; }
+
+    .task-block { display: grid; gap: 12px; padding-top: 2px; }
+    .task-head { display: flex; gap: 11px; align-items: flex-start; }
+    .task-index {
+      width: 29px; height: 29px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+    .task-head h3 { margin-bottom: 3px; }
+    .task-head p { font-size: .88rem; }
+
+    .choice-grid { display: grid; gap: 9px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) 22px;
+      gap: 11px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: var(--slate-300); box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-letter {
+      width: 33px; height: 33px; display: grid; place-items: center;
+      border: 1px solid var(--slate-300); border-radius: 10px;
+      color: var(--slate-600); background: var(--slate-50); font-size: .8rem; font-weight: 900;
+    }
+    .choice-copy strong { display: block; margin-bottom: 2px; color: var(--slate-900); font-size: .91rem; }
+    .choice-copy span { display: block; color: var(--slate-600); font-size: .84rem; }
+    .radio-mark {
+      width: 21px; height: 21px; margin-top: 5px;
+      border: 2px solid var(--slate-300); border-radius: 50%; background: white; position: relative;
+    }
+    .choice:has(input:checked) { border-color: var(--mission-color); background: var(--mission-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 9%, transparent); }
+    .choice:has(input:checked) .choice-letter { border-color: var(--mission-color); background: var(--mission-color); color: white; }
+    .choice:has(input:checked) .radio-mark { border-color: var(--mission-color); }
+    .choice:has(input:checked) .radio-mark::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--mission-color); }
+
+    .eps-flow { display: grid; grid-template-columns: 1fr auto 1.25fr auto 1fr; gap: 10px; align-items: stretch; }
+    .eps-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .eps-card strong { color: var(--slate-900); font-size: .83rem; letter-spacing: .04em; text-transform: uppercase; }
+    .eps-card small { color: var(--slate-500); font-size: .75rem; }
+    .eps-arrow { display: grid; place-items: center; color: var(--emerald-600); font-size: 1.35rem; font-weight: 900; }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 34px 9px 10px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    select:focus { border-color: var(--mission-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent); }
+
+    .expression-builder {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+    .ide-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #263244;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    .ide-dots { display: flex; gap: 6px; }
+    .ide-dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; }
+    .expression-lines { display: grid; gap: 11px; padding: 16px; }
+    .expression-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .expression-label { color: #a7f3d0; font: 700 .86rem Consolas, Monaco, monospace; white-space: nowrap; }
+    .expression-line select { min-height: 42px; border-color: #334155; background: #172033; color: #f8fafc; font-family: Consolas, Monaco, monospace; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .test-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .test-input { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .test-input strong { color: var(--slate-900); font-size: .86rem; }
+    .test-input span { padding: 4px 8px; border-radius: 8px; background: var(--white); color: var(--emerald-800); font: 800 .8rem Consolas, monospace; border: 1px solid var(--slate-200); }
+
+    .branch {
+      display: none;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .87rem;
+    }
+    .branch.show { display: block; animation: reveal .18s ease; }
+    .branch strong { display: block; color: var(--amber-700); margin-bottom: 3px; }
+
+    .help-row { display: flex; justify-content: flex-start; }
+    .hint-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 999px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      cursor: pointer;
+      font-size: .84rem;
+      font-weight: 850;
+      transition: .16s ease;
+    }
+    .hint-btn:hover { transform: translateY(-1px); background: #dcfce7; }
+    .hint-btn:disabled { cursor: default; opacity: .62; transform: none; }
+    .hint-drawer {
+      display: none;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 14px;
+      background: var(--emerald-50);
+    }
+    .hint-drawer.show { display: grid; animation: reveal .18s ease; }
+    .hint-number { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: var(--emerald-700); color: white; font-size: .75rem; font-weight: 900; }
+    .hint-drawer strong { display: block; color: var(--emerald-900); font-size: .85rem; }
+    .hint-drawer p { margin-top: 2px; font-size: .84rem; }
+
+    .mission-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 3px; }
+    .primary-btn, .secondary-btn {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .primary-btn { background: var(--mission-color); color: white; box-shadow: 0 8px 20px color-mix(in srgb, var(--mission-color) 22%, transparent); }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(.94); }
+    .primary-btn:disabled { cursor: default; opacity: .62; transform: none; box-shadow: none; }
+    .secondary-btn { border: 1px solid var(--slate-300); background: white; color: var(--slate-700); }
+    .secondary-btn:hover { background: var(--slate-50); transform: translateY(-1px); }
+
+    .feedback { display: none; flex: 1 1 310px; padding: 11px 13px; border-radius: 12px; font-size: .86rem; font-weight: 750; }
+    .feedback.show { display: block; }
+    .feedback.warn { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-100); }
+    .feedback.bad { background: var(--red-50); color: var(--red-700); border: 1px solid var(--red-100); }
+    .feedback.ok { background: var(--emerald-50); color: var(--emerald-800); border: 1px solid var(--emerald-100); }
+
+    .mission-result {
+      display: none;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--emerald-50), #f7fee7);
+    }
+    .mission-result.show { display: grid; animation: reveal .24s ease; }
+    .result-check { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--emerald-600); color: white; font-size: 1.15rem; font-weight: 950; }
+    .mission-result strong { display: block; color: var(--emerald-900); margin-bottom: 3px; }
+    .mission-result p { font-size: .84rem; }
+    .seal {
+      min-width: 142px;
+      padding: 9px 11px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 12px;
+      background: white;
+      color: var(--emerald-800);
+      text-align: center;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+    .code-body { padding: 12px 0; overflow-x: auto; }
+    .code-line {
+      display: grid;
+      grid-template-columns: 43px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      color: #e2e8f0;
+      font: .84rem/1.55 Consolas, Monaco, "Courier New", monospace;
+      white-space: pre;
+    }
+    .line-number { padding-right: 12px; color: #64748b; text-align: right; user-select: none; }
+    .line-code { padding-right: 18px; }
+    .code-line.entry { background: rgba(29,78,216,.13); border-left: 4px solid #60a5fa; }
+    .code-line.process { background: rgba(5,150,105,.13); border-left: 4px solid #34d399; }
+    .code-line.output { background: rgba(101,163,13,.13); border-left: 4px solid #a3e635; }
+    .tok-pre { color: #c084fc; }
+    .tok-type { color: #67e8f9; }
+    .tok-fn { color: #fde68a; }
+    .tok-str { color: #86efac; }
+    .tok-num { color: #fca5a5; }
+    .tok-var { color: #e2e8f0; }
+    .tok-comment { color: #94a3b8; font-style: italic; }
+    .code-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-top: 1px solid #263244; background: #172033; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #cbd5e1; font-size: .73rem; font-weight: 800; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-dot { background: #60a5fa; }
+    .process-dot { background: #34d399; }
+    .output-dot { background: #a3e635; }
+
+    .completion {
+      display: none;
+      padding: 27px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 92% 10%, rgba(163,230,53,.15), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+    .completion.show { display: block; animation: reveal .3s ease; }
+    .completion-label { color: #bef264; font-size: .75rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .completion h2 { margin-top: 5px; color: white; font-size: 1.65rem; }
+    .completion > p { margin-top: 7px; color: #d1fae5; }
+    .completion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 17px; }
+    .completion-item { padding: 13px; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: rgba(255,255,255,.07); }
+    .completion-item strong { display: block; color: white; font-size: .86rem; }
+    .completion-item span { display: block; margin-top: 3px; color: #d1fae5; font-size: .79rem; }
+    .completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    .completion .secondary-btn { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.10); color: white; }
+    .completion .secondary-btn:hover { background: rgba(255,255,255,.16); }
+
+    .resource-credit { padding: 16px 10px 0; text-align: center; color: var(--slate-500); font-size: .82rem; }
+    .resource-credit a { color: var(--emerald-700); font-weight: 800; text-decoration: none; }
+    .resource-credit a:hover { text-decoration: underline; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 920px) {
+      .hero, .context-card { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 560px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .eps-flow { grid-template-columns: 1fr; }
+      .eps-arrow { transform: rotate(90deg); }
+      .map-line { grid-template-columns: 1fr 28px 1fr 28px 1fr; }
+      .map-node { align-items: center; justify-content: center; padding: 8px; }
+      .map-node-copy { display: none; }
+      .completion-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      body { padding: 12px 10px 30px; }
+      .shell { gap: 12px; }
+      .hero { padding: 22px 18px; border-radius: 21px; }
+      .hero-flow { grid-template-columns: 1fr auto 1fr; padding: 14px; gap: 8px; }
+      .hero-flow > .flow-arrow:last-of-type { display: none; }
+      .flow-results { grid-column: 1 / -1; }
+      .flow-chip { padding: 10px 7px; }
+      .flow-chip strong { font-size: .86rem; }
+      .flow-chip small { font-size: .68rem; }
+      .context-card { padding: 17px; border-radius: 18px; }
+      .mission-map { top: 4px; padding: 11px; border-radius: 15px; }
+      .map-top { margin-bottom: 9px; }
+      .map-top span { display: none; }
+      .mission { border-radius: 20px; }
+      .mission-toggle { grid-template-columns: auto 1fr; padding: 16px; }
+      .mission-icon { width: 44px; height: 44px; border-radius: 14px; }
+      .mission-side { grid-column: 1 / -1; justify-content: space-between; padding-left: 59px; }
+      .mission-meta { justify-items: start; display: flex; gap: 8px; align-items: center; }
+      .mission-content { padding: 0 16px 18px; }
+      .mission-objective { grid-template-columns: auto 1fr; }
+      .seal-preview { grid-column: 1 / -1; text-align: left; padding-left: 45px; }
+      .choice { grid-template-columns: 32px 1fr 20px; padding: 11px; gap: 9px; }
+      .choice-letter { width: 29px; height: 29px; }
+      .mission-result { grid-template-columns: auto 1fr; }
+      .seal { grid-column: 1 / -1; margin-left: 56px; text-align: left; }
+      .mission-actions { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .feedback { flex-basis: auto; }
+      .completion { padding: 21px 18px; border-radius: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  
+
+    input[type="number"] {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 11px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    input[type="number"]:focus {
+      border-color: var(--mission-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr);
+      gap: 12px;
+    }
+
+    .setup-card {
+      display: grid;
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .setup-card label {
+      color: var(--slate-900);
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .setup-card small {
+      color: var(--slate-500);
+      font-size: .75rem;
+    }
+
+    .trace-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trace-card {
+      position: relative;
+      display: grid;
+      gap: 11px;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+
+    .trace-card::after {
+      content: "→";
+      position: absolute;
+      right: -17px;
+      top: 50%;
+      z-index: 2;
+      color: var(--mission-color);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+
+    .trace-card:last-child::after { display: none; }
+
+    .trace-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trace-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .trace-step strong {
+      color: var(--slate-900);
+      font-size: .82rem;
+    }
+
+    .trace-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .7rem;
+    }
+
+    .trace-fields {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trace-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .trace-field label {
+      color: var(--slate-600);
+      font-size: .72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .case-level {
+      display: inline-flex;
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .diagnosis-box {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .output-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 9px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .output-box {
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+      text-align: center;
+    }
+
+    .output-box small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .output-box strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 900 1.05rem Consolas, Monaco, monospace;
+    }
+
+    .comparison-arrow {
+      color: var(--mission-color);
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+
+    .summary-state {
+      padding: 11px;
+      border-radius: 12px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .summary-state small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .summary-state strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 800 .78rem/1.45 Consolas, Monaco, monospace;
+    }
+
+    @media (max-width: 920px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr 1fr; }
+      .trace-card:nth-child(2)::after { display: none; }
+      .diagnosis-box, .setup-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr; }
+      .trace-card::after { display: none; }
+      .output-comparison { grid-template-columns: 1fr; }
+      .comparison-arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .hero-flow.hero-trace {
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .hero-trace .flow-chip {
+      min-height: 78px;
+      display: grid;
+      align-content: center;
+    }
+
+    .hero-trace .flow-chip small {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .hero-trace .flow-chip strong {
+      font-size: .94rem;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 660px) {
+      .hero-flow.hero-trace {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-trace .flow-chip {
+        min-height: 68px;
+      }
+    }
+
+  
+
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .architecture-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      background: var(--surface);
+    }
+
+    .architecture-card small {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .architecture-card strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 5px;
+    }
+
+    .architecture-card p {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .architecture-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .role-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .role-card code {
+      width: fit-content;
+      border-radius: 8px;
+      padding: 3px 7px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .variable-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .variable-token {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font: 800 .83rem/1.2 Consolas, monospace;
+    }
+
+    .logic-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .logic-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 15px;
+    }
+
+    .logic-panel h4 {
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .logic-selects {
+      display: grid;
+      gap: 10px;
+    }
+
+    .logic-row {
+      display: grid;
+      grid-template-columns: minmax(145px, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logic-row label {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .signature-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .signature-card.full { grid-column: 1 / -1; }
+
+    .code-section-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font: 800 .68rem/1.3 system-ui, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #D1FAE5;
+      border: 1px solid rgba(209,250,229,.24);
+      background: rgba(16,185,129,.16);
+      margin-right: 8px;
+    }
+
+    .final-code[hidden] { display: none; }
+
+    @media (max-width: 860px) {
+      .architecture-flow,
+      .role-grid,
+      .logic-grid,
+      .signature-grid { grid-template-columns: 1fr; }
+      .architecture-arrow { transform: rotate(90deg); }
+      .logic-row { grid-template-columns: 1fr; gap: 5px; }
+      .signature-card.full { grid-column: auto; }
+    }
+
+
+    .hero-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .loop-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+      align-items: stretch;
+    }
+    .loop-card {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .loop-card:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      z-index: 2;
+      color: var(--emerald-600);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+    .loop-card small { color: var(--slate-500); font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 850; }
+    .loop-card strong { color: var(--slate-900); font-size: .92rem; }
+    .loop-card p { font-size: .8rem; }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .control-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .control-card strong { color: var(--slate-900); font-size: .83rem; }
+    .control-card small { color: var(--slate-500); font-size: .74rem; }
+
+    .state-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+    .state-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .state-table th,
+    .state-table td {
+      padding: 11px;
+      border-bottom: 1px solid var(--slate-200);
+      border-right: 1px solid var(--slate-200);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .state-table th:last-child,
+    .state-table td:last-child { border-right: 0; }
+    .state-table tr:last-child td { border-bottom: 0; }
+    .state-table th {
+      background: var(--slate-50);
+      color: var(--slate-700);
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .state-table td:first-child { color: var(--slate-900); font-weight: 900; }
+    .state-table input[type="number"] { min-width: 112px; }
+
+    .formula-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+    .formula-card {
+      display: grid;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .formula-card strong { color: var(--slate-900); font-size: .84rem; }
+    .formula-arrow { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    .case-level {
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .7rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    @media (max-width: 920px) {
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr 1fr; }
+      .loop-card:not(:last-child)::after { display: none; }
+      .formula-strip { grid-template-columns: 1fr; }
+      .formula-arrow { transform: rotate(90deg); text-align: center; }
+    }
+    @media (max-width: 660px) {
+      .hero-flow { grid-template-columns: 1fr; }
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr; }
+    }
+
+
+
+    .hero-flow.state-preview {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .state-preview .flow-chip { min-height: 78px; display: grid; align-content: center; }
+    .state-preview .flow-chip small { text-transform: uppercase; letter-spacing: .05em; font-size: .68rem; }
+
+    .variable-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .variable-card {
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+      text-align: center;
+    }
+    .variable-card small { display: block; color: var(--slate-500); font-size: .69rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
+    .variable-card strong { display: block; margin-top: 4px; color: var(--slate-900); font: 900 1.08rem Consolas, Monaco, monospace; }
+
+    .initial-state-grid,
+    .final-state-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .state-input-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .state-input-card strong { color: var(--slate-900); font: 900 .94rem Consolas, Monaco, monospace; }
+    .state-input-card small { color: var(--slate-500); font-size: .73rem; }
+
+    .assignment-demo {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 11px;
+      align-items: stretch;
+    }
+    .assignment-box {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .assignment-box small { display: block; color: var(--slate-500); font-size: .69rem; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+    .assignment-box strong { display: block; margin-top: 5px; color: var(--slate-900); font: 900 .95rem/1.45 Consolas, Monaco, monospace; }
+    .assignment-arrow { display: grid; place-items: center; color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    .state-trace {
+      display: grid;
+      gap: 10px;
+    }
+    .state-step {
+      display: grid;
+      grid-template-columns: 42px minmax(180px, .9fr) minmax(0, 1fr) minmax(160px, .65fr);
+      gap: 11px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .state-step.no-snapshot {
+      grid-template-columns: 42px minmax(0, 1fr) minmax(160px, .65fr);
+    }
+    .state-step-number {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .78rem;
+      font-weight: 950;
+    }
+    .state-code { color: var(--slate-900); font: 850 .86rem Consolas, Monaco, monospace; }
+    .state-code small { display: block; margin-top: 3px; color: var(--slate-500); font: 600 .72rem/1.35 Inter, system-ui, sans-serif; }
+    .state-current { display: flex; flex-wrap: wrap; gap: 6px; }
+    .state-token {
+      padding: 6px 8px;
+      border: 1px solid var(--slate-200);
+      border-radius: 9px;
+      background: white;
+      color: var(--slate-700);
+      font: 800 .74rem Consolas, Monaco, monospace;
+    }
+    .state-answer label { display: block; margin-bottom: 5px; color: var(--slate-600); font-size: .71rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+
+    .state-summary {
+      display: none;
+      margin-top: 12px;
+      overflow-x: auto;
+      border: 1px solid var(--emerald-100);
+      border-radius: 15px;
+      background: var(--emerald-50);
+    }
+    .state-summary.show { display: block; animation: reveal .2s ease; }
+    .state-summary table { width: 100%; min-width: 650px; border-collapse: collapse; }
+    .state-summary th,
+    .state-summary td { padding: 9px 11px; border-bottom: 1px solid rgba(5,150,105,.14); text-align: left; }
+    .state-summary th { color: var(--emerald-900); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+    .state-summary td { color: var(--slate-700); font: 750 .78rem Consolas, Monaco, monospace; }
+    .state-summary tr:last-child td { border-bottom: 0; }
+
+    .order-check {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .order-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .order-card strong { color: var(--slate-900); font-size: .84rem; }
+    .order-card code { color: var(--emerald-800); font: 850 .81rem Consolas, Monaco, monospace; }
+
+    @media (max-width: 920px) {
+      .state-step { grid-template-columns: 38px minmax(0, 1fr); }
+      .state-current, .state-answer { grid-column: 2; }
+    }
+    @media (max-width: 660px) {
+      .hero-flow.state-preview,
+      .variable-board,
+      .initial-state-grid,
+      .final-state-grid,
+      .order-check { grid-template-columns: 1fr; }
+      .assignment-demo { grid-template-columns: 1fr; }
+      .assignment-arrow { transform: rotate(90deg); }
+      .state-step { grid-template-columns: 34px minmax(0, 1fr); padding: 11px; }
+    }
+
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .type-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .type-card code {
+      width: fit-content;
+      padding: 4px 7px;
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--emerald-800);
+      border: 1px solid var(--slate-200);
+      font: 850 .82rem Consolas, Monaco, monospace;
+    }
+    .type-card small {
+      color: var(--slate-500);
+      font-size: .73rem;
+    }
+    .calculation-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .calculation-card {
+      display: grid;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .calculation-card strong {
+      color: var(--slate-900);
+      font: 850 .82rem Consolas, Monaco, monospace;
+    }
+    .calculation-card small {
+      color: var(--slate-500);
+      font-size: .72rem;
+    }
+    .case-code {
+      display: block;
+      padding: 10px;
+      border-radius: 11px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font: .78rem/1.5 Consolas, Monaco, monospace;
+      white-space: pre-wrap;
+    }
+    .data-snapshot {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .snapshot-item {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid var(--slate-200);
+      border-radius: 11px;
+      background: var(--white);
+    }
+    .snapshot-item small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .snapshot-item strong {
+      display: block;
+      margin-top: 3px;
+      overflow-wrap: anywhere;
+      color: var(--slate-900);
+      font: 800 .76rem/1.35 Consolas, Monaco, monospace;
+    }
+    @media (max-width: 920px) {
+      .type-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .calculation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .data-snapshot { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 660px) {
+      .type-grid,
+      .calculation-grid,
+      .data-snapshot { grid-template-columns: 1fr; }
+    }
+
+
+    .reading-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .reading-card {
+      display: grid;
+      gap: 5px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .reading-card small {
+      color: var(--slate-500);
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .reading-card strong {
+      color: var(--emerald-800);
+      font: 900 1.32rem Consolas, Monaco, monospace;
+    }
+    .reading-card span { color: var(--slate-600); font-size: .82rem; }
+
+    .decomposition-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .decomposition-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .decomposition-card strong { color: var(--slate-900); font-size: .86rem; }
+    .decomposition-card small { color: var(--slate-500); font-size: .76rem; }
+
+    .calculation-strip {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+    .calc-token {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--white);
+      text-align: center;
+    }
+    .calc-token small { color: var(--slate-500); font-size: .7rem; text-transform: uppercase; font-weight: 850; }
+    .calc-token strong { color: var(--emerald-800); font: 900 1.05rem Consolas, Monaco, monospace; }
+    .calc-symbol { color: var(--emerald-600); font-size: 1.3rem; font-weight: 950; text-align: center; }
+
+    .pseudocode-order {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .pseudo-step {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+    .pseudo-number {
+      width: 31px;
+      height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .77rem;
+      font-weight: 900;
+    }
+
+    .analysis-note {
+      padding: 12px 14px;
+      border: 1px solid var(--blue-100);
+      border-radius: 13px;
+      background: #eff6ff;
+      color: var(--slate-700);
+      font-size: .85rem;
+    }
+    .analysis-note strong { display: block; color: var(--blue-700); margin-bottom: 3px; }
+
+    @media (max-width: 760px) {
+      .reading-board,
+      .decomposition-grid,
+      .pseudocode-order { grid-template-columns: 1fr; }
+      .calculation-strip { grid-template-columns: 1fr; }
+      .calc-symbol { transform: rotate(90deg); }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="badge-row">
+          <span class="badge">Roteiro por missões</span>
+          <span class="badge">CCI01</span>
+          <span class="badge">Representação algorítmica</span>
+        </div>
+        <h1>Do hidrômetro ao consumo mensal</h1>
+        <p class="hero-description">Transforme duas leituras acumuladas do hidrômetro em uma solução algorítmica clara, passando pela decomposição do problema, pelo fluxo EPS e pelo pseudocódigo.</p>
+      </div>
+
+      <div class="hero-flow state-preview" aria-label="Resumo do problema">
+        <div class="flow-chip"><small>Leitura anterior</small><strong>1284 m³</strong></div>
+        <div class="flow-chip"><small>Leitura atual</small><strong>1309 m³</strong></div>
+        <div class="flow-chip"><small>Consumo do mês</small><strong>25 m³</strong></div>
+      </div>
+    </header>
+
+    <section class="context-card" aria-label="Contexto da atividade">
+      <article>
+        <p class="kicker">Problema real</p>
+        <h2>Descobrir o consumo de água de uma residência</h2>
+        <div class="problem-statement">
+          Uma família anota mensalmente a leitura acumulada do hidrômetro. No início do período, o aparelho marcava <strong>1284 m³</strong>. Na leitura seguinte, marcava <strong>1309 m³</strong>. A família precisa descobrir quantos metros cúbicos de água foram consumidos nesse intervalo.
+          <small>Considere que as duas leituras pertencem ao mesmo hidrômetro e que o aparelho não foi substituído nem reiniciado.</small>
+        </div>
+
+        <div class="reading-board" aria-label="Dados do problema">
+          <article class="reading-card"><small>Dado disponível</small><strong>1284 m³</strong><span>Leitura acumulada no início do período.</span></article>
+          <article class="reading-card"><small>Dado disponível</small><strong>1309 m³</strong><span>Leitura acumulada no final do período.</span></article>
+          <article class="reading-card"><small>Resultado procurado</small><strong>? m³</strong><span>Quantidade consumida entre as duas leituras.</span></article>
+        </div>
+      </article>
+
+      <aside class="meta-stack">
+        <p class="kicker">Resumo pedagógico</p>
+        <h2>Competência trabalhada</h2>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI01</strong><p>Representar problemas por soluções algorítmicas antes da implementação.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões sobre interpretação, EPS e pseudocódigo.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Subtração, leitura de valores e noção básica de variável.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>Entradas, processamento e saída representados de forma coerente.</p></div></div>
+      </aside>
+    </section>
+
+    <nav class="mission-map" aria-label="Mapa das missões">
+      <div class="map-top">
+        <strong id="progressText">Missão atual: 1 de 3</strong>
+        <span>Conclua a missão ativa para desbloquear a próxima.</span>
+      </div>
+      <div class="map-line">
+        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Reconhecer</strong><small>Em andamento</small></span></div>
+        <div class="map-connector" data-connector="1"></div>
+        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Estruturar</strong><small>Bloqueada</small></span></div>
+        <div class="map-connector" data-connector="2"></div>
+        <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Validar</strong><small>Bloqueada</small></span></div>
+      </div>
+    </nav>
+
+    <section class="mission active open" data-mission="1">
+      <button class="mission-toggle" type="button" aria-expanded="true">
+        <span class="mission-icon">1</span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Decifrar o problema</h2><p>Identifique o objetivo, os dados necessários e as perguntas menores que formam a solução.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Traduzir a situação da família em um problema computacional bem definido.</p></div><span class="seal-preview">Selo: Problema decifrado</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Reconheça o objetivo central</h3><p>Escolha o que realmente precisa ser descoberto.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Objetivo do problema">
+            <label class="choice"><input type="radio" name="m1_goal" value="difference"><span class="choice-letter">A</span><span class="choice-copy"><strong>Calcular a diferença entre a leitura atual e a leitura anterior.</strong><span>A diferença representa a água consumida no período.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_goal" value="sum"><span class="choice-letter">B</span><span class="choice-copy"><strong>Somar as duas leituras do hidrômetro.</strong><span>A soma mistura dois valores acumulados e não representa consumo.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_goal" value="current"><span class="choice-letter">C</span><span class="choice-copy"><strong>Usar apenas a leitura atual como consumo do mês.</strong><span>A leitura atual inclui todo o consumo acumulado pelo aparelho.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m1_goal_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Separe dados e resultado</h3><p>Classifique o papel de cada informação no problema.</p></div></div>
+          <div class="type-grid">
+            <article class="type-card"><code>1284 m³</code><small>Leitura feita no início do período</small><select id="m1_role_previous"><option value="">Selecione</option><option value="input">Entrada</option><option value="process">Processamento</option><option value="output">Saída</option></select></article>
+            <article class="type-card"><code>1309 m³</code><small>Leitura feita no final do período</small><select id="m1_role_current"><option value="">Selecione</option><option value="input">Entrada</option><option value="process">Processamento</option><option value="output">Saída</option></select></article>
+            <article class="type-card"><code>consumo mensal</code><small>Quantidade de água usada no intervalo</small><select id="m1_role_consumption"><option value="">Selecione</option><option value="input">Entrada</option><option value="process">Processamento</option><option value="output">Saída</option></select></article>
+          </div>
+          <div class="branch" id="m1_roles_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Decomponha a resolução</h3><p>Associe cada pergunta menor à resposta que orienta o algoritmo.</p></div></div>
+          <div class="decomposition-grid">
+            <article class="decomposition-card"><strong>Quais valores preciso conhecer?</strong><small>Dados que devem existir antes do cálculo.</small><select id="m1_decomp_data"><option value="">Selecione</option><option value="both">Leitura anterior e leitura atual</option><option value="current">Somente a leitura atual</option><option value="bill">Valor da conta de água</option></select></article>
+            <article class="decomposition-card"><strong>Que operação liga os dados?</strong><small>Regra usada para transformar as leituras.</small><select id="m1_decomp_rule"><option value="">Selecione</option><option value="subtract">leituraAtual - leituraAnterior</option><option value="add">leituraAtual + leituraAnterior</option><option value="divide">leituraAtual / leituraAnterior</option></select></article>
+            <article class="decomposition-card"><strong>O que devo apresentar?</strong><small>Resposta final para a família.</small><select id="m1_decomp_result"><option value="">Selecione</option><option value="consumption">Consumo do mês em m³</option><option value="readings">As duas leituras sem cálculo</option><option value="price">Preço da conta</option></select></article>
+          </div>
+          <div class="branch" id="m1_decomp_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você identificou os dois dados de entrada, o resultado procurado e a relação necessária entre eles.</p></div><span class="seal">Selo conquistado<br>Problema decifrado</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="2" style="--mission-color: var(--teal-700); --mission-soft: #f0fdfa;">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">2</span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Construir o caminho EPS</h2><p>Organize entrada, processamento e saída e confirme o cálculo do caso-base.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>3 tarefas</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Representar o caminho dos dados sem escrever ainda um programa em C.</p></div><span class="seal-preview">Selo: Fluxo estruturado</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Monte o fluxo Entrada → Processamento → Saída</h3><p>Cada bloco deve cumprir uma função diferente na solução.</p></div></div>
+          <div class="eps-flow">
+            <article class="eps-card"><strong>Entrada</strong><small>Dados fornecidos ao algoritmo.</small><select id="m2_eps_input"><option value="">Selecione</option><option value="readings">leituraAnterior e leituraAtual</option><option value="consumption">consumoMensal</option><option value="single">somente leituraAtual</option></select></article>
+            <span class="eps-arrow">→</span>
+            <article class="eps-card"><strong>Processamento</strong><small>Operação que produz o resultado.</small><select id="m2_eps_process"><option value="">Selecione</option><option value="subtract">consumoMensal = leituraAtual - leituraAnterior</option><option value="add">consumoMensal = leituraAtual + leituraAnterior</option><option value="copy">consumoMensal = leituraAtual</option></select></article>
+            <span class="eps-arrow">→</span>
+            <article class="eps-card"><strong>Saída</strong><small>Informação apresentada ao usuário.</small><select id="m2_eps_output"><option value="">Selecione</option><option value="consumption">consumoMensal em m³</option><option value="current">leituraAtual</option><option value="bill">valor da conta</option></select></article>
+          </div>
+          <div class="branch" id="m2_eps_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Execute o cálculo do caso-base</h3><p>Use as leituras apresentadas pela família.</p></div></div>
+          <div class="calculation-strip">
+            <div class="calc-token"><small>Leitura atual</small><strong>1309</strong></div>
+            <span class="calc-symbol">−</span>
+            <div class="calc-token"><small>Leitura anterior</small><strong>1284</strong></div>
+            <span class="calc-symbol">=</span>
+            <div class="calc-token"><small>Consumo</small><input id="m2_consumption" type="number" placeholder="?" aria-label="Consumo calculado"></div>
+          </div>
+          <div class="branch" id="m2_calc_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha a representação mais fiel</h3><p>O EPS deve mostrar o percurso do dado, não apenas números isolados.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Representação EPS">
+            <label class="choice"><input type="radio" name="m2_representation" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>Entradas: duas leituras → cálculo: diferença → saída: consumo em m³.</strong><span>A representação deixa explícito o que entra, como se transforma e o que sai.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_representation" value="numbers"><span class="choice-letter">B</span><span class="choice-copy"><strong>1284 → 1309 → 25.</strong><span>Mostra valores, mas não explica o significado nem a operação.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_representation" value="code"><span class="choice-letter">C</span><span class="choice-copy"><strong>Escrever imediatamente o código completo em C.</strong><span>Pula a etapa de representação e dificulta verificar a lógica antes da implementação.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m2_rep_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você organizou o fluxo EPS e verificou que o consumo do período é 25 m³.</p></div><span class="seal">Selo conquistado<br>Fluxo estruturado</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="3" style="--mission-color: var(--lime-600); --mission-soft: #f7fee7;">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">3</span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Representar e validar a solução</h2><p>Ordene o pseudocódigo e teste a lógica em situações diferentes.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>3 níveis</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Produzir uma representação executável por uma pessoa e verificar seus limites.</p></div><span class="seal-preview">Selo: Algoritmo validado</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Ordene o pseudocódigo</h3><p>Cada ação deve ocorrer no momento adequado.</p></div></div>
+          <div class="pseudocode-order">
+            <article class="pseudo-step"><span class="pseudo-number">1</span><select id="m3_order1"><option value="">Selecione</option><option value="start">início</option><option value="read">leia leituraAnterior e leituraAtual</option><option value="calc">consumoMensal recebe leituraAtual - leituraAnterior</option><option value="show">escreva consumoMensal</option><option value="end">fim</option></select></article>
+            <article class="pseudo-step"><span class="pseudo-number">2</span><select id="m3_order2"><option value="">Selecione</option><option value="calc">consumoMensal recebe leituraAtual - leituraAnterior</option><option value="show">escreva consumoMensal</option><option value="read">leia leituraAnterior e leituraAtual</option><option value="end">fim</option><option value="start">início</option></select></article>
+            <article class="pseudo-step"><span class="pseudo-number">3</span><select id="m3_order3"><option value="">Selecione</option><option value="show">escreva consumoMensal</option><option value="calc">consumoMensal recebe leituraAtual - leituraAnterior</option><option value="end">fim</option><option value="read">leia leituraAnterior e leituraAtual</option><option value="start">início</option></select></article>
+            <article class="pseudo-step"><span class="pseudo-number">4</span><select id="m3_order4"><option value="">Selecione</option><option value="end">fim</option><option value="show">escreva consumoMensal</option><option value="calc">consumoMensal recebe leituraAtual - leituraAnterior</option><option value="start">início</option><option value="read">leia leituraAnterior e leituraAtual</option></select></article>
+            <article class="pseudo-step full"><span class="pseudo-number">5</span><select id="m3_order5"><option value="">Selecione</option><option value="end">fim</option><option value="show">escreva consumoMensal</option><option value="start">início</option><option value="calc">consumoMensal recebe leituraAtual - leituraAnterior</option><option value="read">leia leituraAnterior e leituraAtual</option></select></article>
+          </div>
+          <div class="branch" id="m3_order_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Valide em três níveis</h3><p>Reconheça a regra, aplique em outro caso e analise uma entrada inconsistente.</p></div></div>
+          <div class="test-grid">
+            <article class="test-card">
+              <span class="case-level">Reconheça</span>
+              <div class="test-input"><strong>850 → 867 m³</strong><span>caso direto</span></div>
+              <label for="m3_case1" class="sr-only">Consumo do caso Reconheça</label>
+              <input id="m3_case1" type="number" placeholder="Consumo em m³">
+            </article>
+            <article class="test-card">
+              <span class="case-level">Aplique</span>
+              <div class="test-input"><strong>1492 → 1520 m³</strong><span>novo caso</span></div>
+              <label for="m3_case2" class="sr-only">Consumo do caso Aplique</label>
+              <input id="m3_case2" type="number" placeholder="Consumo em m³">
+            </article>
+            <article class="test-card">
+              <span class="case-level">Analise</span>
+              <div class="test-input"><strong>910 → 905 m³</strong><span>dado suspeito</span></div>
+              <select id="m3_case3"><option value="">O que concluir?</option><option value="invalid">As leituras estão inconsistentes e devem ser verificadas</option><option value="negative">O consumo foi -5 m³ e pode ser aceito</option><option value="zero">O consumo deve ser substituído por 0</option></select>
+            </article>
+          </div>
+          <div class="analysis-note"><strong>Regra de consistência</strong>Sem troca ou reinício do hidrômetro, a leitura atual deve ser maior ou igual à leitura anterior.</div>
+          <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Conclua a estratégia</h3><p>Escolha a justificativa que melhor descreve a solução.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Conclusão do roteiro">
+            <label class="choice"><input type="radio" name="m3_conclusion" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>A solução usa duas leituras acumuladas, calcula a diferença na ordem correta e apresenta o consumo do período.</strong><span>O pseudocódigo explicita o caminho completo antes da implementação.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_conclusion" value="current"><span class="choice-letter">B</span><span class="choice-copy"><strong>A leitura atual já representa o consumo mensal.</strong><span>Ignora que o hidrômetro acumula o consumo ao longo do tempo.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_conclusion" value="reverse"><span class="choice-letter">C</span><span class="choice-copy"><strong>O cálculo deve ser leituraAnterior - leituraAtual.</strong><span>Para leituras crescentes, essa ordem produziria um consumo negativo.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m3_conclusion_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir roteiro</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você ordenou o pseudocódigo, aplicou a regra em novos casos e reconheceu uma entrada inconsistente.</p></div><span class="seal">Selo conquistado<br>Algoritmo validado</span></div>
+      </div>
+    </section>
+
+    <section class="final-code" id="finalCodeBlock" hidden>
+      <p class="kicker">Representação de referência</p>
+      <h2>Do problema ao pseudocódigo</h2>
+      <p style="margin: 7px 0 14px;">A representação explicita os dados, a transformação e o resultado sem depender ainda de uma linguagem de programação.</p>
+      <div class="code-window">
+        <div class="ide-bar"><span>consumo_hidrometro.alg</span><span class="ide-dots"><span class="ide-dot"></span><span class="ide-dot"></span><span class="ide-dot"></span></span></div>
+        <div class="code-body">
+          <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">início</span></span></div>
+          <div class="code-line entry"><span class="line-number">2</span><span class="line-code">    leia leituraAnterior</span></div>
+          <div class="code-line entry"><span class="line-number">3</span><span class="line-code">    leia leituraAtual</span></div>
+          <div class="code-line process"><span class="line-number">4</span><span class="line-code">    consumoMensal ← leituraAtual - leituraAnterior</span></div>
+          <div class="code-line output"><span class="line-number">5</span><span class="line-code">    escreva "Consumo do período: ", consumoMensal, " m³"</span></div>
+          <div class="code-line"><span class="line-number">6</span><span class="line-code"><span class="tok-pre">fim</span></span></div>
+        </div>
+        <div class="code-legend"><span class="legend-item"><span class="legend-dot entry-dot"></span>Entradas</span><span class="legend-item"><span class="legend-dot process-dot"></span>Processamento</span><span class="legend-item"><span class="legend-dot output-dot"></span>Saída</span></div>
+      </div>
+    </section>
+
+    <section class="completion" id="completionPanel" aria-live="polite">
+      <span class="completion-label">Roteiro concluído</span>
+      <h2>Problema representado antes do código</h2>
+      <p>Você transformou uma situação cotidiana em entradas, processamento, saída e pseudocódigo verificável.</p>
+      <div class="completion-grid">
+        <article class="completion-item"><strong>Problema decomposto</strong><span>O objetivo e as perguntas menores foram identificados sem acrescentar dados desnecessários.</span></article>
+        <article class="completion-item"><strong>EPS estruturado</strong><span>As duas leituras alimentam uma subtração que produz o consumo mensal.</span></article>
+        <article class="completion-item"><strong>Representação validada</strong><span>O pseudocódigo funcionou em casos diretos e revelou uma leitura inconsistente.</span></article>
+      </div>
+      <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer o roteiro</button></div>
+    </section>
+
+    <footer class="resource-credit"><p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p></footer>
+  </main>
+
+  <script>
+    const completed = new Set();
+    const hintState = { 1: 0, 2: 0, 3: 0 };
+    const hints = {
+      1: [
+        ["Pista", "O hidrômetro registra um total acumulado. Para descobrir apenas um período, compare duas leituras."],
+        ["Pergunta guia", "Quais valores já são conhecidos e qual informação ainda precisa ser produzida?"],
+        ["Estratégia", "Decomponha em três perguntas: quais são as entradas, qual é a operação e qual é a saída?"]
+      ],
+      2: [
+        ["Pista", "No EPS, as leituras são dados de entrada; o consumo ainda não existe antes do cálculo."],
+        ["Pergunta guia", "Qual ordem da subtração produz um consumo positivo quando a leitura aumenta?"],
+        ["Estratégia", "Use leituraAtual - leituraAnterior e apresente o resultado em metros cúbicos."]
+      ],
+      3: [
+        ["Pista", "O pseudocódigo precisa ler os dados antes de calcular e calcular antes de mostrar."],
+        ["Pergunta guia", "O que uma leitura atual menor que a anterior indica quando o aparelho não foi trocado?"],
+        ["Validação", "Teste casos normais e confirme a regra leituraAtual ≥ leituraAnterior."]
+      ]
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+    const value = id => (document.getElementById(id)?.value || "").trim();
+    const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+    const numberValue = id => {
+      const raw = value(id).replace(",", ".");
+      return raw === "" ? NaN : Number(raw);
+    };
+
+    function setBranch(id, title = "", text = "") {
+      const box = document.getElementById(id);
+      if (!title) { box.classList.remove("show"); box.innerHTML = ""; return; }
+      box.innerHTML = `<strong>${title}</strong>${text}`;
+      box.classList.add("show");
+    }
+
+    function showFeedback(number, text, type = "warn") {
+      const box = document.getElementById(`m${number}_feedback`);
+      box.textContent = text;
+      box.className = `feedback show ${type}`;
+    }
+
+    function validateMission1(live = false) {
+      const goal = radio("m1_goal");
+      const previous = value("m1_role_previous");
+      const current = value("m1_role_current");
+      const consumption = value("m1_role_consumption");
+      const data = value("m1_decomp_data");
+      const rule = value("m1_decomp_rule");
+      const result = value("m1_decomp_result");
+
+      if (goal && goal !== "difference") {
+        setBranch("m1_goal_branch",
+          goal === "sum" ? "Leituras acumuladas não devem ser somadas" : "Leitura acumulada não é consumo mensal",
+          goal === "sum"
+            ? "Somar 1284 e 1309 mistura dois totais acumulados e produz um valor sem significado para o período."
+            : "1309 m³ inclui todo o histórico registrado pelo hidrômetro, não apenas o mês analisado.");
+      } else setBranch("m1_goal_branch");
+
+      const rolesTouched = previous || current || consumption;
+      const rolesOk = previous === "input" && current === "input" && consumption === "output";
+      if (rolesTouched && !rolesOk) {
+        setBranch("m1_roles_branch", "Revise o papel das informações", "As duas leituras já existem antes do cálculo e funcionam como entradas. O consumo é produzido pela solução e funciona como saída.");
+      } else setBranch("m1_roles_branch");
+
+      const decompositionTouched = data || rule || result;
+      const decompositionOk = data === "both" && rule === "subtract" && result === "consumption";
+      if (decompositionTouched && !decompositionOk) {
+        let message = "A decomposição deve ligar os dados existentes ao resultado solicitado.";
+        if (data && data !== "both") message = "São necessárias as duas leituras para medir apenas o intervalo entre elas.";
+        else if (rule && rule !== "subtract") message = "O consumo do período corresponde à diferença entre o total atual e o total anterior.";
+        else if (result && result !== "consumption") message = "A família precisa do consumo em m³, não apenas das leituras nem do preço da conta.";
+        setBranch("m1_decomp_branch", "Decomposição incompleta", message);
+      } else setBranch("m1_decomp_branch");
+
+      const complete = goal === "difference" && rolesOk && decompositionOk;
+      if (!live && !complete) showFeedback(1, "Identifique o objetivo, classifique os três elementos e complete a decomposição.");
+      return complete;
+    }
+
+    function validateMission2(live = false) {
+      const input = value("m2_eps_input");
+      const process = value("m2_eps_process");
+      const output = value("m2_eps_output");
+      const consumption = numberValue("m2_consumption");
+      const representation = radio("m2_representation");
+
+      const epsTouched = input || process || output;
+      const epsOk = input === "readings" && process === "subtract" && output === "consumption";
+      if (epsTouched && !epsOk) {
+        let message = "O fluxo deve começar com as duas leituras, transformar esses dados e terminar no consumo.";
+        if (input && input !== "readings") message = "O algoritmo precisa receber leitura anterior e leitura atual.";
+        else if (process && process !== "subtract") message = "A transformação correta é leituraAtual - leituraAnterior.";
+        else if (output && output !== "consumption") message = "A saída solicitada é o consumo do período em m³.";
+        setBranch("m2_eps_branch", "Fluxo EPS incoerente", message);
+      } else setBranch("m2_eps_branch");
+
+      if (Number.isFinite(consumption) && consumption !== 25) {
+        setBranch("m2_calc_branch", "Cálculo incorreto", "Subtraia 1284 de 1309. A ordem deve acompanhar total final menos total inicial.");
+      } else setBranch("m2_calc_branch");
+
+      if (representation && representation !== "correct") {
+        setBranch("m2_rep_branch",
+          representation === "numbers" ? "Significado ausente" : "Representação pulada",
+          representation === "numbers"
+            ? "A sequência numérica não explica quais valores entram, que operação ocorre nem o que o resultado representa."
+            : "O objetivo deste roteiro é verificar a solução antes de escolher detalhes de sintaxe de uma linguagem.");
+      } else setBranch("m2_rep_branch");
+
+      const complete = epsOk && consumption === 25 && representation === "correct";
+      if (!live && !complete) showFeedback(2, "Complete o fluxo EPS, calcule o consumo e escolha a representação mais fiel.");
+      return complete;
+    }
+
+    function validateMission3(live = false) {
+      const order = [1, 2, 3, 4, 5].map(i => value(`m3_order${i}`));
+      const expectedOrder = ["start", "read", "calc", "show", "end"];
+      const orderFilled = order.every(Boolean);
+      const uniqueOrder = new Set(order).size === order.length;
+      const orderOk = orderFilled && uniqueOrder && order.every((item, index) => item === expectedOrder[index]);
+
+      if (order.some(Boolean) && !orderOk) {
+        const message = !uniqueOrder && orderFilled
+          ? "Cada ação deve aparecer apenas uma vez."
+          : "A sequência lógica é iniciar, ler, calcular, mostrar e finalizar.";
+        setBranch("m3_order_branch", "Ordem do algoritmo", message);
+      } else setBranch("m3_order_branch");
+
+      const case1 = numberValue("m3_case1");
+      const case2 = numberValue("m3_case2");
+      const case3 = value("m3_case3");
+      const casesOk = case1 === 17 && case2 === 28 && case3 === "invalid";
+      const casesTouched = Number.isFinite(case1) || Number.isFinite(case2) || case3;
+      if (casesTouched && !casesOk) {
+        let message = "Aplique sempre leituraAtual - leituraAnterior e verifique a consistência dos dados.";
+        if (Number.isFinite(case1) && case1 !== 17) message = "No primeiro caso, 867 - 850 resulta em 17 m³.";
+        else if (Number.isFinite(case2) && case2 !== 28) message = "No segundo caso, 1520 - 1492 resulta em 28 m³.";
+        else if (case3 && case3 !== "invalid") message = "Uma leitura atual menor que a anterior exige verificar os dados ou a troca do aparelho; não deve ser aceita como consumo normal.";
+        setBranch("m3_cases_branch", "Validação incompleta", message);
+      } else setBranch("m3_cases_branch");
+
+      const conclusion = radio("m3_conclusion");
+      if (conclusion && conclusion !== "correct") {
+        setBranch("m3_conclusion_branch",
+          conclusion === "current" ? "Total acumulado confundido com consumo" : "Subtração invertida",
+          conclusion === "current"
+            ? "A leitura atual contém o histórico acumulado do hidrômetro."
+            : "Leitura anterior menos leitura atual produziria valor negativo em um funcionamento normal.");
+      } else setBranch("m3_conclusion_branch");
+
+      const complete = orderOk && casesOk && conclusion === "correct";
+      if (!live && !complete) showFeedback(3, "Ordene o pseudocódigo, resolva os três casos e confirme a conclusão.");
+      return complete;
+    }
+
+    const validators = { 1: validateMission1, 2: validateMission2, 3: validateMission3 };
+
+    function unlockMission(number) {
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.remove("locked");
+      mission.classList.add("active");
+      const toggle = $(".mission-toggle", mission);
+      toggle.disabled = false;
+      $("[data-state]", mission).textContent = "Disponível";
+    }
+
+    function openMission(number, scroll = false) {
+      $$(".mission").forEach(mission => {
+        const current = Number(mission.dataset.mission);
+        const shouldOpen = current === number;
+        mission.classList.toggle("open", shouldOpen);
+        $(".mission-toggle", mission).setAttribute("aria-expanded", String(shouldOpen));
+      });
+      const mission = $(`.mission[data-mission="${number}"]`);
+      if (scroll) mission.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateMap(activeNumber) {
+      for (let i = 1; i <= 3; i++) {
+        const node = $(`[data-map="${i}"]`);
+        const small = $("small", node);
+        node.classList.remove("active", "locked", "done");
+        if (completed.has(i)) { node.classList.add("done"); small.textContent = "Concluída"; }
+        else if (i === activeNumber) { node.classList.add("active"); small.textContent = "Em andamento"; }
+        else { node.classList.add("locked"); small.textContent = "Bloqueada"; }
+        if (i < 3) $(`[data-connector="${i}"]`).classList.toggle("done", completed.has(i));
+      }
+      document.getElementById("progressText").textContent = activeNumber ? `Missão atual: ${activeNumber} de 3` : "3 de 3 missões concluídas";
+    }
+
+    function completeMission(number, button) {
+      if (completed.has(number)) return;
+      completed.add(number);
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.add("completed");
+      mission.classList.remove("active");
+      $("[data-state]", mission).textContent = "Concluída";
+      document.getElementById(`m${number}_result`).classList.add("show");
+      button.textContent = number === 3 ? "Roteiro concluído" : "Missão concluída";
+      button.disabled = true;
+      showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
+
+      if (number < 3) {
+        unlockMission(number + 1);
+        updateMap(number + 1);
+        setTimeout(() => {
+          mission.classList.remove("open");
+          $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
+          openMission(number + 1, true);
+        }, 650);
+      } else {
+        updateMap(null);
+        document.getElementById("finalCodeBlock").hidden = false;
+        document.getElementById("completionPanel").classList.add("show");
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 250);
+      }
+    }
+
+    $$('[data-check]').forEach(button => button.addEventListener("click", () => {
+      const number = Number(button.dataset.check);
+      if (validators[number](false)) completeMission(number, button);
+    }));
+
+    $$("input, select").forEach(field => field.addEventListener("change", () => {
+      const mission = field.closest(".mission");
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+
+    $$('input[type="number"]').forEach(field => field.addEventListener("input", () => {
+      const mission = field.closest(".mission");
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+
+    $$(".mission-toggle").forEach(toggle => toggle.addEventListener("click", () => {
+      const mission = toggle.closest(".mission");
+      if (mission.classList.contains("locked")) return;
+      const isOpen = mission.classList.contains("open");
+      $$(".mission").forEach(item => {
+        if (item !== mission) {
+          item.classList.remove("open");
+          $(".mission-toggle", item).setAttribute("aria-expanded", "false");
+        }
+      });
+      mission.classList.toggle("open", !isOpen);
+      toggle.setAttribute("aria-expanded", String(!isOpen));
+    }));
+
+    $$('[data-hint]').forEach(button => button.addEventListener("click", () => {
+      const number = Number(button.dataset.hint);
+      const next = Math.min(hintState[number], hints[number].length - 1);
+      const [title, text] = hints[number][next];
+      hintState[number] = Math.min(hintState[number] + 1, hints[number].length);
+      const drawer = document.getElementById(`hintDrawer${number}`);
+      drawer.classList.add("show");
+      $(".hint-number", drawer).textContent = `${next + 1}/${hints[number].length}`;
+      document.getElementById(`hintTitle${number}`).textContent = title;
+      document.getElementById(`hintText${number}`).textContent = text;
+      button.textContent = next + 1 < hints[number].length ? "Ver próxima pista" : "Pistas exibidas";
+      if (next + 1 >= hints[number].length) button.disabled = true;
+    }));
+
+    document.getElementById("reviewButton").addEventListener("click", () => openMission(1, true));
+    document.getElementById("restartButton").addEventListener("click", () => location.reload());
+  </script>
+</body>
+</html>

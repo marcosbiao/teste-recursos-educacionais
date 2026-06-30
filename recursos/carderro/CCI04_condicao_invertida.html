@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Condição invertida</title>
+  <meta name="description" content="Card diagnóstico interativo sobre condições lógicas invertidas em programas escritos em C.">
+  <style>
+    :root {
+      --red-700: #B42318;
+      --red-600: #D92D20;
+      --red-100: #FEE4E2;
+      --red-50: #FEF3F2;
+      --green-700: #067647;
+      --green-600: #079455;
+      --green-100: #D1FADF;
+      --green-50: #ECFDF3;
+      --amber-700: #B54708;
+      --amber-100: #FEF0C7;
+      --amber-50: #FFFAEB;
+      --blue-700: #175CD3;
+      --blue-100: #D1E9FF;
+      --blue-50: #EFF8FF;
+      --slate-950: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-400: #94A3B8;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+      --code: #111827;
+      --code-line: #1F2937;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 18px 48px rgba(15, 23, 42, 0.10);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(23, 92, 211, 0.07), transparent 28rem),
+        radial-gradient(circle at 94% 12%, rgba(217, 45, 32, 0.06), transparent 25rem),
+        var(--slate-50);
+      color: var(--slate-950);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      padding: 24px 16px 40px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(23, 92, 211, 0.35);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 88% 18%, rgba(248, 113, 113, 0.22), transparent 18rem),
+        linear-gradient(135deg, #450A0A 0%, #7F1D1D 56%, #991B1B 100%);
+      border: 1px solid rgba(254, 202, 202, 0.20);
+      border-radius: var(--radius-xl);
+      padding: 26px;
+      box-shadow: 0 18px 44px rgba(69, 10, 10, 0.22);
+    }
+
+    .topbar::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #F04438, #FB7185 55%, #F97316);
+      z-index: -1;
+    }
+
+    .topbar::after {
+      content: "!";
+      position: absolute;
+      right: 22px;
+      top: -54px;
+      color: rgba(255, 255, 255, 0.055);
+      font-size: 210px;
+      line-height: 1;
+      font-weight: 950;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .topbar-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .bug-mark {
+      width: 56px;
+      height: 56px;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #FECACA;
+      background: rgba(248, 113, 113, 0.17);
+      border: 1px solid rgba(254, 202, 202, 0.28);
+      box-shadow: 0 12px 30px rgba(69, 10, 10, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .bug-mark svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .eyebrow-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFF7F7;
+      backdrop-filter: blur(8px);
+    }
+
+    .pill.red {
+      color: #FFF1F2;
+      background: rgba(248, 113, 113, 0.22);
+      border-color: rgba(254, 202, 202, 0.32);
+    }
+
+    .pill.amber {
+      color: #FFF7ED;
+      background: rgba(249, 115, 22, 0.20);
+      border-color: rgba(254, 215, 170, 0.32);
+    }
+
+    h1 {
+      font-size: clamp(1.7rem, 4vw, 2.7rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      color: var(--slate-950);
+      margin-bottom: 8px;
+    }
+
+    .topbar h1 {
+      color: var(--white);
+      text-shadow: 0 2px 14px rgba(69, 10, 10, 0.24);
+    }
+
+    .subtitle {
+      color: var(--slate-600);
+      max-width: 830px;
+      font-size: 1rem;
+    }
+
+    .topbar .subtitle {
+      color: #FEE2E2;
+    }
+
+    .indicator-strip {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .indicator {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 14px;
+      padding: 11px 13px;
+      backdrop-filter: blur(8px);
+    }
+
+    .indicator small {
+      display: block;
+      color: #FCA5A5;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .indicator strong {
+      color: var(--white);
+      font-size: 0.92rem;
+    }
+
+    .stage-nav {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 13px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 8px;
+      z-index: 20;
+    }
+
+    .stage-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      color: var(--slate-500);
+      background: var(--slate-50);
+      border: 1px solid transparent;
+      font-weight: 800;
+      font-size: 0.86rem;
+      transition: 0.2s ease;
+    }
+
+    .stage-number {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid var(--slate-300);
+      background: var(--white);
+      color: var(--slate-600);
+      font-size: 0.75rem;
+    }
+
+    .stage-item.active {
+      color: var(--blue-700);
+      background: var(--blue-50);
+      border-color: var(--blue-100);
+    }
+
+    .stage-item.active .stage-number {
+      background: var(--blue-700);
+      color: var(--white);
+      border-color: var(--blue-700);
+    }
+
+    .stage-item.done {
+      color: var(--green-700);
+      background: var(--green-50);
+      border-color: var(--green-100);
+    }
+
+    .stage-item.done .stage-number {
+      background: var(--green-600);
+      color: var(--white);
+      border-color: var(--green-600);
+    }
+
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-header {
+      padding: 22px 22px 0;
+    }
+
+    .kicker {
+      color: var(--blue-700);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.73rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      color: var(--slate-950);
+      font-size: 1.3rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      color: var(--slate-900);
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    p {
+      color: var(--slate-600);
+    }
+
+    .statement {
+      margin: 16px 22px 0;
+      border: 1px solid var(--blue-100);
+      background: var(--blue-50);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .statement-label {
+      color: var(--blue-700);
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 5px;
+    }
+
+    .statement p:last-child {
+      color: var(--slate-950);
+      font-weight: 800;
+    }
+
+    .observe-grid {
+      padding: 18px 22px 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(330px, 0.65fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .code-card,
+    .test-area {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--slate-50);
+    }
+
+    .card-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .caption-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--slate-800);
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--red-600);
+      box-shadow: 0 0 0 4px var(--red-50);
+    }
+
+    .caption-note {
+      color: var(--slate-500);
+      font-size: 0.78rem;
+    }
+
+    .code-window {
+      background: var(--code);
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 46px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #E5E7EB;
+      white-space: pre;
+    }
+
+    .line-number {
+      color: #6B7280;
+      text-align: right;
+      padding-right: 14px;
+      user-select: none;
+    }
+
+    .line-code {
+      padding-right: 18px;
+    }
+
+    .code-line.problem {
+      background: rgba(217, 45, 32, 0.18);
+      border-left: 4px solid var(--red-600);
+    }
+
+    .code-line.problem .line-number {
+      color: #FDA29B;
+    }
+
+    .token-pre { color: #C084FC; }
+    .token-type { color: #67E8F9; }
+    .token-function { color: #FDE68A; }
+    .token-string { color: #86EFAC; }
+    .token-number { color: #FCA5A5; }
+    .token-comment { color: #94A3B8; font-style: italic; }
+    .token-variable { color: #E2E8F0; }
+    .token-op { color: #F8FAFC; }
+
+    .problem-token {
+      display: inline-block;
+      color: #FFFFFF;
+      background: rgba(217, 45, 32, 0.55);
+      border: 1px solid rgba(254, 228, 226, 0.36);
+      border-radius: 5px;
+      padding: 0 4px;
+      font-weight: 800;
+    }
+
+    .problem-note {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      background: var(--red-50);
+      color: var(--red-700);
+      border-top: 1px solid var(--red-100);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .problem-note svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    .tests-list {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .test-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .test-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 9px;
+    }
+
+    .test-title {
+      color: var(--slate-800);
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    .fail-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-100);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.71rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .test-input {
+      display: block;
+      width: 100%;
+      background: var(--slate-950);
+      color: #E2E8F0;
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-family: Consolas, monospace;
+      font-size: 0.79rem;
+      margin-bottom: 9px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .test-results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .result-box {
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid;
+    }
+
+    .result-box small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.64rem;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .result-box strong {
+      display: block;
+      font-family: Consolas, monospace;
+      font-size: 0.81rem;
+      word-break: break-word;
+    }
+
+    .expected {
+      background: var(--green-50);
+      color: var(--green-700);
+      border-color: var(--green-100);
+    }
+
+    .obtained {
+      background: var(--red-50);
+      color: var(--red-700);
+      border-color: var(--red-100);
+    }
+
+    .diagnose-panel {
+      padding: 22px;
+    }
+
+    .diagnose-panel .intro {
+      margin-top: 6px;
+      max-width: 760px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .option {
+      position: relative;
+      display: grid;
+      grid-template-columns: 36px 1fr 24px;
+      align-items: start;
+      gap: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      padding: 13px 14px;
+      background: var(--slate-50);
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      background: var(--white);
+      border-color: var(--slate-300);
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .letter {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--slate-600);
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+      font-weight: 900;
+    }
+
+    .option-text {
+      color: var(--slate-700);
+      font-size: 0.93rem;
+      padding-top: 4px;
+    }
+
+    .check-indicator {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--slate-300);
+      background: var(--white);
+      margin-top: 5px;
+      position: relative;
+    }
+
+    .option:has(input:checked) {
+      border-color: var(--blue-700);
+      background: var(--blue-50);
+      box-shadow: 0 0 0 3px rgba(23, 92, 211, 0.08);
+    }
+
+    .option:has(input:checked) .letter {
+      color: var(--white);
+      background: var(--blue-700);
+      border-color: var(--blue-700);
+    }
+
+    .option:has(input:checked) .check-indicator {
+      border-color: var(--blue-700);
+    }
+
+    .option:has(input:checked) .check-indicator::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      background: var(--blue-700);
+      border-radius: 50%;
+    }
+
+    .action-row {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      min-height: 44px;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .primary-btn {
+      color: var(--white);
+      background: var(--blue-700);
+      box-shadow: 0 8px 18px rgba(23, 92, 211, 0.18);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      background: #1849A9;
+    }
+
+    .secondary-btn {
+      color: var(--slate-700);
+      background: var(--white);
+      border: 1px solid var(--slate-300);
+    }
+
+    .secondary-btn:hover {
+      background: var(--slate-50);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none !important;
+      box-shadow: none;
+    }
+
+    .hypothesis-status {
+      display: none;
+      flex: 1 1 280px;
+      min-height: 44px;
+      align-items: center;
+      gap: 8px;
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.87rem;
+      font-weight: 800;
+    }
+
+    .hypothesis-status.show {
+      display: flex;
+    }
+
+    .feedback-line {
+      display: none;
+      margin-top: 12px;
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .feedback-line.show {
+      display: block;
+    }
+
+    .feedback-line.neutral {
+      color: var(--amber-700);
+      background: var(--amber-50);
+      border: 1px solid var(--amber-100);
+    }
+
+    .analysis-content {
+      display: none;
+      gap: 18px;
+    }
+
+    .analysis-content.visible {
+      display: grid;
+    }
+
+    .explain-grid {
+      padding: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 16px;
+    }
+
+    .diagnosis-summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .diagnosis-card {
+      border-radius: 15px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+    }
+
+    .diagnosis-card.red {
+      background: var(--red-50);
+      border-color: var(--red-100);
+    }
+
+    .diagnosis-card strong {
+      display: block;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+      font-size: 0.88rem;
+    }
+
+    .diagnosis-card.red strong {
+      color: var(--red-700);
+    }
+
+    .diagnosis-card p {
+      font-size: 0.9rem;
+    }
+
+    .flow-card {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      background: var(--white);
+    }
+
+    .flow-title {
+      margin-bottom: 13px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(7, auto);
+      align-items: stretch;
+      justify-content: stretch;
+      gap: 8px;
+    }
+
+    .flow-step {
+      min-width: 0;
+      border-radius: 13px;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      text-align: center;
+    }
+
+    .flow-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .flow-step strong {
+      color: var(--slate-800);
+      font-size: 0.84rem;
+    }
+
+    .flow-step.error {
+      background: var(--red-50);
+      border-color: var(--red-100);
+    }
+
+    .flow-step.error small,
+    .flow-step.error strong {
+      color: var(--red-700);
+    }
+
+    .flow-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--slate-400);
+      font-size: 1.2rem;
+    }
+
+    .correction-panel {
+      padding: 22px;
+    }
+
+    .correction-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(290px, 0.9fr);
+      gap: 16px;
+      margin-top: 15px;
+    }
+
+    .diff-card {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--code);
+    }
+
+    .diff-head {
+      padding: 12px 14px;
+      background: var(--slate-800);
+      color: #E2E8F0;
+      font-size: 0.82rem;
+      font-weight: 900;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .diff-line {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      padding: 10px 14px;
+      font-family: Consolas, monospace;
+      font-size: 0.89rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .diff-line.minus {
+      color: #FDA29B;
+      background: rgba(217, 45, 32, 0.18);
+    }
+
+    .diff-line.plus {
+      color: #6CE9A6;
+      background: rgba(7, 148, 85, 0.17);
+    }
+
+    .diff-symbol {
+      font-weight: 900;
+    }
+
+    .correction-side {
+      display: grid;
+      gap: 10px;
+    }
+
+    .principle {
+      border-radius: 14px;
+      padding: 13px 14px;
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+    }
+
+    .principle strong {
+      color: var(--green-700);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .principle p {
+      font-size: 0.9rem;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 30px;
+      color: var(--slate-600);
+      font-size: 0.9rem;
+    }
+
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+      font-size: 0.72rem;
+      font-weight: 900;
+    }
+
+    .validate-panel {
+      padding: 22px;
+    }
+
+    .validate-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(290px, 0.85fr);
+      gap: 16px;
+      margin-top: 15px;
+    }
+
+    .validation-intro {
+      margin-top: 6px;
+      max-width: 820px;
+    }
+
+    .validation-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 17px;
+      padding: 7px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-100);
+    }
+
+    .validation-tab {
+      flex: 1 1 180px;
+      min-height: 44px;
+      padding: 9px 13px;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      color: var(--slate-600);
+      background: transparent;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .validation-tab:hover {
+      color: var(--slate-950);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .validation-tab[aria-selected="true"] {
+      color: var(--blue-700);
+      background: var(--white);
+      border-color: var(--blue-100);
+      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.07);
+    }
+
+    .validation-tab.is-correct::after {
+      content: "  ✓";
+      color: var(--green-700);
+    }
+
+    .validation-panel[hidden] {
+      display: none;
+    }
+
+    .validation-panel {
+      animation: validationPanelIn 0.24s ease both;
+    }
+
+    @keyframes validationPanelIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 9px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 0.71rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .level-badge.recognize {
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+    }
+
+    .level-badge.apply {
+      color: var(--amber-700);
+      background: var(--amber-50);
+      border: 1px solid var(--amber-100);
+    }
+
+    .level-badge.analyze {
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-100);
+    }
+
+    .validation-progress {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 13px;
+      color: var(--slate-600);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .validation-progress strong {
+      color: var(--slate-950);
+    }
+
+    .mini-problem,
+    .mini-response {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--slate-50);
+      padding: 16px;
+    }
+
+    .mini-problem p {
+      margin-top: 7px;
+      font-size: 0.9rem;
+    }
+
+    .mini-code-editor {
+      margin-top: 12px;
+      overflow: hidden;
+      background: var(--code);
+      border: 1px solid var(--code-line);
+      border-radius: 14px;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12);
+    }
+
+    .mini-code-editor:focus-visible {
+      outline: 3px solid rgba(23, 92, 211, 0.35);
+      outline-offset: 3px;
+    }
+
+    .mini-code-bar {
+      min-height: 40px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 11px;
+      padding: 8px 12px;
+      color: #CBD5E1;
+      background: #1E293B;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .mini-window-dots {
+      display: inline-flex;
+      gap: 5px;
+    }
+
+    .mini-window-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64748B;
+    }
+
+    .mini-window-dots span:nth-child(1) { background: #F87171; }
+    .mini-window-dots span:nth-child(2) { background: #FBBF24; }
+    .mini-window-dots span:nth-child(3) { background: #4ADE80; }
+
+    .mini-code-file {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mini-code-language {
+      padding: 3px 7px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 7px;
+      color: #94A3B8;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+    }
+
+    .mini-code-body {
+      padding: 10px 0;
+      overflow-x: auto;
+      color: #E5E7EB;
+      background: var(--code);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.81rem;
+      line-height: 1.62;
+      scrollbar-color: #475569 #111827;
+    }
+
+    .mini-code-line {
+      display: grid;
+      grid-template-columns: 38px minmax(max-content, 1fr);
+      min-height: 22px;
+      white-space: pre;
+    }
+
+    .mini-code-line:hover {
+      background: rgba(148, 163, 184, 0.06);
+    }
+
+    .mini-line-number {
+      padding-right: 11px;
+      color: #64748B;
+      text-align: right;
+      user-select: none;
+    }
+
+    .mini-code-line code {
+      padding-right: 16px;
+      color: inherit;
+      font: inherit;
+    }
+
+    .token-keyword { color: #C4B5FD; font-weight: 700; }
+    .token-header { color: #F9A8D4; }
+
+    .mini-response .options {
+      margin-top: 10px;
+    }
+
+    .mini-response .option {
+      grid-template-columns: 30px 1fr 20px;
+      padding: 10px 11px;
+      gap: 9px;
+    }
+
+    .mini-response .letter {
+      width: 27px;
+      height: 27px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+    }
+
+    .mini-response .option-text {
+      font-size: 0.85rem;
+      padding-top: 2px;
+    }
+
+    .mini-response .check-indicator {
+      width: 19px;
+      height: 19px;
+      margin-top: 3px;
+    }
+
+    .quick-feedback {
+      display: none;
+      margin-top: 11px;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 0.87rem;
+      font-weight: 700;
+    }
+
+    .quick-feedback.show {
+      display: block;
+    }
+
+    .quick-feedback.correct {
+      color: var(--green-700);
+      background: var(--green-50);
+      border: 1px solid var(--green-100);
+    }
+
+    .quick-feedback.incorrect {
+      color: var(--red-700);
+      background: var(--red-50);
+      border: 1px solid var(--red-100);
+    }
+
+    .quick-feedback.neutral {
+      color: var(--amber-700);
+      background: var(--amber-50);
+      border: 1px solid var(--amber-100);
+    }
+
+    .review-card {
+      background: linear-gradient(135deg, var(--slate-950), var(--slate-800));
+      border-radius: var(--radius-xl);
+      color: var(--white);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .review-card h2 {
+      color: var(--white);
+    }
+
+    .review-card > p {
+      color: #CBD5E1;
+      margin-top: 5px;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .review-item {
+      border-radius: 14px;
+      padding: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .review-item strong {
+      display: block;
+      color: var(--white);
+      font-size: 0.86rem;
+      margin-bottom: 4px;
+    }
+
+    .review-item p {
+      color: #CBD5E1;
+      font-size: 0.82rem;
+    }
+
+    details.mobile-details {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    details.mobile-details summary {
+      display: none;
+      cursor: pointer;
+      color: var(--slate-900);
+      font-weight: 900;
+      padding: 15px 16px;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .resource-credit {
+      text-align: center;
+      padding: 14px 10px 0;
+      color: var(--slate-500);
+      font-size: 0.84rem;
+    }
+
+    .resource-credit a {
+      color: var(--blue-700);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .resource-credit a:hover {
+      text-decoration: underline;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 900px) {
+      .observe-grid,
+      .explain-grid,
+      .correction-grid,
+      .validate-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .indicator-strip {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .review-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 12px 10px 28px;
+      }
+
+      .shell {
+        gap: 12px;
+      }
+
+      .topbar {
+        padding: 20px 18px 18px;
+        border-radius: 20px;
+      }
+
+      .topbar::after {
+        right: -8px;
+        top: -25px;
+        font-size: 150px;
+      }
+
+      .topbar-row {
+        gap: 12px;
+      }
+
+      .bug-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+      }
+
+      .bug-mark svg {
+        width: 23px;
+        height: 23px;
+      }
+
+      .indicator-strip {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      .indicator {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 11px;
+      }
+
+      .indicator small {
+        margin: 0;
+      }
+
+      .indicator strong {
+        text-align: right;
+      }
+
+      .stage-nav {
+        grid-template-columns: repeat(4, minmax(64px, 1fr));
+        overflow-x: auto;
+        padding: 8px;
+        top: 4px;
+      }
+
+      .stage-item {
+        flex-direction: column;
+        gap: 3px;
+        padding: 7px 5px;
+        font-size: 0.69rem;
+        white-space: nowrap;
+      }
+
+      .stage-number {
+        width: 22px;
+        height: 22px;
+      }
+
+      .panel,
+      .review-card {
+        border-radius: 20px;
+      }
+
+      .panel-header {
+        padding: 18px 16px 0;
+      }
+
+      .statement {
+        margin: 13px 16px 0;
+      }
+
+      .observe-grid,
+      .diagnose-panel,
+      .explain-grid,
+      .correction-panel,
+      .validate-panel {
+        padding: 14px 16px 16px;
+      }
+
+      .card-caption {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .caption-note {
+        padding-left: 17px;
+      }
+
+      .code-line {
+        grid-template-columns: 38px minmax(max-content, 1fr);
+        font-size: 0.78rem;
+      }
+
+      .line-number {
+        padding-right: 10px;
+      }
+
+      .option {
+        grid-template-columns: 31px 1fr 21px;
+        gap: 9px;
+        padding: 11px;
+      }
+
+      .letter {
+        width: 28px;
+        height: 28px;
+      }
+
+      .option-text {
+        font-size: 0.87rem;
+        padding-top: 2px;
+      }
+
+      .validation-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+      }
+
+      .validation-tab {
+        flex: 0 0 auto;
+        min-width: 150px;
+        scroll-snap-align: start;
+      }
+
+      .action-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+
+      .hypothesis-status {
+        width: 100%;
+      }
+
+      .test-results {
+        grid-template-columns: 1fr;
+      }
+
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+
+      details.mobile-details summary {
+        display: block;
+      }
+
+      details.mobile-details:not([open]) > .mobile-detail-content {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar" aria-label="Cabeçalho do card diagnóstico de erro">
+      <div class="topbar-row">
+        <div class="bug-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 9h8v7a4 4 0 0 1-8 0V9Z"/>
+            <path d="M9 9V7a3 3 0 0 1 6 0v2M5 13h3M16 13h3M6 18l2-1M18 18l-2-1M6 8l2 1M18 8l-2 1"/>
+          </svg>
+        </div>
+        <div>
+          <div class="eyebrow-row">
+            <span class="pill">Card diagnóstico</span>
+            <span class="pill">CCI04</span>
+            <span class="pill red">Erro lógico condicional</span>
+            <span class="pill amber">Gravidade alta</span>
+          </div>
+          <h1>Condição invertida</h1>
+          <p class="subtitle">Investigue programas em que a estrutura condicional está sintaticamente correta, mas representa o contrário da regra descrita no problema.</p>
+        </div>
+      </div>
+
+      <div class="indicator-strip" aria-label="Resumo do erro">
+        <div class="indicator"><small>Sintoma</small><strong>O bloco errado executa em determinados casos</strong></div>
+        <div class="indicator"><small>Impacto</small><strong>A decisão produz uma classificação oposta</strong></div>
+        <div class="indicator"><small>Competência</small><strong>Decisões condicionais e expressões lógicas corretas</strong></div>
+      </div>
+    </header>
+
+    <nav class="stage-nav" aria-label="Etapas do diagnóstico">
+      <div class="stage-item active" data-stage-item="1"><span class="stage-number">1</span><span>Observar</span></div>
+      <div class="stage-item" data-stage-item="2"><span class="stage-number">2</span><span>Diagnosticar</span></div>
+      <div class="stage-item" data-stage-item="3"><span class="stage-number">3</span><span>Corrigir</span></div>
+      <div class="stage-item" data-stage-item="4"><span class="stage-number">4</span><span>Validar</span></div>
+    </nav>
+
+    <section class="panel" id="observeSection">
+      <div class="panel-header">
+        <p class="kicker">Etapa 1 · Observe</p>
+        <h2>Compare a regra de maioridade com a condição implementada</h2>
+      </div>
+
+      <div class="statement">
+        <p class="statement-label">Enunciado</p>
+        <p>Leia a idade de uma pessoa. Mostre “Maior de idade” quando a idade for maior ou igual a 18; caso contrário, mostre “Menor de idade”.</p>
+      </div>
+
+      <div class="observe-grid">
+        <article class="code-card" aria-label="Programa em C com condição invertida">
+          <div class="card-caption">
+            <div class="caption-title"><span class="status-dot"></span>Solução em análise</div>
+            <span class="caption-note">Linguagem C</span>
+          </div>
+          <div class="code-window" role="region" aria-label="Código em C com números de linha" tabindex="0">
+            <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="token-pre">#include</span> <span class="token-string">&lt;stdio.h&gt;</span></span></div>
+            <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+            <div class="code-line"><span class="line-number">3</span><span class="line-code"><span class="token-type">int</span> <span class="token-function">main</span>() {</span></div>
+            <div class="code-line"><span class="line-number">4</span><span class="line-code">    <span class="token-type">int</span> <span class="token-variable">idade</span>;</span></div>
+            <div class="code-line"><span class="line-number">5</span><span class="line-code"></span></div>
+            <div class="code-line"><span class="line-number">6</span><span class="line-code">    <span class="token-function">scanf</span>(<span class="token-string">"%d"</span>, &amp;<span class="token-variable">idade</span>);</span></div>
+            <div class="code-line problem"><span class="line-number">7</span><span class="line-code">    <span class="token-pre">if</span> (<span class="problem-token">idade &lt; 18</span>) {</span></div>
+            <div class="code-line problem"><span class="line-number">8</span><span class="line-code">        <span class="token-function">printf</span>(<span class="token-string problem-token">"Maior de idade
+"</span>);</span></div>
+            <div class="code-line"><span class="line-number">9</span><span class="line-code">    } <span class="token-pre">else</span> {</span></div>
+            <div class="code-line"><span class="line-number">10</span><span class="line-code">        <span class="token-function">printf</span>(<span class="token-string">"Menor de idade
+"</span>);</span></div>
+            <div class="code-line"><span class="line-number">11</span><span class="line-code">    }</span></div>
+            <div class="code-line"><span class="line-number">12</span><span class="line-code">    <span class="token-pre">return</span> <span class="token-number">0</span>;</span></div>
+            <div class="code-line"><span class="line-number">13</span><span class="line-code">}</span></div>
+          </div>
+          <div class="problem-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.8 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/></svg>
+            <span>A condição identifica pessoas com menos de 18 anos, mas esse bloco imprime “Maior de idade”. A regra lógica e a ação executada apontam para sentidos opostos.</span>
+          </div>
+        </article>
+
+        <aside class="test-area" aria-label="Casos de teste">
+          <div class="card-caption"><div class="caption-title">Casos de teste</div><span class="caption-note">3 divergências</span></div>
+          <div class="tests-list">
+            <article class="test-card">
+              <div class="test-card-head"><span class="test-title">Abaixo do limite</span><span class="fail-badge">Falhou</span></div>
+              <span class="test-input">Idade: 17</span>
+              <div class="test-results"><div class="result-box expected"><small>Esperado</small><strong>Menor de idade</strong></div><div class="result-box obtained"><small>Obtido</small><strong>Maior de idade</strong></div></div>
+            </article>
+            <article class="test-card">
+              <div class="test-card-head"><span class="test-title">Caso-limite</span><span class="fail-badge">Falhou</span></div>
+              <span class="test-input">Idade: 18</span>
+              <div class="test-results"><div class="result-box expected"><small>Esperado</small><strong>Maior de idade</strong></div><div class="result-box obtained"><small>Obtido</small><strong>Menor de idade</strong></div></div>
+            </article>
+            <article class="test-card">
+              <div class="test-card-head"><span class="test-title">Acima do limite</span><span class="fail-badge">Falhou</span></div>
+              <span class="test-input">Idade: 25</span>
+              <div class="test-results"><div class="result-box expected"><small>Esperado</small><strong>Maior de idade</strong></div><div class="result-box obtained"><small>Obtido</small><strong>Menor de idade</strong></div></div>
+            </article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel diagnose-panel" id="diagnoseSection">
+      <p class="kicker">Etapa 2 · Diagnostique</p>
+      <h2>Qual hipótese explica os resultados dos três testes?</h2>
+      <p class="intro">Registre sua hipótese antes de abrir a análise. Observe o significado da condição e o bloco associado a ela.</p>
+      <div class="options" role="radiogroup" aria-label="Alternativas para o diagnóstico inicial">
+        <label class="option"><input type="radio" name="initialDiagnosis" value="a"><span class="letter">A</span><span class="option-text">A condição está invertida: ela seleciona idades menores que 18 para executar o bloco que afirma “Maior de idade”.</span><span class="check-indicator" aria-hidden="true"></span></label>
+        <label class="option"><input type="radio" name="initialDiagnosis" value="b"><span class="letter">B</span><span class="option-text">O tipo <code>int</code> não pode armazenar a idade 18 e, por isso, o programa escolhe o bloco <code>else</code>.</span><span class="check-indicator" aria-hidden="true"></span></label>
+        <label class="option"><input type="radio" name="initialDiagnosis" value="c"><span class="letter">C</span><span class="option-text">O problema ocorre porque uma estrutura <code>if</code> não pode ser usada para comparar valores inteiros.</span><span class="check-indicator" aria-hidden="true"></span></label>
+      </div>
+      <div class="action-row">
+        <button class="primary-btn" type="button" id="registerHypothesis">Registrar hipótese</button>
+        <button class="secondary-btn" type="button" id="openAnalysis" disabled>Ver análise e correção</button>
+        <div class="hypothesis-status" id="hypothesisStatus" aria-live="polite">Hipótese registrada. Agora confronte sua ideia com a análise completa.</div>
+      </div>
+      <div class="feedback-line neutral" id="diagnosisFeedback" aria-live="polite">Selecione uma alternativa antes de registrar sua hipótese.</div>
+    </section>
+
+    <div class="analysis-content" id="analysisContent" hidden aria-hidden="true">
+      <details class="mobile-details" open>
+        <summary>Onde está o erro?</summary>
+        <div class="mobile-detail-content">
+          <section class="panel">
+            <div class="panel-header"><p class="kicker">Análise do diagnóstico</p><h2>A condição representa a mesma regra descrita no enunciado?</h2></div>
+            <div class="explain-grid">
+              <div class="diagnosis-summary">
+                <article class="diagnosis-card red"><strong>Diagnóstico</strong><p>A alternativa A descreve o erro. O bloco “Maior de idade” deveria executar quando <code>idade &gt;= 18</code>, mas o código usa <code>idade &lt; 18</code>.</p></article>
+                <article class="diagnosis-card"><strong>Causa conceitual</strong><p>Uma condição não deve apenas compilar: ela precisa representar exatamente a regra de decisão. Trocar maior por menor ou incluir o limite no lado errado inverte o conjunto de casos selecionados.</p></article>
+                <article class="diagnosis-card"><strong>Como identificar</strong><p>Reescreva a condição em linguagem natural e teste um valor abaixo do limite, o próprio limite e um valor acima dele.</p></article>
+              </div>
+              <article class="flow-card">
+                <div class="flow-title"><h3>Como o erro se propaga</h3><p>A condição verdadeira conduz ao bloco semanticamente oposto.</p></div>
+                <div class="flow" aria-label="Fluxo de propagação do erro">
+                  <div class="flow-step"><small>Regra</small><strong>idade ≥ 18</strong></div><div class="flow-arrow" aria-hidden="true">→</div>
+                  <div class="flow-step error"><small>Condição</small><strong>idade &lt; 18</strong></div><div class="flow-arrow" aria-hidden="true">→</div>
+                  <div class="flow-step error"><small>Bloco executado</small><strong>Maior de idade</strong></div><div class="flow-arrow" aria-hidden="true">→</div>
+                  <div class="flow-step error"><small>Resultado</small><strong>Classificação invertida</strong></div>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details class="mobile-details" open>
+        <summary>Como corrigir?</summary>
+        <div class="mobile-detail-content">
+          <section class="panel correction-panel" id="correctSection">
+            <p class="kicker">Etapa 3 · Corrija</p>
+            <h2>Traduza a regra para linguagem natural antes de escolher os operadores</h2>
+            <div class="correction-grid">
+              <article class="diff-card" aria-label="Comparação entre condição incorreta e condição corrigida">
+                <div class="diff-head">Correção mínima em C</div>
+                <div class="diff-line minus"><span class="diff-symbol">−</span><span>if (idade &lt; 18) {</span></div>
+                <div class="diff-line plus"><span class="diff-symbol">+</span><span>if (idade &gt;= 18) {</span></div>
+                <div class="diff-line plus"><span class="diff-symbol">+</span><span>    printf("Maior de idade
+");</span></div>
+                <div class="diff-line plus"><span class="diff-symbol">+</span><span>} else {</span></div>
+                <div class="diff-line plus"><span class="diff-symbol">+</span><span>    printf("Menor de idade
+");</span></div>
+                <div class="diff-line plus"><span class="diff-symbol">+</span><span>}</span></div>
+              </article>
+              <div class="correction-side">
+                <article class="principle"><strong>Por que funciona?</strong><p>“Maior de idade” corresponde à frase “idade maior ou igual a 18”. O operador <code>&gt;=</code> inclui corretamente o caso-limite 18 no primeiro bloco.</p></article>
+                <ul class="checklist" aria-label="Checklist de correção">
+                  <li>Escreva em palavras quando o primeiro bloco deve executar.</li>
+                  <li>Identifique se o limite deve ser incluído.</li>
+                  <li>Converta cada relação para o operador correspondente.</li>
+                  <li>Teste valores abaixo, no limite e acima dele.</li>
+                  <li>Confirme se a mensagem do bloco combina com a condição.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <details class="mobile-details" open>
+        <summary>Valide a aprendizagem</summary>
+        <div class="mobile-detail-content">
+          <section class="panel validate-panel" id="validateSection">
+            <p class="kicker">Etapa 4 · Valide</p>
+            <h2>Reconheça, aplique e analise condições invertidas</h2>
+            <p class="validation-intro">Passe pelos três casos. O foco não é apenas encontrar um operador diferente, mas verificar se a condição seleciona exatamente os casos descritos pela regra.</p>
+
+            <div class="validation-tabs" role="tablist" aria-label="Etapas de validação da aprendizagem">
+              <button class="validation-tab" type="button" role="tab" id="validationTabRecognize" aria-controls="validationPanelRecognize" aria-selected="true" tabindex="0" data-validation-tab="recognize">1. Reconheça</button>
+              <button class="validation-tab" type="button" role="tab" id="validationTabApply" aria-controls="validationPanelApply" aria-selected="false" tabindex="-1" data-validation-tab="apply">2. Aplique</button>
+              <button class="validation-tab" type="button" role="tab" id="validationTabAnalyze" aria-controls="validationPanelAnalyze" aria-selected="false" tabindex="-1" data-validation-tab="analyze">3. Analise</button>
+            </div>
+            <div class="validation-progress" aria-live="polite"><span>Progresso:</span><strong id="validationProgressText">0 de 3 diagnósticos corretos</strong></div>
+
+            <div class="validation-panel" id="validationPanelRecognize" role="tabpanel" aria-labelledby="validationTabRecognize" data-validation-panel="recognize">
+              <div class="validate-grid">
+                <article class="mini-problem">
+                  <span class="level-badge recognize">Reconheça</span>
+                  <h3>Frete grátis</h3>
+                  <p>Uma loja oferece frete grátis quando o total da compra é maior ou igual a R$ 100,00.</p>
+                  <div class="mini-code-editor" role="region" aria-label="Código em C do caso Reconheça" tabindex="0">
+                    <div class="mini-code-bar"><span class="mini-window-dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="mini-code-file">frete.c</span><span class="mini-code-language">C</span></div>
+                    <div class="mini-code-body">
+                      <div class="mini-code-line"><span class="mini-line-number">1</span><code><span class="token-keyword">if</span> (<span class="token-variable">total</span> <span class="token-op">&lt;</span> <span class="token-number">100.0</span>)</code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">2</span><code>    <span class="token-function">printf</span>(<span class="token-string">"Frete gratis"</span>);</code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">3</span><code><span class="token-keyword">else</span></code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">4</span><code>    <span class="token-function">printf</span>(<span class="token-string">"Frete pago"</span>);</code></div>
+                    </div>
+                  </div>
+                </article>
+                <article class="mini-response">
+                  <h3>Qual é o diagnóstico?</h3>
+                  <div class="options" role="radiogroup" aria-label="Alternativas do caso Reconheça">
+                    <label class="option"><input type="radio" name="validationRecognize" value="a"><span class="letter">A</span><span class="option-text">A condição está invertida: compras abaixo de R$ 100,00 recebem frete grátis, enquanto compras elegíveis entram no <code>else</code>.</span><span class="check-indicator" aria-hidden="true"></span></label>
+                    <label class="option"><input type="radio" name="validationRecognize" value="b"><span class="letter">B</span><span class="option-text">O erro é usar um número real no teste; comparações só aceitam valores inteiros.</span><span class="check-indicator" aria-hidden="true"></span></label>
+                    <label class="option"><input type="radio" name="validationRecognize" value="c"><span class="letter">C</span><span class="option-text">A condição está correta, mas o texto “Frete grátis” deveria ser impresso antes do <code>if</code>.</span><span class="check-indicator" aria-hidden="true"></span></label>
+                  </div>
+                  <button class="primary-btn validation-check" type="button" data-test="recognize" style="margin-top: 12px;">Verificar diagnóstico</button>
+                  <div class="quick-feedback" id="feedbackRecognize" aria-live="polite"></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="validation-panel" id="validationPanelApply" role="tabpanel" aria-labelledby="validationTabApply" data-validation-panel="apply" hidden>
+              <div class="validate-grid">
+                <article class="mini-problem">
+                  <span class="level-badge apply">Aplique</span>
+                  <h3>Controle de acesso</h3>
+                  <p>O acesso deve ser autorizado somente quando a pessoa tiver 18 anos ou mais e apresentar um convite válido.</p>
+                  <div class="mini-code-editor" role="region" aria-label="Código em C do caso Aplique" tabindex="0">
+                    <div class="mini-code-bar"><span class="mini-window-dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="mini-code-file">acesso.c</span><span class="mini-code-language">C</span></div>
+                    <div class="mini-code-body">
+                      <div class="mini-code-line"><span class="mini-line-number">1</span><code><span class="token-keyword">if</span> (<span class="token-variable">idade</span> <span class="token-op">&lt;</span> <span class="token-number">18</span> <span class="token-op">&amp;&amp;</span> <span class="token-variable">conviteValido</span> <span class="token-op">==</span> <span class="token-number">0</span>)</code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">2</span><code>    <span class="token-function">printf</span>(<span class="token-string">"Acesso autorizado"</span>);</code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">3</span><code><span class="token-keyword">else</span></code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">4</span><code>    <span class="token-function">printf</span>(<span class="token-string">"Acesso negado"</span>);</code></div>
+                    </div>
+                  </div>
+                </article>
+                <article class="mini-response">
+                  <h3>Qual condição representa corretamente a regra?</h3>
+                  <div class="options" role="radiogroup" aria-label="Alternativas do caso Aplique">
+                    <label class="option"><input type="radio" name="validationApply" value="a"><span class="letter">A</span><span class="option-text"><code>idade &lt; 18 || conviteValido == 0</code></span><span class="check-indicator" aria-hidden="true"></span></label>
+                    <label class="option"><input type="radio" name="validationApply" value="b"><span class="letter">B</span><span class="option-text"><code>idade &gt;= 18 &amp;&amp; conviteValido == 1</code></span><span class="check-indicator" aria-hidden="true"></span></label>
+                    <label class="option"><input type="radio" name="validationApply" value="c"><span class="letter">C</span><span class="option-text"><code>idade &gt;= 18 || conviteValido == 1</code></span><span class="check-indicator" aria-hidden="true"></span></label>
+                  </div>
+                  <button class="primary-btn validation-check" type="button" data-test="apply" style="margin-top: 12px;">Verificar diagnóstico</button>
+                  <div class="quick-feedback" id="feedbackApply" aria-live="polite"></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="validation-panel" id="validationPanelAnalyze" role="tabpanel" aria-labelledby="validationTabAnalyze" data-validation-panel="analyze" hidden>
+              <div class="validate-grid">
+                <article class="mini-problem">
+                  <span class="level-badge analyze">Analise</span>
+                  <h3>Faixa segura de temperatura</h3>
+                  <p>Um refrigerador está em condição segura entre 2 °C e 8 °C, inclusive. O programa deve mostrar “ALERTA” somente quando a temperatura estiver fora dessa faixa.</p>
+                  <div class="mini-code-editor" role="region" aria-label="Código em C do caso Analise" tabindex="0">
+                    <div class="mini-code-bar"><span class="mini-window-dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="mini-code-file">temperatura.c</span><span class="mini-code-language">C</span></div>
+                    <div class="mini-code-body">
+                      <div class="mini-code-line"><span class="mini-line-number">1</span><code><span class="token-keyword">if</span> (<span class="token-variable">temperatura</span> <span class="token-op">&gt;=</span> <span class="token-number">2</span> <span class="token-op">&amp;&amp;</span> <span class="token-variable">temperatura</span> <span class="token-op">&lt;=</span> <span class="token-number">8</span>)</code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">2</span><code>    <span class="token-function">printf</span>(<span class="token-string">"ALERTA"</span>);</code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">3</span><code><span class="token-keyword">else</span></code></div>
+                      <div class="mini-code-line"><span class="mini-line-number">4</span><code>    <span class="token-function">printf</span>(<span class="token-string">"NORMAL"</span>);</code></div>
+                    </div>
+                  </div>
+                </article>
+                <article class="mini-response">
+                  <h3>Qual análise e correção preservam as mensagens atuais?</h3>
+                  <div class="options" role="radiogroup" aria-label="Alternativas do caso Analise">
+                    <label class="option"><input type="radio" name="validationAnalyze" value="a"><span class="letter">A</span><span class="option-text">A condição já identifica a faixa de alerta; basta retirar o <code>else</code>.</span><span class="check-indicator" aria-hidden="true"></span></label>
+                    <label class="option"><input type="radio" name="validationAnalyze" value="b"><span class="letter">B</span><span class="option-text">Trocar <code>&amp;&amp;</code> por <code>||</code>, mantendo os operadores <code>&gt;=</code> e <code>&lt;=</code>.</span><span class="check-indicator" aria-hidden="true"></span></label>
+                    <label class="option"><input type="radio" name="validationAnalyze" value="c"><span class="letter">C</span><span class="option-text">A condição atual identifica a faixa segura, mas executa “ALERTA”. Para preservar os blocos, use <code>temperatura &lt; 2 || temperatura &gt; 8</code>.</span><span class="check-indicator" aria-hidden="true"></span></label>
+                  </div>
+                  <button class="primary-btn validation-check" type="button" data-test="analyze" style="margin-top: 12px;">Verificar diagnóstico</button>
+                  <div class="quick-feedback" id="feedbackAnalyze" aria-live="polite"></div>
+                </article>
+              </div>
+            </div>
+          </section>
+        </div>
+      </details>
+
+      <section class="review-card">
+        <h2>Síntese diagnóstica</h2>
+        <p>Uma condição correta seleciona exatamente os casos descritos pela regra e conduz ao bloco correspondente.</p>
+        <div class="review-grid">
+          <article class="review-item"><strong>Erro</strong><p>Usar uma relação lógica que representa o sentido oposto.</p></article>
+          <article class="review-item"><strong>Sinal</strong><p>Casos válidos e inválidos recebem respostas trocadas.</p></article>
+          <article class="review-item"><strong>Diagnóstico</strong><p>Testar abaixo, no limite e acima do valor de referência.</p></article>
+          <article class="review-item"><strong>Correção</strong><p>Reescrever a regra em palavras e então converter para código.</p></article>
+        </div>
+      </section>
+    </div>
+
+    <footer class="resource-credit">
+      <p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p>
+    </footer>
+  </main>
+
+  <script>
+    const registerHypothesisButton = document.getElementById("registerHypothesis");
+    const openAnalysisButton = document.getElementById("openAnalysis");
+    const hypothesisStatus = document.getElementById("hypothesisStatus");
+    const diagnosisFeedback = document.getElementById("diagnosisFeedback");
+    const analysisContent = document.getElementById("analysisContent");
+    const validationTabs = Array.from(document.querySelectorAll("[data-validation-tab]"));
+    const validationPanels = Array.from(document.querySelectorAll("[data-validation-panel]"));
+    const validationCheckButtons = Array.from(document.querySelectorAll(".validation-check"));
+    const validationProgressText = document.getElementById("validationProgressText");
+    const completedValidationTests = new Set();
+
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      document.querySelectorAll("details.mobile-details").forEach((detail, index) => { detail.open = index === 0; });
+    }
+
+    let maxCompletedStage = 0;
+    function setStage(stage, completedUntil = maxCompletedStage) {
+      maxCompletedStage = Math.max(maxCompletedStage, completedUntil);
+      document.querySelectorAll("[data-stage-item]").forEach((item) => {
+        const itemStage = Number(item.dataset.stageItem);
+        item.classList.toggle("active", itemStage === stage);
+        item.classList.toggle("done", itemStage <= maxCompletedStage);
+      });
+    }
+
+    registerHypothesisButton.addEventListener("click", () => {
+      const selected = document.querySelector('input[name="initialDiagnosis"]:checked');
+      if (!selected) {
+        diagnosisFeedback.className = "feedback-line neutral show";
+        diagnosisFeedback.textContent = "Selecione uma alternativa antes de registrar sua hipótese.";
+        return;
+      }
+      diagnosisFeedback.classList.remove("show");
+      hypothesisStatus.classList.add("show");
+      openAnalysisButton.disabled = false;
+      registerHypothesisButton.textContent = "Hipótese registrada";
+      registerHypothesisButton.disabled = true;
+      document.querySelectorAll('input[name="initialDiagnosis"]').forEach((input) => { input.disabled = true; });
+      setStage(2, 1);
+    });
+
+    openAnalysisButton.addEventListener("click", () => {
+      analysisContent.hidden = false;
+      analysisContent.setAttribute("aria-hidden", "false");
+      analysisContent.classList.add("visible");
+      openAnalysisButton.textContent = "Análise liberada";
+      openAnalysisButton.disabled = true;
+      setStage(3, 2);
+      analysisContent.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    const validationConfig = {
+      recognize: {
+        inputName: "validationRecognize", correctValue: "a", feedbackId: "feedbackRecognize",
+        correctMessage: "Diagnóstico correto. O operador < seleciona justamente as compras que não atingiram o mínimo para o benefício. A condição coerente com o primeiro bloco seria total >= 100.",
+        incorrectMessage: "Compare a condição com a frase ‘frete grátis quando o total é maior ou igual a 100’. O código seleciona o conjunto oposto."
+      },
+      apply: {
+        inputName: "validationApply", correctValue: "b", feedbackId: "feedbackApply",
+        correctMessage: "Correto. As duas exigências precisam ser verdadeiras ao mesmo tempo: idade mínima atendida e convite válido.",
+        incorrectMessage: "A palavra ‘e’ exige conjunção lógica. Autorizar com apenas uma das exigências atendida não representa a regra."
+      },
+      analyze: {
+        inputName: "validationAnalyze", correctValue: "c", feedbackId: "feedbackAnalyze",
+        correctMessage: "Correto. A condição original descreve a faixa segura, mas está ligada ao bloco de alerta. A expressão temperatura < 2 || temperatura > 8 seleciona somente os valores fora da faixa.",
+        incorrectMessage: "Verifique qual conjunto a condição seleciona. Entre 2 e 8 é a faixa normal; o alerta deve representar o complemento dessa faixa."
+      }
+    };
+
+    function activateValidationTab(testId, focusTab = false) {
+      validationTabs.forEach((tab) => {
+        const active = tab.dataset.validationTab === testId;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focusTab) tab.focus();
+      });
+      validationPanels.forEach((panel) => { panel.hidden = panel.dataset.validationPanel !== testId; });
+    }
+
+    function updateValidationProgress() {
+      const total = validationTabs.length;
+      const completed = completedValidationTests.size;
+      validationProgressText.textContent = `${completed} de ${total} diagnósticos corretos`;
+      setStage(4, completed === total ? 4 : 3);
+    }
+
+    validationTabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activateValidationTab(tab.dataset.validationTab));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let nextIndex = index;
+        if (event.key === "ArrowRight") nextIndex = (index + 1) % validationTabs.length;
+        if (event.key === "ArrowLeft") nextIndex = (index - 1 + validationTabs.length) % validationTabs.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = validationTabs.length - 1;
+        activateValidationTab(validationTabs[nextIndex].dataset.validationTab, true);
+      });
+    });
+
+    validationCheckButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const testId = button.dataset.test;
+        const config = validationConfig[testId];
+        const selected = document.querySelector(`input[name="${config.inputName}"]:checked`);
+        const feedback = document.getElementById(config.feedbackId);
+        feedback.className = "quick-feedback show";
+        if (!selected) {
+          feedback.classList.add("neutral");
+          feedback.textContent = "Selecione uma alternativa antes de verificar.";
+          return;
+        }
+        if (selected.value === config.correctValue) {
+          feedback.classList.add("correct");
+          feedback.textContent = config.correctMessage;
+          completedValidationTests.add(testId);
+          document.querySelector(`[data-validation-tab="${testId}"]`).classList.add("is-correct");
+          document.querySelectorAll(`input[name="${config.inputName}"]`).forEach((input) => { input.disabled = true; });
+          button.textContent = "Diagnóstico correto";
+          button.disabled = true;
+        } else {
+          feedback.classList.add("incorrect");
+          feedback.textContent = config.incorrectMessage;
+          completedValidationTests.delete(testId);
+          document.querySelector(`[data-validation-tab="${testId}"]`).classList.remove("is-correct");
+        }
+        updateValidationProgress();
+      });
+    });
+
+    const stageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        if (entry.target.id === "observeSection") setStage(1, 0);
+        if (entry.target.id === "diagnoseSection" && analysisContent.hidden) setStage(2, 1);
+        if (entry.target.id === "correctSection") setStage(3, 2);
+        if (entry.target.id === "validateSection") setStage(4, 3);
+      });
+    }, { threshold: 0.45 });
+
+    ["observeSection", "diagnoseSection", "correctSection", "validateSection"].forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) stageObserver.observe(element);
+    });
+  </script>
+</body>
+</html>
