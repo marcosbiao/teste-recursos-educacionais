@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Do hidrômetro ao consumo mensal — missões</title>
+  <title>Atendendo uma fila até o encerramento — missões</title>
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
@@ -1208,317 +1208,54 @@
       .control-grid { grid-template-columns: 1fr; }
     }
 
-
-
-    .hero-flow.state-preview {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 9px;
-    }
-    .state-preview .flow-chip { min-height: 78px; display: grid; align-content: center; }
-    .state-preview .flow-chip small { text-transform: uppercase; letter-spacing: .05em; font-size: .68rem; }
-
-    .variable-board {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .variable-card {
-      padding: 13px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-      text-align: center;
-    }
-    .variable-card small { display: block; color: var(--slate-500); font-size: .69rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
-    .variable-card strong { display: block; margin-top: 4px; color: var(--slate-900); font: 900 1.08rem Consolas, Monaco, monospace; }
-
-    .initial-state-grid,
-    .final-state-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .state-input-card {
-      display: grid;
-      gap: 8px;
-      padding: 14px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-    }
-    .state-input-card strong { color: var(--slate-900); font: 900 .94rem Consolas, Monaco, monospace; }
-    .state-input-card small { color: var(--slate-500); font-size: .73rem; }
-
-    .assignment-demo {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 11px;
-      align-items: stretch;
-    }
-    .assignment-box {
-      padding: 14px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-    }
-    .assignment-box small { display: block; color: var(--slate-500); font-size: .69rem; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
-    .assignment-box strong { display: block; margin-top: 5px; color: var(--slate-900); font: 900 .95rem/1.45 Consolas, Monaco, monospace; }
-    .assignment-arrow { display: grid; place-items: center; color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
-
-    .state-trace {
-      display: grid;
-      gap: 10px;
-    }
-    .state-step {
-      display: grid;
-      grid-template-columns: 42px minmax(180px, .9fr) minmax(0, 1fr) minmax(160px, .65fr);
-      gap: 11px;
-      align-items: center;
-      padding: 12px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-    }
-    .state-step.no-snapshot {
-      grid-template-columns: 42px minmax(0, 1fr) minmax(160px, .65fr);
-    }
-    .state-step-number {
-      width: 34px; height: 34px;
-      display: grid; place-items: center;
-      border-radius: 11px;
-      background: var(--mission-color);
-      color: white;
-      font-size: .78rem;
-      font-weight: 950;
-    }
-    .state-code { color: var(--slate-900); font: 850 .86rem Consolas, Monaco, monospace; }
-    .state-code small { display: block; margin-top: 3px; color: var(--slate-500); font: 600 .72rem/1.35 Inter, system-ui, sans-serif; }
-    .state-current { display: flex; flex-wrap: wrap; gap: 6px; }
-    .state-token {
-      padding: 6px 8px;
-      border: 1px solid var(--slate-200);
-      border-radius: 9px;
-      background: white;
-      color: var(--slate-700);
-      font: 800 .74rem Consolas, Monaco, monospace;
-    }
-    .state-answer label { display: block; margin-bottom: 5px; color: var(--slate-600); font-size: .71rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
-
-    .state-summary {
-      display: none;
-      margin-top: 12px;
-      overflow-x: auto;
-      border: 1px solid var(--emerald-100);
-      border-radius: 15px;
-      background: var(--emerald-50);
-    }
-    .state-summary.show { display: block; animation: reveal .2s ease; }
-    .state-summary table { width: 100%; min-width: 650px; border-collapse: collapse; }
-    .state-summary th,
-    .state-summary td { padding: 9px 11px; border-bottom: 1px solid rgba(5,150,105,.14); text-align: left; }
-    .state-summary th { color: var(--emerald-900); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
-    .state-summary td { color: var(--slate-700); font: 750 .78rem Consolas, Monaco, monospace; }
-    .state-summary tr:last-child td { border-bottom: 0; }
-
-    .order-check {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .order-card {
-      display: grid;
-      gap: 8px;
-      padding: 14px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-    }
-    .order-card strong { color: var(--slate-900); font-size: .84rem; }
-    .order-card code { color: var(--emerald-800); font: 850 .81rem Consolas, Monaco, monospace; }
-
-    @media (max-width: 920px) {
-      .state-step { grid-template-columns: 38px minmax(0, 1fr); }
-      .state-current, .state-answer { grid-column: 2; }
-    }
-    @media (max-width: 660px) {
-      .hero-flow.state-preview,
-      .variable-board,
-      .initial-state-grid,
-      .final-state-grid,
-      .order-check { grid-template-columns: 1fr; }
-      .assignment-demo { grid-template-columns: 1fr; }
-      .assignment-arrow { transform: rotate(90deg); }
-      .state-step { grid-template-columns: 34px minmax(0, 1fr); padding: 11px; }
-    }
-
-
-    .reading-board {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .reading-card {
-      padding: 14px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-      text-align: center;
-    }
-    .reading-card small {
-      display: block;
-      color: var(--slate-500);
-      font-size: .69rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-    .reading-card strong {
-      display: block;
-      margin-top: 5px;
-      color: var(--slate-900);
-      font-size: 1.16rem;
-      font-weight: 950;
-    }
-    .reading-card.result {
-      border-color: var(--emerald-100);
-      background: var(--emerald-50);
-    }
-    .reading-card.result strong { color: var(--emerald-800); }
-
-    .two-field-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .field-card {
-      display: grid;
-      gap: 7px;
-      padding: 13px;
-      border: 1px solid var(--slate-200);
-      border-radius: 14px;
-      background: var(--slate-50);
-    }
-    .field-card label {
-      color: var(--slate-900);
-      font-size: .78rem;
-      font-weight: 900;
-    }
-
-    .decomposition-strip {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 9px;
-    }
-    .decomposition-item {
-      position: relative;
-      display: grid;
-      gap: 5px;
-      padding: 13px;
-      border: 1px solid var(--slate-200);
-      border-radius: 14px;
-      background: var(--slate-50);
-    }
-    .decomposition-item:not(:last-child)::after {
-      content: '→';
-      position: absolute;
-      right: -13px;
-      top: 50%;
-      z-index: 2;
-      transform: translateY(-50%);
-      color: var(--mission-color);
-      font-weight: 950;
-    }
-    .decomposition-item small {
-      color: var(--slate-500);
-      font-size: .67rem;
-      font-weight: 900;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-    }
-    .decomposition-item strong {
-      color: var(--slate-900);
-      font-size: .85rem;
-    }
-
-    .formula-card {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-      gap: 10px;
-      align-items: center;
-      padding: 15px;
-      border: 1px solid var(--slate-200);
-      border-radius: 15px;
-      background: var(--slate-50);
-    }
-    .formula-value {
-      padding: 11px;
-      border: 1px solid var(--slate-200);
-      border-radius: 11px;
-      background: white;
-      text-align: center;
-    }
-    .formula-value small { display: block; color: var(--slate-500); font-size: .67rem; font-weight: 850; }
-    .formula-value strong { color: var(--slate-900); font-size: 1rem; }
-    .formula-symbol { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
-
-    @media (max-width: 920px) {
-      .decomposition-strip { grid-template-columns: 1fr 1fr; }
-      .decomposition-item:not(:last-child)::after { display: none; }
-    }
-    @media (max-width: 660px) {
-      .reading-board,
-      .two-field-grid,
-      .decomposition-strip { grid-template-columns: 1fr; }
-      .formula-card { grid-template-columns: 1fr; }
-      .formula-symbol { transform: rotate(90deg); text-align: center; }
-    }
 </style>
 </head>
+
 <body>
   <main class="shell">
     <header class="hero">
       <div>
         <div class="badge-row">
           <span class="badge">Roteiro por missões</span>
-          <span class="badge">CCI01</span>
-          <span class="badge">Decomposição, EPS e pseudocódigo</span>
+          <span class="badge">CCI05</span>
+          <span class="badge">Repetição com sentinela</span>
         </div>
-        <h1>Do hidrômetro ao consumo mensal</h1>
-        <p class="hero-description">Transforme duas leituras acumuladas em uma solução algorítmica clara, verificável e representada antes da programação.</p>
+        <h1>Atendendo uma fila até o encerramento</h1>
+        <p class="hero-description">Registre cada senha atendida, atualize o contador e encerre o atendimento quando a senha 0 for informada, sem contar o valor de encerramento como uma pessoa atendida.</p>
       </div>
 
-      <div class="hero-flow state-preview" aria-label="Resumo das leituras e do consumo">
-        <div class="flow-chip"><small>leitura anterior</small><strong>12.480 m³</strong></div>
-        <div class="flow-chip"><small>leitura atual</small><strong>12.497 m³</strong></div>
-        <div class="flow-chip"><small>consumo do mês</small><strong>17 m³</strong></div>
+      <div class="hero-flow" aria-label="Fluxo resumido da solução">
+        <div class="flow-chip"><small>1 · ler</small><strong>Receber uma senha</strong></div>
+        <div class="flow-chip"><small>2 · decidir</small><strong>É diferente de 0?</strong></div>
+        <div class="flow-chip"><small>3 · repetir ou parar</small><strong>Contar e continuar</strong></div>
       </div>
     </header>
 
     <section class="context-card" aria-label="Contexto da atividade">
       <article>
         <p class="kicker">Problema a resolver</p>
-        <h2>Descobrir quanto uma residência consumiu no mês</h2>
+        <h2>Registrar atendimentos até o operador informar a senha de encerramento</h2>
         <div class="problem-statement">
-          No início do mês, o hidrômetro de uma residência marcava 12.480 m³. No fim do mês, passou a marcar 12.497 m³. As leituras do hidrômetro são acumuladas. Construa uma solução algorítmica para calcular o consumo correspondente ao período.
-          <small>Pergunta central: quais dados entram, qual cálculo deve ser realizado e qual resultado precisa ser apresentado?</small>
+          Em um posto de atendimento, o operador informa o número de cada senha atendida. Como não se sabe previamente quantas pessoas serão atendidas, a leitura deve continuar até que seja digitado o valor 0.
+          <small>A senha 0 é reservada para encerrar o registro. Ela controla a repetição, mas não representa um atendimento realizado.</small>
         </div>
 
-        <div class="reading-board" aria-label="Dados do problema">
-          <article class="reading-card"><small>Início do período</small><strong>12.480 m³</strong></article>
-          <article class="reading-card"><small>Fim do período</small><strong>12.497 m³</strong></article>
-          <article class="reading-card result"><small>Resultado esperado</small><strong>17 m³</strong></article>
+        <div class="loop-flow" aria-label="Ciclo conceitual do algoritmo">
+          <article class="loop-card"><small>Entrada</small><strong>Ler a senha</strong><p>Cada valor positivo representa uma pessoa atendida.</p></article>
+          <article class="loop-card"><small>Controle</small><strong>Comparar com 0</strong><p>Enquanto a senha for diferente da sentinela, o laço continua.</p></article>
+          <article class="loop-card"><small>Estado</small><strong>Atualizar o contador</strong><p>Somente senhas válidas aumentam o total de atendimentos.</p></article>
         </div>
       </article>
 
       <aside class="meta-stack">
         <p class="kicker">Resumo pedagógico</p>
         <h2>Competência trabalhada</h2>
-        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI01</strong><p>Representar problemas por soluções algorítmicas.</p></div></div>
-        <div class="meta-row"><span class="meta-icon">T</span><div><strong>10 a 14 minutos</strong><p>Três missões antes da implementação em uma linguagem.</p></div></div>
-        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Subtração, ideia de entrada e saída e sequência de ações.</p></div></div>
-        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>EPS correto, decomposição coerente e pseudocódigo verificável.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI05</strong><p>Controlar processamento iterativo com repetição, atualização de estado e paradas seguras.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões curtas, liberadas em sequência.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Variáveis inteiras, atribuição, comparação, contador e estrutura while.</p></div></div>
+        <div class="variable-strip" aria-label="Variáveis principais">
+          <span class="variable-token">senha</span><span class="variable-token">atendimentos</span><span class="variable-token">SENTINELA = 0</span>
+        </div>
       </aside>
     </section>
 
@@ -1528,201 +1265,190 @@
         <span>Conclua a missão ativa para desbloquear a próxima.</span>
       </div>
       <div class="map-line">
-        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Interpretar</strong><small>Em andamento</small></span></div>
+        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Planejar</strong><small>Em andamento</small></span></div>
         <div class="map-connector" data-connector="1"></div>
-        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Decompor</strong><small>Bloqueada</small></span></div>
+        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Rastrear</strong><small>Bloqueada</small></span></div>
         <div class="map-connector" data-connector="2"></div>
-        <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Representar</strong><small>Bloqueada</small></span></div>
+        <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Validar</strong><small>Bloqueada</small></span></div>
       </div>
     </nav>
 
     <section class="mission active open" data-mission="1">
       <button class="mission-toggle" type="button" aria-expanded="true">
         <span class="mission-icon">1</span>
-        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Ler o problema como programador</h2><p>Reconheça o significado das leituras e organize entrada, processamento e saída.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>3 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Planejar a parada</h2><p>Defina o papel da sentinela, a condição de permanência e a primeira leitura.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Construir uma leitura correta do enunciado antes de pensar em comandos.</p></div><span class="seal-preview">Selo: Problema interpretado</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Transformar uma quantidade desconhecida de atendimentos em uma repetição controlada por sentinela.</p></div><span class="seal-preview">Selo: Parada planejada</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Entenda o que o hidrômetro registra</h3><p>Escolha a interpretação compatível com um medidor acumulativo.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Interpretação das leituras">
-            <label class="choice"><input type="radio" name="m1_meaning" value="month"><span class="choice-letter">A</span><span class="choice-copy"><strong>Cada leitura já é o consumo daquele mês</strong><span>12.480 m³ seria o consumo anterior e 12.497 m³ o consumo atual.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_meaning" value="cumulative"><span class="choice-letter">B</span><span class="choice-copy"><strong>As leituras são totais acumulados</strong><span>O consumo do período é a diferença entre o valor atual e o anterior.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_meaning" value="sum"><span class="choice-letter">C</span><span class="choice-copy"><strong>As duas leituras devem ser somadas</strong><span>O resultado representa todo o consumo registrado.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Identifique o que se repete</h3><p>Escolha a ação executada para cada pessoa atendida.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Ação repetida">
+            <label class="choice"><input type="radio" name="m1_action" value="show"><span class="choice-letter">A</span><span class="choice-copy"><strong>Mostrar o total final</strong><span>Exibir o resultado antes de encerrar a fila.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_action" value="read"><span class="choice-letter">B</span><span class="choice-copy"><strong>Ler e registrar uma senha atendida</strong><span>Receber a próxima senha e atualizar o total quando ela for válida.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_action" value="fixed"><span class="choice-letter">C</span><span class="choice-copy"><strong>Executar exatamente dez vezes</strong><span>Usar uma quantidade fixa de atendimentos.</span></span><span class="radio-mark"></span></label>
           </div>
-          <div class="branch" id="m1_meaning_branch" aria-live="polite"></div>
+          <div class="branch" id="m1_action_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Monte o fluxo EPS</h3><p>Classifique os elementos como entrada, processamento e saída.</p></div></div>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Defina a sentinela e a condição</h3><p>Separe o valor de encerramento da condição que mantém o laço ativo.</p></div></div>
           <div class="eps-flow">
-            <article class="eps-card">
-              <strong>Entrada</strong><small>Dados fornecidos ao algoritmo</small>
-              <select id="m1_input1"><option value="">Primeiro dado</option><option value="previous">Leitura anterior</option><option value="current">Leitura atual</option><option value="consumption">Consumo mensal</option></select>
-              <select id="m1_input2"><option value="">Segundo dado</option><option value="previous">Leitura anterior</option><option value="current">Leitura atual</option><option value="sum">Soma das leituras</option></select>
-            </article>
+            <div class="eps-card"><strong>Sentinela</strong><small>Valor reservado para encerrar</small><select id="m1_sentinel"><option value="">Selecione</option><option value="0">0</option><option value="1">1</option><option value="100">100</option></select></div>
             <div class="eps-arrow">→</div>
-            <article class="eps-card">
-              <strong>Processamento</strong><small>Transformação realizada</small>
-              <select id="m1_process"><option value="">Escolha o cálculo</option><option value="subtract">Leitura atual − leitura anterior</option><option value="reverse">Leitura anterior − leitura atual</option><option value="add">Leitura atual + leitura anterior</option></select>
-            </article>
+            <div class="eps-card"><strong>Continuar enquanto</strong><small>Condição de permanência</small><select id="m1_condition"><option value="">Selecione</option><option value="different">senha != 0</option><option value="equal">senha == 0</option><option value="positive">atendimentos &lt; 10</option></select></div>
             <div class="eps-arrow">→</div>
-            <article class="eps-card">
-              <strong>Saída</strong><small>Informação apresentada</small>
-              <select id="m1_output"><option value="">Escolha o resultado</option><option value="consumption">Consumo do mês em m³</option><option value="current">Apenas a leitura atual</option><option value="both">As duas leituras sem cálculo</option></select>
-            </article>
+            <div class="eps-card"><strong>Contar</strong><small>Somente quando</small><select id="m1_count_rule"><option value="">Selecione</option><option value="valid">A senha for diferente de 0</option><option value="all">Qualquer valor for lido</option><option value="sentinel">A senha for igual a 0</option></select></div>
           </div>
-          <div class="branch" id="m1_eps_branch" aria-live="polite"></div>
+          <div class="branch" id="m1_rule_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha os dados indispensáveis</h3><p>Evite incluir informações que não participam da solução.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Dados necessários">
-            <label class="choice"><input type="radio" name="m1_data" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>Leitura anterior e leitura atual</strong><span>São os dois valores necessários para calcular a diferença.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_data" value="address"><span class="choice-letter">B</span><span class="choice-copy"><strong>Leituras, endereço e nome da família</strong><span>Inclui dados reais do contexto que não alteram o cálculo.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m1_data" value="one"><span class="choice-letter">C</span><span class="choice-copy"><strong>Somente a leitura atual</strong><span>Não permite saber quanto o valor aumentou no período.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha onde fazer a primeira leitura</h3><p>O while precisa conhecer o valor de senha antes de testar a condição.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Posição da primeira leitura">
+            <label class="choice"><input type="radio" name="m1_first_read" value="before"><span class="choice-letter">A</span><span class="choice-copy"><strong>Ler uma senha antes do while</strong><span>O primeiro valor estará disponível quando a condição for avaliada.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_first_read" value="after"><span class="choice-letter">B</span><span class="choice-copy"><strong>Ler somente depois do while</strong><span>A condição tentará usar senha antes da leitura.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_first_read" value="none"><span class="choice-letter">C</span><span class="choice-copy"><strong>Não realizar leitura</strong><span>O programa não receberá as senhas da fila.</span></span><span class="radio-mark"></span></label>
           </div>
-          <div class="branch" id="m1_data_branch" aria-live="polite"></div>
+          <div class="branch" id="m1_read_branch" aria-live="polite"></div>
         </div>
 
         <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você interpretou o medidor e organizou o problema em entrada, processamento e saída.</p></div><span class="seal">Selo conquistado<br>Problema interpretado</span></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você definiu a sentinela, a condição de permanência e a leitura que prepara o laço.</p></div><span class="seal">Selo conquistado<br>Parada planejada</span></div>
       </div>
     </section>
 
     <section class="mission locked" data-mission="2">
       <button class="mission-toggle" type="button" aria-expanded="false" disabled>
         <span class="mission-icon">2</span>
-        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Decompor a solução</h2><p>Divida o problema em ações menores e verifique o cálculo com os dados reais.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Rastrear os atendimentos</h2><p>Atualize o contador apenas para senhas válidas e preserve a condição de parada.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>4 entradas</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Transformar o enunciado em uma sequência curta de ações verificáveis.</p></div><span class="seal-preview">Selo: Solução decomposta</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Acompanhar uma sequência de senhas e manter um contador coerente até a sentinela.</p></div><span class="seal-preview">Selo: Fila rastreada</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Escolha a decomposição adequada</h3><p>A solução precisa receber os dados, calcular a diferença e apresentar o resultado.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Sequência de ações">
-            <label class="choice"><input type="radio" name="m2_sequence" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>Ler as duas leituras → calcular a diferença → mostrar o consumo</strong><span>Cada ação produz o dado necessário para a seguinte.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m2_sequence" value="early"><span class="choice-letter">B</span><span class="choice-copy"><strong>Calcular o consumo → ler as leituras → mostrar o resultado</strong><span>O cálculo aparece antes de os dados estarem disponíveis.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m2_sequence" value="no_calc"><span class="choice-letter">C</span><span class="choice-copy"><strong>Ler as duas leituras → mostrar as duas leituras</strong><span>O resultado solicitado não é produzido.</span></span><span class="radio-mark"></span></label>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Configure o estado do laço</h3><p>Defina o contador, sua atualização e a nova leitura.</p></div></div>
+          <div class="control-grid">
+            <article class="control-card"><strong>Contador inicial</strong><small>Antes do primeiro atendimento</small><select id="m2_count_start"><option value="">Selecione</option><option value="0">0</option><option value="1">1</option><option value="-1">-1</option></select></article>
+            <article class="control-card"><strong>Atualização</strong><small>Após uma senha válida</small><select id="m2_count_update"><option value="">Selecione</option><option value="inc">atendimentos++</option><option value="dec">atendimentos--</option><option value="zero">atendimentos = 0</option></select></article>
+            <article class="control-card"><strong>Próxima leitura</strong><small>Para evitar repetir a mesma senha</small><select id="m2_next_read"><option value="">Selecione</option><option value="inside_end">No final do corpo do laço</option><option value="outside_only">Somente antes do laço</option><option value="never">Não é necessária</option></select></article>
+            <article class="control-card"><strong>Sentinela</strong><small>Participa do total?</small><select id="m2_sentinel_count"><option value="">Selecione</option><option value="no">Não, apenas encerra</option><option value="yes">Sim, conta como atendimento</option><option value="twice">Conta duas vezes</option></select></article>
           </div>
-          <div class="branch" id="m2_sequence_branch" aria-live="polite"></div>
+          <div class="branch" id="m2_setup_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Construa o cálculo</h3><p>Escolha a expressão que representa o aumento da leitura acumulada.</p></div></div>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Acompanhe a fila até a senha 0</h3><p>Considere a sequência 104, 108, 115 e 0.</p></div></div>
+          <div class="state-table-wrap">
+            <table class="state-table">
+              <thead><tr><th>Valor lido</th><th>É sentinela?</th><th>Atendimentos depois da leitura</th></tr></thead>
+              <tbody>
+                <tr><td>104</td><td><select id="m2_is_sentinel1"><option value="">Selecione</option><option value="no">Não</option><option value="yes">Sim</option></select></td><td><input id="m2_count1" type="number" placeholder="1"></td></tr>
+                <tr><td>108</td><td><select id="m2_is_sentinel2"><option value="">Selecione</option><option value="no">Não</option><option value="yes">Sim</option></select></td><td><input id="m2_count2" type="number" placeholder="2"></td></tr>
+                <tr><td>115</td><td><select id="m2_is_sentinel3"><option value="">Selecione</option><option value="no">Não</option><option value="yes">Sim</option></select></td><td><input id="m2_count3" type="number" placeholder="3"></td></tr>
+                <tr><td>0</td><td><select id="m2_is_sentinel4"><option value="">Selecione</option><option value="no">Não</option><option value="yes">Sim</option></select></td><td><input id="m2_count4" type="number" placeholder="3"></td></tr>
+              </tbody>
+            </table>
+          </div>
           <div class="expression-builder">
-            <div class="ide-bar"><span>expressão do consumo</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
-            <div class="expression-lines">
-              <div class="expression-line"><span class="expression-label">consumo =</span><select id="m2_formula"><option value="">Escolha a expressão</option><option value="current-previous">leituraAtual - leituraAnterior</option><option value="previous-current">leituraAnterior - leituraAtual</option><option value="sum">leituraAtual + leituraAnterior</option></select></div>
-            </div>
+            <div class="ide-bar"><span>atualizacao_do_estado</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+            <div class="expression-lines"><div class="expression-line"><span class="expression-label">atendimentos =</span><select id="m2_rule"><option value="">Complete a expressão</option><option value="plus">atendimentos + 1</option><option value="senha">senha</option><option value="zero">0</option></select></div></div>
           </div>
-          <div class="branch" id="m2_formula_branch" aria-live="polite"></div>
-        </div>
-
-        <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Execute o exemplo real</h3><p>Use as leituras do início e do fim do mês.</p></div></div>
-          <div class="formula-card">
-            <div class="formula-value"><small>Leitura atual</small><strong>12.497</strong></div>
-            <div class="formula-symbol">−</div>
-            <div class="formula-value"><small>Leitura anterior</small><strong>12.480</strong></div>
-            <div class="formula-symbol">=</div>
-            <div class="formula-value"><small>Consumo</small><input id="m2_result" type="number" step="1" placeholder="? m³" aria-label="Consumo calculado"></div>
-          </div>
-          <div class="branch" id="m2_result_branch" aria-live="polite"></div>
+          <div class="branch" id="m2_trace_branch" aria-live="polite"></div>
         </div>
 
         <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m2_result_box"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você decompôs o problema e verificou que o consumo do período é 17 m³.</p></div><span class="seal">Selo conquistado<br>Solução decomposta</span></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você contou somente as senhas válidas e preservou o valor final quando a sentinela foi lida.</p></div><span class="seal">Selo conquistado<br>Fila rastreada</span></div>
       </div>
     </section>
 
     <section class="mission locked" data-mission="3">
       <button class="mission-toggle" type="button" aria-expanded="false" disabled>
         <span class="mission-icon">3</span>
-        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Representar e validar</h2><p>Organize o pseudocódigo e teste se a estratégia funciona em outras situações.</p></span>
-        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Validar a parada segura</h2><p>Teste entradas especiais e diagnostique situações que impedem o encerramento.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 casos</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
       </button>
 
       <div class="mission-content">
-        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Produzir uma representação algorítmica que possa ser implementada depois.</p></div><span class="seal-preview">Selo: Algoritmo representado</span></div>
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Confirmar que o laço encerra no momento correto e não processa a sentinela como atendimento.</p></div><span class="seal-preview">Selo: Parada validada</span></div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">1</span><div><h3>Organize o pseudocódigo</h3><p>Selecione a ação correta em cada posição.</p></div></div>
-          <div class="expression-builder">
-            <div class="ide-bar"><span>consumo_mensal.pseudo</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
-            <div class="expression-lines">
-              <div class="expression-line"><span class="expression-label">1.</span><select id="m3_step1"><option value="">Primeira ação</option><option value="readPrevious">ler leituraAnterior</option><option value="readCurrent">ler leituraAtual</option><option value="calculate">calcular consumo</option><option value="show">mostrar consumo</option></select></div>
-              <div class="expression-line"><span class="expression-label">2.</span><select id="m3_step2"><option value="">Segunda ação</option><option value="readPrevious">ler leituraAnterior</option><option value="readCurrent">ler leituraAtual</option><option value="calculate">calcular consumo</option><option value="show">mostrar consumo</option></select></div>
-              <div class="expression-line"><span class="expression-label">3.</span><select id="m3_step3"><option value="">Terceira ação</option><option value="readPrevious">ler leituraAnterior</option><option value="readCurrent">ler leituraAtual</option><option value="calculate">consumo = leituraAtual - leituraAnterior</option><option value="show">mostrar consumo</option></select></div>
-              <div class="expression-line"><span class="expression-label">4.</span><select id="m3_step4"><option value="">Quarta ação</option><option value="readPrevious">ler leituraAnterior</option><option value="readCurrent">ler leituraAtual</option><option value="calculate">calcular consumo</option><option value="show">mostrar consumo</option></select></div>
-            </div>
+          <div class="task-head"><span class="task-index">1</span><div><h3>Complete a estrutura final</h3><p>Relacione condição, atualização e saída.</p></div></div>
+          <div class="formula-strip">
+            <div class="formula-card"><strong>Condição do while</strong><select id="m3_condition"><option value="">Selecione</option><option value="different">senha != 0</option><option value="equal">senha == 0</option><option value="count">atendimentos &lt; 10</option></select></div>
+            <div class="formula-arrow">→</div>
+            <div class="formula-card"><strong>Nova leitura</strong><select id="m3_read"><option value="">Selecione</option><option value="inside">Dentro do laço, após contar</option><option value="none">Não realizar novamente</option><option value="after">Somente depois do programa</option></select></div>
+            <div class="formula-arrow">→</div>
+            <div class="formula-card"><strong>Saída final</strong><select id="m3_output"><option value="">Selecione</option><option value="after">Mostrar atendimentos após o laço</option><option value="inside">Mostrar apenas dentro do laço</option><option value="sentinel">Mostrar a senha 0 como atendimento</option></select></div>
           </div>
-          <div class="branch" id="m3_pseudo_branch" aria-live="polite"></div>
+          <div class="branch" id="m3_formula_branch" aria-live="polite"></div>
         </div>
 
         <div class="task-block">
-          <div class="task-head"><span class="task-index">2</span><div><h3>Teste três situações</h3><p>Use Reconheça, Aplique e Analise para validar a estratégia.</p></div></div>
+          <div class="task-head"><span class="task-index">2</span><div><h3>Teste três situações</h3><p>Use Reconheça, Aplique e Analise para verificar a segurança do laço.</p></div></div>
           <div class="test-grid">
-            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>Consumo simples</strong><span>anterior=3000; atual=3011</span></div><label class="sr-only" for="m3_case1">Consumo do primeiro caso</label><select id="m3_case1"><option value="">Consumo?</option><option value="11">11 m³</option><option value="6011">6011 m³</option><option value="-11">-11 m³</option></select></article>
-            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Sem aumento</strong><span>anterior=4825; atual=4825</span></div><label class="sr-only" for="m3_case2">Consumo do segundo caso</label><select id="m3_case2"><option value="">Consumo?</option><option value="0">0 m³</option><option value="4825">4825 m³</option><option value="9650">9650 m³</option></select></article>
-            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Leitura inconsistente</strong><span>anterior=9100; atual=9092</span></div><label class="sr-only" for="m3_case3">Diagnóstico do terceiro caso</label><select id="m3_case3"><option value="">O que fazer?</option><option value="review">Revisar as leituras informadas</option><option value="negative">Aceitar consumo de -8 m³</option><option value="sum">Somar as duas leituras</option></select></article>
+            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>Entradas</strong><span>21, 35, 0</span></div><label class="sr-only" for="m3_case1">Quantidade de atendimentos</label><select id="m3_case1"><option value="">Quantos atendimentos?</option><option value="2">2</option><option value="3">3</option><option value="0">0</option></select></article>
+            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Primeira entrada</strong><span>0</span></div><label class="sr-only" for="m3_case2">Resultado quando a primeira entrada é a sentinela</label><select id="m3_case2"><option value="">O que acontece?</option><option value="zero">O laço não executa e o total é 0</option><option value="one">A senha 0 é contada</option><option value="infinite">O programa entra em laço infinito</option></select></article>
+            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Erro</strong><span>Não há novo scanf dentro do while</span></div><label class="sr-only" for="m3_case3">Consequência da ausência de nova leitura</label><select id="m3_case3"><option value="">Qual é a consequência?</option><option value="infinite">A mesma senha é testada indefinidamente</option><option value="sentinel">A sentinela é ignorada uma vez</option><option value="minus">O contador diminui</option></select></article>
           </div>
           <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
-        </div>
-
-        <div class="task-block">
-          <div class="task-head"><span class="task-index">3</span><div><h3>Justifique a estratégia</h3><p>Escolha a explicação que conecta o contexto ao algoritmo.</p></div></div>
-          <div class="choice-grid" role="radiogroup" aria-label="Justificativa do cálculo">
-            <label class="choice"><input type="radio" name="m3_why" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>A leitura atual contém todo o consumo acumulado até o fim do período</strong><span>Subtrair a leitura anterior isola apenas o que foi consumido no mês.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m3_why" value="sum"><span class="choice-letter">B</span><span class="choice-copy"><strong>Somar as leituras reúne todo o consumo do hidrômetro</strong><span>O total acumulado representa o consumo mensal.</span></span><span class="radio-mark"></span></label>
-            <label class="choice"><input type="radio" name="m3_why" value="current"><span class="choice-letter">C</span><span class="choice-copy"><strong>A leitura atual já é suficiente</strong><span>Não é necessário considerar o valor registrado anteriormente.</span></span><span class="radio-mark"></span></label>
-          </div>
-          <div class="branch" id="m3_why_branch" aria-live="polite"></div>
         </div>
 
         <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
         <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
         <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir missão</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
-        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você construiu o pseudocódigo e validou a estratégia em diferentes leituras.</p></div><span class="seal">Selo conquistado<br>Algoritmo representado</span></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você validou o encerramento imediato, a contagem das senhas válidas e o risco de laço infinito.</p></div><span class="seal">Selo conquistado<br>Parada validada</span></div>
       </div>
     </section>
 
     <section class="final-code" id="finalCodeBlock" hidden>
       <div class="task-block">
-        <div class="task-head"><span class="task-index">✓</span><div><h3>Representação final em pseudocódigo</h3><p>Esta solução está pronta para ser traduzida depois para uma linguagem de programação.</p></div></div>
-        <div class="code-window" aria-label="Pseudocódigo final">
-          <div class="ide-bar"><span>consumo_mensal.pseudo</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+        <div class="task-head"><span class="task-index">✓</span><div><h3>Código final para registrar a fila</h3><p>Compare a solução completa com as decisões tomadas nas três missões.</p></div></div>
+        <div class="code-window" aria-label="Código final em C">
+          <div class="ide-bar"><span>fila_atendimento.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
           <div class="code-body">
-            <div class="code-line entry"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">INÍCIO</span></span></div>
-            <div class="code-line entry"><span class="line-number">2</span><span class="line-code">    ler leituraAnterior</span></div>
-            <div class="code-line entry"><span class="line-number">3</span><span class="line-code">    ler leituraAtual</span></div>
-            <div class="code-line process"><span class="line-number">4</span><span class="line-code">    verificar se leituraAtual é maior ou igual à leituraAnterior</span></div>
-            <div class="code-line process"><span class="line-number">5</span><span class="line-code">    consumo ← leituraAtual - leituraAnterior</span></div>
-            <div class="code-line output"><span class="line-number">6</span><span class="line-code">    mostrar "Consumo do mês: ", consumo, " m³"</span></div>
-            <div class="code-line output"><span class="line-number">7</span><span class="line-code"><span class="tok-pre">FIM</span></span></div>
+            <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;stdio.h&gt;</span></span></div>
+            <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+            <div class="code-line entry"><span class="line-number">3</span><span class="line-code"><span class="code-section-label">Preparação</span><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
+            <div class="code-line entry"><span class="line-number">4</span><span class="line-code">    <span class="tok-type">const int</span> SENTINELA = <span class="tok-num">0</span>;</span></div>
+            <div class="code-line entry"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">int</span> senha;</span></div>
+            <div class="code-line entry"><span class="line-number">6</span><span class="line-code">    <span class="tok-type">int</span> atendimentos = <span class="tok-num">0</span>;</span></div>
+            <div class="code-line"><span class="line-number">7</span><span class="line-code"></span></div>
+            <div class="code-line entry"><span class="line-number">8</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">"Digite a senha atendida (0 encerra): "</span>);</span></div>
+            <div class="code-line entry"><span class="line-number">9</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">"%d"</span>, &amp;senha);</span></div>
+            <div class="code-line"><span class="line-number">10</span><span class="line-code"></span></div>
+            <div class="code-line process"><span class="line-number">11</span><span class="line-code"><span class="code-section-label">Repetição</span>    <span class="tok-pre">while</span> (senha != SENTINELA) {</span></div>
+            <div class="code-line process"><span class="line-number">12</span><span class="line-code">        atendimentos++;</span></div>
+            <div class="code-line process"><span class="line-number">13</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">"Proxima senha (0 encerra): "</span>);</span></div>
+            <div class="code-line process"><span class="line-number">14</span><span class="line-code">        <span class="tok-fn">scanf</span>(<span class="tok-str">"%d"</span>, &amp;senha);</span></div>
+            <div class="code-line process"><span class="line-number">15</span><span class="line-code">    }</span></div>
+            <div class="code-line"><span class="line-number">16</span><span class="line-code"></span></div>
+            <div class="code-line output"><span class="line-number">17</span><span class="line-code"><span class="code-section-label">Resultado</span>    <span class="tok-fn">printf</span>(<span class="tok-str">"Total de atendimentos: %d\n"</span>, atendimentos);</span></div>
+            <div class="code-line"><span class="line-number">18</span><span class="line-code"></span></div>
+            <div class="code-line"><span class="line-number">19</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
+            <div class="code-line"><span class="line-number">20</span><span class="line-code">}</span></div>
           </div>
-          <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Entrada</span><span class="legend-item"><i class="legend-dot process-dot"></i>Processamento e validação</span><span class="legend-item"><i class="legend-dot output-dot"></i>Saída</span></div>
+          <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Estado inicial e primeira leitura</span><span class="legend-item"><i class="legend-dot process-dot"></i>Teste, contagem e nova leitura</span><span class="legend-item"><i class="legend-dot output-dot"></i>Resultado após a sentinela</span></div>
         </div>
       </div>
     </section>
 
     <section class="completion" id="completionPanel" aria-live="polite">
       <span class="completion-label">Percurso concluído</span>
-      <h2>Consumo mensal: 17 m³</h2>
-      <p>O problema foi interpretado, decomposto e representado por um fluxo EPS e por pseudocódigo antes da implementação.</p>
+      <h2>Uma fila aberta por tempo indeterminado, encerrada com segurança</h2>
+      <p>A sentinela definiu a parada, o contador foi atualizado somente para senhas válidas e a nova leitura garantiu que o laço pudesse alcançar o encerramento.</p>
       <div class="completion-grid">
-        <article class="completion-item"><strong>Problema interpretado</strong><span>As leituras foram reconhecidas como valores acumulados.</span></article>
-        <article class="completion-item"><strong>Solução decomposta</strong><span>Entrada, cálculo e saída foram organizados em uma sequência verificável.</span></article>
-        <article class="completion-item"><strong>Algoritmo representado</strong><span>O pseudocódigo foi validado com casos normais, nulos e inconsistentes.</span></article>
+        <article class="completion-item"><strong>Parada planejada</strong><span>A sentinela, a condição e a primeira leitura foram definidas.</span></article>
+        <article class="completion-item"><strong>Fila rastreada</strong><span>As senhas válidas foram contadas sem incluir o valor 0.</span></article>
+        <article class="completion-item"><strong>Parada validada</strong><span>Casos de encerramento imediato e laço infinito foram analisados.</span></article>
       </div>
       <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer o roteiro</button></div>
     </section>
@@ -1735,123 +1461,120 @@
     const hintState = { 1: 0, 2: 0, 3: 0 };
     const hints = {
       1: [
-        ["Pista", "O hidrômetro não zera todo mês: cada leitura mostra um total acumulado."],
-        ["Pergunta guia", "Quais dois valores são necessários para saber quanto o total aumentou?"],
-        ["Regra central", "Entrada: leituras anterior e atual. Processamento: atual menos anterior. Saída: consumo do período."]
+        ["Pista", "A quantidade de atendimentos não é conhecida antes do início da fila; por isso, um valor especial deve indicar o fim."],
+        ["Pergunta guia", "O valor 0 representa uma pessoa atendida ou apenas um comando de encerramento?"],
+        ["Começo da resposta", "Ler a primeira senha, continuar enquanto senha != 0 e contar somente valores diferentes da sentinela."]
       ],
       2: [
-        ["Pista", "O algoritmo precisa obter os dados antes de realizar o cálculo."],
-        ["Pergunta guia", "Qual leitura deve ser maior em uma situação normal: a atual ou a anterior?"],
-        ["Estratégia", "Use a sequência: ler anterior → ler atual → subtrair → mostrar."]
+        ["Pista", "O contador começa em zero porque nenhuma pessoa foi atendida antes da primeira senha válida."],
+        ["Pergunta guia", "Depois de processar uma senha, o que precisa mudar para que o while teste um novo valor?"],
+        ["Começo da resposta", "Para 104, 108, 115 e 0, o contador evolui 1, 2, 3 e permanece 3."]
       ],
       3: [
-        ["Pista", "Cada ação do pseudocódigo deve produzir o que a próxima precisa usar."],
-        ["Pergunta guia", "O que uma leitura atual menor que a anterior indica sobre os dados informados?"],
-        ["Validação", "Uma solução coerente produz 11, 0 e um alerta de revisão nos três casos apresentados."]
+        ["Pista", "Se a primeira entrada já for 0, a condição do while será falsa antes da primeira execução."],
+        ["Pergunta guia", "O que ocorre se senha nunca receber um novo valor dentro do laço?"],
+        ["Começo da resposta", "Use while (senha != 0), leia novamente dentro do laço e mostre o total somente depois da parada."]
       ]
     };
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-    const value = id => (document.getElementById(id)?.value || "").trim();
-    const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
-    const numberValue = id => {
-      const raw = value(id).replace(",", ".");
-      return raw === "" ? NaN : Number(raw);
-    };
 
-    function setBranch(id, title = "", text = "") {
-      const box = document.getElementById(id);
-      if (!title) { box.classList.remove("show"); box.innerHTML = ""; return; }
-      box.innerHTML = `<strong>${title}</strong>${text}`;
-      box.classList.add("show");
+    function value(id) { const element = document.getElementById(id); return element ? element.value : ""; }
+    function selected(name) { const element = document.querySelector(`input[name="${name}"]:checked`); return element ? element.value : ""; }
+    function numberValue(id) { const raw = value(id).replace(',', '.').trim(); return raw === '' ? NaN : Number(raw); }
+
+    function setBranch(id, title = "", text = "", type = "warn") {
+      const branch = document.getElementById(id);
+      if (!title) { branch.className = "branch"; branch.innerHTML = ""; return; }
+      branch.className = `branch show ${type}`;
+      branch.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
     }
 
     function showFeedback(number, text, type = "warn") {
-      const box = document.getElementById(`m${number}_feedback`);
-      box.textContent = text;
-      box.className = `feedback show ${type}`;
+      const feedback = document.getElementById(`m${number}_feedback`);
+      feedback.textContent = text;
+      feedback.className = `feedback show ${type}`;
     }
 
     function validateMission1(live = false) {
-      const meaning = radio("m1_meaning");
-      const input1 = value("m1_input1");
-      const input2 = value("m1_input2");
-      const process = value("m1_process");
-      const output = value("m1_output");
-      const data = radio("m1_data");
+      const action = selected("m1_action");
+      const sentinel = value("m1_sentinel");
+      const condition = value("m1_condition");
+      const countRule = value("m1_count_rule");
+      const firstRead = selected("m1_first_read");
 
-      if (meaning && meaning !== "cumulative") {
-        setBranch("m1_meaning_branch", meaning === "month" ? "Leitura não é consumo mensal" : "Somar não isola o período", meaning === "month" ? "O hidrômetro mostra um total acumulado desde sua instalação ou última substituição." : "A soma aumenta ainda mais o total acumulado e não revela o consumo entre as duas datas.");
-      } else setBranch("m1_meaning_branch");
+      if (action && action !== "read") {
+        if (action === "fixed") setBranch("m1_action_branch", "Quantidade desconhecida", "O posto não sabe antecipadamente quantas senhas serão atendidas. A repetição deve depender da sentinela.");
+        else setBranch("m1_action_branch", "Resultado fora de hora", "O total deve ser mostrado depois que a senha 0 encerrar a leitura.");
+      } else setBranch("m1_action_branch");
 
-      const epsFilled = [input1, input2, process, output].every(Boolean);
-      const inputsOk = new Set([input1, input2]).size === 2 && [input1, input2].includes("previous") && [input1, input2].includes("current");
-      const epsOk = epsFilled && inputsOk && process === "subtract" && output === "consumption";
-      if (epsFilled && !epsOk) {
-        if (!inputsOk) setBranch("m1_eps_branch", "Entradas incompletas", "O cálculo precisa das duas leituras: a anterior e a atual.");
-        else if (process !== "subtract") setBranch("m1_eps_branch", "Processamento inadequado", "O aumento do medidor é obtido por leitura atual menos leitura anterior.");
-        else setBranch("m1_eps_branch", "Saída diferente do objetivo", "O algoritmo deve apresentar o consumo do período, não apenas repetir as leituras.");
-      } else setBranch("m1_eps_branch");
+      const ruleOk = sentinel === "0" && condition === "different" && countRule === "valid";
+      if ([sentinel, condition, countRule].some(Boolean) && !ruleOk) {
+        if (condition === "equal") setBranch("m1_rule_branch", "Condição invertida", "senha == 0 faria o corpo executar justamente quando o valor de encerramento fosse informado.");
+        else if (countRule === "all" || countRule === "sentinel") setBranch("m1_rule_branch", "Sentinela não é atendimento", "O valor 0 serve apenas para parar e não deve aumentar o contador.");
+        else setBranch("m1_rule_branch", "Regra incompleta", "Use 0 como sentinela, continue enquanto senha != 0 e conte apenas senhas válidas.");
+      } else setBranch("m1_rule_branch");
 
-      if (data && data !== "correct") {
-        setBranch("m1_data_branch", data === "address" ? "Dados desnecessários" : "Falta uma referência", data === "address" ? "Endereço e nome contextualizam a situação, mas não participam do cálculo." : "Sem a leitura anterior, não é possível descobrir quanto o total aumentou.");
-      } else setBranch("m1_data_branch");
+      if (firstRead && firstRead !== "before") setBranch("m1_read_branch", "Senha sem valor definido", "O while precisa avaliar senha. Faça uma leitura antes da primeira verificação.");
+      else setBranch("m1_read_branch");
 
-      const complete = meaning === "cumulative" && epsOk && data === "correct";
-      if (!live && !complete) showFeedback(1, "Complete as três decisões ou use as pistas antes de concluir.");
+      const complete = action === "read" && ruleOk && firstRead === "before";
+      if (!live && !complete) showFeedback(1, "Complete as decisões sobre a sentinela, a condição e a primeira leitura.");
       return complete;
     }
 
     function validateMission2(live = false) {
-      const sequence = radio("m2_sequence");
-      const formula = value("m2_formula");
-      const result = numberValue("m2_result");
+      const setupOk = value("m2_count_start") === "0" && value("m2_count_update") === "inc" && value("m2_next_read") === "inside_end" && value("m2_sentinel_count") === "no";
+      if (["m2_count_start","m2_count_update","m2_next_read","m2_sentinel_count"].some(id => value(id)) && !setupOk) {
+        if (value("m2_count_start") === "1") setBranch("m2_setup_branch", "Contagem antecipada", "O contador deve começar em zero, pois ainda não houve atendimento válido.");
+        else if (value("m2_next_read") !== "" && value("m2_next_read") !== "inside_end") setBranch("m2_setup_branch", "A senha não muda", "Sem uma nova leitura dentro do laço, a mesma senha será testada repetidamente.");
+        else if (value("m2_sentinel_count") === "yes" || value("m2_sentinel_count") === "twice") setBranch("m2_setup_branch", "Encerramento contado indevidamente", "A sentinela 0 não corresponde a uma pessoa atendida.");
+        else setBranch("m2_setup_branch", "Estado incorreto", "Use contador em 0, incremento após senha válida, nova leitura no laço e não conte a sentinela.");
+      } else setBranch("m2_setup_branch");
 
-      if (sequence && sequence !== "correct") {
-        setBranch("m2_sequence_branch", sequence === "early" ? "Dados ainda não disponíveis" : "O resultado não foi calculado", sequence === "early" ? "A subtração só pode ocorrer depois que as duas leituras forem conhecidas." : "Mostrar apenas as leituras não responde quanto foi consumido no período.");
-      } else setBranch("m2_sequence_branch");
+      const expectedSentinel = ["no","no","no","yes"];
+      const expectedCounts = [1,2,3,3];
+      let traceFilled = true;
+      let traceOk = true;
+      for (let i = 1; i <= 4; i++) {
+        const sent = value(`m2_is_sentinel${i}`);
+        const count = numberValue(`m2_count${i}`);
+        if (!sent || !Number.isFinite(count)) traceFilled = false;
+        if (sent !== expectedSentinel[i-1] || count !== expectedCounts[i-1]) traceOk = false;
+      }
+      traceOk = traceFilled && traceOk && value("m2_rule") === "plus";
 
-      if (formula && formula !== "current-previous") {
-        setBranch("m2_formula_branch", formula === "previous-current" ? "Ordem invertida" : "Operação inadequada", formula === "previous-current" ? "A leitura anterior é menor; inverter a subtração produziria consumo negativo." : "Somar os totais acumulados não representa o aumento entre as leituras.");
-      } else setBranch("m2_formula_branch");
+      if ((traceFilled || value("m2_rule")) && !traceOk) {
+        if (numberValue("m2_count4") === 4) setBranch("m2_trace_branch", "A sentinela foi contada", "Quando 0 é lido, o laço termina e atendimentos deve permanecer em 3.");
+        else if (value("m2_rule") === "senha") setBranch("m2_trace_branch", "Contador substituído", "atendimentos deve aumentar uma unidade; ele não deve receber o número da senha.");
+        else setBranch("m2_trace_branch", "Rastreamento inconsistente", "As senhas 104, 108 e 115 produzem contagens 1, 2 e 3; a senha 0 mantém o total em 3.");
+      } else setBranch("m2_trace_branch");
 
-      if (Number.isFinite(result) && result !== 17) {
-        setBranch("m2_result_branch", "Revise a diferença", "12.497 - 12.480 resulta em 17 m³.");
-      } else setBranch("m2_result_branch");
-
-      const complete = sequence === "correct" && formula === "current-previous" && result === 17;
-      if (!live && !complete) showFeedback(2, "Defina a sequência, escolha a expressão e calcule o consumo do exemplo.");
+      const complete = setupOk && traceOk;
+      if (!live && !complete) showFeedback(2, "Configure o estado e complete o rastreamento da sequência de senhas.");
       return complete;
     }
 
     function validateMission3(live = false) {
-      const steps = [value("m3_step1"), value("m3_step2"), value("m3_step3"), value("m3_step4")];
-      const expected = ["readPrevious", "readCurrent", "calculate", "show"];
-      const pseudoFilled = steps.every(Boolean);
-      const pseudoUnique = new Set(steps).size === 4;
-      const pseudoOk = pseudoFilled && pseudoUnique && steps.every((item, index) => item === expected[index]);
-      const casesOk = value("m3_case1") === "11" && value("m3_case2") === "0" && value("m3_case3") === "review";
-      const why = radio("m3_why");
+      const formulaOk = value("m3_condition") === "different" && value("m3_read") === "inside" && value("m3_output") === "after";
+      if (["m3_condition","m3_read","m3_output"].some(id => value(id)) && !formulaOk) {
+        if (value("m3_condition") === "equal") setBranch("m3_formula_branch", "Condição invertida", "O corpo precisa executar para senhas válidas, e não para o valor 0.");
+        else if (value("m3_read") === "none") setBranch("m3_formula_branch", "Risco de laço infinito", "Sem nova leitura, uma senha diferente de 0 nunca será substituída pela sentinela.");
+        else if (value("m3_output") === "sentinel") setBranch("m3_formula_branch", "Saída incorreta", "O resultado é a quantidade de atendimentos, não a senha usada para encerrar.");
+        else setBranch("m3_formula_branch", "Estrutura incompleta", "Use senha != 0, leia novamente dentro do laço e mostre o total após a parada.");
+      } else setBranch("m3_formula_branch");
 
-      if (pseudoFilled && !pseudoOk) {
-        if (!pseudoUnique) setBranch("m3_pseudo_branch", "Ação repetida", "Cada ação deve aparecer uma única vez no pseudocódigo.");
-        else setBranch("m3_pseudo_branch", "Ordem incoerente", "Leia as duas entradas, calcule a diferença e somente depois mostre o resultado.");
-      } else setBranch("m3_pseudo_branch");
-
-      if (["m3_case1", "m3_case2", "m3_case3"].some(id => value(id)) && !casesOk) {
-        if (value("m3_case1") && value("m3_case1") !== "11") setBranch("m3_cases_branch", "Primeiro caso", "3011 - 3000 produz 11 m³.");
-        else if (value("m3_case2") && value("m3_case2") !== "0") setBranch("m3_cases_branch", "Segundo caso", "Leituras iguais indicam que não houve aumento no período.");
-        else if (value("m3_case3") && value("m3_case3") !== "review") setBranch("m3_cases_branch", "Dados inconsistentes", "Em condições normais, a leitura acumulada atual não deve ser menor que a anterior.");
-        else setBranch("m3_cases_branch", "Revise os casos", "Calcule a diferença e observe a coerência das leituras.");
+      const casesOk = value("m3_case1") === "2" && value("m3_case2") === "zero" && value("m3_case3") === "infinite";
+      if (["m3_case1","m3_case2","m3_case3"].some(id => value(id)) && !casesOk) {
+        if (value("m3_case1") === "3") setBranch("m3_cases_branch", "Sentinela incluída", "Na sequência 21, 35 e 0, somente 21 e 35 representam atendimentos.");
+        else if (value("m3_case2") === "one") setBranch("m3_cases_branch", "Encerramento imediato", "Se a primeira leitura é 0, o while não executa nenhuma vez.");
+        else if (value("m3_case3") && value("m3_case3") !== "infinite") setBranch("m3_cases_branch", "Valor não atualizado", "Uma senha válida permanece diferente de 0 e o teste se repete indefinidamente.");
+        else setBranch("m3_cases_branch", "Revise os casos", "A sequência conta 2 atendimentos, a entrada inicial 0 encerra sem executar e a ausência de nova leitura pode gerar laço infinito.");
       } else setBranch("m3_cases_branch");
 
-      if (why && why !== "correct") {
-        setBranch("m3_why_branch", "Justificativa incorreta", why === "sum" ? "Somar os totais acumulados não isola o consumo do mês." : "A leitura atual sozinha inclui todo o consumo acumulado anterior.");
-      } else setBranch("m3_why_branch");
-
-      const complete = pseudoOk && casesOk && why === "correct";
-      if (!live && !complete) showFeedback(3, "Organize o pseudocódigo, resolva os três casos e justifique o cálculo.");
+      const complete = formulaOk && casesOk;
+      if (!live && !complete) showFeedback(3, "Complete a estrutura final e os três casos de validação.");
       return complete;
     }
 
@@ -1897,8 +1620,7 @@
       mission.classList.add("completed");
       mission.classList.remove("active");
       $("[data-state]", mission).textContent = "Concluída";
-      const resultId = number === 2 ? "m2_result_box" : `m${number}_result`;
-      document.getElementById(resultId).classList.add("show");
+      document.getElementById(`m${number}_result`).classList.add("show");
       button.textContent = "Missão concluída";
       button.disabled = true;
       showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
@@ -1910,12 +1632,12 @@
           mission.classList.remove("open");
           $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
           openMission(number + 1, true);
-        }, 650);
+        }, 700);
       } else {
         updateMap(null);
         document.getElementById("finalCodeBlock").hidden = false;
         document.getElementById("completionPanel").classList.add("show");
-        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 250);
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 300);
       }
     }
 

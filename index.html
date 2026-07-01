@@ -844,6 +844,276 @@
       transform: translateX(3px);
     }
 
+    .competence-finder {
+      padding: clamp(1.1rem, 2.4vw, 1.6rem);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .competence-finder-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .competence-finder-header h2 {
+      margin-bottom: 0.45rem;
+      font-size: clamp(1.55rem, 3vw, 2rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .competence-finder-header p {
+      max-width: 650px;
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .competence-field {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .competence-field label {
+      color: #1f2937;
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: "";
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      width: 0.58rem;
+      height: 0.58rem;
+      border-right: 2px solid var(--primary);
+      border-bottom: 2px solid var(--primary);
+      pointer-events: none;
+      transform: translateY(-65%) rotate(45deg);
+    }
+
+    .competence-select {
+      width: 100%;
+      min-height: 54px;
+      padding: 0.8rem 2.6rem 0.8rem 0.95rem;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      font: inherit;
+      font-weight: 750;
+      line-height: 1.35;
+      appearance: none;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .competence-select:focus-visible {
+      border-color: rgba(79, 70, 229, 0.55);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.14);
+    }
+
+    .competence-results {
+      margin-top: 1.2rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .competence-message {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .competence-result-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .competence-result-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      margin-bottom: 0.35rem;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .competence-code-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0.24rem 0.58rem;
+      color: var(--primary-dark);
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 999px;
+      background: #eef2ff;
+      font-size: 0.78rem;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .competence-count {
+      color: var(--primary-dark);
+      font-size: 0.92rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .competence-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.65rem;
+    }
+
+    .type-count {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 0.22rem 0.56rem;
+      color: #374151;
+      border: 1px solid rgba(229, 231, 235, 0.95);
+      border-radius: 999px;
+      background: #f8fafc;
+      font-size: 0.75rem;
+      font-weight: 850;
+    }
+
+    .resource-result-group + .resource-result-group {
+      margin-top: 1.2rem;
+    }
+
+    .resource-result-group h3 {
+      margin-bottom: 0.65rem;
+      font-size: 1.05rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .resource-results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .resource-result-card {
+      --accent: var(--primary);
+      --accent-soft: #eef2ff;
+      display: grid;
+      min-width: 0;
+      padding: 0.95rem;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .resource-result-card[data-type="roteiro"] {
+      --accent: var(--green);
+      --accent-soft: #ecfdf5;
+    }
+
+    .resource-result-card[data-type="card-erro"] {
+      --accent: #B42318;
+      --accent-soft: #FEF3F2;
+    }
+
+    .resource-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.38rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .resource-type-badge,
+    .resource-code-badge,
+    .resource-time-badge,
+    .resource-severity-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0.18rem 0.48rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .resource-type-badge {
+      color: color-mix(in srgb, var(--accent) 82%, #111827);
+      border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      background: var(--accent-soft);
+    }
+
+    .resource-code-badge {
+      color: var(--primary-dark);
+      border: 1px solid rgba(79, 70, 229, 0.16);
+      background: #eef2ff;
+    }
+
+    .resource-time-badge {
+      color: #3f6212;
+      background: #ecfccb;
+    }
+
+    .resource-severity-badge {
+      color: #9a3412;
+      border: 1px solid rgba(245, 158, 11, 0.26);
+      background: #fff7ed;
+    }
+
+    .resource-result-card h4 {
+      margin: 0 0 0.45rem;
+      color: #111827;
+      font-size: 1rem;
+      line-height: 1.28;
+      letter-spacing: 0;
+    }
+
+    .resource-result-card p {
+      margin-bottom: 0.8rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .resource-open-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 40px;
+      margin-top: auto;
+      padding: 0.58rem 0.78rem;
+      color: #ffffff;
+      border-radius: 8px;
+      background: var(--accent);
+      font-size: 0.84rem;
+      font-weight: 900;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .resource-open-link:hover,
+    .resource-open-link:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+      background: color-mix(in srgb, var(--accent) 86%, #111827);
+    }
+
     .evaluation-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
@@ -980,7 +1250,8 @@
     }
 
     @media (max-width: 1100px) {
-      .category-grid {
+      .category-grid,
+      .resource-results-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -1112,14 +1383,33 @@
         flex-direction: column;
       }
 
+      .competence-finder {
+        padding: 1rem;
+      }
+
+      .competence-finder-header,
+      .competence-result-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .competence-count {
+        white-space: normal;
+      }
+
       .resource-summary {
         justify-content: space-between;
         white-space: normal;
       }
 
       .category-grid,
+      .resource-results-grid,
       .footer-inner {
         grid-template-columns: 1fr;
+      }
+
+      .resource-open-link {
+        width: 100%;
       }
 
       .category-link-content {
@@ -1394,7 +1684,7 @@
           </div>
         </a>
 
-        <a class="category-card category-link" data-category="roteiros" data-resource-count="4" href="roteiros.html" aria-label="Abrir página de roteiros de resolução">
+        <a class="category-card category-link" data-category="roteiros" data-resource-count="28" href="roteiros.html" aria-label="Abrir página de roteiros de resolução">
           <div class="category-link-content">
             <div class="category-head">
               <span class="category-icon" aria-hidden="true">
@@ -1485,6 +1775,37 @@
       </div>
     </section>
 
+    <section class="section" id="busca-competencia" aria-labelledby="busca-competencia-titulo">
+      <div class="competence-finder">
+        <div class="competence-finder-header">
+          <div>
+            <span class="section-kicker">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              BUSCA POR COMPETÊNCIA
+            </span>
+            <h2 id="busca-competencia-titulo">Encontre recursos por competência</h2>
+            <p>Selecione uma competência CCI para visualizar os recursos disponíveis.</p>
+          </div>
+        </div>
+
+        <div class="competence-field">
+          <label for="competencia-recurso">Competência CCI</label>
+          <div class="select-wrap">
+            <select class="competence-select" id="competencia-recurso" data-competence-select>
+              <option value="">Selecione uma competência</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="competence-results" data-competence-results aria-live="polite">
+          <p class="competence-message">Selecione uma competência para visualizar os recursos relacionados.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="avaliacao" aria-labelledby="avaliacao-titulo">
       <div class="evaluation-grid">
         <div class="callout">
@@ -1570,9 +1891,39 @@
     </div>
   </footer>
 
+  <script src="assets/resource-data.js"></script>
   <script>
     const FORM_URL = "https://forms.gle/P9j7JNMTzRxNfiDh8";
     const categoryCards = document.querySelectorAll(".category-card");
+    const resourceCatalog = window.ResourceCatalog;
+    const competenceSelect = document.querySelector("[data-competence-select]");
+    const competenceResults = document.querySelector("[data-competence-results]");
+    const competenceGroups = [
+      {
+        key: "infograficos",
+        title: "Infográficos",
+        type: "infografico",
+        singular: "infográfico",
+        plural: "infográficos",
+        action: "Abrir infográfico"
+      },
+      {
+        key: "roteiros",
+        title: "Roteiros de resolução",
+        type: "roteiro",
+        singular: "roteiro",
+        plural: "roteiros",
+        action: "Abrir roteiro"
+      },
+      {
+        key: "cardsErros",
+        title: "Cards de erros",
+        type: "card-erro",
+        singular: "card de erro",
+        plural: "cards de erros",
+        action: "Abrir card"
+      }
+    ];
 
     function getCategoryCount(card) {
       const declaredCount = Number(card.dataset.resourceCount);
@@ -1602,6 +1953,140 @@
     document.querySelector("[data-open-all]")?.addEventListener("click", () => {
       document.querySelector("#recursos")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatCount(count, singular, plural) {
+      return count === 1 ? `1 ${singular}` : `${count} ${plural}`;
+    }
+
+    function renderCompetenceMessage(message) {
+      if (!competenceResults) {
+        return;
+      }
+
+      competenceResults.innerHTML = `<p class="competence-message">${escapeHTML(message)}</p>`;
+    }
+
+    function populateCompetenceSelect() {
+      if (!competenceSelect || !resourceCatalog) {
+        return;
+      }
+
+      const options = resourceCatalog.competenciasLista.map(({ codigo, descricao }) => {
+        return `<option value="${escapeHTML(codigo)}">${escapeHTML(codigo)} — ${escapeHTML(descricao)}</option>`;
+      });
+
+      competenceSelect.insertAdjacentHTML("beforeend", options.join(""));
+    }
+
+    function getGroupCounts(groups) {
+      return competenceGroups.map((group) => ({
+        ...group,
+        count: groups[group.key].length
+      }));
+    }
+
+    function renderResourceCard(resource, group) {
+      const title = escapeHTML(resource.titulo);
+      const description = escapeHTML(resource.descricao || resource.sintoma || "");
+      const time = escapeHTML(resource.tempo || "");
+      const url = escapeHTML(resource.url);
+      const codes = (resource.competencias || [resource.competenciaCodigo])
+        .map((code) => `<span class="resource-code-badge">${escapeHTML(code)}</span>`)
+        .join("");
+      const severity = group.key === "cardsErros" && resource.gravidade
+        ? `<span class="resource-severity-badge">Gravidade ${escapeHTML(resource.gravidade).toLowerCase()}</span>`
+        : "";
+
+      return `
+        <article class="resource-result-card" data-type="${group.type}">
+          <div class="resource-card-meta">
+            <span class="resource-type-badge">${escapeHTML(resource.tipoRecurso)}</span>
+            ${codes}
+          </div>
+          <h4>${title}</h4>
+          <p>${description}</p>
+          <div class="resource-card-meta">
+            ${time ? `<span class="resource-time-badge">${time}</span>` : ""}
+            ${severity}
+          </div>
+          <a class="resource-open-link" href="${url}" aria-label="${group.action}: ${title}">
+            ${group.action}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </a>
+        </article>
+      `;
+    }
+
+    function renderResourceGroup(group, resources) {
+      if (!resources.length) {
+        return "";
+      }
+
+      return `
+        <section class="resource-result-group" aria-labelledby="grupo-${group.key}">
+          <h3 id="grupo-${group.key}">${group.title}</h3>
+          <div class="resource-results-grid">
+            ${resources.map((resource) => renderResourceCard(resource, group)).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderCompetenceResults() {
+      if (!competenceSelect || !competenceResults || !resourceCatalog) {
+        return;
+      }
+
+      const selectedCode = resourceCatalog.normalizeCompetenceCodes(competenceSelect.value)[0];
+
+      if (!selectedCode) {
+        renderCompetenceMessage("Selecione uma competência para visualizar os recursos relacionados.");
+        return;
+      }
+
+      const description = resourceCatalog.competenciasCCI[selectedCode];
+      const groups = resourceCatalog.getResourcesByCompetence(selectedCode);
+      const counts = getGroupCounts(groups);
+      const total = counts.reduce((sum, group) => sum + group.count, 0);
+      const breakdown = counts
+        .filter((group) => group.count > 0)
+        .map((group) => `<span class="type-count">${formatCount(group.count, group.singular, group.plural)}</span>`)
+        .join("");
+
+      const resultContent = total
+        ? competenceGroups.map((group) => renderResourceGroup(group, groups[group.key])).join("")
+        : `<p class="competence-message">Ainda não há recursos cadastrados para esta competência.</p>`;
+
+      competenceResults.innerHTML = `
+        <div class="competence-result-head">
+          <div>
+            <div class="competence-result-title">
+              <span class="competence-code-pill">${escapeHTML(selectedCode)}</span>
+              <span>${escapeHTML(description)}</span>
+            </div>
+            ${breakdown ? `<div class="competence-breakdown">${breakdown}</div>` : ""}
+          </div>
+          <span class="competence-count">${formatCount(total, "recurso encontrado", "recursos encontrados")}</span>
+        </div>
+        ${resultContent}
+      `;
+    }
+
+    populateCompetenceSelect();
+    renderCompetenceResults();
+    competenceSelect?.addEventListener("change", renderCompetenceResults);
 
     async function copyFormLink() {
       const feedback = document.querySelector("[data-copy-feedback]");

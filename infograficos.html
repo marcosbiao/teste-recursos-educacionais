@@ -19,6 +19,8 @@
       --resource-primary-hover: #4338CA;
       --resource-focus: rgba(79, 70, 229, 0.28);
       --resource-shadow: rgba(49, 46, 129, 0.18);
+      --time-badge-color: var(--cor-primaria);
+      --time-badge-bg: var(--cor-superficie-destacada);
       --cor-destaque-pontual: #F59E0B;
       --cor-fundo: #F8FAFC;
       --cor-superficie: #FFFFFF;
@@ -53,12 +55,6 @@
     a {
       color: inherit;
       text-decoration: none;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
     }
 
     .skip-link {
@@ -150,8 +146,7 @@
     }
 
     .nav-links a,
-    .back-link,
-    .btn {
+    .back-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -189,9 +184,7 @@
     }
 
     .back-link:hover,
-    .back-link:focus-visible,
-    .btn:hover,
-    .btn:focus-visible {
+    .back-link:focus-visible {
       transform: translateY(-1px);
       outline: none;
     }
@@ -420,11 +413,8 @@
     }
 
     .listing-intro {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
-      gap: 1.5rem;
-      align-items: end;
-      margin-bottom: 1.1rem;
+      max-width: 720px;
+      margin-bottom: 1.25rem;
     }
 
     .listing-intro h2 {
@@ -444,64 +434,6 @@
       margin-top: 0.65rem;
       font-size: 0.92rem;
       font-weight: 800;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(150px, 0.42fr);
-      gap: 0.75rem;
-      align-items: end;
-    }
-
-    .field {
-      display: grid;
-      gap: 0.4rem;
-      min-width: 0;
-    }
-
-    .field label {
-      color: var(--cor-texto-principal);
-      font-size: 0.82rem;
-      font-weight: 900;
-    }
-
-    .input-wrap {
-      position: relative;
-    }
-
-    .input-wrap svg {
-      position: absolute;
-      left: 0.85rem;
-      top: 50%;
-      color: #64748B;
-      transform: translateY(-50%);
-      pointer-events: none;
-    }
-
-    input,
-    select {
-      width: 100%;
-      min-height: 48px;
-      color: var(--cor-texto-principal);
-      border: 1px solid var(--cor-borda);
-      border-radius: var(--raio);
-      background: #ffffff;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input {
-      padding: 0.78rem 1rem 0.78rem 2.65rem;
-    }
-
-    select {
-      padding: 0.78rem 0.85rem;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: rgba(79, 70, 229, 0.62);
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
     }
 
     .infographic-table {
@@ -608,42 +540,6 @@
       line-height: 1.55;
     }
 
-    .empty-state {
-      display: none;
-      padding: 2rem;
-      text-align: center;
-      border-top: 1px solid var(--cor-borda);
-      background: #ffffff;
-    }
-
-    .empty-state.is-visible {
-      display: block;
-    }
-
-    .empty-state h3 {
-      margin-bottom: 0.25rem;
-      font-size: 1.28rem;
-    }
-
-    .empty-state p {
-      color: var(--cor-texto-secundario);
-    }
-
-    .btn {
-      min-height: 44px;
-      padding: 0.7rem 0.95rem;
-      border: 1px solid rgba(79, 70, 229, 0.28);
-      color: var(--cor-primaria-escura);
-      background: #ffffff;
-      cursor: pointer;
-    }
-
-    .btn:hover,
-    .btn:focus-visible {
-      border-color: var(--cor-primaria);
-      background: var(--cor-superficie-destacada);
-    }
-
     .closing {
       position: relative;
       overflow: hidden;
@@ -736,7 +632,6 @@
 
     @media (max-width: 960px) {
       .header-inner,
-      .listing-intro,
       .hero-grid {
         grid-template-columns: 1fr;
       }
@@ -778,18 +673,12 @@
       }
 
       .nav-actions,
-      .nav-links,
-      .filters {
+      .nav-links {
         width: 100%;
       }
 
-      .nav-actions,
-      .filters {
-        align-items: stretch;
-        grid-template-columns: 1fr;
-      }
-
       .nav-actions {
+        align-items: stretch;
         flex-direction: column;
       }
 
@@ -1003,26 +892,6 @@
           <p>Explore os infográficos disponíveis e selecione o conteúdo que deseja estudar ou revisar.</p>
           <span class="result-count" data-result-count aria-live="polite"></span>
         </div>
-
-        <form class="filters" role="search" aria-label="Busca e filtro de infográficos">
-          <div class="field">
-            <label for="busca-infografico">Buscar infográfico</label>
-            <div class="input-wrap">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-              </svg>
-              <input id="busca-infografico" type="search" autocomplete="off" placeholder="Título, tema ou CCI">
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="filtro-competencia">Competência</label>
-            <select id="filtro-competencia">
-              <option value="">Todas</option>
-            </select>
-          </div>
-        </form>
       </div>
 
       <div class="infographic-table">
@@ -1045,18 +914,12 @@
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
             </svg>
-            Este recurso aborda
+            ESTE RECURSO ABORDA
           </span>
           <span>Ação</span>
         </div>
 
         <div class="info-list" data-infographic-list></div>
-
-        <div class="empty-state" data-empty-state>
-          <h3>Nenhum infográfico encontrado</h3>
-          <p>Tente buscar por outro título, tema ou competência.</p>
-          <button class="btn" type="button" data-clear-search>Limpar busca</button>
-        </div>
       </div>
     </section>
 
@@ -1083,304 +946,12 @@
     </div>
   </footer>
 
+  <script src="assets/resource-data.js"></script>
   <script>
-    const infograficos = [
-      {
-        competenciaCodigo: "CCI01",
-        competenciaNome: "Representar problemas introdutórios por meio de soluções algorítmicas claras",
-        itemTrabalhado: "Entrada, processamento e saída",
-        titulo: "Como enxergar um problema de programação",
-        descricao: "Aprenda a ler um enunciado como um caminho de informação: o que entra, o que será calculado ou decidido e o que deve sair como resposta.",
-        url: "recursos/Infograficos/cci01_como_enxergar_um_problema_de_programacao.html"
-      },
-      {
-        competenciaCodigo: "CCI01",
-        competenciaNome: "Representar problemas introdutórios por meio de soluções algorítmicas claras",
-        itemTrabalhado: "Formas de representação",
-        titulo: "Antes do código: escolha uma forma de representar a solução",
-        descricao: "Compare linguagem natural, pseudocódigo e fluxograma para organizar um algoritmo antes de transformá-lo em comandos da linguagem C.",
-        url: "recursos/Infograficos/cci01_formas_de_representacao.html"
-      },
-      {
-        competenciaCodigo: "CCI01",
-        competenciaNome: "Representar problemas introdutórios por meio de soluções algorítmicas claras",
-        itemTrabalhado: "Decomposição",
-        titulo: "Quebrando um problema em partes menores",
-        descricao: "Explore diferentes caminhos para transformar um problema grande em partes menores, claras e programáveis antes de escrever o código em C.",
-        url: "recursos/Infograficos/cci01_quebrando_problema_em_partes_menores.html"
-      },
-      {
-        competenciaCodigo: "CCI02",
-        competenciaNome: "Implementar programas introdutórios com fluxo verificável de entrada, processamento e saída",
-        itemTrabalhado: "Estrutura básica de um programa em C",
-        titulo: "Anatomia de um programa em C",
-        descricao: "Reconheça como biblioteca, função main, variáveis, comandos e retorno se organizam para formar um programa executável.",
-        url: "recursos/Infograficos/cci02_anatomia_programa_c.html"
-      },
-      {
-        competenciaCodigo: "CCI02",
-        competenciaNome: "Implementar programas introdutórios com fluxo verificável de entrada, processamento e saída",
-        itemTrabalhado: "Teste com valores simples",
-        titulo: "Como saber se meu programa funciona?",
-        descricao: "Aprenda a testar programas básicos com entradas pequenas, prever a resposta correta e comparar o resultado esperado com o que o código realmente produz.",
-        url: "recursos/Infograficos/cci02_como_saber_se_programa_funciona.html"
-      },
-      {
-        competenciaCodigo: "CCI02",
-        competenciaNome: "Implementar programas introdutórios com fluxo verificável de entrada, processamento e saída",
-        itemTrabalhado: "Entrada, processamento e saída",
-        titulo: "O fluxo E P S: entrada, processamento e saída",
-        descricao: "Visualize como um programa recebe dados, transforma ou decide algo e produz uma resposta compreensível para o usuário.",
-        url: "recursos/Infograficos/cci02_fluxo_eps.html"
-      },
-      {
-        competenciaCodigo: "CCI02",
-        competenciaNome: "Implementar programas introdutórios com fluxo verificável de entrada, processamento e saída",
-        itemTrabalhado: "Variável, constante e atribuição",
-        titulo: "Variável não é número solto: é memória com nome",
-        descricao: "Entenda como um programa guarda valores, identifica cada espaço de memória e modifica seu estado por meio de atribuições.",
-        url: "recursos/Infograficos/cci02_variavel_memoria_com_nome.html"
-      },
-      {
-        competenciaCodigo: "CCI03",
-        competenciaNome: "Manipular dados simples, variáveis, constantes e expressões preservando a coerência do estado",
-        itemTrabalhado: "Estado do programa",
-        titulo: "O valor da variável muda: acompanhe o estado",
-        descricao: "Aprenda a seguir a execução linha por linha e registrar o valor atual de cada variável após atribuições, cálculos e atualizações.",
-        url: "recursos/Infograficos/cci03_estado_programa.html"
-      },
-      {
-        competenciaCodigo: "CCI03",
-        competenciaNome: "Manipular dados simples, variáveis, constantes e expressões preservando a coerência do estado",
-        itemTrabalhado: "Expressões e precedência",
-        titulo: "A ordem dos cálculos no programa",
-        descricao: "Entenda como o C interpreta expressões aritméticas, decide qual operação executar primeiro e como os parênteses tornam a intenção do cálculo mais clara.",
-        url: "recursos/Infograficos/cci03_ordem_dos_calculos.html"
-      },
-      {
-        competenciaCodigo: "CCI04",
-        competenciaNome: "Controlar o fluxo por decisões condicionais e expressões lógicas corretas",
-        itemTrabalhado: "Fronteiras e cobertura",
-        titulo: "Sua condição cobre todos os casos?",
-        descricao: "Aprenda a testar limites, localizar lacunas, evitar sobreposição de faixas e tratar entradas que não pertencem a nenhum caso esperado.",
-        url: "recursos/Infograficos/cci04_cobertura_casos.html"
-      },
-      {
-        competenciaCodigo: "CCI04",
-        competenciaNome: "Controlar o fluxo por decisões condicionais e expressões lógicas corretas",
-        itemTrabalhado: "Operadores relacionais e lógicos",
-        titulo: "Como escrever uma condição correta",
-        descricao: "Aprenda a comparar valores, combinar regras e prever quando uma expressão em C será verdadeira ou falsa.",
-        url: "recursos/Infograficos/cci04_condicao_correta.html"
-      },
-      {
-        competenciaCodigo: "CCI04",
-        competenciaNome: "Controlar o fluxo por decisões condicionais e expressões lógicas corretas",
-        itemTrabalhado: "if else versus switch case",
-        titulo: "Quando usar if e quando usar switch",
-        descricao: "Compare duas formas de controlar decisões em C e escolha a estrutura mais clara para cada tipo de regra.",
-        url: "recursos/Infograficos/cci04_if_else_switch_case.html"
-      },
-      {
-        competenciaCodigo: "CCI05",
-        competenciaNome: "Controlar processamento iterativo com repetição, atualização de estado e paradas seguras",
-        itemTrabalhado: "Condição de parada",
-        titulo: "Como evitar laço infinito",
-        descricao: "Entenda como inicialização, teste, atualização e parada segura trabalham juntas para garantir que uma repetição termine.",
-        url: "recursos/Infograficos/cci05_como_evitar_laco_infinito.html"
-      },
-      {
-        competenciaCodigo: "CCI05",
-        competenciaNome: "Controlar processamento iterativo com repetição, atualização de estado e paradas seguras",
-        itemTrabalhado: "Padrões com laços",
-        titulo: "Padrões clássicos com repetição",
-        descricao: "Reconheça modelos que aparecem em muitos problemas com laços: somar, contar, calcular média, encontrar o maior e localizar o menor valor.",
-        url: "recursos/Infograficos/cci05_padroes_classicos_repeticao.html"
-      },
-      {
-        competenciaCodigo: "CCI05",
-        competenciaNome: "Controlar processamento iterativo com repetição, atualização de estado e paradas seguras",
-        itemTrabalhado: "for, while e do while",
-        titulo: "Qual laço usar?",
-        descricao: "Compare for, while e do while para escolher a estrutura de repetição que deixa a lógica mais clara e adequada ao problema.",
-        url: "recursos/Infograficos/cci05_qual_laco_usar.html"
-      },
-      {
-        competenciaCodigo: "CCI05",
-        competenciaNome: "Controlar processamento iterativo com repetição, atualização de estado e paradas seguras",
-        itemTrabalhado: "Contador, acumulador e controle",
-        titulo: "As três variáveis mais importantes da repetição",
-        descricao: "Entenda como contador, acumulador e variável de controle registram o que acontece dentro de um laço e ajudam o programa a saber quanto repetiu, o que reuniu e quando deve parar.",
-        url: "recursos/Infograficos/cci05_tres_variaveis_repeticao.html"
-      },
-      {
-        competenciaCodigo: "CCI06",
-        competenciaNome: "Representar, percorrer e processar coleções indexadas e dados estruturados simples",
-        itemTrabalhado: "Erros com índice",
-        titulo: "Cuidado com o índice fora do limite",
-        descricao: "Aprenda a reconhecer posições válidas, corrigir limites de laços e impedir acessos indevidos em vetores e matrizes.",
-        url: "recursos/Infograficos/cci06_indice_fora_limite.html"
-      },
-      {
-        competenciaCodigo: "CCI06",
-        competenciaNome: "Representar, percorrer e processar coleções indexadas e dados estruturados simples",
-        itemTrabalhado: "Matriz, linha e coluna",
-        titulo: "Matriz: dados organizados em linhas e colunas",
-        descricao: "Entenda como representar uma tabela em C, acessar cada célula com dois índices e percorrer todos os elementos usando laços aninhados.",
-        url: "recursos/Infograficos/cci06_matriz_linhas_colunas.html"
-      },
-      {
-        competenciaCodigo: "CCI06",
-        competenciaNome: "Representar, percorrer e processar coleções indexadas e dados estruturados simples",
-        itemTrabalhado: "Percorrer vetor com laço",
-        titulo: "Como visitar todos os elementos de um vetor",
-        descricao: "Entenda como o laço for, o índice e o tamanho do vetor trabalham juntos para acessar cada posição uma única vez.",
-        url: "recursos/Infograficos/cci06_visitar_elementos_vetor.html"
-      },
-      {
-        competenciaCodigo: "CCI07",
-        competenciaNome: "Modularizar soluções por funções ou procedimentos com interfaces coerentes",
-        itemTrabalhado: "Escopo e variáveis locais",
-        titulo: "Onde a variável existe?",
-        descricao: "Entenda como o local da declaração define onde uma variável pode ser usada, por quanto tempo uma variável local comum permanece disponível e por que dados globais devem ser empregados com critério.",
-        url: "recursos/Infograficos/cci07_escopo_variaveis_locais.html"
-      },
-      {
-        competenciaCodigo: "CCI07",
-        competenciaNome: "Modularizar soluções por funções ou procedimentos com interfaces coerentes",
-        itemTrabalhado: "Função e procedimento",
-        titulo: "Função ou procedimento? Entenda a diferença",
-        descricao: "Compare estruturas que devolvem um valor com estruturas void que executam uma ação, e escolha a forma adequada para cada parte do programa.",
-        url: "recursos/Infograficos/cci07_funcao_ou_procedimento.html"
-      },
-      {
-        competenciaCodigo: "CCI07",
-        competenciaNome: "Modularizar soluções por funções ou procedimentos com interfaces coerentes",
-        itemTrabalhado: "Parâmetros e argumentos",
-        titulo: "Como uma função recebe informações",
-        descricao: "Entenda onde aparecem os parâmetros, quais valores são enviados como argumentos e como uma chamada conecta o fluxo principal ao corpo da função.",
-        url: "recursos/Infograficos/cci07_parametros_argumentos.html"
-      },
-      {
-        competenciaCodigo: "CCI08",
-        competenciaNome: "Analisar, justificar e selecionar estruturas ou estratégias adequadas ao problema",
-        itemTrabalhado: "Escolha de estruturas",
-        titulo: "Qual estrutura resolve melhor este problema?",
-        descricao: "Aprenda a reconhecer o tipo de tarefa descrita no enunciado e a escolher entre condição, repetição, vetor, matriz e função.",
-        url: "recursos/Infograficos/cci08_qual_estrutura_resolve_melhor.html"
-      },
-      {
-        competenciaCodigo: "CCI08",
-        competenciaNome: "Analisar, justificar e selecionar estruturas ou estratégias adequadas ao problema",
-        itemTrabalhado: "Comparação de estratégias",
-        titulo: "Solução simples ou solução complicada?",
-        descricao: "Aprenda a comparar estratégias de programação pela correção, clareza, adequação e complexidade, sem confundir simplicidade com código curto.",
-        url: "recursos/Infograficos/cci08_solucao_simples_ou_complicada.html"
-      },
-      {
-        competenciaCodigo: "CCI09",
-        competenciaNome: "Organizar cadastros, saídas consolidadas, consultas e relatórios verificáveis",
-        itemTrabalhado: "Cadastro simples",
-        titulo: "Como organizar um cadastro em C",
-        descricao: "Aprenda a agrupar os dados de cada pessoa, produto ou livro em um registro e a armazenar vários registros de forma organizada.",
-        url: "recursos/Infograficos/cci09_como_organizar_cadastro_c.html"
-      },
-      {
-        competenciaCodigo: "CCI09",
-        competenciaNome: "Organizar cadastros, saídas consolidadas, consultas e relatórios verificáveis",
-        itemTrabalhado: "Consulta e filtro",
-        titulo: "Como procurar informações em um cadastro",
-        descricao: "Aprenda a consultar registros por código, nome ou posição e a filtrar todos os elementos que atendem a um critério.",
-        url: "recursos/Infograficos/cci09_consulta_filtro.html"
-      },
-      {
-        competenciaCodigo: "CCI10",
-        competenciaNome: "Integrar múltiplas estruturas em soluções introdutórias mais complexas",
-        itemTrabalhado: "Divisão do programa em partes",
-        titulo: "Como planejar um programa maior sem se perder",
-        descricao: "Aprenda a transformar um enunciado amplo em blocos funcionais, definir o papel de cada parte e conectar tudo antes de escrever o código completo.",
-        url: "recursos/Infograficos/cci10_planejar_programa_maior.html"
-      },
-      {
-        competenciaCodigo: "CCI10",
-        competenciaNome: "Integrar múltiplas estruturas em soluções introdutórias mais complexas",
-        itemTrabalhado: "Teste por partes",
-        titulo: "Teste primeiro as partes, depois o todo",
-        descricao: "Aprenda a verificar funções, laços, consultas e saídas separadamente para localizar erros antes de integrar o programa completo.",
-        url: "recursos/Infograficos/cci10_teste_por_partes.html"
-      },
-      {
-        competenciaCodigo: "CCI11",
-        competenciaNome: "Modelar e organizar dados compostos em programas introdutórios",
-        itemTrabalhado: "Conceito de struct",
-        titulo: "Struct: quando várias informações formam uma entidade",
-        descricao: "Entenda como a linguagem C agrupa dados relacionados em um único tipo composto e por que isso torna o programa mais organizado.",
-        url: "recursos/Infograficos/cci11_conceito_struct.html"
-      },
-      {
-        competenciaCodigo: "CCI11",
-        competenciaNome: "Modelar e organizar dados compostos em programas introdutórios",
-        itemTrabalhado: "Vetor de structs",
-        titulo: "Vários registros organizados em uma coleção",
-        descricao: "Entenda como um vetor de structs permite armazenar e percorrer vários alunos, produtos ou livros com a mesma organização.",
-        url: "recursos/Infograficos/cci11_vetor_de_structs.html"
-      },
-      {
-        competenciaCodigo: "CCI12",
-        competenciaNome: "Construir subprogramas recursivos com progressão verificável",
-        itemTrabalhado: "Caso base e passo recursivo",
-        titulo: "Toda recursão precisa de uma saída",
-        descricao: "Entenda como o caso base interrompe as chamadas e como o passo recursivo reduz o problema até alcançar essa saída.",
-        url: "recursos/Infograficos/cci12_caso_base_passo_recursivo.html"
-      },
-      {
-        competenciaCodigo: "CCI12",
-        competenciaNome: "Construir subprogramas recursivos com progressão verificável",
-        itemTrabalhado: "Pilha de chamadas",
-        titulo: "O que acontece quando uma função chama ela mesma",
-        descricao: "Visualize como cada chamada recursiva ocupa uma posição na pilha, aguarda sua resposta e retorna na ordem inversa.",
-        url: "recursos/Infograficos/cci12_pilha_de_chamadas.html"
-      },
-      {
-        competenciaCodigo: "CCI13",
-        competenciaNome: "Desenvolver soluções com persistência e consulta em arquivos",
-        itemTrabalhado: "Cadastro com arquivo",
-        titulo: "Salvando e recuperando registros",
-        descricao: "Entenda como transformar registros mantidos na memória em dados persistentes e como recuperar essas informações para listar ou consultar um cadastro.",
-        url: "recursos/Infograficos/cci13_cadastro_com_arquivo.html"
-      },
-      {
-        competenciaCodigo: "CCI13",
-        competenciaNome: "Desenvolver soluções com persistência e consulta em arquivos",
-        itemTrabalhado: "Abrir, ler, escrever e fechar",
-        titulo: "O ciclo básico de um arquivo em C",
-        descricao: "Entenda como abrir, verificar, ler ou escrever e fechar um arquivo com segurança, acompanhando o caminho entre o programa e os dados armazenados.",
-        url: "recursos/Infograficos/cci13_ciclo_basico_arquivo_c.html"
-      },
-      {
-        competenciaCodigo: "CCI13",
-        competenciaNome: "Desenvolver soluções com persistência e consulta em arquivos",
-        itemTrabalhado: "Modos de abertura",
-        titulo: "Cuidado: o modo de abertura pode apagar seus dados",
-        descricao: "Entenda como r, w e a alteram o comportamento de um arquivo e escolha o modo adequado antes de ler ou gravar informações.",
-        url: "recursos/Infograficos/cci13_modos_de_abertura.html"
-      }
-    ];
+    const { infograficos } = window.ResourceCatalog.resources;
 
     const list = document.querySelector("[data-infographic-list]");
-    const searchInput = document.querySelector("#busca-infografico");
-    const competenceFilter = document.querySelector("#filtro-competencia");
     const resultCount = document.querySelector("[data-result-count]");
-    const emptyState = document.querySelector("[data-empty-state]");
-    const clearSearchButton = document.querySelector("[data-clear-search]");
-    const filtersForm = document.querySelector(".filters");
-
-    function normalizeText(value) {
-      return String(value)
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-    }
 
     function escapeHTML(value) {
       return String(value)
@@ -1391,42 +962,13 @@
         .replaceAll("'", "&#039;");
     }
 
-    function buildSearchText(infografico) {
-      return normalizeText([
-        infografico.competenciaCodigo,
-        infografico.competenciaNome,
-        infografico.itemTrabalhado,
-        infografico.titulo,
-        infografico.descricao
-      ].join(" "));
-    }
-
-    function populateCompetenceFilter() {
-      const codes = [...new Set(infograficos.map((infografico) => infografico.competenciaCodigo))].sort();
-
-      codes.forEach((code) => {
-        const option = document.createElement("option");
-        option.value = code;
-        option.textContent = code;
-        competenceFilter.append(option);
-      });
-    }
-
     function renderInfographics() {
-      const query = normalizeText(searchInput.value.trim());
-      const selectedCompetence = competenceFilter.value;
-
-      const filteredInfographics = infograficos.filter((infografico) => {
-        const matchesSearch = !query || buildSearchText(infografico).includes(query);
-        const matchesCompetence = !selectedCompetence || infografico.competenciaCodigo === selectedCompetence;
-        return matchesSearch && matchesCompetence;
-      });
-
-      list.innerHTML = filteredInfographics.map((infografico) => {
+      list.innerHTML = infograficos.map((infografico) => {
         const title = escapeHTML(infografico.titulo);
         const code = escapeHTML(infografico.competenciaCodigo);
         const competenceName = escapeHTML(infografico.competenciaNome);
         const description = escapeHTML(infografico.descricao);
+        const time = escapeHTML(infografico.tempo);
         const url = escapeHTML(infografico.url);
 
         return `
@@ -1445,8 +987,11 @@
               <div class="info-title">${title}</div>
             </div>
             <div class="row-section">
-              <span class="mobile-label">O que aborda</span>
+              <span class="mobile-label">ESTE RECURSO ABORDA</span>
               <p class="info-description">${description}</p>
+              <div class="badge-list">
+                <span class="meta-badge time">${time}</span>
+              </div>
             </div>
             <div class="resource-action-cell">
               <a class="resource-action" href="${url}" aria-label="Abrir infográfico: ${title}">
@@ -1461,29 +1006,14 @@
         `;
       }).join("");
 
-      const visibleCount = filteredInfographics.length;
-      const label = visibleCount === 1
+      const totalCount = infograficos.length;
+      const label = totalCount === 1
         ? "1 infográfico"
-        : `${visibleCount} infográficos`;
+        : `${totalCount} infográficos`;
 
       resultCount.textContent = label;
-      emptyState.classList.toggle("is-visible", visibleCount === 0);
     }
 
-    clearSearchButton.addEventListener("click", () => {
-      searchInput.value = "";
-      competenceFilter.value = "";
-      renderInfographics();
-      searchInput.focus();
-    });
-
-    searchInput.addEventListener("input", renderInfographics);
-    competenceFilter.addEventListener("change", renderInfographics);
-    filtersForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-    });
-
-    populateCompetenceFilter();
     renderInfographics();
   </script>
 </body>

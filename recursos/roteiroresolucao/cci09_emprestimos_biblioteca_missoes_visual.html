@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de empréstimos da biblioteca — missões</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <style>
+
+    :root {
+      --emerald-950: #022c22;
+      --emerald-900: #064e3b;
+      --emerald-800: #065f46;
+      --emerald-700: #047857;
+      --emerald-600: #059669;
+      --emerald-100: #d1fae5;
+      --emerald-50: #ecfdf5;
+      --teal-700: #0f766e;
+      --teal-100: #ccfbf1;
+      --lime-600: #65a30d;
+      --lime-100: #ecfccb;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --amber-50: #fffbeb;
+      --red-700: #b91c1c;
+      --red-100: #fee2e2;
+      --red-50: #fef2f2;
+      --blue-700: #1d4ed8;
+      --blue-100: #dbeafe;
+      --slate-950: #0f172a;
+      --slate-900: #172033;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
+      --shadow-md: 0 20px 55px rgba(15, 23, 42, .11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-950);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(5, 150, 105, .11), transparent 30rem),
+        radial-gradient(circle at 94% 13%, rgba(101, 163, 13, .08), transparent 28rem),
+        var(--slate-50);
+      padding: 24px 16px 46px;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(5, 150, 105, .32);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 26px;
+      align-items: center;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 84% 15%, rgba(255,255,255,.11), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900) 58%, var(--emerald-700));
+      box-shadow: 0 24px 60px rgba(2, 44, 34, .23);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #34d399, #a3e635, #2dd4bf);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.11);
+      color: #ecfdf5;
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      color: var(--white);
+      font-size: clamp(2rem, 4.8vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .hero-description { max-width: 760px; color: #d1fae5; font-size: 1.02rem; }
+
+    .hero-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.35fr;
+      gap: 12px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(9px);
+    }
+
+    .flow-chip {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,.10);
+      text-align: center;
+    }
+    .flow-chip strong { display: block; color: white; font-size: 1.05rem; }
+    .flow-chip small { color: #a7f3d0; font-weight: 700; }
+    .flow-arrow { color: #bef264; font-size: 1.35rem; text-align: center; }
+    .flow-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .context-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kicker {
+      margin-bottom: 6px;
+      color: var(--emerald-700);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    h2 { color: var(--slate-950); font-size: 1.35rem; line-height: 1.2; letter-spacing: -.02em; }
+    h3 { color: var(--slate-900); font-size: 1.02rem; line-height: 1.25; }
+    p { color: var(--slate-600); }
+
+    .problem-statement {
+      margin-top: 13px;
+      padding: 16px 17px;
+      border: 1px solid var(--emerald-100);
+      border-left: 5px solid var(--emerald-600);
+      border-radius: var(--radius-md);
+      background: var(--emerald-50);
+      color: var(--slate-950);
+      font-weight: 780;
+    }
+
+    .problem-statement small { display: block; margin-top: 7px; color: var(--slate-600); font-weight: 600; }
+
+    .meta-stack { display: grid; gap: 9px; }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+    }
+    .meta-icon {
+      width: 31px; height: 31px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      font-weight: 900;
+    }
+    .meta-row strong { display: block; color: var(--slate-900); font-size: .86rem; }
+    .meta-row span { color: var(--slate-600); font-size: .83rem; }
+
+    .mission-map {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      padding: 15px 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .map-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .map-top strong { color: var(--slate-900); font-size: .93rem; }
+    .map-top span { color: var(--slate-500); font-size: .83rem; }
+    .map-line { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: center; }
+    .map-connector { height: 3px; border-radius: 999px; background: var(--slate-200); transition: background .3s ease; }
+    .map-connector.done { background: linear-gradient(90deg, var(--emerald-600), #84cc16); }
+    .map-node {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      transition: .25s ease;
+    }
+    .map-node-number {
+      width: 30px; height: 30px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border: 2px solid var(--slate-300);
+      border-radius: 50%;
+      background: var(--white);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .map-node strong { display: block; color: inherit; font-size: .83rem; line-height: 1.12; }
+    .map-node small { display: block; margin-top: 2px; color: inherit; font-size: .68rem; text-transform: uppercase; font-weight: 850; letter-spacing: .04em; }
+    .map-node.active { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); box-shadow: 0 0 0 3px rgba(5,150,105,.07); }
+    .map-node.active .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.done { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); }
+    .map-node.done .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.locked { opacity: .62; }
+
+    .mission {
+      --mission-color: var(--emerald-600);
+      --mission-soft: var(--emerald-50);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--mission-color);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+    }
+    .mission[data-mission="2"] { --mission-color: var(--teal-700); --mission-soft: #f0fdfa; }
+    .mission[data-mission="3"] { --mission-color: var(--lime-600); --mission-soft: #f7fee7; }
+    .mission.locked { opacity: .72; }
+    .mission.active { box-shadow: var(--shadow-md); }
+    .mission.completed { border-color: var(--emerald-100); }
+
+    .mission-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 20px 22px;
+      background: var(--white);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mission.locked .mission-toggle { cursor: not-allowed; }
+    .mission-icon {
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 17px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 24%, transparent);
+      font-size: 1.25rem;
+      font-weight: 950;
+    }
+    .mission-heading small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--mission-color);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mission-heading h2 { margin: 0; font-size: 1.35rem; }
+    .mission-heading p { margin-top: 4px; font-size: .9rem; }
+    .mission-side { display: flex; align-items: center; gap: 10px; }
+    .mission-meta {
+      display: grid;
+      gap: 3px;
+      justify-items: end;
+      color: var(--slate-500);
+      font-size: .77rem;
+      white-space: nowrap;
+    }
+    .mission-meta strong { color: var(--slate-800); font-size: .82rem; }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .mission.active .state-pill { background: var(--mission-soft); color: var(--mission-color); }
+    .mission.completed .state-pill { background: var(--emerald-50); color: var(--emerald-800); }
+    .chevron { color: var(--slate-400); font-size: 1.15rem; transition: transform .22s ease; }
+    .mission.open .chevron { transform: rotate(180deg); }
+
+    .mission-content { display: none; padding: 0 22px 24px; }
+    .mission.open .mission-content { display: grid; gap: 22px; }
+
+    .mission-objective {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: var(--mission-soft);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 20%, transparent);
+    }
+    .objective-icon {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 11px; background: white; color: var(--mission-color); font-weight: 950;
+    }
+    .mission-objective strong { display: block; color: var(--slate-900); font-size: .88rem; }
+    .mission-objective p { font-size: .84rem; }
+    .seal-preview { color: var(--mission-color); font-size: .76rem; font-weight: 900; text-align: right; }
+
+    .task-block { display: grid; gap: 12px; padding-top: 2px; }
+    .task-head { display: flex; gap: 11px; align-items: flex-start; }
+    .task-index {
+      width: 29px; height: 29px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+    .task-head h3 { margin-bottom: 3px; }
+    .task-head p { font-size: .88rem; }
+
+    .choice-grid { display: grid; gap: 9px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) 22px;
+      gap: 11px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: var(--slate-300); box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-letter {
+      width: 33px; height: 33px; display: grid; place-items: center;
+      border: 1px solid var(--slate-300); border-radius: 10px;
+      color: var(--slate-600); background: var(--slate-50); font-size: .8rem; font-weight: 900;
+    }
+    .choice-copy strong { display: block; margin-bottom: 2px; color: var(--slate-900); font-size: .91rem; }
+    .choice-copy span { display: block; color: var(--slate-600); font-size: .84rem; }
+    .radio-mark {
+      width: 21px; height: 21px; margin-top: 5px;
+      border: 2px solid var(--slate-300); border-radius: 50%; background: white; position: relative;
+    }
+    .choice:has(input:checked) { border-color: var(--mission-color); background: var(--mission-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 9%, transparent); }
+    .choice:has(input:checked) .choice-letter { border-color: var(--mission-color); background: var(--mission-color); color: white; }
+    .choice:has(input:checked) .radio-mark { border-color: var(--mission-color); }
+    .choice:has(input:checked) .radio-mark::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--mission-color); }
+
+    .eps-flow { display: grid; grid-template-columns: 1fr auto 1.25fr auto 1fr; gap: 10px; align-items: stretch; }
+    .eps-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .eps-card strong { color: var(--slate-900); font-size: .83rem; letter-spacing: .04em; text-transform: uppercase; }
+    .eps-card small { color: var(--slate-500); font-size: .75rem; }
+    .eps-arrow { display: grid; place-items: center; color: var(--emerald-600); font-size: 1.35rem; font-weight: 900; }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 34px 9px 10px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    select:focus { border-color: var(--mission-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent); }
+
+    .expression-builder {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+    .ide-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #263244;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    .ide-dots { display: flex; gap: 6px; }
+    .ide-dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; }
+    .expression-lines { display: grid; gap: 11px; padding: 16px; }
+    .expression-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .expression-label { color: #a7f3d0; font: 700 .86rem Consolas, Monaco, monospace; white-space: nowrap; }
+    .expression-line select { min-height: 42px; border-color: #334155; background: #172033; color: #f8fafc; font-family: Consolas, Monaco, monospace; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .test-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .test-input { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .test-input strong { color: var(--slate-900); font-size: .86rem; }
+    .test-input span { padding: 4px 8px; border-radius: 8px; background: var(--white); color: var(--emerald-800); font: 800 .8rem Consolas, monospace; border: 1px solid var(--slate-200); }
+
+    .branch {
+      display: none;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .87rem;
+    }
+    .branch.show { display: block; animation: reveal .18s ease; }
+    .branch strong { display: block; color: var(--amber-700); margin-bottom: 3px; }
+
+    .help-row { display: flex; justify-content: flex-start; }
+    .hint-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 999px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      cursor: pointer;
+      font-size: .84rem;
+      font-weight: 850;
+      transition: .16s ease;
+    }
+    .hint-btn:hover { transform: translateY(-1px); background: #dcfce7; }
+    .hint-btn:disabled { cursor: default; opacity: .62; transform: none; }
+    .hint-drawer {
+      display: none;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 14px;
+      background: var(--emerald-50);
+    }
+    .hint-drawer.show { display: grid; animation: reveal .18s ease; }
+    .hint-number { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: var(--emerald-700); color: white; font-size: .75rem; font-weight: 900; }
+    .hint-drawer strong { display: block; color: var(--emerald-900); font-size: .85rem; }
+    .hint-drawer p { margin-top: 2px; font-size: .84rem; }
+
+    .mission-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 3px; }
+    .primary-btn, .secondary-btn {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .primary-btn { background: var(--mission-color); color: white; box-shadow: 0 8px 20px color-mix(in srgb, var(--mission-color) 22%, transparent); }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(.94); }
+    .primary-btn:disabled { cursor: default; opacity: .62; transform: none; box-shadow: none; }
+    .secondary-btn { border: 1px solid var(--slate-300); background: white; color: var(--slate-700); }
+    .secondary-btn:hover { background: var(--slate-50); transform: translateY(-1px); }
+
+    .feedback { display: none; flex: 1 1 310px; padding: 11px 13px; border-radius: 12px; font-size: .86rem; font-weight: 750; }
+    .feedback.show { display: block; }
+    .feedback.warn { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-100); }
+    .feedback.bad { background: var(--red-50); color: var(--red-700); border: 1px solid var(--red-100); }
+    .feedback.ok { background: var(--emerald-50); color: var(--emerald-800); border: 1px solid var(--emerald-100); }
+
+    .mission-result {
+      display: none;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--emerald-50), #f7fee7);
+    }
+    .mission-result.show { display: grid; animation: reveal .24s ease; }
+    .result-check { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--emerald-600); color: white; font-size: 1.15rem; font-weight: 950; }
+    .mission-result strong { display: block; color: var(--emerald-900); margin-bottom: 3px; }
+    .mission-result p { font-size: .84rem; }
+    .seal {
+      min-width: 142px;
+      padding: 9px 11px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 12px;
+      background: white;
+      color: var(--emerald-800);
+      text-align: center;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+    .code-body { padding: 12px 0; overflow-x: auto; }
+    .code-line {
+      display: grid;
+      grid-template-columns: 43px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      color: #e2e8f0;
+      font: .84rem/1.55 Consolas, Monaco, "Courier New", monospace;
+      white-space: pre;
+    }
+    .line-number { padding-right: 12px; color: #64748b; text-align: right; user-select: none; }
+    .line-code { padding-right: 18px; }
+    .code-line.entry { background: rgba(29,78,216,.13); border-left: 4px solid #60a5fa; }
+    .code-line.process { background: rgba(5,150,105,.13); border-left: 4px solid #34d399; }
+    .code-line.output { background: rgba(101,163,13,.13); border-left: 4px solid #a3e635; }
+    .tok-pre { color: #c084fc; }
+    .tok-type { color: #67e8f9; }
+    .tok-fn { color: #fde68a; }
+    .tok-str { color: #86efac; }
+    .tok-num { color: #fca5a5; }
+    .tok-var { color: #e2e8f0; }
+    .tok-comment { color: #94a3b8; font-style: italic; }
+    .code-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-top: 1px solid #263244; background: #172033; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #cbd5e1; font-size: .73rem; font-weight: 800; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-dot { background: #60a5fa; }
+    .process-dot { background: #34d399; }
+    .output-dot { background: #a3e635; }
+
+    .completion {
+      display: none;
+      padding: 27px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 92% 10%, rgba(163,230,53,.15), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+    .completion.show { display: block; animation: reveal .3s ease; }
+    .completion-label { color: #bef264; font-size: .75rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .completion h2 { margin-top: 5px; color: white; font-size: 1.65rem; }
+    .completion > p { margin-top: 7px; color: #d1fae5; }
+    .completion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 17px; }
+    .completion-item { padding: 13px; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: rgba(255,255,255,.07); }
+    .completion-item strong { display: block; color: white; font-size: .86rem; }
+    .completion-item span { display: block; margin-top: 3px; color: #d1fae5; font-size: .79rem; }
+    .completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    .completion .secondary-btn { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.10); color: white; }
+    .completion .secondary-btn:hover { background: rgba(255,255,255,.16); }
+
+    .resource-credit { padding: 16px 10px 0; text-align: center; color: var(--slate-500); font-size: .82rem; }
+    .resource-credit a { color: var(--emerald-700); font-weight: 800; text-decoration: none; }
+    .resource-credit a:hover { text-decoration: underline; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 920px) {
+      .hero, .context-card { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 560px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .eps-flow { grid-template-columns: 1fr; }
+      .eps-arrow { transform: rotate(90deg); }
+      .map-line { grid-template-columns: 1fr 28px 1fr 28px 1fr; }
+      .map-node { align-items: center; justify-content: center; padding: 8px; }
+      .map-node-copy { display: none; }
+      .completion-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      body { padding: 12px 10px 30px; }
+      .shell { gap: 12px; }
+      .hero { padding: 22px 18px; border-radius: 21px; }
+      .hero-flow { grid-template-columns: 1fr auto 1fr; padding: 14px; gap: 8px; }
+      .hero-flow > .flow-arrow:last-of-type { display: none; }
+      .flow-results { grid-column: 1 / -1; }
+      .flow-chip { padding: 10px 7px; }
+      .flow-chip strong { font-size: .86rem; }
+      .flow-chip small { font-size: .68rem; }
+      .context-card { padding: 17px; border-radius: 18px; }
+      .mission-map { top: 4px; padding: 11px; border-radius: 15px; }
+      .map-top { margin-bottom: 9px; }
+      .map-top span { display: none; }
+      .mission { border-radius: 20px; }
+      .mission-toggle { grid-template-columns: auto 1fr; padding: 16px; }
+      .mission-icon { width: 44px; height: 44px; border-radius: 14px; }
+      .mission-side { grid-column: 1 / -1; justify-content: space-between; padding-left: 59px; }
+      .mission-meta { justify-items: start; display: flex; gap: 8px; align-items: center; }
+      .mission-content { padding: 0 16px 18px; }
+      .mission-objective { grid-template-columns: auto 1fr; }
+      .seal-preview { grid-column: 1 / -1; text-align: left; padding-left: 45px; }
+      .choice { grid-template-columns: 32px 1fr 20px; padding: 11px; gap: 9px; }
+      .choice-letter { width: 29px; height: 29px; }
+      .mission-result { grid-template-columns: auto 1fr; }
+      .seal { grid-column: 1 / -1; margin-left: 56px; text-align: left; }
+      .mission-actions { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .feedback { flex-basis: auto; }
+      .completion { padding: 21px 18px; border-radius: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  
+
+    input[type="number"] {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 11px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    input[type="number"]:focus {
+      border-color: var(--mission-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr);
+      gap: 12px;
+    }
+
+    .setup-card {
+      display: grid;
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .setup-card label {
+      color: var(--slate-900);
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .setup-card small {
+      color: var(--slate-500);
+      font-size: .75rem;
+    }
+
+    .trace-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trace-card {
+      position: relative;
+      display: grid;
+      gap: 11px;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+
+    .trace-card::after {
+      content: "→";
+      position: absolute;
+      right: -17px;
+      top: 50%;
+      z-index: 2;
+      color: var(--mission-color);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+
+    .trace-card:last-child::after { display: none; }
+
+    .trace-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trace-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .trace-step strong {
+      color: var(--slate-900);
+      font-size: .82rem;
+    }
+
+    .trace-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .7rem;
+    }
+
+    .trace-fields {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trace-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .trace-field label {
+      color: var(--slate-600);
+      font-size: .72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .case-level {
+      display: inline-flex;
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .diagnosis-box {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .output-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 9px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .output-box {
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+      text-align: center;
+    }
+
+    .output-box small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .output-box strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 900 1.05rem Consolas, Monaco, monospace;
+    }
+
+    .comparison-arrow {
+      color: var(--mission-color);
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+
+    .summary-state {
+      padding: 11px;
+      border-radius: 12px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .summary-state small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .summary-state strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 800 .78rem/1.45 Consolas, Monaco, monospace;
+    }
+
+    @media (max-width: 920px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr 1fr; }
+      .trace-card:nth-child(2)::after { display: none; }
+      .diagnosis-box, .setup-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr; }
+      .trace-card::after { display: none; }
+      .output-comparison { grid-template-columns: 1fr; }
+      .comparison-arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .hero-flow.hero-trace {
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .hero-trace .flow-chip {
+      min-height: 78px;
+      display: grid;
+      align-content: center;
+    }
+
+    .hero-trace .flow-chip small {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .hero-trace .flow-chip strong {
+      font-size: .94rem;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 660px) {
+      .hero-flow.hero-trace {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-trace .flow-chip {
+        min-height: 68px;
+      }
+    }
+
+  
+
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .architecture-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      background: var(--surface);
+    }
+
+    .architecture-card small {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .architecture-card strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 5px;
+    }
+
+    .architecture-card p {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .architecture-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .role-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .role-card code {
+      width: fit-content;
+      border-radius: 8px;
+      padding: 3px 7px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .variable-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .variable-token {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font: 800 .83rem/1.2 Consolas, monospace;
+    }
+
+    .logic-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .logic-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 15px;
+    }
+
+    .logic-panel h4 {
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .logic-selects {
+      display: grid;
+      gap: 10px;
+    }
+
+    .logic-row {
+      display: grid;
+      grid-template-columns: minmax(145px, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logic-row label {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .signature-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .signature-card.full { grid-column: 1 / -1; }
+
+    .code-section-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font: 800 .68rem/1.3 system-ui, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #D1FAE5;
+      border: 1px solid rgba(209,250,229,.24);
+      background: rgba(16,185,129,.16);
+      margin-right: 8px;
+    }
+
+    .final-code[hidden] { display: none; }
+
+    @media (max-width: 860px) {
+      .architecture-flow,
+      .role-grid,
+      .logic-grid,
+      .signature-grid { grid-template-columns: 1fr; }
+      .architecture-arrow { transform: rotate(90deg); }
+      .logic-row { grid-template-columns: 1fr; gap: 5px; }
+      .signature-card.full { grid-column: auto; }
+    }
+
+
+    .hero-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .loop-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+      align-items: stretch;
+    }
+    .loop-card {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .loop-card:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      z-index: 2;
+      color: var(--emerald-600);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+    .loop-card small { color: var(--slate-500); font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 850; }
+    .loop-card strong { color: var(--slate-900); font-size: .92rem; }
+    .loop-card p { font-size: .8rem; }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .control-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .control-card strong { color: var(--slate-900); font-size: .83rem; }
+    .control-card small { color: var(--slate-500); font-size: .74rem; }
+
+    .state-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+    .state-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .state-table th,
+    .state-table td {
+      padding: 11px;
+      border-bottom: 1px solid var(--slate-200);
+      border-right: 1px solid var(--slate-200);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .state-table th:last-child,
+    .state-table td:last-child { border-right: 0; }
+    .state-table tr:last-child td { border-bottom: 0; }
+    .state-table th {
+      background: var(--slate-50);
+      color: var(--slate-700);
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .state-table td:first-child { color: var(--slate-900); font-weight: 900; }
+    .state-table input[type="number"] { min-width: 112px; }
+
+    .formula-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+    .formula-card {
+      display: grid;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .formula-card strong { color: var(--slate-900); font-size: .84rem; }
+    .formula-arrow { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    .case-level {
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .7rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    @media (max-width: 920px) {
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr 1fr; }
+      .loop-card:not(:last-child)::after { display: none; }
+      .formula-strip { grid-template-columns: 1fr; }
+      .formula-arrow { transform: rotate(90deg); text-align: center; }
+    }
+    @media (max-width: 660px) {
+      .hero-flow { grid-template-columns: 1fr; }
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr; }
+    }
+
+
+
+    .catalog-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .catalog-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .catalog-card small {
+      display: block;
+      color: var(--emerald-700);
+      font-size: .7rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .catalog-card strong { display: block; margin-top: 4px; color: var(--slate-900); }
+    .catalog-card p { margin-top: 4px; font-size: .82rem; }
+
+    .record-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: white;
+    }
+    .record-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+    .record-table th,
+    .record-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--slate-200);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .record-table th {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      font-size: .7rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .record-table tbody tr:last-child td { border-bottom: 0; }
+    .record-table code {
+      padding: 3px 6px;
+      border-radius: 7px;
+      background: var(--slate-100);
+      color: var(--emerald-800);
+      font-size: .78rem;
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: .69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .status-tag.open { background: var(--amber-100); color: var(--amber-700); }
+    .status-tag.done { background: var(--emerald-100); color: var(--emerald-800); }
+    .status-tag.late { background: var(--red-100); color: var(--red-700); }
+
+    .record-link {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px dashed var(--slate-300);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .record-field {
+      padding: 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+    }
+    .record-field small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .66rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .record-field strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--slate-900);
+      font-size: .84rem;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .report-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .report-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .report-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--slate-900);
+      font-size: 1.08rem;
+    }
+    .report-card p { margin-top: 3px; font-size: .8rem; }
+
+    @media (max-width: 920px) {
+      .catalog-flow, .record-link, .report-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 660px) {
+      .catalog-flow, .record-link, .report-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="badge-row">
+          <span class="badge">Roteiro por missões</span>
+          <span class="badge">CCI09</span>
+          <span class="badge">Cadastros, consultas e relatórios</span>
+        </div>
+        <h1>Relatório de empréstimos da biblioteca</h1>
+        <p class="hero-description">Organize registros de empréstimos, localize um livro pelo título e gere um relatório de atrasos sem perder a correspondência entre livro, leitor, vencimento e situação.</p>
+      </div>
+
+      <div class="hero-flow" aria-label="Resumo do percurso">
+        <div class="flow-chip"><small>1</small><strong>Cadastrar</strong></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-chip"><small>2</small><strong>Consultar</strong></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-chip"><small>3</small><strong>Relatar</strong></div>
+      </div>
+    </header>
+
+    <section class="context-card" aria-label="Contexto da atividade">
+      <article>
+        <p class="kicker">Problema a resolver</p>
+        <h2>Uma biblioteca precisa acompanhar seus empréstimos ativos</h2>
+        <div class="problem-statement">
+          O sistema registra cinco livros emprestados. Ele deve listar todos os registros, localizar um livro pelo título e apresentar quais empréstimos estão atrasados no dia 15 do mês.
+          <small>Cada posição representa um único empréstimo. Título, leitor, vencimento e situação precisam permanecer associados ao mesmo índice durante consultas e relatórios.</small>
+        </div>
+
+        <div class="catalog-flow" aria-label="Operações do sistema">
+          <article class="catalog-card"><small>Cadastro</small><strong>Guardar os campos</strong><p>Registrar título, leitor, vencimento e devolução.</p></article>
+          <article class="catalog-card"><small>Consulta</small><strong>Localizar um título</strong><p>Encontrar o índice e recuperar todos os dados ligados a ele.</p></article>
+          <article class="catalog-card"><small>Relatório</small><strong>Filtrar atrasados</strong><p>Exibir apenas empréstimos não devolvidos cujo prazo já passou.</p></article>
+        </div>
+      </article>
+
+      <aside class="meta-stack">
+        <p class="kicker">Resumo pedagógico</p>
+        <h2>Competência trabalhada</h2>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI09</strong><p>Organizar cadastros, consultas e relatórios simples preservando consistência entre dados e saídas.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>18 a 22 minutos</strong><p>Três missões liberadas em sequência.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Vetores, índices, strings, laço for, condições e comparação de textos.</p></div></div>
+        <div class="variable-strip" aria-label="Conceitos principais">
+          <span class="variable-token">cadastro</span><span class="variable-token">índice comum</span><span class="variable-token">busca</span><span class="variable-token">relatório</span>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="mission-map" aria-label="Mapa das missões">
+      <div class="map-top">
+        <strong id="progressText">Missão atual: 1 de 3</strong>
+        <span>Conclua a missão ativa para desbloquear a próxima.</span>
+      </div>
+      <div class="map-line">
+        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Organizar</strong><small>Em andamento</small></span></div>
+        <div class="map-connector" data-connector="1"></div>
+        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Consultar</strong><small>Bloqueada</small></span></div>
+        <div class="map-connector" data-connector="2"></div>
+        <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Relatar</strong><small>Bloqueada</small></span></div>
+      </div>
+    </nav>
+
+    <section class="mission active open" data-mission="1">
+      <button class="mission-toggle" type="button" aria-expanded="true">
+        <span class="mission-icon">1</span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Organizar o cadastro</h2><p>Defina os campos e preserve a correspondência entre os dados de cada empréstimo.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>6 min</strong><span>8 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Reconhecer quais dados formam um registro e como mantê-los associados por um índice comum.</p></div><span class="seal-preview">Selo: Cadastro coerente</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Defina a função de cada campo</h3><p>Cada informação deve ter um papel claro no cadastro.</p></div></div>
+          <div class="control-grid">
+            <article class="control-card"><strong>Título</strong><small>Serve para...</small><select id="m1_title_role"><option value="">Selecione</option><option value="identify">Identificar o livro</option><option value="deadline">Definir o prazo</option><option value="status">Marcar devolução</option></select></article>
+            <article class="control-card"><strong>Leitor</strong><small>Serve para...</small><select id="m1_reader_role"><option value="">Selecione</option><option value="person">Identificar quem recebeu o livro</option><option value="book">Identificar o livro</option><option value="count">Contar atrasos</option></select></article>
+            <article class="control-card"><strong>Vencimento</strong><small>Serve para...</small><select id="m1_due_role"><option value="">Selecione</option><option value="deadline">Definir o prazo de devolução</option><option value="person">Identificar o leitor</option><option value="found">Marcar busca encontrada</option></select></article>
+            <article class="control-card"><strong>Devolvido</strong><small>Serve para...</small><select id="m1_return_role"><option value="">Selecione</option><option value="status">Registrar se o livro já voltou</option><option value="deadline">Definir o prazo</option><option value="title">Guardar outro título</option></select></article>
+          </div>
+          <div class="branch" id="m1_fields_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Escolha uma organização consistente</h3><p>A mesma posição precisa representar o mesmo empréstimo em todos os campos.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Organização dos dados">
+            <label class="choice"><input type="radio" name="m1_structure" value="isolated"><span class="choice-letter">A</span><span class="choice-copy"><strong>Variáveis isoladas para cada empréstimo</strong><span>titulo1, leitor1, titulo2, leitor2... com muitos comandos repetidos.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_structure" value="parallel"><span class="choice-letter">B</span><span class="choice-copy"><strong>Vetores paralelos com o mesmo índice</strong><span>titulos[i], leitores[i], vencimentos[i] e devolvidos[i] descrevem o mesmo empréstimo.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m1_structure" value="unrelated"><span class="choice-letter">C</span><span class="choice-copy"><strong>Vetores percorridos com índices diferentes</strong><span>Cada campo avança de forma independente, sem garantir correspondência.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m1_structure_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Reconstrua o registro do índice 2</h3><p>Selecione os quatro campos que pertencem ao mesmo empréstimo.</p></div></div>
+          <div class="record-link" aria-label="Registro do índice 2">
+            <article class="record-field"><small>Título [2]</small><select id="m1_index_title"><option value="">Selecione</option><option value="cortico">O Cortiço</option><option value="vidas">Vidas Secas</option><option value="capitaes">Capitães da Areia</option></select></article>
+            <article class="record-field"><small>Leitor [2]</small><select id="m1_index_reader"><option value="">Selecione</option><option value="carla">Carla</option><option value="ana">Ana</option><option value="elisa">Elisa</option></select></article>
+            <article class="record-field"><small>Vencimento [2]</small><select id="m1_index_due"><option value="">Selecione</option><option value="12">Dia 12</option><option value="9">Dia 9</option><option value="20">Dia 20</option></select></article>
+            <article class="record-field"><small>Devolvido [2]</small><select id="m1_index_returned"><option value="">Selecione</option><option value="yes">Sim</option><option value="no">Não</option></select></article>
+          </div>
+          <div class="branch" id="m1_index_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você organizou o cadastro usando um índice comum para manter todos os campos do empréstimo associados.</p></div><span class="seal">Cadastro coerente</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="2">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">2</span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Consultar sem misturar registros</h2><p>Localize um título e recupere os demais campos usando exatamente o mesmo índice.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>6 min</strong><span>8 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Construir uma busca linear e preservar a correspondência entre o título encontrado e seus dados associados.</p></div><span class="seal-preview">Selo: Consulta consistente</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Observe os empréstimos cadastrados</h3><p>O índice à esquerda conecta todos os campos da mesma linha.</p></div></div>
+          <div class="record-table-wrap">
+            <table class="record-table">
+              <thead><tr><th>Índice</th><th>Título</th><th>Leitor</th><th>Vencimento</th><th>Situação</th></tr></thead>
+              <tbody>
+                <tr><td><code>0</code></td><td>A Hora da Estrela</td><td>Ana</td><td>Dia 10</td><td><span class="status-tag open">Em aberto</span></td></tr>
+                <tr><td><code>1</code></td><td>Quarto de Despejo</td><td>Bruno</td><td>Dia 18</td><td><span class="status-tag open">Em aberto</span></td></tr>
+                <tr><td><code>2</code></td><td>O Cortiço</td><td>Carla</td><td>Dia 12</td><td><span class="status-tag done">Devolvido</span></td></tr>
+                <tr><td><code>3</code></td><td>Capitães da Areia</td><td>Diego</td><td>Dia 20</td><td><span class="status-tag open">Em aberto</span></td></tr>
+                <tr><td><code>4</code></td><td>Vidas Secas</td><td>Elisa</td><td>Dia 9</td><td><span class="status-tag open">Em aberto</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Monte a busca linear</h3><p>Percorra os títulos e registre a posição encontrada.</p></div></div>
+          <div class="control-grid">
+            <article class="control-card"><strong>Início do percurso</strong><small>Primeiro índice</small><select id="m2_start"><option value="">Selecione</option><option value="zero">0</option><option value="one">1</option><option value="five">5</option></select></article>
+            <article class="control-card"><strong>Condição</strong><small>Enquanto houver registros</small><select id="m2_condition"><option value="">Selecione</option><option value="lt">i &lt; 5</option><option value="le">i &lt;= 5</option><option value="gt">i &gt; 5</option></select></article>
+            <article class="control-card"><strong>Comparação</strong><small>Título atual × busca</small><select id="m2_compare"><option value="">Selecione</option><option value="strcmp">strcmp(titulos[i], busca) == 0</option><option value="assign">titulos[i] = busca</option><option value="reader">strcmp(leitores[i], busca) == 0</option></select></article>
+            <article class="control-card"><strong>Ao encontrar</strong><small>O que preservar?</small><select id="m2_found"><option value="">Selecione</option><option value="sameIndex">Usar o mesmo índice i em todos os vetores</option><option value="zero">Usar sempre o índice 0</option><option value="next">Usar i + 1 nos outros vetores</option></select></article>
+          </div>
+          <div class="branch" id="m2_search_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Consulte “O Cortiço”</h3><p>Recupere os dados ligados ao título encontrado.</p></div></div>
+          <div class="control-grid">
+            <article class="control-card"><strong>Índice encontrado</strong><small>Posição no vetor</small><select id="m2_query_index"><option value="">Selecione</option><option value="2">2</option><option value="3">3</option><option value="0">0</option></select></article>
+            <article class="control-card"><strong>Leitor</strong><small>leitores[i]</small><select id="m2_query_reader"><option value="">Selecione</option><option value="carla">Carla</option><option value="ana">Ana</option><option value="diego">Diego</option></select></article>
+            <article class="control-card"><strong>Vencimento</strong><small>vencimentos[i]</small><select id="m2_query_due"><option value="">Selecione</option><option value="12">Dia 12</option><option value="10">Dia 10</option><option value="20">Dia 20</option></select></article>
+            <article class="control-card"><strong>Situação</strong><small>devolvidos[i]</small><select id="m2_query_status"><option value="">Selecione</option><option value="returned">Devolvido</option><option value="open">Em aberto</option><option value="late">Atrasado</option></select></article>
+          </div>
+          <div class="branch" id="m2_query_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">4</span><div><h3>Trate uma busca sem resultado</h3><p>A mensagem deve aparecer somente depois que todo o vetor tiver sido verificado.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Tratamento de título não encontrado">
+            <label class="choice"><input type="radio" name="m2_notfound" value="inside"><span class="choice-letter">A</span><span class="choice-copy"><strong>Imprimir “não encontrado” em cada comparação diferente</strong><span>A mensagem pode aparecer várias vezes antes de o título ser encontrado.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_notfound" value="after"><span class="choice-letter">B</span><span class="choice-copy"><strong>Usar uma variável encontrado e verificar depois do laço</strong><span>A mensagem aparece uma vez, apenas se nenhum índice corresponder.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_notfound" value="skip"><span class="choice-letter">C</span><span class="choice-copy"><strong>Não informar quando a busca falhar</strong><span>O usuário não recebe retorno sobre a consulta.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m2_notfound_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você localizou um título e recuperou leitor, vencimento e situação usando a mesma posição.</p></div><span class="seal">Consulta consistente</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="3">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">3</span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Produzir relatórios coerentes</h2><p>Liste os empréstimos e filtre atrasos sem confundir prazo vencido com livro já devolvido.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>7 min</strong><span>8 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Construir uma listagem completa e um relatório de atrasos com regra lógica e saída correspondente aos dados armazenados.</p></div><span class="seal-preview">Selo: Relatório confiável</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Defina a regra de atraso</h3><p>No dia 15, um empréstimo está atrasado apenas se o prazo passou e o livro ainda não foi devolvido.</p></div></div>
+          <div class="expression-builder">
+            <div class="ide-bar"><span>regra_atraso.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+            <div class="expression-lines">
+              <div class="expression-line"><span class="expression-label">atrasado =</span><select id="m3_rule"><option value="">Selecione a expressão</option><option value="correct">devolvidos[i] == 0 &amp;&amp; vencimentos[i] &lt; DIA_REFERENCIA</option><option value="or">devolvidos[i] == 0 || vencimentos[i] &lt; DIA_REFERENCIA</option><option value="dueOnly">vencimentos[i] &lt; DIA_REFERENCIA</option><option value="returned">devolvidos[i] == 1 &amp;&amp; vencimentos[i] &lt; DIA_REFERENCIA</option></select></div>
+            </div>
+          </div>
+          <div class="branch" id="m3_rule_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Confira o relatório do dia 15</h3><p>Use os cinco registros cadastrados para consolidar a saída.</p></div></div>
+          <div class="report-grid">
+            <article class="report-card"><small>Total listado</small><strong>5 empréstimos</strong><p>Todos os registros aparecem na listagem geral.</p></article>
+            <article class="report-card"><small>Atrasados esperados</small><strong>2 empréstimos</strong><p>A Hora da Estrela e Vidas Secas.</p></article>
+            <article class="report-card"><small>Devolvido no prazo vencido</small><strong>O Cortiço</strong><p>Não entra no relatório de atrasos porque já foi devolvido.</p></article>
+          </div>
+          <div class="control-grid">
+            <article class="control-card"><strong>Quantidade de atrasados</strong><small>Resultado do filtro</small><select id="m3_late_count"><option value="">Selecione</option><option value="2">2</option><option value="3">3</option><option value="1">1</option></select></article>
+            <article class="control-card"><strong>Primeiro atrasado</strong><small>Título</small><select id="m3_late_one"><option value="">Selecione</option><option value="hora">A Hora da Estrela</option><option value="cortico">O Cortiço</option><option value="quarto">Quarto de Despejo</option></select></article>
+            <article class="control-card"><strong>Segundo atrasado</strong><small>Título</small><select id="m3_late_two"><option value="">Selecione</option><option value="vidas">Vidas Secas</option><option value="capitaes">Capitães da Areia</option><option value="cortico">O Cortiço</option></select></article>
+          </div>
+          <div class="branch" id="m3_report_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Reconheça, aplique e analise</h3><p>Valide a regra e diagnostique inconsistências entre os dados e a saída.</p></div></div>
+          <div class="test-grid">
+            <article class="test-card"><span class="case-level">Reconheça</span><div class="test-input"><strong>O Cortiço: prazo 12, devolvido</strong><span>dia 15</span></div><select id="m3_case1"><option value="">Classificação</option><option value="notLate">Não está atrasado</option><option value="late">Está atrasado</option><option value="missing">Não está cadastrado</option></select></article>
+            <article class="test-card"><span class="case-level">Aplique</span><div class="test-input"><strong>Consulta: Vidas Secas</strong><span>índice 4</span></div><select id="m3_case2"><option value="">Saída coerente</option><option value="elisaLate">Elisa — atrasado</option><option value="anaLate">Ana — atrasado</option><option value="elisaReturned">Elisa — devolvido</option></select></article>
+            <article class="test-card"><span class="case-level">Analise</span><div class="test-input"><strong>Título encontrado em i, mas leitor impresso com [0]</strong><span>bug</span></div><select id="m3_case3"><option value="">Diagnóstico</option><option value="mismatch">Mistura dados de empréstimos diferentes</option><option value="faster">Torna a consulta mais rápida</option><option value="same">Não altera o resultado</option></select></article>
+          </div>
+          <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir missão</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você produziu uma listagem geral, um relatório de atrasos e saídas coerentes com cada registro.</p></div><span class="seal">Relatório confiável</span></div>
+
+        <div class="task-block" id="finalCodeBlock" hidden>
+          <div class="task-head"><span class="task-index">✓</span><div><h3>Estrutura final em C</h3><p>Os vetores paralelos compartilham o índice do empréstimo em todas as operações.</p></div></div>
+          <div class="code-window">
+            <div class="ide-bar"><span>biblioteca.c</span><span class="ide-dots"><i class="ide-dot"></i><i class="ide-dot"></i><i class="ide-dot"></i></span></div>
+            <div class="code-body">
+              <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;stdio.h&gt;</span></span></div>
+              <div class="code-line"><span class="line-number">2</span><span class="line-code"><span class="tok-pre">#include</span> <span class="tok-str">&lt;string.h&gt;</span></span></div>
+              <div class="code-line"><span class="line-number">3</span><span class="line-code"></span></div>
+              <div class="code-line entry"><span class="line-number">4</span><span class="line-code"><span class="code-section-label">Cadastro</span><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
+              <div class="code-line entry"><span class="line-number">5</span><span class="line-code">    <span class="tok-type">char</span> titulos[<span class="tok-num">5</span>][<span class="tok-num">40</span>] = {<span class="tok-str">"A Hora da Estrela"</span>, <span class="tok-str">"Quarto de Despejo"</span>,</span></div>
+              <div class="code-line entry"><span class="line-number">6</span><span class="line-code">        <span class="tok-str">"O Cortico"</span>, <span class="tok-str">"Capitaes da Areia"</span>, <span class="tok-str">"Vidas Secas"</span>};</span></div>
+              <div class="code-line entry"><span class="line-number">7</span><span class="line-code">    <span class="tok-type">char</span> leitores[<span class="tok-num">5</span>][<span class="tok-num">20</span>] = {<span class="tok-str">"Ana"</span>, <span class="tok-str">"Bruno"</span>, <span class="tok-str">"Carla"</span>, <span class="tok-str">"Diego"</span>, <span class="tok-str">"Elisa"</span>};</span></div>
+              <div class="code-line entry"><span class="line-number">8</span><span class="line-code">    <span class="tok-type">int</span> vencimentos[<span class="tok-num">5</span>] = {<span class="tok-num">10</span>, <span class="tok-num">18</span>, <span class="tok-num">12</span>, <span class="tok-num">20</span>, <span class="tok-num">9</span>};</span></div>
+              <div class="code-line entry"><span class="line-number">9</span><span class="line-code">    <span class="tok-type">int</span> devolvidos[<span class="tok-num">5</span>] = {<span class="tok-num">0</span>, <span class="tok-num">0</span>, <span class="tok-num">1</span>, <span class="tok-num">0</span>, <span class="tok-num">0</span>};</span></div>
+              <div class="code-line"><span class="line-number">10</span><span class="line-code">    <span class="tok-type">const int</span> DIA_REFERENCIA = <span class="tok-num">15</span>;</span></div>
+              <div class="code-line"><span class="line-number">11</span><span class="line-code"></span></div>
+              <div class="code-line output"><span class="line-number">12</span><span class="line-code"><span class="code-section-label">Listagem geral</span>    <span class="tok-pre">for</span> (<span class="tok-type">int</span> i = <span class="tok-num">0</span>; i &lt; <span class="tok-num">5</span>; i++)</span></div>
+              <div class="code-line output"><span class="line-number">13</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">"%s | %s | dia %d | %s\n"</span>, titulos[i], leitores[i], vencimentos[i],</span></div>
+              <div class="code-line output"><span class="line-number">14</span><span class="line-code">               devolvidos[i] ? <span class="tok-str">"devolvido"</span> : <span class="tok-str">"em aberto"</span>);</span></div>
+              <div class="code-line"><span class="line-number">15</span><span class="line-code"></span></div>
+              <div class="code-line process"><span class="line-number">16</span><span class="line-code"><span class="code-section-label">Consulta</span>    <span class="tok-type">char</span> busca[<span class="tok-num">40</span>];</span></div>
+              <div class="code-line process"><span class="line-number">17</span><span class="line-code">    <span class="tok-type">int</span> encontrado = <span class="tok-num">0</span>;</span></div>
+              <div class="code-line process"><span class="line-number">18</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">" %39[^\n]"</span>, busca);</span></div>
+              <div class="code-line process"><span class="line-number">19</span><span class="line-code">    <span class="tok-pre">for</span> (<span class="tok-type">int</span> i = <span class="tok-num">0</span>; i &lt; <span class="tok-num">5</span>; i++) {</span></div>
+              <div class="code-line process"><span class="line-number">20</span><span class="line-code">        <span class="tok-pre">if</span> (<span class="tok-fn">strcmp</span>(titulos[i], busca) == <span class="tok-num">0</span>) {</span></div>
+              <div class="code-line process"><span class="line-number">21</span><span class="line-code">            <span class="tok-fn">printf</span>(<span class="tok-str">"Leitor: %s | vencimento: %d\n"</span>, leitores[i], vencimentos[i]);</span></div>
+              <div class="code-line process"><span class="line-number">22</span><span class="line-code">            encontrado = <span class="tok-num">1</span>;</span></div>
+              <div class="code-line process"><span class="line-number">23</span><span class="line-code">            <span class="tok-pre">break</span>;</span></div>
+              <div class="code-line process"><span class="line-number">24</span><span class="line-code">        }</span></div>
+              <div class="code-line process"><span class="line-number">25</span><span class="line-code">    }</span></div>
+              <div class="code-line process"><span class="line-number">26</span><span class="line-code">    <span class="tok-pre">if</span> (!encontrado) <span class="tok-fn">printf</span>(<span class="tok-str">"Titulo nao encontrado.\n"</span>);</span></div>
+              <div class="code-line"><span class="line-number">27</span><span class="line-code"></span></div>
+              <div class="code-line output"><span class="line-number">28</span><span class="line-code"><span class="code-section-label">Relatório de atrasos</span>    <span class="tok-pre">for</span> (<span class="tok-type">int</span> i = <span class="tok-num">0</span>; i &lt; <span class="tok-num">5</span>; i++)</span></div>
+              <div class="code-line output"><span class="line-number">29</span><span class="line-code">        <span class="tok-pre">if</span> (devolvidos[i] == <span class="tok-num">0</span> &amp;&amp; vencimentos[i] &lt; DIA_REFERENCIA)</span></div>
+              <div class="code-line output"><span class="line-number">30</span><span class="line-code">            <span class="tok-fn">printf</span>(<span class="tok-str">"Atrasado: %s — %s\n"</span>, titulos[i], leitores[i]);</span></div>
+              <div class="code-line"><span class="line-number">31</span><span class="line-code"></span></div>
+              <div class="code-line"><span class="line-number">32</span><span class="line-code">    <span class="tok-pre">return</span> <span class="tok-num">0</span>;</span></div>
+              <div class="code-line"><span class="line-number">33</span><span class="line-code">}</span></div>
+            </div>
+            <div class="code-legend"><span class="legend-item"><i class="legend-dot entry-dot"></i>Cadastro</span><span class="legend-item"><i class="legend-dot process-dot"></i>Consulta</span><span class="legend-item"><i class="legend-dot output-dot"></i>Relatórios</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="completion" id="completionPanel" aria-live="polite">
+      <span class="completion-label">Percurso concluído</span>
+      <h2>Os dados permaneceram coerentes do cadastro ao relatório</h2>
+      <p>O mesmo índice foi usado para relacionar título, leitor, vencimento e situação. Isso permitiu consultar registros e produzir relatórios sem misturar informações de empréstimos diferentes.</p>
+      <div class="completion-grid">
+        <article class="completion-item"><strong>Cadastro organizado</strong><span>Campos e índices comuns foram definidos.</span></article>
+        <article class="completion-item"><strong>Consulta consistente</strong><span>O título encontrado recuperou os dados correspondentes.</span></article>
+        <article class="completion-item"><strong>Relatório confiável</strong><span>Atrasos foram filtrados com prazo e situação de devolução.</span></article>
+      </div>
+      <div class="completion-actions"><button class="secondary-btn" type="button" id="reviewButton">Revisar as missões</button><button class="secondary-btn" type="button" id="restartButton">Refazer o roteiro</button></div>
+    </section>
+
+    <footer class="resource-credit"><p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p></footer>
+  </main>
+
+  <script>
+    const completed = new Set();
+    const hintState = { 1: 0, 2: 0, 3: 0 };
+    const hints = {
+      1: [
+        ["Pista", "Pense em cada índice como uma ficha de empréstimo. Todos os vetores devem descrever essa mesma ficha na mesma posição."],
+        ["Pergunta guia", "Se titulos[2] é O Cortiço, quais valores precisam aparecer em leitores[2], vencimentos[2] e devolvidos[2]?"],
+        ["Começo da resposta", "Use vetores paralelos do mesmo tamanho e preserve o índice i para título, leitor, vencimento e situação."]
+      ],
+      2: [
+        ["Pista", "Uma busca linear começa no índice zero e compara cada título até encontrar correspondência."],
+        ["Pergunta guia", "Depois de encontrar o título em i, por que leitores[i] é mais seguro do que leitores[0] ou leitores[i + 1]?"],
+        ["Começo da resposta", "for (i = 0; i < 5; i++) if (strcmp(titulos[i], busca) == 0) use os demais vetores no mesmo i."]
+      ],
+      3: [
+        ["Pista", "Prazo vencido sozinho não basta: um livro já devolvido não deve aparecer como atraso."],
+        ["Pergunta guia", "Quais duas condições precisam ser verdadeiras ao mesmo tempo para o empréstimo estar atrasado?"],
+        ["Começo da resposta", "devolvidos[i] == 0 && vencimentos[i] < DIA_REFERENCIA."]
+      ]
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+    function value(id) { const element = document.getElementById(id); return element ? element.value : ""; }
+    function selected(name) { const element = document.querySelector(`input[name="${name}"]:checked`); return element ? element.value : ""; }
+
+    function setBranch(id, title = "", text = "", type = "warn") {
+      const branch = document.getElementById(id);
+      if (!title) { branch.className = "branch"; branch.innerHTML = ""; return; }
+      branch.className = `branch show ${type}`;
+      branch.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+    }
+
+    function showFeedback(number, text, type = "warn") {
+      const feedback = document.getElementById(`m${number}_feedback`);
+      feedback.textContent = text;
+      feedback.className = `feedback show ${type}`;
+    }
+
+    function validateMission1(live = false) {
+      const fieldsOk = value("m1_title_role") === "identify" && value("m1_reader_role") === "person" && value("m1_due_role") === "deadline" && value("m1_return_role") === "status";
+      if (["m1_title_role", "m1_reader_role", "m1_due_role", "m1_return_role"].some(id => value(id)) && !fieldsOk) {
+        setBranch("m1_fields_branch", "Cada campo tem uma responsabilidade", "Título identifica o livro; leitor identifica a pessoa; vencimento define o prazo; devolvido registra a situação.");
+      } else setBranch("m1_fields_branch");
+
+      const structure = selected("m1_structure");
+      const structureOk = structure === "parallel";
+      if (structure && !structureOk) {
+        if (structure === "isolated") setBranch("m1_structure_branch", "Organização pouco escalável", "Variáveis isoladas multiplicam nomes e comandos, dificultando listagens e buscas.");
+        else setBranch("m1_structure_branch", "Correspondência quebrada", "Se cada vetor usa um índice diferente, título e leitor podem deixar de pertencer ao mesmo empréstimo.");
+      } else setBranch("m1_structure_branch");
+
+      const indexOk = value("m1_index_title") === "cortico" && value("m1_index_reader") === "carla" && value("m1_index_due") === "12" && value("m1_index_returned") === "yes";
+      if (["m1_index_title", "m1_index_reader", "m1_index_due", "m1_index_returned"].some(id => value(id)) && !indexOk) {
+        setBranch("m1_index_branch", "Os campos precisam vir da mesma posição", "No índice 2, o cadastro é O Cortiço, Carla, vencimento no dia 12 e situação devolvido.");
+      } else setBranch("m1_index_branch");
+
+      const complete = fieldsOk && structureOk && indexOk;
+      if (!live && !complete) showFeedback(1, "Defina o papel dos campos, escolha a organização e reconstrua corretamente o registro do índice 2.");
+      return complete;
+    }
+
+    function validateMission2(live = false) {
+      const searchOk = value("m2_start") === "zero" && value("m2_condition") === "lt" && value("m2_compare") === "strcmp" && value("m2_found") === "sameIndex";
+      if (["m2_start", "m2_condition", "m2_compare", "m2_found"].some(id => value(id)) && !searchOk) {
+        if (value("m2_condition") === "le") setBranch("m2_search_branch", "Índice fora do cadastro", "Com cinco registros, os índices válidos são 0 a 4; i <= 5 alcança uma posição inexistente.");
+        else if (value("m2_compare") === "assign") setBranch("m2_search_branch", "Atribuição não compara textos", "Use strcmp para verificar se duas strings possuem o mesmo conteúdo.");
+        else if (value("m2_found") !== "sameIndex" && value("m2_found")) setBranch("m2_search_branch", "Dados de outro empréstimo", "Depois de encontrar o título em i, leitor, vencimento e situação também devem usar i.");
+        else setBranch("m2_search_branch", "Revise a busca", "Comece em 0, percorra enquanto i < 5, compare os títulos e preserve o mesmo índice.");
+      } else setBranch("m2_search_branch");
+
+      const queryOk = value("m2_query_index") === "2" && value("m2_query_reader") === "carla" && value("m2_query_due") === "12" && value("m2_query_status") === "returned";
+      if (["m2_query_index", "m2_query_reader", "m2_query_due", "m2_query_status"].some(id => value(id)) && !queryOk) {
+        setBranch("m2_query_branch", "Consulta inconsistente", "O Cortiço está no índice 2 e seus dados associados são Carla, dia 12 e devolvido.");
+      } else setBranch("m2_query_branch");
+
+      const notFound = selected("m2_notfound");
+      const notFoundOk = notFound === "after";
+      if (notFound && !notFoundOk) {
+        if (notFound === "inside") setBranch("m2_notfound_branch", "Mensagem antecipada", "Uma comparação diferente não prova que o título não existe nas posições seguintes.");
+        else setBranch("m2_notfound_branch", "Falta de retorno ao usuário", "A consulta precisa informar quando nenhum título foi localizado.");
+      } else setBranch("m2_notfound_branch");
+
+      const complete = searchOk && queryOk && notFoundOk;
+      if (!live && !complete) showFeedback(2, "Complete a busca, recupere os dados de O Cortiço e trate corretamente uma consulta sem resultado.");
+      return complete;
+    }
+
+    function validateMission3(live = false) {
+      const ruleOk = value("m3_rule") === "correct";
+      if (value("m3_rule") && !ruleOk) {
+        if (value("m3_rule") === "or") setBranch("m3_rule_branch", "O operador || inclui registros indevidos", "Um livro em aberto com prazo futuro ou um livro devolvido com prazo antigo poderia ser marcado como atraso.");
+        else if (value("m3_rule") === "dueOnly") setBranch("m3_rule_branch", "Falta verificar a devolução", "O Cortiço tem prazo anterior ao dia 15, mas já foi devolvido.");
+        else setBranch("m3_rule_branch", "Situação invertida", "Atraso exige que o livro ainda não tenha sido devolvido.");
+      } else setBranch("m3_rule_branch");
+
+      const reportOk = value("m3_late_count") === "2" && value("m3_late_one") === "hora" && value("m3_late_two") === "vidas";
+      if (["m3_late_count", "m3_late_one", "m3_late_two"].some(id => value(id)) && !reportOk) {
+        if (value("m3_late_count") === "3" || value("m3_late_one") === "cortico" || value("m3_late_two") === "cortico") setBranch("m3_report_branch", "Livro devolvido não é atraso", "O Cortiço possui prazo vencido, porém devolvidos[2] vale 1.");
+        else setBranch("m3_report_branch", "Revise o filtro", "No dia 15, os atrasados são A Hora da Estrela e Vidas Secas.");
+      } else setBranch("m3_report_branch");
+
+      const casesOk = value("m3_case1") === "notLate" && value("m3_case2") === "elisaLate" && value("m3_case3") === "mismatch";
+      if (["m3_case1", "m3_case2", "m3_case3"].some(id => value(id)) && !casesOk) {
+        if (value("m3_case1") === "late") setBranch("m3_cases_branch", "Prazo antigo não basta", "Como O Cortiço foi devolvido, ele não deve aparecer entre os atrasados.");
+        else if (value("m3_case2") && value("m3_case2") !== "elisaLate") setBranch("m3_cases_branch", "Use o índice 4", "Vidas Secas pertence a Elisa, vence no dia 9 e continua em aberto.");
+        else if (value("m3_case3") && value("m3_case3") !== "mismatch") setBranch("m3_cases_branch", "Índices diferentes quebram o registro", "Imprimir leitores[0] para um título encontrado em outro índice mistura empréstimos.");
+        else setBranch("m3_cases_branch", "Revise os casos", "Considere simultaneamente prazo, devolução e correspondência de índices.");
+      } else setBranch("m3_cases_branch");
+
+      const complete = ruleOk && reportOk && casesOk;
+      if (!live && !complete) showFeedback(3, "Defina a regra de atraso, confira o relatório e resolva os três casos de validação.");
+      return complete;
+    }
+
+    const validators = { 1: validateMission1, 2: validateMission2, 3: validateMission3 };
+
+    function unlockMission(number) {
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.remove("locked");
+      mission.classList.add("active");
+      const toggle = $(".mission-toggle", mission);
+      toggle.disabled = false;
+      $("[data-state]", mission).textContent = "Disponível";
+    }
+
+    function openMission(number, scroll = false) {
+      $$(".mission").forEach(mission => {
+        const current = Number(mission.dataset.mission);
+        const shouldOpen = current === number;
+        mission.classList.toggle("open", shouldOpen);
+        $(".mission-toggle", mission).setAttribute("aria-expanded", String(shouldOpen));
+      });
+      const mission = $(`.mission[data-mission="${number}"]`);
+      if (scroll) mission.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateMap(activeNumber) {
+      for (let i = 1; i <= 3; i++) {
+        const node = $(`[data-map="${i}"]`);
+        const small = $("small", node);
+        node.classList.remove("active", "locked", "done");
+        if (completed.has(i)) { node.classList.add("done"); small.textContent = "Concluída"; }
+        else if (i === activeNumber) { node.classList.add("active"); small.textContent = "Em andamento"; }
+        else { node.classList.add("locked"); small.textContent = "Bloqueada"; }
+        if (i < 3) $(`[data-connector="${i}"]`).classList.toggle("done", completed.has(i));
+      }
+      document.getElementById("progressText").textContent = activeNumber ? `Missão atual: ${activeNumber} de 3` : "3 de 3 missões concluídas";
+    }
+
+    function completeMission(number, button) {
+      if (completed.has(number)) return;
+      completed.add(number);
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.add("completed");
+      mission.classList.remove("active");
+      $("[data-state]", mission).textContent = "Concluída";
+      document.getElementById(`m${number}_result`).classList.add("show");
+      button.textContent = "Missão concluída";
+      button.disabled = true;
+      showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
+
+      if (number < 3) {
+        unlockMission(number + 1);
+        updateMap(number + 1);
+        setTimeout(() => {
+          mission.classList.remove("open");
+          $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
+          openMission(number + 1, true);
+        }, 700);
+      } else {
+        updateMap(null);
+        document.getElementById("finalCodeBlock").hidden = false;
+        document.getElementById("completionPanel").classList.add("show");
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 300);
+      }
+    }
+
+    $$('[data-check]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.check);
+      if (validators[number](false)) completeMission(number, button);
+    }));
+
+    $$('input, select').forEach(field => field.addEventListener('change', () => {
+      const mission = field.closest('.mission');
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+
+    $$('.mission-toggle').forEach(toggle => toggle.addEventListener('click', () => {
+      const mission = toggle.closest('.mission');
+      if (mission.classList.contains('locked')) return;
+      const isOpen = mission.classList.contains('open');
+      $$('.mission').forEach(item => {
+        if (item !== mission) { item.classList.remove('open'); $('.mission-toggle', item).setAttribute('aria-expanded', 'false'); }
+      });
+      mission.classList.toggle('open', !isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    }));
+
+    $$('[data-hint]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.hint);
+      const next = Math.min(hintState[number], hints[number].length - 1);
+      const [title, text] = hints[number][next];
+      hintState[number] = Math.min(hintState[number] + 1, hints[number].length);
+      const drawer = document.getElementById(`hintDrawer${number}`);
+      drawer.classList.add('show');
+      $('.hint-number', drawer).textContent = `${next + 1}/${hints[number].length}`;
+      document.getElementById(`hintTitle${number}`).textContent = title;
+      document.getElementById(`hintText${number}`).textContent = text;
+      button.textContent = next + 1 < hints[number].length ? 'Ver próxima pista' : 'Pistas exibidas';
+      if (next + 1 >= hints[number].length) button.disabled = true;
+    }));
+
+    document.getElementById('reviewButton').addEventListener('click', () => openMission(1, true));
+    document.getElementById('restartButton').addEventListener('click', () => location.reload());
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro persistente de estudantes — missões</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <style>
+
+    :root {
+      --emerald-950: #022c22;
+      --emerald-900: #064e3b;
+      --emerald-800: #065f46;
+      --emerald-700: #047857;
+      --emerald-600: #059669;
+      --emerald-100: #d1fae5;
+      --emerald-50: #ecfdf5;
+      --teal-700: #0f766e;
+      --teal-100: #ccfbf1;
+      --lime-600: #65a30d;
+      --lime-100: #ecfccb;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --amber-50: #fffbeb;
+      --red-700: #b91c1c;
+      --red-100: #fee2e2;
+      --red-50: #fef2f2;
+      --blue-700: #1d4ed8;
+      --blue-100: #dbeafe;
+      --slate-950: #0f172a;
+      --slate-900: #172033;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
+      --shadow-md: 0 20px 55px rgba(15, 23, 42, .11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-950);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(5, 150, 105, .11), transparent 30rem),
+        radial-gradient(circle at 94% 13%, rgba(101, 163, 13, .08), transparent 28rem),
+        var(--slate-50);
+      padding: 24px 16px 46px;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(5, 150, 105, .32);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 26px;
+      align-items: center;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 84% 15%, rgba(255,255,255,.11), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900) 58%, var(--emerald-700));
+      box-shadow: 0 24px 60px rgba(2, 44, 34, .23);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #34d399, #a3e635, #2dd4bf);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.11);
+      color: #ecfdf5;
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      color: var(--white);
+      font-size: clamp(2rem, 4.8vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .hero-description { max-width: 760px; color: #d1fae5; font-size: 1.02rem; }
+
+    .hero-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.35fr;
+      gap: 12px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(9px);
+    }
+
+    .flow-chip {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,.10);
+      text-align: center;
+    }
+    .flow-chip strong { display: block; color: white; font-size: 1.05rem; }
+    .flow-chip small { color: #a7f3d0; font-weight: 700; }
+    .flow-arrow { color: #bef264; font-size: 1.35rem; text-align: center; }
+    .flow-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .context-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kicker {
+      margin-bottom: 6px;
+      color: var(--emerald-700);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    h2 { color: var(--slate-950); font-size: 1.35rem; line-height: 1.2; letter-spacing: -.02em; }
+    h3 { color: var(--slate-900); font-size: 1.02rem; line-height: 1.25; }
+    p { color: var(--slate-600); }
+
+    .problem-statement {
+      margin-top: 13px;
+      padding: 16px 17px;
+      border: 1px solid var(--emerald-100);
+      border-left: 5px solid var(--emerald-600);
+      border-radius: var(--radius-md);
+      background: var(--emerald-50);
+      color: var(--slate-950);
+      font-weight: 780;
+    }
+
+    .problem-statement small { display: block; margin-top: 7px; color: var(--slate-600); font-weight: 600; }
+
+    .meta-stack { display: grid; gap: 9px; }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+    }
+    .meta-icon {
+      width: 31px; height: 31px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      font-weight: 900;
+    }
+    .meta-row strong { display: block; color: var(--slate-900); font-size: .86rem; }
+    .meta-row span { color: var(--slate-600); font-size: .83rem; }
+
+    .mission-map {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      padding: 15px 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .map-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .map-top strong { color: var(--slate-900); font-size: .93rem; }
+    .map-top span { color: var(--slate-500); font-size: .83rem; }
+    .map-line { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: center; }
+    .map-connector { height: 3px; border-radius: 999px; background: var(--slate-200); transition: background .3s ease; }
+    .map-connector.done { background: linear-gradient(90deg, var(--emerald-600), #84cc16); }
+    .map-node {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      transition: .25s ease;
+    }
+    .map-node-number {
+      width: 30px; height: 30px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border: 2px solid var(--slate-300);
+      border-radius: 50%;
+      background: var(--white);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .map-node strong { display: block; color: inherit; font-size: .83rem; line-height: 1.12; }
+    .map-node small { display: block; margin-top: 2px; color: inherit; font-size: .68rem; text-transform: uppercase; font-weight: 850; letter-spacing: .04em; }
+    .map-node.active { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); box-shadow: 0 0 0 3px rgba(5,150,105,.07); }
+    .map-node.active .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.done { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); }
+    .map-node.done .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.locked { opacity: .62; }
+
+    .mission {
+      --mission-color: var(--emerald-600);
+      --mission-soft: var(--emerald-50);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--mission-color);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+    }
+    .mission[data-mission="2"] { --mission-color: var(--teal-700); --mission-soft: #f0fdfa; }
+    .mission[data-mission="3"] { --mission-color: var(--lime-600); --mission-soft: #f7fee7; }
+    .mission.locked { opacity: .72; }
+    .mission.active { box-shadow: var(--shadow-md); }
+    .mission.completed { border-color: var(--emerald-100); }
+
+    .mission-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 20px 22px;
+      background: var(--white);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mission.locked .mission-toggle { cursor: not-allowed; }
+    .mission-icon {
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 17px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 24%, transparent);
+      font-size: 1.25rem;
+      font-weight: 950;
+    }
+    .mission-heading small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--mission-color);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mission-heading h2 { margin: 0; font-size: 1.35rem; }
+    .mission-heading p { margin-top: 4px; font-size: .9rem; }
+    .mission-side { display: flex; align-items: center; gap: 10px; }
+    .mission-meta {
+      display: grid;
+      gap: 3px;
+      justify-items: end;
+      color: var(--slate-500);
+      font-size: .77rem;
+      white-space: nowrap;
+    }
+    .mission-meta strong { color: var(--slate-800); font-size: .82rem; }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .mission.active .state-pill { background: var(--mission-soft); color: var(--mission-color); }
+    .mission.completed .state-pill { background: var(--emerald-50); color: var(--emerald-800); }
+    .chevron { color: var(--slate-400); font-size: 1.15rem; transition: transform .22s ease; }
+    .mission.open .chevron { transform: rotate(180deg); }
+
+    .mission-content { display: none; padding: 0 22px 24px; }
+    .mission.open .mission-content { display: grid; gap: 22px; }
+
+    .mission-objective {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: var(--mission-soft);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 20%, transparent);
+    }
+    .objective-icon {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 11px; background: white; color: var(--mission-color); font-weight: 950;
+    }
+    .mission-objective strong { display: block; color: var(--slate-900); font-size: .88rem; }
+    .mission-objective p { font-size: .84rem; }
+    .seal-preview { color: var(--mission-color); font-size: .76rem; font-weight: 900; text-align: right; }
+
+    .task-block { display: grid; gap: 12px; padding-top: 2px; }
+    .task-head { display: flex; gap: 11px; align-items: flex-start; }
+    .task-index {
+      width: 29px; height: 29px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+    .task-head h3 { margin-bottom: 3px; }
+    .task-head p { font-size: .88rem; }
+
+    .choice-grid { display: grid; gap: 9px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) 22px;
+      gap: 11px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: var(--slate-300); box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-letter {
+      width: 33px; height: 33px; display: grid; place-items: center;
+      border: 1px solid var(--slate-300); border-radius: 10px;
+      color: var(--slate-600); background: var(--slate-50); font-size: .8rem; font-weight: 900;
+    }
+    .choice-copy strong { display: block; margin-bottom: 2px; color: var(--slate-900); font-size: .91rem; }
+    .choice-copy span { display: block; color: var(--slate-600); font-size: .84rem; }
+    .radio-mark {
+      width: 21px; height: 21px; margin-top: 5px;
+      border: 2px solid var(--slate-300); border-radius: 50%; background: white; position: relative;
+    }
+    .choice:has(input:checked) { border-color: var(--mission-color); background: var(--mission-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 9%, transparent); }
+    .choice:has(input:checked) .choice-letter { border-color: var(--mission-color); background: var(--mission-color); color: white; }
+    .choice:has(input:checked) .radio-mark { border-color: var(--mission-color); }
+    .choice:has(input:checked) .radio-mark::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--mission-color); }
+
+    .eps-flow { display: grid; grid-template-columns: 1fr auto 1.25fr auto 1fr; gap: 10px; align-items: stretch; }
+    .eps-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .eps-card strong { color: var(--slate-900); font-size: .83rem; letter-spacing: .04em; text-transform: uppercase; }
+    .eps-card small { color: var(--slate-500); font-size: .75rem; }
+    .eps-arrow { display: grid; place-items: center; color: var(--emerald-600); font-size: 1.35rem; font-weight: 900; }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 34px 9px 10px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    select:focus { border-color: var(--mission-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent); }
+
+    .expression-builder {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+    .ide-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #263244;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    .ide-dots { display: flex; gap: 6px; }
+    .ide-dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; }
+    .expression-lines { display: grid; gap: 11px; padding: 16px; }
+    .expression-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .expression-label { color: #a7f3d0; font: 700 .86rem Consolas, Monaco, monospace; white-space: nowrap; }
+    .expression-line select { min-height: 42px; border-color: #334155; background: #172033; color: #f8fafc; font-family: Consolas, Monaco, monospace; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .test-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .test-input { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .test-input strong { color: var(--slate-900); font-size: .86rem; }
+    .test-input span { padding: 4px 8px; border-radius: 8px; background: var(--white); color: var(--emerald-800); font: 800 .8rem Consolas, monospace; border: 1px solid var(--slate-200); }
+
+    .branch {
+      display: none;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .87rem;
+    }
+    .branch.show { display: block; animation: reveal .18s ease; }
+    .branch strong { display: block; color: var(--amber-700); margin-bottom: 3px; }
+
+    .help-row { display: flex; justify-content: flex-start; }
+    .hint-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 999px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      cursor: pointer;
+      font-size: .84rem;
+      font-weight: 850;
+      transition: .16s ease;
+    }
+    .hint-btn:hover { transform: translateY(-1px); background: #dcfce7; }
+    .hint-btn:disabled { cursor: default; opacity: .62; transform: none; }
+    .hint-drawer {
+      display: none;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 14px;
+      background: var(--emerald-50);
+    }
+    .hint-drawer.show { display: grid; animation: reveal .18s ease; }
+    .hint-number { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: var(--emerald-700); color: white; font-size: .75rem; font-weight: 900; }
+    .hint-drawer strong { display: block; color: var(--emerald-900); font-size: .85rem; }
+    .hint-drawer p { margin-top: 2px; font-size: .84rem; }
+
+    .mission-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 3px; }
+    .primary-btn, .secondary-btn {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .primary-btn { background: var(--mission-color); color: white; box-shadow: 0 8px 20px color-mix(in srgb, var(--mission-color) 22%, transparent); }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(.94); }
+    .primary-btn:disabled { cursor: default; opacity: .62; transform: none; box-shadow: none; }
+    .secondary-btn { border: 1px solid var(--slate-300); background: white; color: var(--slate-700); }
+    .secondary-btn:hover { background: var(--slate-50); transform: translateY(-1px); }
+
+    .feedback { display: none; flex: 1 1 310px; padding: 11px 13px; border-radius: 12px; font-size: .86rem; font-weight: 750; }
+    .feedback.show { display: block; }
+    .feedback.warn { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-100); }
+    .feedback.bad { background: var(--red-50); color: var(--red-700); border: 1px solid var(--red-100); }
+    .feedback.ok { background: var(--emerald-50); color: var(--emerald-800); border: 1px solid var(--emerald-100); }
+
+    .mission-result {
+      display: none;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--emerald-50), #f7fee7);
+    }
+    .mission-result.show { display: grid; animation: reveal .24s ease; }
+    .result-check { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--emerald-600); color: white; font-size: 1.15rem; font-weight: 950; }
+    .mission-result strong { display: block; color: var(--emerald-900); margin-bottom: 3px; }
+    .mission-result p { font-size: .84rem; }
+    .seal {
+      min-width: 142px;
+      padding: 9px 11px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 12px;
+      background: white;
+      color: var(--emerald-800);
+      text-align: center;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+    .code-body { padding: 12px 0; overflow-x: auto; }
+    .code-line {
+      display: grid;
+      grid-template-columns: 43px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      color: #e2e8f0;
+      font: .84rem/1.55 Consolas, Monaco, "Courier New", monospace;
+      white-space: pre;
+    }
+    .line-number { padding-right: 12px; color: #64748b; text-align: right; user-select: none; }
+    .line-code { padding-right: 18px; }
+    .code-line.entry { background: rgba(29,78,216,.13); border-left: 4px solid #60a5fa; }
+    .code-line.process { background: rgba(5,150,105,.13); border-left: 4px solid #34d399; }
+    .code-line.output { background: rgba(101,163,13,.13); border-left: 4px solid #a3e635; }
+    .tok-pre { color: #c084fc; }
+    .tok-type { color: #67e8f9; }
+    .tok-fn { color: #fde68a; }
+    .tok-str { color: #86efac; }
+    .tok-num { color: #fca5a5; }
+    .tok-var { color: #e2e8f0; }
+    .tok-comment { color: #94a3b8; font-style: italic; }
+    .code-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-top: 1px solid #263244; background: #172033; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #cbd5e1; font-size: .73rem; font-weight: 800; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-dot { background: #60a5fa; }
+    .process-dot { background: #34d399; }
+    .output-dot { background: #a3e635; }
+
+    .completion {
+      display: none;
+      padding: 27px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 92% 10%, rgba(163,230,53,.15), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+    .completion.show { display: block; animation: reveal .3s ease; }
+    .completion-label { color: #bef264; font-size: .75rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .completion h2 { margin-top: 5px; color: white; font-size: 1.65rem; }
+    .completion > p { margin-top: 7px; color: #d1fae5; }
+    .completion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 17px; }
+    .completion-item { padding: 13px; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: rgba(255,255,255,.07); }
+    .completion-item strong { display: block; color: white; font-size: .86rem; }
+    .completion-item span { display: block; margin-top: 3px; color: #d1fae5; font-size: .79rem; }
+    .completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    .completion .secondary-btn { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.10); color: white; }
+    .completion .secondary-btn:hover { background: rgba(255,255,255,.16); }
+
+    .resource-credit { padding: 16px 10px 0; text-align: center; color: var(--slate-500); font-size: .82rem; }
+    .resource-credit a { color: var(--emerald-700); font-weight: 800; text-decoration: none; }
+    .resource-credit a:hover { text-decoration: underline; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 920px) {
+      .hero, .context-card { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 560px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .eps-flow { grid-template-columns: 1fr; }
+      .eps-arrow { transform: rotate(90deg); }
+      .map-line { grid-template-columns: 1fr 28px 1fr 28px 1fr; }
+      .map-node { align-items: center; justify-content: center; padding: 8px; }
+      .map-node-copy { display: none; }
+      .completion-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      body { padding: 12px 10px 30px; }
+      .shell { gap: 12px; }
+      .hero { padding: 22px 18px; border-radius: 21px; }
+      .hero-flow { grid-template-columns: 1fr auto 1fr; padding: 14px; gap: 8px; }
+      .hero-flow > .flow-arrow:last-of-type { display: none; }
+      .flow-results { grid-column: 1 / -1; }
+      .flow-chip { padding: 10px 7px; }
+      .flow-chip strong { font-size: .86rem; }
+      .flow-chip small { font-size: .68rem; }
+      .context-card { padding: 17px; border-radius: 18px; }
+      .mission-map { top: 4px; padding: 11px; border-radius: 15px; }
+      .map-top { margin-bottom: 9px; }
+      .map-top span { display: none; }
+      .mission { border-radius: 20px; }
+      .mission-toggle { grid-template-columns: auto 1fr; padding: 16px; }
+      .mission-icon { width: 44px; height: 44px; border-radius: 14px; }
+      .mission-side { grid-column: 1 / -1; justify-content: space-between; padding-left: 59px; }
+      .mission-meta { justify-items: start; display: flex; gap: 8px; align-items: center; }
+      .mission-content { padding: 0 16px 18px; }
+      .mission-objective { grid-template-columns: auto 1fr; }
+      .seal-preview { grid-column: 1 / -1; text-align: left; padding-left: 45px; }
+      .choice { grid-template-columns: 32px 1fr 20px; padding: 11px; gap: 9px; }
+      .choice-letter { width: 29px; height: 29px; }
+      .mission-result { grid-template-columns: auto 1fr; }
+      .seal { grid-column: 1 / -1; margin-left: 56px; text-align: left; }
+      .mission-actions { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .feedback { flex-basis: auto; }
+      .completion { padding: 21px 18px; border-radius: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  
+
+    input[type="number"] {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 11px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    input[type="number"]:focus {
+      border-color: var(--mission-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr);
+      gap: 12px;
+    }
+
+    .setup-card {
+      display: grid;
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .setup-card label {
+      color: var(--slate-900);
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .setup-card small {
+      color: var(--slate-500);
+      font-size: .75rem;
+    }
+
+    .trace-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trace-card {
+      position: relative;
+      display: grid;
+      gap: 11px;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+
+    .trace-card::after {
+      content: "→";
+      position: absolute;
+      right: -17px;
+      top: 50%;
+      z-index: 2;
+      color: var(--mission-color);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+
+    .trace-card:last-child::after { display: none; }
+
+    .trace-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trace-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .trace-step strong {
+      color: var(--slate-900);
+      font-size: .82rem;
+    }
+
+    .trace-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .7rem;
+    }
+
+    .trace-fields {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trace-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .trace-field label {
+      color: var(--slate-600);
+      font-size: .72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .case-level {
+      display: inline-flex;
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .diagnosis-box {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .output-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 9px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .output-box {
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+      text-align: center;
+    }
+
+    .output-box small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .output-box strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 900 1.05rem Consolas, Monaco, monospace;
+    }
+
+    .comparison-arrow {
+      color: var(--mission-color);
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+
+    .summary-state {
+      padding: 11px;
+      border-radius: 12px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .summary-state small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .summary-state strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 800 .78rem/1.45 Consolas, Monaco, monospace;
+    }
+
+    @media (max-width: 920px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr 1fr; }
+      .trace-card:nth-child(2)::after { display: none; }
+      .diagnosis-box, .setup-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr; }
+      .trace-card::after { display: none; }
+      .output-comparison { grid-template-columns: 1fr; }
+      .comparison-arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .hero-flow.hero-trace {
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .hero-trace .flow-chip {
+      min-height: 78px;
+      display: grid;
+      align-content: center;
+    }
+
+    .hero-trace .flow-chip small {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .hero-trace .flow-chip strong {
+      font-size: .94rem;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 660px) {
+      .hero-flow.hero-trace {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-trace .flow-chip {
+        min-height: 68px;
+      }
+    }
+
+  
+
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .architecture-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      background: var(--surface);
+    }
+
+    .architecture-card small {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .architecture-card strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 5px;
+    }
+
+    .architecture-card p {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .architecture-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .role-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .role-card code {
+      width: fit-content;
+      border-radius: 8px;
+      padding: 3px 7px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .variable-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .variable-token {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font: 800 .83rem/1.2 Consolas, monospace;
+    }
+
+    .logic-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .logic-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 15px;
+    }
+
+    .logic-panel h4 {
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .logic-selects {
+      display: grid;
+      gap: 10px;
+    }
+
+    .logic-row {
+      display: grid;
+      grid-template-columns: minmax(145px, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logic-row label {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .signature-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .signature-card.full { grid-column: 1 / -1; }
+
+    .code-section-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font: 800 .68rem/1.3 system-ui, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #D1FAE5;
+      border: 1px solid rgba(209,250,229,.24);
+      background: rgba(16,185,129,.16);
+      margin-right: 8px;
+    }
+
+    .final-code[hidden] { display: none; }
+
+    @media (max-width: 860px) {
+      .architecture-flow,
+      .role-grid,
+      .logic-grid,
+      .signature-grid { grid-template-columns: 1fr; }
+      .architecture-arrow { transform: rotate(90deg); }
+      .logic-row { grid-template-columns: 1fr; gap: 5px; }
+      .signature-card.full { grid-column: auto; }
+    }
+
+
+    .hero-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .loop-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+      align-items: stretch;
+    }
+    .loop-card {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .loop-card:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      z-index: 2;
+      color: var(--emerald-600);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+    .loop-card small { color: var(--slate-500); font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 850; }
+    .loop-card strong { color: var(--slate-900); font-size: .92rem; }
+    .loop-card p { font-size: .8rem; }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .control-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .control-card strong { color: var(--slate-900); font-size: .83rem; }
+    .control-card small { color: var(--slate-500); font-size: .74rem; }
+
+    .state-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+    .state-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .state-table th,
+    .state-table td {
+      padding: 11px;
+      border-bottom: 1px solid var(--slate-200);
+      border-right: 1px solid var(--slate-200);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .state-table th:last-child,
+    .state-table td:last-child { border-right: 0; }
+    .state-table tr:last-child td { border-bottom: 0; }
+    .state-table th {
+      background: var(--slate-50);
+      color: var(--slate-700);
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .state-table td:first-child { color: var(--slate-900); font-weight: 900; }
+    .state-table input[type="number"] { min-width: 112px; }
+
+    .formula-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+    .formula-card {
+      display: grid;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .formula-card strong { color: var(--slate-900); font-size: .84rem; }
+    .formula-arrow { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    .case-level {
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .7rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    @media (max-width: 920px) {
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr 1fr; }
+      .loop-card:not(:last-child)::after { display: none; }
+      .formula-strip { grid-template-columns: 1fr; }
+      .formula-arrow { transform: rotate(90deg); text-align: center; }
+    }
+    @media (max-width: 660px) {
+      .hero-flow { grid-template-columns: 1fr; }
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr; }
+    }
+
+
+
+    .catalog-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .catalog-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .catalog-card small {
+      display: block;
+      color: var(--emerald-700);
+      font-size: .7rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .catalog-card strong { display: block; margin-top: 4px; color: var(--slate-900); }
+    .catalog-card p { margin-top: 4px; font-size: .82rem; }
+
+    .record-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: white;
+    }
+    .record-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+    .record-table th,
+    .record-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--slate-200);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .record-table th {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      font-size: .7rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .record-table tbody tr:last-child td { border-bottom: 0; }
+    .record-table code {
+      padding: 3px 6px;
+      border-radius: 7px;
+      background: var(--slate-100);
+      color: var(--emerald-800);
+      font-size: .78rem;
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: .69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .status-tag.open { background: var(--amber-100); color: var(--amber-700); }
+    .status-tag.done { background: var(--emerald-100); color: var(--emerald-800); }
+    .status-tag.late { background: var(--red-100); color: var(--red-700); }
+
+    .record-link {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px dashed var(--slate-300);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .record-field {
+      padding: 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+    }
+    .record-field small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .66rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .record-field strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--slate-900);
+      font-size: .84rem;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .report-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .report-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .report-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--slate-900);
+      font-size: 1.08rem;
+    }
+    .report-card p { margin-top: 3px; font-size: .8rem; }
+
+    @media (max-width: 920px) {
+      .catalog-flow, .record-link, .report-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 660px) {
+      .catalog-flow, .record-link, .report-grid { grid-template-columns: 1fr; }
+    }
+
+    .stock-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .stock-card {
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+      min-width: 0;
+    }
+    .stock-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .66rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .stock-card strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font-size: .92rem;
+    }
+    .stock-card span {
+      display: block;
+      margin-top: 2px;
+      color: var(--slate-600);
+      font-size: .78rem;
+    }
+    .movement-list { display: grid; gap: 10px; }
+    .movement-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1.2fr) minmax(160px, .55fr);
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .movement-number {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      background: var(--teal-700);
+      color: white;
+      font-weight: 900;
+    }
+    .movement-copy strong { display: block; color: var(--slate-900); }
+    .movement-copy span { display: block; color: var(--slate-600); font-size: .81rem; }
+    .movement-row select { width: 100%; }
+    .indicator-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .indicator-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .indicator-card small { display: block; color: var(--slate-500); font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+    .indicator-card strong { display: block; margin-top: 4px; color: var(--slate-900); font-size: 1.05rem; }
+    .indicator-card select { margin-top: 8px; width: 100%; }
+    @media (max-width: 900px) {
+      .stock-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .movement-row { grid-template-columns: auto 1fr; }
+      .movement-row select { grid-column: 1 / -1; }
+      .indicator-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) { .stock-grid { grid-template-columns: 1fr; } }
+
+
+
+    .participant-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .participant-card {
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+      min-width: 0;
+    }
+    .participant-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .participant-card strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font-size: .94rem;
+    }
+    .participant-card span {
+      display: block;
+      margin-top: 2px;
+      color: var(--slate-600);
+      font-size: .8rem;
+    }
+    .participant-card select { width: 100%; margin-top: 9px; }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .rule-card {
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-top: 4px solid var(--mission-color, var(--emerald-600));
+      border-radius: 14px;
+      background: var(--white);
+    }
+    .rule-card small { display: block; color: var(--slate-500); font-size: .68rem; font-weight: 900; text-transform: uppercase; }
+    .rule-card strong { display: block; margin-top: 4px; color: var(--slate-900); }
+    .rule-card span { display: block; margin-top: 3px; color: var(--slate-600); font-size: .8rem; }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .metric-card small { display: block; color: var(--slate-500); font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+    .metric-card strong { display: block; margin-top: 4px; color: var(--slate-900); font-size: 1.02rem; }
+    .metric-card select { width: 100%; margin-top: 8px; }
+
+    .category-counts {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .category-card {
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+    }
+    .category-card strong { display: block; color: var(--slate-900); }
+    .category-card small { display: block; color: var(--slate-500); font-size: .72rem; }
+    .category-card select { width: 100%; margin-top: 8px; }
+
+    @media (max-width: 920px) {
+      .participant-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .rule-grid, .category-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .participant-grid, .rule-grid, .metric-grid, .category-counts { grid-template-columns: 1fr; }
+    }
+
+    .record-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .record-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-top: 4px solid var(--emerald-600);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .record-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .record-card strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font-size: .98rem;
+    }
+    .record-card p { margin-top: 4px; font-size: .82rem; }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .field-card {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .field-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .field-card strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font-size: .9rem;
+      overflow-wrap: anywhere;
+    }
+    .field-card span {
+      display: block;
+      margin-top: 3px;
+      color: var(--slate-600);
+      font-size: .78rem;
+    }
+    .field-card select { margin-top: 9px; }
+
+    .record-preview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .record-state {
+      padding: 15px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+    .record-state > small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .record-state h3 { margin-top: 5px; }
+    .attribute-list { display: grid; gap: 7px; margin-top: 10px; }
+    .attribute-row {
+      display: grid;
+      grid-template-columns: minmax(95px, .7fr) 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 11px;
+      background: white;
+    }
+    .attribute-row strong { color: var(--slate-800); font-size: .8rem; }
+    .attribute-row span { color: var(--slate-600); font-size: .8rem; }
+
+    .case-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .case-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .case-card small {
+      display: block;
+      color: var(--mission-color);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .case-card strong { display: block; margin-top: 4px; color: var(--slate-900); }
+    .case-card p { margin-top: 4px; font-size: .81rem; }
+    .case-card select { margin-top: 10px; }
+
+    .mini-note {
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .84rem;
+    }
+
+    @media (max-width: 980px) {
+      .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .record-flow, .case-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 650px) {
+      .field-grid, .record-preview { grid-template-columns: 1fr; }
+    }
+
+
+    .pyramid-visual {
+      display: grid;
+      gap: 7px;
+      justify-items: center;
+      padding: 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+    }
+    .pyramid-row { display: flex; justify-content: center; gap: 6px; }
+    .can {
+      width: 31px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--emerald-700);
+      border-radius: 7px 7px 10px 10px;
+      background: linear-gradient(180deg, #ecfdf5, #d1fae5);
+      color: var(--emerald-900);
+      font-size: .72rem;
+      font-weight: 900;
+      box-shadow: inset 0 5px 0 rgba(255,255,255,.55);
+    }
+    .pyramid-caption { margin-top: 5px; color: var(--slate-600); font-size: .82rem; text-align: center; }
+
+    .call-chain {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid var(--slate-200);
+      border-radius: 17px;
+      background: var(--slate-50);
+    }
+    .call-row {
+      display: grid;
+      grid-template-columns: 84px minmax(0, 1fr) 150px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: white;
+    }
+    .call-depth {
+      color: var(--mission-color);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .call-code { color: var(--slate-900); font: 700 .88rem Consolas, Monaco, monospace; }
+    .call-row select { min-width: 0; }
+
+    .return-path {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .return-card {
+      padding: 13px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: white;
+      text-align: center;
+    }
+    .return-card small { display: block; color: var(--mission-color); font-size: .68rem; font-weight: 900; text-transform: uppercase; }
+    .return-card code { display: block; margin: 5px 0 8px; color: var(--slate-900); font-weight: 800; }
+
+    .relation-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+    .relation-part {
+      padding: 15px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .relation-part small { display: block; color: var(--mission-color); font-size: .7rem; font-weight: 900; text-transform: uppercase; }
+    .relation-part strong { display: block; margin-top: 5px; color: var(--slate-900); }
+    .relation-arrow { align-self: center; color: var(--mission-color); font-size: 1.35rem; font-weight: 900; }
+
+    @media (max-width: 760px) {
+      .call-row { grid-template-columns: 1fr; }
+      .return-path { grid-template-columns: 1fr; }
+      .relation-card { grid-template-columns: 1fr; }
+      .relation-arrow { transform: rotate(90deg); justify-self: center; }
+    }
+</style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="badge-row">
+          <span class="badge">CCI13</span>
+          <span class="badge">Persistência em arquivos</span>
+          <span class="badge">3 missões</span>
+        </div>
+        <h1>Cadastro persistente de estudantes</h1>
+        <p class="hero-description">Registre matrícula, nome e nota em arquivo e recupere o estudante mesmo depois que o programa for encerrado e executado novamente.</p>
+      </div>
+      <div class="hero-flow" aria-label="Resumo do percurso">
+        <div class="flow-chip"><small>memória</small><strong>dados temporários</strong></div>
+        <div class="flow-chip"><small>arquivo</small><strong>estado persistido</strong></div>
+        <div class="flow-chip"><small>nova execução</small><strong>busca recupera</strong></div>
+      </div>
+    </header>
+
+    <section class="context-card">
+      <div>
+        <p class="kicker">Problema real</p>
+        <h2>O cadastro precisa continuar disponível após o programa ser fechado</h2>
+        <div class="problem-statement">
+          O sistema recebe matrícula, nome e nota. Cada estudante deve ser acrescentado ao arquivo <code>estudantes.txt</code>. Em uma execução posterior, a consulta por matrícula precisa reabrir o arquivo, percorrer os registros e apresentar os dados correspondentes.
+          <small>Neste roteiro, cada linha usa o formato <code>matricula;nome;nota</code>. A matrícula é única e o caractere ponto e vírgula não faz parte do nome.</small>
+        </div>
+        <div class="return-path" aria-label="Diferença entre memória e persistência">
+          <article class="return-card"><small>1. entrada</small><code>Estudante novo</code><span>existe na memória durante a execução</span></article>
+          <article class="return-card"><small>2. gravação</small><code>fprintf</code><span>transforma os campos em uma linha persistente</span></article>
+          <article class="return-card"><small>3. reinício</small><code>memória limpa</code><span>as variáveis anteriores deixam de existir</span></article>
+          <article class="return-card"><small>4. recuperação</small><code>fopen + fscanf</code><span>reconstrói o registro a partir do arquivo</span></article>
+        </div>
+      </div>
+      <div class="meta-stack">
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>Competência</strong><span>Persistir e recuperar dados em arquivos com abertura, leitura, escrita e fechamento seguros.</span></div></div>
+        <div class="meta-row"><span class="meta-icon">F</span><div><strong>Foco</strong><span>Integrar cadastro, gravação, recuperação e busca, distinguindo memória e armazenamento persistente.</span></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>Tempo estimado</strong><span>24 a 30 minutos</span></div></div>
+        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência final</strong><span>Programa que cadastra e localiza estudantes mesmo após uma nova execução.</span></div></div>
+      </div>
+    </section>
+
+    <nav class="mission-map" aria-label="Mapa das missões">
+      <div class="map-top"><strong id="progressText">Missão atual: 1 de 3</strong><span>Conclua uma missão para liberar a próxima.</span></div>
+      <div class="map-line">
+        <article class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Distinguir os estados</strong><small>Em andamento</small></span></article>
+        <span class="map-connector" data-connector="1"></span>
+        <article class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Persistir o cadastro</strong><small>Bloqueada</small></span></article>
+        <span class="map-connector" data-connector="2"></span>
+        <article class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Reabrir e pesquisar</strong><small>Bloqueada</small></span></article>
+      </div>
+    </nav>
+
+    <section class="mission active open" data-mission="1">
+      <button class="mission-toggle" type="button" aria-expanded="true">
+        <span class="mission-icon">1</span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Distinguir memória e persistência</h2><p>Identifique onde os dados existem e organize o percurso que transforma uma entrada temporária em um registro recuperável.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>8 min</strong><span>11 decisões</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+      </button>
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Compreender que uma variável não sobrevive ao encerramento do programa e que o arquivo precisa ser gravado e reaberto.</p></div><span class="seal-preview">Selo: Estados distinguidos</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Classifique cada estado do cadastro</h3><p>Considere que o programa acabou de receber os dados de uma estudante.</p></div></div>
+          <div class="field-grid">
+            <article class="field-card"><small><code>Estudante atual</code> durante a execução</small><select id="m1_variable"><option value="">Selecione</option><option value="memory">estado em memória</option><option value="persistent">estado persistido</option><option value="both">arquivo e memória obrigatoriamente</option></select></article>
+            <article class="field-card"><small>Linha gravada em <code>estudantes.txt</code></small><select id="m1_file"><option value="">Selecione</option><option value="persistent">estado persistido</option><option value="memory">estado apenas em memória</option><option value="lost">estado já perdido</option></select></article>
+            <article class="field-card"><small>Depois de encerrar e abrir o programa novamente</small><select id="m1_restart"><option value="">Selecione</option><option value="file_only">as variáveis anteriores somem, mas o arquivo permanece</option><option value="all">variáveis e arquivo continuam automaticamente na memória</option><option value="nothing">todos os dados desaparecem</option></select></article>
+          </div>
+          <div class="branch" id="m1_state_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Ordene o caminho até a persistência</h3><p>Selecione a ação correspondente a cada etapa do cadastro.</p></div></div>
+          <div class="field-grid">
+            <article class="field-card"><small>Etapa 1</small><select id="m1_step1"><option value="">Selecione</option><option value="input">receber matrícula, nome e nota</option><option value="open">abrir o arquivo</option><option value="write">gravar a linha</option></select></article>
+            <article class="field-card"><small>Etapa 2</small><select id="m1_step2"><option value="">Selecione</option><option value="open">abrir em modo de acréscimo</option><option value="close">fechar o arquivo</option><option value="search">pesquisar outro estudante</option></select></article>
+            <article class="field-card"><small>Etapa 3</small><select id="m1_step3"><option value="">Selecione</option><option value="check">verificar se <code>fopen</code> retornou um ponteiro válido</option><option value="write">gravar antes de verificar</option><option value="restart">reiniciar o programa</option></select></article>
+            <article class="field-card"><small>Etapa 4</small><select id="m1_step4"><option value="">Selecione</option><option value="write">escrever o registro com <code>fprintf</code></option><option value="read">ler o arquivo inteiro</option><option value="close">fechar sem gravar</option></select></article>
+            <article class="field-card"><small>Etapa 5</small><select id="m1_step5"><option value="">Selecione</option><option value="close">fechar com <code>fclose</code></option><option value="erase">apagar o arquivo</option><option value="keep_open">manter o arquivo aberto</option></select></article>
+          </div>
+          <div class="branch" id="m1_order_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Defina um registro recuperável</h3><p>A escrita e a leitura precisam concordar sobre campos e separadores.</p></div></div>
+          <div class="return-path">
+            <article class="return-card"><small>matrícula</small><code>2026102</code><span>inteiro usado na busca</span></article>
+            <article class="return-card"><small>nome</small><code>Carlos Melo</code><span>texto que pode conter espaços</span></article>
+            <article class="return-card"><small>nota</small><code>6.75</code><span>valor real</span></article>
+          </div>
+          <div class="field-grid" style="margin-top:10px">
+            <article class="field-card"><small>Quantidade de campos por registro</small><select id="m1_fields"><option value="">Selecione</option><option value="3">3 campos</option><option value="2">2 campos</option><option value="4">4 campos</option></select></article>
+            <article class="field-card"><small>Separador entre os campos</small><select id="m1_delimiter"><option value="">Selecione</option><option value="semicolon">ponto e vírgula</option><option value="none">nenhum separador</option><option value="files">um arquivo para cada caractere</option></select></article>
+            <article class="field-card"><small>Organização dos registros</small><select id="m1_line"><option value="">Selecione</option><option value="one">uma linha completa por estudante</option><option value="mixed">campos de estudantes diferentes na mesma linha</option><option value="memory">somente em variáveis</option></select></article>
+          </div>
+          <div class="branch" id="m1_format_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" data-hint="1" type="button">Preciso de uma pista</button><div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1"></strong><p id="hintText1"></p></div></div></div>
+        <div class="mission-actions"><button class="primary-btn" data-check="1" type="button">Concluir missão 1</button><div class="feedback" id="m1_feedback"></div></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você distinguiu os estados, organizou o ciclo de gravação e definiu um formato coerente para cada registro.</p></div><span class="seal">Estados distinguidos</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="2">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">2</span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Persistir o cadastro com segurança</h2><p>Complete a escrita, preserve os registros anteriores e impeça matrículas duplicadas.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>8 min</strong><span>8 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Acrescentar um registro válido ao arquivo, verificar falhas e manter a matrícula como identificador único.</p></div><span class="seal-preview">Selo: Cadastro persistido</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Complete a operação de gravação</h3><p>O arquivo já pode conter estudantes cadastrados em execuções anteriores.</p></div></div>
+          <div class="expression-builder">
+            <div class="ide-bar"><span>cadastrar_estudante.c</span><span>acréscimo + verificação + fechamento</span></div>
+            <div class="expression-lines">
+              <div class="expression-line"><span class="expression-number">1</span><span class="expression-code">FILE *arquivo = fopen("estudantes.txt", <select id="m2_mode"><option value="">modo</option><option value="a">"a"</option><option value="w">"w"</option><option value="r">"r"</option></select>);</span></div>
+              <div class="expression-line"><span class="expression-number">2</span><span class="expression-code">if (<select id="m2_check"><option value="">condição</option><option value="null">arquivo == NULL</option><option value="not_null">arquivo != NULL</option><option value="student">estudante == NULL</option></select>) return;</span></div>
+              <div class="expression-line"><span class="expression-number">3</span><span class="expression-code"><select id="m2_function"><option value="">função</option><option value="fprintf">fprintf</option><option value="fscanf">fscanf</option><option value="printf">printf</option></select>(arquivo, <select id="m2_format"><option value="">formato</option><option value="correct">"%d;%s;%.2f\n"</option><option value="two">"%d;%s\n"</option><option value="screen">"Matricula: %d"</option></select>, estudante.matricula, estudante.nome, estudante.nota);</span></div>
+              <div class="expression-line"><span class="expression-number">4</span><span class="expression-code"><select id="m2_close"><option value="">encerramento</option><option value="close">fclose(arquivo);</option><option value="nothing">nenhuma ação</option><option value="remove">remove("estudantes.txt");</option></select></span></div>
+            </div>
+          </div>
+          <div class="branch" id="m2_write_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Preserve a unicidade da matrícula</h3><p>O arquivo já contém a matrícula <code>2026102</code>. O usuário tenta cadastrá-la novamente com outro nome.</p></div></div>
+          <div class="choice-grid">
+            <label class="choice"><input type="radio" name="m2_duplicate" value="search_before"><span class="choice-letter">A</span><span class="choice-copy"><strong>Pesquisar antes de gravar e recusar a duplicação</strong><span>A matrícula continua identificando um único estudante.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_duplicate" value="append_anyway"><span class="choice-letter">B</span><span class="choice-copy"><strong>Acrescentar o novo registro sem consultar</strong><span>A mesma matrícula passaria a representar estudantes diferentes.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_duplicate" value="erase_all"><span class="choice-letter">C</span><span class="choice-copy"><strong>Apagar o arquivo e manter apenas o registro novo</strong><span>Os demais cadastros seriam perdidos.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m2_duplicate_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Analise três falhas de persistência</h3><p>Relacione cada decisão ao efeito provável.</p></div></div>
+          <div class="field-grid">
+            <article class="field-card"><small>Abrir com <code>"w"</code> para cadastrar um estudante</small><select id="m2_w_effect"><option value="">Selecione</option><option value="erase">pode apagar os registros anteriores</option><option value="append">sempre acrescenta ao final</option><option value="read">permite apenas leitura</option></select></article>
+            <article class="field-card"><small>Preencher apenas uma variável e não usar <code>fprintf</code></small><select id="m2_memory_only"><option value="">Selecione</option><option value="volatile">o cadastro desaparece ao encerrar o programa</option><option value="saved">o sistema operacional salva automaticamente</option><option value="duplicated">o arquivo recebe duas cópias</option></select></article>
+            <article class="field-card"><small>Não chamar <code>fclose</code> após a escrita</small><select id="m2_close_reason"><option value="">Selecione</option><option value="buffers">pode deixar buffers pendentes e o recurso aberto</option><option value="safer">torna a gravação mais segura</option><option value="required_read">é necessário apenas para leitura</option></select></article>
+          </div>
+          <div class="branch" id="m2_analysis_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" data-hint="2" type="button">Preciso de uma pista</button><div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2"></strong><p id="hintText2"></p></div></div></div>
+        <div class="mission-actions"><button class="primary-btn" data-check="2" type="button">Concluir missão 2</button><div class="feedback" id="m2_feedback"></div></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você preservou o arquivo, verificou a abertura, gravou um registro completo e protegeu a unicidade da matrícula.</p></div><span class="seal">Cadastro persistido</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="3">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">3</span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Reabrir o arquivo e pesquisar</h2><p>Leia registros completos, compare matrículas e trate corretamente consultas sem resultado.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>9 min</strong><span>11 decisões</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Recuperar dados persistidos em uma nova execução, pesquisar pelo identificador e fechar o arquivo em todos os caminhos.</p></div><span class="seal-preview">Selo: Recuperação verificada</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Complete a busca por matrícula</h3><p>A função precisa percorrer apenas registros completos e encerrar quando localizar a matrícula.</p></div></div>
+          <div class="expression-builder">
+            <div class="ide-bar"><span>buscar_estudante.c</span><span>leitura + comparação + resultado</span></div>
+            <div class="expression-lines">
+              <div class="expression-line"><span class="expression-number">1</span><span class="expression-code">FILE *arquivo = fopen("estudantes.txt", <select id="m3_mode"><option value="">modo</option><option value="r">"r"</option><option value="a">"a"</option><option value="w">"w"</option></select>);</span></div>
+              <div class="expression-line"><span class="expression-number">2</span><span class="expression-code">while (fscanf(arquivo, "%d;%79[^;];%f", &amp;atual.matricula, atual.nome, &amp;atual.nota) <select id="m3_loop"><option value="">condição</option><option value="three">== 3</option><option value="feof">!= EOF</option><option value="one">== 1</option></select>) {</span></div>
+              <div class="expression-line"><span class="expression-number">3</span><span class="expression-code">&nbsp;&nbsp;if (<select id="m3_compare"><option value="">comparação</option><option value="equal">atual.matricula == procurada</option><option value="assign">atual.matricula = procurada</option><option value="name">atual.nome == procurada</option></select>) { encontrado = <select id="m3_found"><option value="">valor</option><option value="one">1</option><option value="zero">0</option><option value="matricula">procurada</option></select>; break; }</span></div>
+              <div class="expression-line"><span class="expression-number">4</span><span class="expression-code"><select id="m3_close"><option value="">encerramento</option><option value="close">fclose(arquivo);</option><option value="keep">manter aberto</option><option value="erase">remove("estudantes.txt");</option></select></span></div>
+            </div>
+          </div>
+          <div class="branch" id="m3_search_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Reconheça, aplique e analise</h3><p>Considere o arquivo persistente abaixo, reaberto em uma nova execução.</p></div></div>
+          <div class="expression-builder">
+            <div class="ide-bar"><span>estudantes.txt</span><span>três registros persistidos</span></div>
+            <div class="expression-lines">
+              <div class="expression-line"><span class="expression-number">1</span><span class="expression-code">2026101;Ana Lima;8.50</span></div>
+              <div class="expression-line"><span class="expression-number">2</span><span class="expression-code">2026102;Carlos Melo;6.75</span></div>
+              <div class="expression-line"><span class="expression-number">3</span><span class="expression-code">2026103;Bia Rocha;9.10</span></div>
+            </div>
+          </div>
+          <div class="field-grid" style="margin-top:10px">
+            <article class="field-card"><small>Reconheça: a busca por <code>2026102</code> recupera</small><select id="m3_case1"><option value="">Selecione</option><option value="carlos">Carlos Melo e nota 6,75</option><option value="ana">Ana Lima e nota 8,50</option><option value="bia">Bia Rocha e nota 9,10</option></select></article>
+            <article class="field-card"><small>Aplique: a busca por <code>2026199</code> deve informar</small><select id="m3_case2"><option value="">Selecione</option><option value="not_found">não encontrado após percorrer o arquivo</option><option value="first">retornar o primeiro estudante</option><option value="create">criar automaticamente um registro</option></select></article>
+            <article class="field-card"><small>Analise: após reiniciar, a consulta ainda funciona porque</small><select id="m3_case3"><option value="">Selecione</option><option value="reopen">o programa reabre e lê o estado persistido</option><option value="memory">a variável da execução anterior permanece ativa</option><option value="cache">o compilador memoriza os estudantes</option></select></article>
+          </div>
+          <div class="branch" id="m3_cases_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Diagnostique os erros de recuperação</h3><p>Escolha a consequência mais coerente para cada implementação.</p></div></div>
+          <div class="field-grid">
+            <article class="field-card"><small>Usar <code>while (!feof(arquivo))</code> e processar sem testar <code>fscanf</code></small><select id="m3_feof"><option value="">Selecione</option><option value="stale">pode processar novamente dados antigos após uma leitura falhar</option><option value="perfect">garante exatamente um processamento por registro</option><option value="append">acrescenta novos estudantes</option></select></article>
+            <article class="field-card"><small>Pesquisar somente em um vetor criado durante a execução anterior</small><select id="m3_memory"><option value="">Selecione</option><option value="empty">a nova execução não possui aquele estado em memória</option><option value="persistent">o vetor é recuperado automaticamente</option><option value="file">o vetor transforma-se em arquivo</option></select></article>
+            <article class="field-card"><small>Informar “não encontrado” dentro do laço após a primeira diferença</small><select id="m3_early"><option value="">Selecione</option><option value="early">a busca pode terminar antes de verificar registros posteriores</option><option value="correct">é a forma mais eficiente e correta</option><option value="duplicate">duplica todos os registros</option></select></article>
+          </div>
+          <div class="branch" id="m3_errors_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" data-hint="3" type="button">Preciso de uma pista</button><div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3"></strong><p id="hintText3"></p></div></div></div>
+        <div class="mission-actions"><button class="primary-btn" data-check="3" type="button">Concluir missão 3</button><div class="feedback" id="m3_feedback"></div></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você reabriu o arquivo, percorreu registros completos e produziu uma consulta confiável após o reinício.</p></div><span class="seal">Recuperação verificada</span></div>
+      </div>
+    </section>
+
+    <section class="final-code" id="finalCodeBlock" hidden>
+      <div class="final-code-head"><div><p class="kicker">Código final</p><h2>Cadastro e consulta persistentes por matrícula</h2></div><span class="code-badge">CCI13</span></div>
+      <div class="code-window">
+        <div class="code-window-bar"><span>cadastro_estudantes.c</span><span>memória temporária + arquivo persistente</span></div>
+        <div class="code-body">
+<div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-pre">#include &lt;stdio.h&gt;</span></span></div>
+<div class="code-line"><span class="line-number">2</span><span class="line-code"><span class="tok-pre">#include &lt;string.h&gt;</span></span></div>
+<div class="code-line"><span class="line-number">3</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">4</span><span class="line-code"><span class="tok-pre">#define ARQUIVO_ESTUDANTES &quot;estudantes.txt&quot;</span></span></div>
+<div class="code-line"><span class="line-number">5</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">6</span><span class="line-code"><span class="tok-type">typedef</span> <span class="tok-type">struct</span> {</span></div>
+<div class="code-line"><span class="line-number">7</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">matricula</span>;</span></div>
+<div class="code-line"><span class="line-number">8</span><span class="line-code">    <span class="tok-type">char</span> <span class="tok-var">nome</span>[<span class="tok-num">80</span>];</span></div>
+<div class="code-line"><span class="line-number">9</span><span class="line-code">    <span class="tok-type">float</span> <span class="tok-var">nota</span>;</span></div>
+<div class="code-line"><span class="line-number">10</span><span class="line-code">} <span class="tok-type">Estudante</span>;</span></div>
+<div class="code-line"><span class="line-number">11</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">12</span><span class="line-code"><span class="tok-type">void</span> <span class="tok-fn">limparEntrada</span>() {</span></div>
+<div class="code-line"><span class="line-number">13</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">caractere</span>;</span></div>
+<div class="code-line process"><span class="line-number">14</span><span class="line-code">    <span class="tok-type">while</span> ((<span class="tok-var">caractere</span> = <span class="tok-fn">getchar</span>()) != <span class="tok-str">&#x27;\n&#x27;</span> &amp;&amp; <span class="tok-var">caractere</span> != <span class="tok-var">EOF</span>) { }</span></div>
+<div class="code-line"><span class="line-number">15</span><span class="line-code">}</span></div>
+<div class="code-line"><span class="line-number">16</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">17</span><span class="line-code"><span class="tok-type">void</span> <span class="tok-fn">removerQuebraDeLinha</span>(<span class="tok-type">char</span> <span class="tok-var">texto</span>[]) {</span></div>
+<div class="code-line process"><span class="line-number">18</span><span class="line-code">    <span class="tok-var">texto</span>[<span class="tok-fn">strcspn</span>(<span class="tok-var">texto</span>, <span class="tok-str">&quot;\n&quot;</span>)] = <span class="tok-str">&#x27;\0&#x27;</span>;</span></div>
+<div class="code-line"><span class="line-number">19</span><span class="line-code">}</span></div>
+<div class="code-line"><span class="line-number">20</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">21</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">lerRegistro</span>(<span class="tok-type">FILE</span> *<span class="tok-var">arquivo</span>, <span class="tok-type">Estudante</span> *<span class="tok-var">estudante</span>) {</span></div>
+<div class="code-line process"><span class="line-number">22</span><span class="line-code">    <span class="tok-type">return</span> <span class="tok-fn">fscanf</span>(</span></div>
+<div class="code-line"><span class="line-number">23</span><span class="line-code">        <span class="tok-var">arquivo</span>,</span></div>
+<div class="code-line"><span class="line-number">24</span><span class="line-code">        <span class="tok-str">&quot;%d;%79[^;];%f&quot;</span>,</span></div>
+<div class="code-line"><span class="line-number">25</span><span class="line-code">        &amp;<span class="tok-var">estudante</span>-&gt;<span class="tok-var">matricula</span>,</span></div>
+<div class="code-line"><span class="line-number">26</span><span class="line-code">        <span class="tok-var">estudante</span>-&gt;<span class="tok-var">nome</span>,</span></div>
+<div class="code-line"><span class="line-number">27</span><span class="line-code">        &amp;<span class="tok-var">estudante</span>-&gt;<span class="tok-var">nota</span></span></div>
+<div class="code-line"><span class="line-number">28</span><span class="line-code">    ) == <span class="tok-num">3</span>;</span></div>
+<div class="code-line"><span class="line-number">29</span><span class="line-code">}</span></div>
+<div class="code-line"><span class="line-number">30</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">31</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">buscarEstudante</span>(<span class="tok-type">int</span> <span class="tok-var">matricula</span>, <span class="tok-type">Estudante</span> *<span class="tok-var">encontrado</span>) {</span></div>
+<div class="code-line process"><span class="line-number">32</span><span class="line-code">    <span class="tok-type">FILE</span> *<span class="tok-var">arquivo</span> = <span class="tok-fn">fopen</span>(<span class="tok-var">ARQUIVO_ESTUDANTES</span>, <span class="tok-str">&quot;r&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">33</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">34</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-var">arquivo</span> == <span class="tok-var">NULL</span>) {</span></div>
+<div class="code-line process"><span class="line-number">35</span><span class="line-code">        <span class="tok-type">return</span> <span class="tok-num">0</span>;</span></div>
+<div class="code-line"><span class="line-number">36</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">37</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">38</span><span class="line-code">    <span class="tok-type">Estudante</span> <span class="tok-var">atual</span>;</span></div>
+<div class="code-line"><span class="line-number">39</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">40</span><span class="line-code">    <span class="tok-type">while</span> (<span class="tok-fn">lerRegistro</span>(<span class="tok-var">arquivo</span>, &amp;<span class="tok-var">atual</span>)) {</span></div>
+<div class="code-line process"><span class="line-number">41</span><span class="line-code">        <span class="tok-type">if</span> (<span class="tok-var">atual</span>.<span class="tok-var">matricula</span> == <span class="tok-var">matricula</span>) {</span></div>
+<div class="code-line"><span class="line-number">42</span><span class="line-code">            *<span class="tok-var">encontrado</span> = <span class="tok-var">atual</span>;</span></div>
+<div class="code-line process"><span class="line-number">43</span><span class="line-code">            <span class="tok-fn">fclose</span>(<span class="tok-var">arquivo</span>);</span></div>
+<div class="code-line process"><span class="line-number">44</span><span class="line-code">            <span class="tok-type">return</span> <span class="tok-num">1</span>;</span></div>
+<div class="code-line"><span class="line-number">45</span><span class="line-code">        }</span></div>
+<div class="code-line"><span class="line-number">46</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">47</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">48</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-fn">ferror</span>(<span class="tok-var">arquivo</span>)) {</span></div>
+<div class="code-line output"><span class="line-number">49</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Erro durante a leitura do arquivo.\n&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">50</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">51</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">52</span><span class="line-code">    <span class="tok-fn">fclose</span>(<span class="tok-var">arquivo</span>);</span></div>
+<div class="code-line process"><span class="line-number">53</span><span class="line-code">    <span class="tok-type">return</span> <span class="tok-num">0</span>;</span></div>
+<div class="code-line"><span class="line-number">54</span><span class="line-code">}</span></div>
+<div class="code-line"><span class="line-number">55</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">56</span><span class="line-code"><span class="tok-type">void</span> <span class="tok-fn">cadastrarEstudante</span>() {</span></div>
+<div class="code-line"><span class="line-number">57</span><span class="line-code">    <span class="tok-type">Estudante</span> <span class="tok-var">novo</span>;</span></div>
+<div class="code-line"><span class="line-number">58</span><span class="line-code">    <span class="tok-type">Estudante</span> <span class="tok-var">existente</span>;</span></div>
+<div class="code-line"><span class="line-number">59</span><span class="line-code"></span></div>
+<div class="code-line output"><span class="line-number">60</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Matricula: &quot;</span>);</span></div>
+<div class="code-line entry"><span class="line-number">61</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">&quot;%d&quot;</span>, &amp;<span class="tok-var">novo</span>.<span class="tok-var">matricula</span>);</span></div>
+<div class="code-line"><span class="line-number">62</span><span class="line-code">    <span class="tok-fn">limparEntrada</span>();</span></div>
+<div class="code-line"><span class="line-number">63</span><span class="line-code"></span></div>
+<div class="code-line output"><span class="line-number">64</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Nome: &quot;</span>);</span></div>
+<div class="code-line entry"><span class="line-number">65</span><span class="line-code">    <span class="tok-fn">fgets</span>(<span class="tok-var">novo</span>.<span class="tok-var">nome</span>, <span class="tok-type">sizeof</span>(<span class="tok-var">novo</span>.<span class="tok-var">nome</span>), <span class="tok-var">stdin</span>);</span></div>
+<div class="code-line"><span class="line-number">66</span><span class="line-code">    <span class="tok-fn">removerQuebraDeLinha</span>(<span class="tok-var">novo</span>.<span class="tok-var">nome</span>);</span></div>
+<div class="code-line"><span class="line-number">67</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">68</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-fn">strchr</span>(<span class="tok-var">novo</span>.<span class="tok-var">nome</span>, <span class="tok-str">&#x27;;&#x27;</span>) != <span class="tok-var">NULL</span>) {</span></div>
+<div class="code-line output"><span class="line-number">69</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;O nome nao pode conter ponto e virgula.\n&quot;</span>);</span></div>
+<div class="code-line process"><span class="line-number">70</span><span class="line-code">        <span class="tok-type">return</span>;</span></div>
+<div class="code-line"><span class="line-number">71</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">72</span><span class="line-code"></span></div>
+<div class="code-line output"><span class="line-number">73</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Nota: &quot;</span>);</span></div>
+<div class="code-line entry"><span class="line-number">74</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">&quot;%f&quot;</span>, &amp;<span class="tok-var">novo</span>.<span class="tok-var">nota</span>);</span></div>
+<div class="code-line"><span class="line-number">75</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">76</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-var">novo</span>.<span class="tok-var">nota</span> &lt; <span class="tok-num">0.0f</span> || <span class="tok-var">novo</span>.<span class="tok-var">nota</span> &gt; <span class="tok-num">10.0f</span>) {</span></div>
+<div class="code-line output"><span class="line-number">77</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;A nota deve estar entre 0 e 10.\n&quot;</span>);</span></div>
+<div class="code-line process"><span class="line-number">78</span><span class="line-code">        <span class="tok-type">return</span>;</span></div>
+<div class="code-line"><span class="line-number">79</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">80</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">81</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-fn">buscarEstudante</span>(<span class="tok-var">novo</span>.<span class="tok-var">matricula</span>, &amp;<span class="tok-var">existente</span>)) {</span></div>
+<div class="code-line output"><span class="line-number">82</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Ja existe um estudante com essa matricula.\n&quot;</span>);</span></div>
+<div class="code-line process"><span class="line-number">83</span><span class="line-code">        <span class="tok-type">return</span>;</span></div>
+<div class="code-line"><span class="line-number">84</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">85</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">86</span><span class="line-code">    <span class="tok-type">FILE</span> *<span class="tok-var">arquivo</span> = <span class="tok-fn">fopen</span>(<span class="tok-var">ARQUIVO_ESTUDANTES</span>, <span class="tok-str">&quot;a&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">87</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">88</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-var">arquivo</span> == <span class="tok-var">NULL</span>) {</span></div>
+<div class="code-line output"><span class="line-number">89</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Nao foi possivel abrir o arquivo para gravacao.\n&quot;</span>);</span></div>
+<div class="code-line process"><span class="line-number">90</span><span class="line-code">        <span class="tok-type">return</span>;</span></div>
+<div class="code-line"><span class="line-number">91</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">92</span><span class="line-code"></span></div>
+<div class="code-line output"><span class="line-number">93</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">resultado</span> = <span class="tok-fn">fprintf</span>(</span></div>
+<div class="code-line"><span class="line-number">94</span><span class="line-code">        <span class="tok-var">arquivo</span>,</span></div>
+<div class="code-line"><span class="line-number">95</span><span class="line-code">        <span class="tok-str">&quot;%d;%s;%.2f\n&quot;</span>,</span></div>
+<div class="code-line"><span class="line-number">96</span><span class="line-code">        <span class="tok-var">novo</span>.<span class="tok-var">matricula</span>,</span></div>
+<div class="code-line"><span class="line-number">97</span><span class="line-code">        <span class="tok-var">novo</span>.<span class="tok-var">nome</span>,</span></div>
+<div class="code-line"><span class="line-number">98</span><span class="line-code">        <span class="tok-var">novo</span>.<span class="tok-var">nota</span></span></div>
+<div class="code-line"><span class="line-number">99</span><span class="line-code">    );</span></div>
+<div class="code-line"><span class="line-number">100</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">101</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-var">resultado</span> &lt; <span class="tok-num">0</span>) {</span></div>
+<div class="code-line output"><span class="line-number">102</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Falha ao gravar o estudante.\n&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">103</span><span class="line-code">    } <span class="tok-type">else</span> {</span></div>
+<div class="code-line output"><span class="line-number">104</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Estudante cadastrado no arquivo.\n&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">105</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">106</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">107</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-fn">fclose</span>(<span class="tok-var">arquivo</span>) != <span class="tok-num">0</span>) {</span></div>
+<div class="code-line output"><span class="line-number">108</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Aviso: ocorreu uma falha ao fechar o arquivo.\n&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">109</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">110</span><span class="line-code">}</span></div>
+<div class="code-line"><span class="line-number">111</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">112</span><span class="line-code"><span class="tok-type">void</span> <span class="tok-fn">consultarEstudante</span>() {</span></div>
+<div class="code-line"><span class="line-number">113</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">matricula</span>;</span></div>
+<div class="code-line"><span class="line-number">114</span><span class="line-code">    <span class="tok-type">Estudante</span> <span class="tok-var">encontrado</span>;</span></div>
+<div class="code-line"><span class="line-number">115</span><span class="line-code"></span></div>
+<div class="code-line output"><span class="line-number">116</span><span class="line-code">    <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Matricula para consulta: &quot;</span>);</span></div>
+<div class="code-line entry"><span class="line-number">117</span><span class="line-code">    <span class="tok-fn">scanf</span>(<span class="tok-str">&quot;%d&quot;</span>, &amp;<span class="tok-var">matricula</span>);</span></div>
+<div class="code-line"><span class="line-number">118</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">119</span><span class="line-code">    <span class="tok-type">if</span> (<span class="tok-fn">buscarEstudante</span>(<span class="tok-var">matricula</span>, &amp;<span class="tok-var">encontrado</span>)) {</span></div>
+<div class="code-line output"><span class="line-number">120</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;\nESTUDANTE ENCONTRADO\n&quot;</span>);</span></div>
+<div class="code-line output"><span class="line-number">121</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Matricula: %d\n&quot;</span>, <span class="tok-var">encontrado</span>.<span class="tok-var">matricula</span>);</span></div>
+<div class="code-line output"><span class="line-number">122</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Nome: %s\n&quot;</span>, <span class="tok-var">encontrado</span>.<span class="tok-var">nome</span>);</span></div>
+<div class="code-line output"><span class="line-number">123</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Nota: %.2f\n&quot;</span>, <span class="tok-var">encontrado</span>.<span class="tok-var">nota</span>);</span></div>
+<div class="code-line"><span class="line-number">124</span><span class="line-code">    } <span class="tok-type">else</span> {</span></div>
+<div class="code-line output"><span class="line-number">125</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Estudante nao encontrado.\n&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">126</span><span class="line-code">    }</span></div>
+<div class="code-line"><span class="line-number">127</span><span class="line-code">}</span></div>
+<div class="code-line"><span class="line-number">128</span><span class="line-code"></span></div>
+<div class="code-line"><span class="line-number">129</span><span class="line-code"><span class="tok-type">int</span> <span class="tok-fn">main</span>() {</span></div>
+<div class="code-line"><span class="line-number">130</span><span class="line-code">    <span class="tok-type">int</span> <span class="tok-var">opcao</span>;</span></div>
+<div class="code-line"><span class="line-number">131</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">132</span><span class="line-code">    <span class="tok-type">do</span> {</span></div>
+<div class="code-line output"><span class="line-number">133</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;\n1 - Cadastrar estudante\n&quot;</span>);</span></div>
+<div class="code-line output"><span class="line-number">134</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;2 - Consultar por matricula\n&quot;</span>);</span></div>
+<div class="code-line output"><span class="line-number">135</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;0 - Encerrar\n&quot;</span>);</span></div>
+<div class="code-line output"><span class="line-number">136</span><span class="line-code">        <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Opcao: &quot;</span>);</span></div>
+<div class="code-line entry"><span class="line-number">137</span><span class="line-code">        <span class="tok-fn">scanf</span>(<span class="tok-str">&quot;%d&quot;</span>, &amp;<span class="tok-var">opcao</span>);</span></div>
+<div class="code-line"><span class="line-number">138</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">139</span><span class="line-code">        <span class="tok-type">if</span> (<span class="tok-var">opcao</span> == <span class="tok-num">1</span>) {</span></div>
+<div class="code-line"><span class="line-number">140</span><span class="line-code">            <span class="tok-fn">cadastrarEstudante</span>();</span></div>
+<div class="code-line"><span class="line-number">141</span><span class="line-code">        } <span class="tok-type">else</span> <span class="tok-type">if</span> (<span class="tok-var">opcao</span> == <span class="tok-num">2</span>) {</span></div>
+<div class="code-line"><span class="line-number">142</span><span class="line-code">            <span class="tok-fn">consultarEstudante</span>();</span></div>
+<div class="code-line"><span class="line-number">143</span><span class="line-code">        } <span class="tok-type">else</span> <span class="tok-type">if</span> (<span class="tok-var">opcao</span> != <span class="tok-num">0</span>) {</span></div>
+<div class="code-line output"><span class="line-number">144</span><span class="line-code">            <span class="tok-fn">printf</span>(<span class="tok-str">&quot;Opcao invalida.\n&quot;</span>);</span></div>
+<div class="code-line"><span class="line-number">145</span><span class="line-code">        }</span></div>
+<div class="code-line process"><span class="line-number">146</span><span class="line-code">    } <span class="tok-type">while</span> (<span class="tok-var">opcao</span> != <span class="tok-num">0</span>);</span></div>
+<div class="code-line"><span class="line-number">147</span><span class="line-code"></span></div>
+<div class="code-line process"><span class="line-number">148</span><span class="line-code">    <span class="tok-type">return</span> <span class="tok-num">0</span>;</span></div>
+<div class="code-line"><span class="line-number">149</span><span class="line-code">}</span></div>
+        </div>
+        <div class="code-legend"><span><i class="legend-entry"></i> entrada</span><span><i class="legend-process"></i> processamento e arquivo</span><span><i class="legend-output"></i> saída</span></div>
+      </div>
+    </section>
+
+    <section class="completion" id="completionPanel" aria-live="polite">
+      <span class="completion-label">Percurso concluído</span>
+      <h2>Cadastro persistente, pesquisável e verificável</h2>
+      <p>Você distinguiu memória e arquivo, preservou os registros anteriores, evitou matrículas duplicadas e recuperou um estudante em uma nova execução.</p>
+      <div class="completion-grid">
+        <article class="completion-item"><strong>Estados distinguidos</strong><span>Variáveis são temporárias; o arquivo mantém os registros após o encerramento.</span></article>
+        <article class="completion-item"><strong>Cadastro persistido</strong><span>O modo <code>"a"</code>, a verificação e o fechamento preservam o histórico.</span></article>
+        <article class="completion-item"><strong>Recuperação verificada</strong><span>A busca reabre o arquivo, lê registros completos e compara a matrícula.</span></article>
+      </div>
+      <div class="completion-actions"><button class="secondary-btn" id="reviewButton" type="button">Revisar desde a missão 1</button><button class="secondary-btn" id="restartButton" type="button">Refazer roteiro</button></div>
+    </section>
+
+    <footer class="resource-credit"><p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p></footer>
+  </main>
+
+  <script>
+    const completed = new Set();
+    const hintState = { 1: 0, 2: 0, 3: 0 };
+    const hints = {
+      1: [
+        ["Pense no encerramento", "O conteúdo de uma variável pertence à execução atual; o arquivo continua no armazenamento."],
+        ["Siga o ciclo do recurso", "Receba os dados, abra, verifique, grave e feche. Nenhuma operação deve usar um ponteiro inválido."],
+        ["Combine escrita e leitura", "Se a escrita usa matrícula, nome e nota separados por ponto e vírgula, a leitura deve esperar os mesmos três campos."]
+      ],
+      2: [
+        ["Preserve o que já existe", "O modo de acréscimo posiciona a escrita no final e cria o arquivo quando ele ainda não existe."],
+        ["Identificador não se repete", "Pesquise a matrícula antes de chamar fprintf; se ela já existir, interrompa o cadastro."],
+        ["Persistir exige uma operação explícita", "Preencher uma struct não grava nada no disco. É preciso escrever e fechar o arquivo."]
+      ],
+      3: [
+        ["Valide cada registro", "O laço deve continuar somente quando fscanf converter os três campos esperados."],
+        ["Não conclua cedo demais", "Uma matrícula diferente no primeiro registro não significa que ela não aparecerá depois."],
+        ["A nova execução começa sem os vetores antigos", "A recuperação acontece porque a função abre o arquivo e reconstrói cada registro na memória."]
+      ]
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const value = id => document.getElementById(id)?.value || "";
+    const selected = name => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+
+    function setBranch(id, title = "", text = "") {
+      const branch = document.getElementById(id);
+      if (!title) { branch.classList.remove("show"); branch.innerHTML = ""; return; }
+      branch.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+      branch.classList.add("show");
+    }
+
+    function showFeedback(number, text, type = "error") {
+      const feedback = document.getElementById(`m${number}_feedback`);
+      feedback.textContent = text;
+      feedback.className = `feedback show ${type}`;
+    }
+
+    function validateMission1(live = false) {
+      const statesOk = value("m1_variable") === "memory" && value("m1_file") === "persistent" && value("m1_restart") === "file_only";
+      if (["m1_variable", "m1_file", "m1_restart"].some(id => value(id)) && !statesOk) {
+        if (value("m1_restart") === "all") setBranch("m1_state_branch", "A memória não atravessa o encerramento", "Uma nova execução recria as variáveis; somente o arquivo preserva os registros gravados.");
+        else setBranch("m1_state_branch", "Separe os dois estados", "A variável é temporária, a linha do arquivo é persistente e o reinício mantém apenas o que foi gravado.");
+      } else setBranch("m1_state_branch");
+
+      const orderOk = value("m1_step1") === "input" && value("m1_step2") === "open" && value("m1_step3") === "check" && value("m1_step4") === "write" && value("m1_step5") === "close";
+      if (["m1_step1", "m1_step2", "m1_step3", "m1_step4", "m1_step5"].some(id => value(id)) && !orderOk) {
+        if (value("m1_step3") === "write") setBranch("m1_order_branch", "Verifique antes de escrever", "fprintf não deve receber um ponteiro retornado por uma abertura que falhou.");
+        else setBranch("m1_order_branch", "Revise o ciclo", "Entrada → abertura → verificação → escrita → fechamento.");
+      } else setBranch("m1_order_branch");
+
+      const formatOk = value("m1_fields") === "3" && value("m1_delimiter") === "semicolon" && value("m1_line") === "one";
+      if (["m1_fields", "m1_delimiter", "m1_line"].some(id => value(id)) && !formatOk) setBranch("m1_format_branch", "O registro precisa ser reconstruível", "Use três campos, um separador conhecido e uma linha completa para cada estudante.");
+      else setBranch("m1_format_branch");
+
+      const complete = statesOk && orderOk && formatOk;
+      if (!live && !complete) showFeedback(1, "Classifique os estados, organize o ciclo e defina o formato do registro.");
+      return complete;
+    }
+
+    function validateMission2(live = false) {
+      const writeOk = value("m2_mode") === "a" && value("m2_check") === "null" && value("m2_function") === "fprintf" && value("m2_format") === "correct" && value("m2_close") === "close";
+      if (["m2_mode", "m2_check", "m2_function", "m2_format", "m2_close"].some(id => value(id)) && !writeOk) {
+        if (value("m2_mode") === "w") setBranch("m2_write_branch", "O histórico seria substituído", "Use o modo a para acrescentar o novo estudante ao final.");
+        else if (value("m2_function") === "fscanf") setBranch("m2_write_branch", "fscanf realiza leitura", "Para gravar campos formatados no arquivo, use fprintf.");
+        else if (value("m2_check") === "not_null") setBranch("m2_write_branch", "A condição de falha foi invertida", "O bloco de erro deve executar quando arquivo == NULL.");
+        else setBranch("m2_write_branch", "Complete a gravação segura", "Abra com a, teste NULL, use fprintf com três campos e finalize com fclose.");
+      } else setBranch("m2_write_branch");
+
+      const duplicateOk = selected("m2_duplicate") === "search_before";
+      if (selected("m2_duplicate") && !duplicateOk) setBranch("m2_duplicate_branch", "A matrícula deve permanecer única", "Pesquise o arquivo antes de acrescentar; não apague os demais registros e não aceite duplicação.");
+      else setBranch("m2_duplicate_branch");
+
+      const analysisOk = value("m2_w_effect") === "erase" && value("m2_memory_only") === "volatile" && value("m2_close_reason") === "buffers";
+      if (["m2_w_effect", "m2_memory_only", "m2_close_reason"].some(id => value(id)) && !analysisOk) setBranch("m2_analysis_branch", "Persistência não é automática", "O modo w pode apagar, variáveis somem ao encerrar e fclose conclui o uso do recurso.");
+      else setBranch("m2_analysis_branch");
+
+      const complete = writeOk && duplicateOk && analysisOk;
+      if (!live && !complete) showFeedback(2, "Complete a escrita, preserve a matrícula única e analise as falhas apresentadas.");
+      return complete;
+    }
+
+    function validateMission3(live = false) {
+      const searchOk = value("m3_mode") === "r" && value("m3_loop") === "three" && value("m3_compare") === "equal" && value("m3_found") === "one" && value("m3_close") === "close";
+      if (["m3_mode", "m3_loop", "m3_compare", "m3_found", "m3_close"].some(id => value(id)) && !searchOk) {
+        if (value("m3_loop") === "feof") setBranch("m3_search_branch", "EOF não confirma uma leitura completa", "Use o retorno de fscanf e processe apenas quando os três campos forem convertidos.");
+        else if (value("m3_compare") === "assign") setBranch("m3_search_branch", "Atribuição não é comparação", "Use == para verificar se a matrícula lida é igual à procurada.");
+        else setBranch("m3_search_branch", "Revise a busca", "Abra com r, leia três campos, compare com ==, marque encontrado e feche o arquivo.");
+      } else setBranch("m3_search_branch");
+
+      const casesOk = value("m3_case1") === "carlos" && value("m3_case2") === "not_found" && value("m3_case3") === "reopen";
+      if (["m3_case1", "m3_case2", "m3_case3"].some(id => value(id)) && !casesOk) setBranch("m3_cases_branch", "Consulte o conteúdo persistido", "A matrícula 2026102 está na segunda linha; uma matrícula ausente só é confirmada após o percurso completo; o reinício exige reabrir o arquivo.");
+      else setBranch("m3_cases_branch");
+
+      const errorsOk = value("m3_feof") === "stale" && value("m3_memory") === "empty" && value("m3_early") === "early";
+      if (["m3_feof", "m3_memory", "m3_early"].some(id => value(id)) && !errorsOk) setBranch("m3_errors_branch", "A recuperação depende de leitura validada", "Não processe após uma leitura falhar, não dependa da memória anterior e só informe ausência depois do laço.");
+      else setBranch("m3_errors_branch");
+
+      const complete = searchOk && casesOk && errorsOk;
+      if (!live && !complete) showFeedback(3, "Complete a busca, resolva os casos e diagnostique os erros de recuperação.");
+      return complete;
+    }
+
+    const validators = { 1: validateMission1, 2: validateMission2, 3: validateMission3 };
+
+    function unlockMission(number) {
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.remove("locked");
+      mission.classList.add("active");
+      const toggle = $(".mission-toggle", mission);
+      toggle.disabled = false;
+      $("[data-state]", mission).textContent = "Disponível";
+    }
+
+    function openMission(number, scroll = false) {
+      $$(".mission").forEach(mission => {
+        const current = Number(mission.dataset.mission);
+        const shouldOpen = current === number;
+        mission.classList.toggle("open", shouldOpen);
+        $(".mission-toggle", mission).setAttribute("aria-expanded", String(shouldOpen));
+      });
+      const mission = $(`.mission[data-mission="${number}"]`);
+      if (scroll) mission.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateMap(activeNumber) {
+      for (let i = 1; i <= 3; i++) {
+        const node = $(`[data-map="${i}"]`);
+        const small = $("small", node);
+        node.classList.remove("active", "locked", "done");
+        if (completed.has(i)) { node.classList.add("done"); small.textContent = "Concluída"; }
+        else if (i === activeNumber) { node.classList.add("active"); small.textContent = "Em andamento"; }
+        else { node.classList.add("locked"); small.textContent = "Bloqueada"; }
+        if (i < 3) $(`[data-connector="${i}"]`).classList.toggle("done", completed.has(i));
+      }
+      document.getElementById("progressText").textContent = activeNumber ? `Missão atual: ${activeNumber} de 3` : "3 de 3 missões concluídas";
+    }
+
+    function completeMission(number, button) {
+      if (completed.has(number)) return;
+      completed.add(number);
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.add("completed");
+      mission.classList.remove("active");
+      $("[data-state]", mission).textContent = "Concluída";
+      document.getElementById(`m${number}_result`).classList.add("show");
+      button.textContent = "Missão concluída";
+      button.disabled = true;
+      showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
+
+      if (number < 3) {
+        unlockMission(number + 1);
+        updateMap(number + 1);
+        setTimeout(() => {
+          mission.classList.remove("open");
+          $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
+          openMission(number + 1, true);
+        }, 700);
+      } else {
+        updateMap(null);
+        document.getElementById("finalCodeBlock").hidden = false;
+        document.getElementById("completionPanel").classList.add("show");
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 300);
+      }
+    }
+
+    $$('[data-check]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.check);
+      if (validators[number](false)) completeMission(number, button);
+    }));
+
+    $$("input, select").forEach(field => field.addEventListener("change", () => {
+      const mission = field.closest(".mission");
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+
+    $$(".mission-toggle").forEach(toggle => toggle.addEventListener("click", () => {
+      const mission = toggle.closest(".mission");
+      if (mission.classList.contains("locked")) return;
+      const isOpen = mission.classList.contains("open");
+      $$(".mission").forEach(item => {
+        if (item !== mission) { item.classList.remove("open"); $(".mission-toggle", item).setAttribute("aria-expanded", "false"); }
+      });
+      mission.classList.toggle("open", !isOpen);
+      toggle.setAttribute("aria-expanded", String(!isOpen));
+    }));
+
+    $$('[data-hint]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.hint);
+      const next = Math.min(hintState[number], hints[number].length - 1);
+      const [title, text] = hints[number][next];
+      hintState[number] = Math.min(hintState[number] + 1, hints[number].length);
+      const drawer = document.getElementById(`hintDrawer${number}`);
+      drawer.classList.add("show");
+      $(".hint-number", drawer).textContent = `${next + 1}/${hints[number].length}`;
+      document.getElementById(`hintTitle${number}`).textContent = title;
+      document.getElementById(`hintText${number}`).textContent = text;
+      button.textContent = next < hints[number].length - 1 ? "Ver próxima pista" : "Pistas exibidas";
+      if (next === hints[number].length - 1) button.disabled = true;
+    }));
+
+    document.getElementById("reviewButton").addEventListener("click", () => openMission(1, true));
+    document.getElementById("restartButton").addEventListener("click", () => window.location.reload());
+  </script>
+</body>
+</html>

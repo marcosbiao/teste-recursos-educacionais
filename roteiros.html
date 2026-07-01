@@ -56,8 +56,6 @@
       line-height: 1.6;
     }
     a { color: inherit; text-decoration: none; }
-    button, input, select { font: inherit; }
-    button { cursor: pointer; }
     svg { display: block; }
 
     :focus-visible {
@@ -113,7 +111,7 @@
     .brand-subtitle { display: block; margin-top: .2rem; color: var(--slate-600); font-size: .82rem; font-weight: 700; line-height: 1.2; }
     .nav-actions, .nav-links { display: flex; align-items: center; gap: .35rem; }
     .nav-actions { gap: .75rem; }
-    .nav-links a, .back-link, .btn {
+    .nav-links a, .back-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -229,43 +227,10 @@
 
     .catalog { padding-top: clamp(3.5rem, 7vw, 6rem); }
     .listing-back { margin-bottom: 1.35rem; }
-    .listing-intro { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; }
+    .listing-intro { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.25rem; }
     .listing-intro h2 { margin: .5rem 0 .35rem; color: var(--emerald-950); font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -.035em; }
     .listing-intro p { max-width: 720px; margin: 0; color: var(--slate-600); }
     .result-count { display: block; min-width: 14ch; margin-top: .75rem; color: var(--emerald-800); font-size: .9rem; font-weight: 850; }
-
-    .filters {
-      display: grid;
-      grid-template-columns: minmax(260px, 1.8fr) minmax(150px, .6fr) minmax(190px, .8fr) auto;
-      gap: .85rem;
-      align-items: end;
-      margin: 1.8rem 0 1.25rem;
-      padding: 1rem;
-      border: 1px solid var(--slate-200);
-      border-radius: 14px;
-      background: var(--white);
-      box-shadow: var(--shadow-min);
-    }
-    .field { min-width: 0; }
-    .field label { display: block; margin-bottom: .35rem; color: var(--slate-700); font-size: .8rem; font-weight: 850; }
-    .input-wrap { position: relative; }
-    .input-wrap svg { position: absolute; top: 50%; left: .85rem; color: var(--emerald-700); transform: translateY(-50%); pointer-events: none; }
-    input, select {
-      width: 100%;
-      min-height: 46px;
-      color: var(--slate-900);
-      border: 1px solid var(--slate-300);
-      border-radius: 9px;
-      background: var(--white);
-    }
-    input { padding: .65rem .8rem .65rem 2.7rem; }
-    select { padding: .65rem 2rem .65rem .75rem; }
-    input:hover, select:hover { border-color: #6EE7B7; }
-    input:focus, select:focus { border-color: var(--emerald-600); outline: 3px solid var(--emerald-100); outline-offset: 0; }
-    select.is-active { border-width: 2px; border-color: var(--emerald-700); font-weight: 750; }
-    .clear-button { padding: .55rem .85rem; color: var(--emerald-900); border: 1px solid var(--emerald-100); background: var(--emerald-50); white-space: nowrap; }
-    .clear-button:hover:not(:disabled) { background: var(--emerald-100); }
-    .clear-button:disabled { color: var(--slate-500); border-color: var(--slate-200); background: var(--slate-100); cursor: not-allowed; }
 
     .route-table { overflow: hidden; border-radius: 16px; }
     .table-head, .route-row {
@@ -300,22 +265,34 @@
     .route-row::before { content: ""; position: absolute; inset: 15px auto 15px 0; width: 4px; border-radius: 0 99px 99px 0; background: linear-gradient(var(--emerald-600), var(--teal-700)); }
     .route-row:hover { transform: translateY(-2px); border-color: #A7F3D0; box-shadow: var(--shadow-soft); }
     .mobile-label { display: none; }
-    .competence { display: grid; grid-template-columns: 42px 1fr; gap: .7rem; align-items: start; }
-    .competence-icon { display: grid; width: 42px; height: 42px; place-items: center; color: var(--emerald-800); border: 1px solid var(--emerald-100); border-radius: 11px; background: var(--emerald-50); }
-    .code-badge { display: inline-flex; padding: .25rem .55rem; color: var(--emerald-900); border: 1px solid var(--emerald-100); border-radius: 999px; background: var(--emerald-50); font-size: .76rem; font-weight: 900; }
-    .competence-name { margin: .45rem 0 0; color: var(--slate-600); font-size: .8rem; line-height: 1.45; }
+    .competence-cell {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.75rem;
+      align-items: start;
+      min-width: 0;
+    }
+    .competence-badge {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      place-items: center;
+      color: #4F46E5;
+      border: 1px solid rgba(79, 70, 229, 0.18);
+      border-radius: 8px;
+      background: #EEF2FF;
+      font-size: 0.82rem;
+      font-weight: 950;
+    }
+    .competence-name {
+      display: block;
+      color: var(--slate-950);
+      font-size: 0.94rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
     .route-title { margin: 0; color: var(--emerald-950); font-size: 1.03rem; line-height: 1.35; }
     .route-description { margin: 0; color: var(--slate-600); font-size: .88rem; line-height: 1.55; }
-    .badge-list { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .65rem; }
-    .meta-badge { display: inline-flex; align-items: center; gap: .3rem; padding: .22rem .48rem; color: var(--teal-700); border-radius: 999px; background: var(--teal-100); font-size: .72rem; font-weight: 800; }
-    .meta-badge.time { color: var(--lime-600); background: var(--lime-100); }
-    .empty-state { display: none; margin-top: .8rem; padding: clamp(2.5rem, 7vw, 5rem) 1.5rem; text-align: center; border: 1px dashed var(--slate-300); border-radius: 14px; background: var(--white); }
-    .empty-state.is-visible { display: block; }
-    .empty-icon { display: grid; width: 60px; height: 60px; margin: 0 auto 1rem; place-items: center; color: var(--amber-700); border-radius: 50%; background: var(--amber-100); }
-    .empty-state h3 { margin: 0; color: var(--emerald-950); font-size: 1.25rem; }
-    .empty-state p { margin: .35rem 0 1rem; color: var(--slate-600); }
-    .empty-state .btn { padding: .6rem 1rem; color: var(--white); border: 0; background: var(--emerald-700); }
-
     .closing {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(320px, .8fr);
@@ -346,8 +323,6 @@
       .nav-links a { display: none; }
       .nav-links a[aria-current="page"] { display: inline-flex; }
       .hero-grid { grid-template-columns: 1fr minmax(290px, .65fr); }
-      .filters { grid-template-columns: minmax(250px, 1.5fr) repeat(2, minmax(150px, .7fr)); }
-      .clear-button { grid-column: 1 / -1; width: fit-content; }
       .table-head, .route-row { grid-template-columns: minmax(175px, .8fr) minmax(200px, 1fr) minmax(250px, 1.35fr) 112px; gap: .8rem; }
     }
 
@@ -355,8 +330,6 @@
       .hero-grid, .closing { grid-template-columns: 1fr; }
       .route-visual { max-width: 520px; width: 100%; margin-inline: auto; }
       .listing-intro { align-items: start; flex-direction: column; }
-      .filters { grid-template-columns: 1fr 1fr; }
-      .filters .field:first-child { grid-column: 1 / -1; }
       .table-head { display: none; }
       .route-table { overflow: visible; }
       .route-list { margin-top: 0; }
@@ -375,8 +348,6 @@
       .route-visual { padding-inline: 0; }
       .route-node:nth-child(2), .route-node:nth-child(4) { transform: none; }
       .catalog { padding-top: 3rem; }
-      .filters { grid-template-columns: 1fr; }
-      .filters .field:first-child, .clear-button { grid-column: auto; width: 100%; }
       .route-row { grid-template-columns: 1fr; gap: 1.1rem; }
       .route-cell:nth-child(3), .route-cell:last-child { grid-column: auto; }
       .closing { width: calc(100% - 2rem); padding: 1.5rem; }
@@ -463,39 +434,14 @@
         </div>
       </div>
 
-      <form class="filters" role="search" aria-label="Busca e filtros de roteiros">
-        <div class="field">
-          <label for="busca-roteiro">Buscar roteiro</label>
-          <div class="input-wrap">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
-            <input id="busca-roteiro" type="search" autocomplete="off" placeholder="Buscar por roteiro, competência ou problema...">
-          </div>
-        </div>
-        <div class="field">
-          <label for="filtro-competencia">Competência</label>
-          <select id="filtro-competencia"><option value="">Todas</option></select>
-        </div>
-        <div class="field">
-          <label for="filtro-tema">Tema</label>
-          <select id="filtro-tema"><option value="">Todos</option></select>
-        </div>
-        <button class="btn clear-button" type="button" data-clear-filters disabled>Limpar filtros</button>
-      </form>
-
       <div class="route-table">
         <div class="table-head" aria-hidden="true">
           <span class="head-cell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="m9 12 2 2 4-5"></path></svg>Competência trabalhada</span>
           <span class="head-cell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path></svg>Título</span>
-          <span class="head-cell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v12H8l-3 3V4Z"></path></svg>Este roteiro orienta</span>
+          <span class="head-cell"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v12H8l-3 3V4Z"></path></svg>ESTE RECURSO ABORDA</span>
           <span>Ação</span>
         </div>
         <div class="route-list" data-route-list></div>
-        <div class="empty-state" data-empty-state>
-          <span class="empty-icon" aria-hidden="true"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4H4v6m10 10h6v-6M4 10l5-5m6 14 5-5"></path></svg></span>
-          <h3>Nenhum roteiro encontrado</h3>
-          <p>Tente buscar por outro problema, tema ou competência.</p>
-          <button class="btn" type="button" data-clear-empty>Limpar busca e filtros</button>
-        </div>
       </div>
     </section>
 
@@ -509,79 +455,12 @@
 
   <footer class="site-footer"><div class="footer-inner"><span>Projeto de Doutorado - Introdução à Programação</span><a href="index.html#recursos">Voltar para a página principal</a></div></footer>
 
+  <script src="assets/resource-data.js"></script>
   <script>
-    const roteiros = [
-      {
-        competenciaCodigo: "CCI02",
-        competenciaNome: "Fluxo verificável de entrada, processamento e saída",
-        titulo: "Do ano de nascimento ao tempo vivido",
-        descricao: "Orienta a interpretação do enunciado, o planejamento das conversões e a validação de uma estimativa em anos, meses e dias.",
-        tema: "Entrada, processamento e saída",
-        formato: "Roteiro por missões",
-        linguagem: "C",
-        etapas: 3,
-        tempo: "12 min",
-        problema: "Calcular quanto tempo uma pessoa já viveu a partir do ano de nascimento.",
-        conteudo: "entrada processamento saída conversão expressões aritméticas validação",
-        url: "./recursos/roteiroresolucao/cci02_anos_de_vida.html"
-      },
-      {
-        competenciaCodigo: "CCI02",
-        competenciaNome: "Fluxo verificável de entrada, processamento e saída",
-        titulo: "Verificando o caminho da entrada até a saída",
-        descricao: "Orienta a preparação de um caso de teste, o rastreamento do estado das variáveis e a comparação entre a saída esperada e a obtida.",
-        tema: "Teste de mesa",
-        formato: "Roteiro por missões",
-        linguagem: "C",
-        etapas: 3,
-        tempo: "12 min",
-        problema: "Executar manualmente um programa que calcula o dobro de um número.",
-        conteudo: "teste de mesa variáveis atribuição entrada processamento saída rastreamento",
-        url: "./recursos/roteiroresolucao/cci02_teste_de_mesa_missoes_visual.html"
-      },
-      {
-        competenciaCodigo: "CCI05",
-        competenciaNome: "Controlar processamento iterativo com atualização de estado e parada segura",
-        titulo: "Repetindo uma ação um número definido de vezes",
-        descricao: "Orienta o controle de cinco leituras, a preservação da soma acumulada e o cálculo da média após o encerramento do laço.",
-        tema: "Repetição",
-        formato: "Roteiro por missões",
-        linguagem: "C",
-        etapas: 3,
-        tempo: "12–16 min",
-        problema: "Ler cinco notas, calcular a soma e obter a média.",
-        conteudo: "laço com contador repetição soma acumulada média variáveis parada",
-        url: "./recursos/roteiroresolucao/cci05_laco_contador_missoes_visual.html"
-      },
-      {
-        competenciaCodigo: "CCI07",
-        competenciaNome: "Modularizar soluções por funções ou procedimentos com interfaces coerentes",
-        titulo: "Encontrando o maior de três números",
-        descricao: "Orienta a leitura no escopo principal, a construção de uma função para localizar o maior valor e o uso de um procedimento para apresentar o resultado.",
-        tema: "Funções e procedimentos",
-        formato: "Roteiro por missões",
-        linguagem: "C",
-        etapas: 3,
-        tempo: "12–16 min",
-        problema: "Encontrar o maior de três números inteiros com responsabilidades separadas.",
-        conteudo: "funções procedimentos modularização parâmetros retorno escopo condicionais",
-        url: "./recursos/roteiroresolucao/cci07_maior_tres_missoes_visual.html"
-      }
-    ];
+    const { roteiros } = window.ResourceCatalog.resources;
 
     const list = document.querySelector("[data-route-list]");
-    const searchInput = document.querySelector("#busca-roteiro");
-    const competenceFilter = document.querySelector("#filtro-competencia");
-    const themeFilter = document.querySelector("#filtro-tema");
     const resultCount = document.querySelector("[data-result-count]");
-    const emptyState = document.querySelector("[data-empty-state]");
-    const clearButtons = document.querySelectorAll("[data-clear-filters], [data-clear-empty]");
-    const clearFilterButton = document.querySelector("[data-clear-filters]");
-    const filtersForm = document.querySelector(".filters");
-
-    function normalizeText(value) {
-      return String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    }
 
     function escapeHTML(value) {
       return String(value).replace(/[&<>'"]/g, (character) => ({
@@ -589,77 +468,27 @@
       })[character]);
     }
 
-    function buildSearchText(roteiro) {
-      return normalizeText([
-        roteiro.titulo, roteiro.competenciaCodigo, roteiro.competenciaNome,
-        roteiro.tema, roteiro.descricao, roteiro.problema, roteiro.linguagem,
-        roteiro.conteudo, roteiro.formato
-      ].join(" "));
-    }
-
-    function populateFilter(select, values) {
-      [...new Set(values)].sort((a, b) => a.localeCompare(b, "pt-BR", { numeric: true })).forEach((value) => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = value;
-        select.appendChild(option);
-      });
-    }
-
     function renderRoutes() {
-      const query = normalizeText(searchInput.value.trim());
-      const competence = competenceFilter.value;
-      const theme = themeFilter.value;
-      const filteredRoutes = roteiros.filter((roteiro) => {
-        return (!query || buildSearchText(roteiro).includes(query)) &&
-          (!competence || roteiro.competenciaCodigo === competence) &&
-          (!theme || roteiro.tema === theme);
-      });
-
-      list.innerHTML = filteredRoutes.map((roteiro) => {
+      list.innerHTML = roteiros.map((roteiro) => {
         const title = escapeHTML(roteiro.titulo);
         const code = escapeHTML(roteiro.competenciaCodigo);
         const competenceName = escapeHTML(roteiro.competenciaNome);
         const description = escapeHTML(roteiro.descricao);
         const time = escapeHTML(roteiro.tempo);
-        const themeLabel = escapeHTML(roteiro.tema);
         const url = escapeHTML(roteiro.url);
         return `
           <article class="route-row">
-            <div class="route-cell"><span class="mobile-label">Competência</span><div class="competence"><span class="competence-icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="m9 12 2 2 4-5"></path></svg></span><div><span class="code-badge">${code}</span><p class="competence-name">${competenceName}</p></div></div></div>
+            <div class="route-cell"><span class="mobile-label">Competência</span><div class="competence-cell"><span class="competence-badge">${code}</span><span><span class="competence-name">${competenceName}</span></span></div></div>
             <div class="route-cell"><span class="mobile-label">Título</span><h3 class="route-title">${title}</h3></div>
-            <div class="route-cell"><span class="mobile-label">Este roteiro orienta</span><p class="route-description">${description}</p><div class="badge-list"><span class="meta-badge time">${time}</span><span class="meta-badge">${themeLabel}</span></div></div>
+            <div class="route-cell"><span class="mobile-label">ESTE RECURSO ABORDA</span><p class="route-description">${description}</p><div class="badge-list"><span class="meta-badge time">${time}</span></div></div>
             <div class="route-cell resource-action-cell"><a class="resource-action" href="${url}" aria-label="Abrir roteiro ${title}">Abrir <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div>
           </article>`;
       }).join("");
 
-      const active = Boolean(query || competence || theme);
-      const count = filteredRoutes.length;
-      resultCount.textContent = active
-        ? `${count} ${count === 1 ? "roteiro encontrado" : "roteiros encontrados"}`
-        : `${count} ${count === 1 ? "roteiro disponível" : "roteiros disponíveis"}`;
-      emptyState.classList.toggle("is-visible", count === 0);
-      emptyState.setAttribute("aria-hidden", String(count !== 0));
-      clearFilterButton.disabled = !active;
-      competenceFilter.classList.toggle("is-active", Boolean(competence));
-      themeFilter.classList.toggle("is-active", Boolean(theme));
+      const count = roteiros.length;
+      resultCount.textContent = `${count} ${count === 1 ? "roteiro disponível" : "roteiros disponíveis"}`;
     }
 
-    function clearFilters() {
-      searchInput.value = "";
-      competenceFilter.value = "";
-      themeFilter.value = "";
-      renderRoutes();
-      searchInput.focus();
-    }
-
-    populateFilter(competenceFilter, roteiros.map((roteiro) => roteiro.competenciaCodigo));
-    populateFilter(themeFilter, roteiros.map((roteiro) => roteiro.tema));
-    searchInput.addEventListener("input", renderRoutes);
-    competenceFilter.addEventListener("change", renderRoutes);
-    themeFilter.addEventListener("change", renderRoutes);
-    clearButtons.forEach((button) => button.addEventListener("click", clearFilters));
-    filtersForm.addEventListener("submit", (event) => event.preventDefault());
     renderRoutes();
   </script>
 </body>

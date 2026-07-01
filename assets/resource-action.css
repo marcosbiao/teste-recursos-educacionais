@@ -57,6 +57,30 @@
   height: 18px;
 }
 
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 26px;
+  padding: 0.22rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.meta-badge.time {
+  color: var(--time-badge-color, #65A30D);
+  background: var(--time-badge-bg, #ECFCCB);
+}
+
 @media (max-width: 760px) {
   .resource-action-cell {
     width: 100%;

@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planejando um pedido na reprografia — missões</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/favicon/favicon-16x16.png">
+  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+  <style>
+
+    :root {
+      --emerald-950: #022c22;
+      --emerald-900: #064e3b;
+      --emerald-800: #065f46;
+      --emerald-700: #047857;
+      --emerald-600: #059669;
+      --emerald-100: #d1fae5;
+      --emerald-50: #ecfdf5;
+      --teal-700: #0f766e;
+      --teal-100: #ccfbf1;
+      --lime-600: #65a30d;
+      --lime-100: #ecfccb;
+      --amber-700: #b45309;
+      --amber-100: #fef3c7;
+      --amber-50: #fffbeb;
+      --red-700: #b91c1c;
+      --red-100: #fee2e2;
+      --red-50: #fef2f2;
+      --blue-700: #1d4ed8;
+      --blue-100: #dbeafe;
+      --slate-950: #0f172a;
+      --slate-900: #172033;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
+      --shadow-md: 0 20px 55px rgba(15, 23, 42, .11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-950);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 7% 0%, rgba(5, 150, 105, .11), transparent 30rem),
+        radial-gradient(circle at 94% 13%, rgba(101, 163, 13, .08), transparent 28rem),
+        var(--slate-50);
+      padding: 24px 16px 46px;
+    }
+
+    button, input, select { font: inherit; }
+    button { border: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(5, 150, 105, .32);
+      outline-offset: 3px;
+    }
+
+    .shell { width: min(1120px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 26px;
+      align-items: center;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 84% 15%, rgba(255,255,255,.11), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900) 58%, var(--emerald-700));
+      box-shadow: 0 24px 60px rgba(2, 44, 34, .23);
+      color: var(--white);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #34d399, #a3e635, #2dd4bf);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.11);
+      color: #ecfdf5;
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      color: var(--white);
+      font-size: clamp(2rem, 4.8vw, 3.45rem);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .hero-description { max-width: 760px; color: #d1fae5; font-size: 1.02rem; }
+
+    .hero-flow {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1.35fr;
+      gap: 12px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(9px);
+    }
+
+    .flow-chip {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,.10);
+      text-align: center;
+    }
+    .flow-chip strong { display: block; color: white; font-size: 1.05rem; }
+    .flow-chip small { color: #a7f3d0; font-weight: 700; }
+    .flow-arrow { color: #bef264; font-size: 1.35rem; text-align: center; }
+    .flow-results { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .context-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(285px, .65fr);
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kicker {
+      margin-bottom: 6px;
+      color: var(--emerald-700);
+      font-size: .73rem;
+      font-weight: 900;
+      letter-spacing: .085em;
+      text-transform: uppercase;
+    }
+
+    h2 { color: var(--slate-950); font-size: 1.35rem; line-height: 1.2; letter-spacing: -.02em; }
+    h3 { color: var(--slate-900); font-size: 1.02rem; line-height: 1.25; }
+    p { color: var(--slate-600); }
+
+    .problem-statement {
+      margin-top: 13px;
+      padding: 16px 17px;
+      border: 1px solid var(--emerald-100);
+      border-left: 5px solid var(--emerald-600);
+      border-radius: var(--radius-md);
+      background: var(--emerald-50);
+      color: var(--slate-950);
+      font-weight: 780;
+    }
+
+    .problem-statement small { display: block; margin-top: 7px; color: var(--slate-600); font-weight: 600; }
+
+    .meta-stack { display: grid; gap: 9px; }
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+    }
+    .meta-icon {
+      width: 31px; height: 31px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      font-weight: 900;
+    }
+    .meta-row strong { display: block; color: var(--slate-900); font-size: .86rem; }
+    .meta-row span { color: var(--slate-600); font-size: .83rem; }
+
+    .mission-map {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      padding: 15px 18px;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .map-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .map-top strong { color: var(--slate-900); font-size: .93rem; }
+    .map-top span { color: var(--slate-500); font-size: .83rem; }
+    .map-line { display: grid; grid-template-columns: 1fr 50px 1fr 50px 1fr; align-items: center; }
+    .map-connector { height: 3px; border-radius: 999px; background: var(--slate-200); transition: background .3s ease; }
+    .map-connector.done { background: linear-gradient(90deg, var(--emerald-600), #84cc16); }
+    .map-node {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 13px;
+      background: var(--slate-50);
+      color: var(--slate-500);
+      transition: .25s ease;
+    }
+    .map-node-number {
+      width: 30px; height: 30px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border: 2px solid var(--slate-300);
+      border-radius: 50%;
+      background: var(--white);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+    .map-node strong { display: block; color: inherit; font-size: .83rem; line-height: 1.12; }
+    .map-node small { display: block; margin-top: 2px; color: inherit; font-size: .68rem; text-transform: uppercase; font-weight: 850; letter-spacing: .04em; }
+    .map-node.active { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); box-shadow: 0 0 0 3px rgba(5,150,105,.07); }
+    .map-node.active .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.done { border-color: var(--emerald-100); background: var(--emerald-50); color: var(--emerald-800); }
+    .map-node.done .map-node-number { border-color: var(--emerald-600); background: var(--emerald-600); color: white; }
+    .map-node.locked { opacity: .62; }
+
+    .mission {
+      --mission-color: var(--emerald-600);
+      --mission-soft: var(--emerald-50);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--mission-color);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      transition: border-color .25s ease, box-shadow .25s ease, opacity .25s ease;
+    }
+    .mission[data-mission="2"] { --mission-color: var(--teal-700); --mission-soft: #f0fdfa; }
+    .mission[data-mission="3"] { --mission-color: var(--lime-600); --mission-soft: #f7fee7; }
+    .mission.locked { opacity: .72; }
+    .mission.active { box-shadow: var(--shadow-md); }
+    .mission.completed { border-color: var(--emerald-100); }
+
+    .mission-toggle {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 15px;
+      align-items: center;
+      padding: 20px 22px;
+      background: var(--white);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mission.locked .mission-toggle { cursor: not-allowed; }
+    .mission-icon {
+      width: 52px; height: 52px;
+      display: grid; place-items: center;
+      border-radius: 17px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 24%, transparent);
+      font-size: 1.25rem;
+      font-weight: 950;
+    }
+    .mission-heading small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--mission-color);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mission-heading h2 { margin: 0; font-size: 1.35rem; }
+    .mission-heading p { margin-top: 4px; font-size: .9rem; }
+    .mission-side { display: flex; align-items: center; gap: 10px; }
+    .mission-meta {
+      display: grid;
+      gap: 3px;
+      justify-items: end;
+      color: var(--slate-500);
+      font-size: .77rem;
+      white-space: nowrap;
+    }
+    .mission-meta strong { color: var(--slate-800); font-size: .82rem; }
+    .state-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: .7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .mission.active .state-pill { background: var(--mission-soft); color: var(--mission-color); }
+    .mission.completed .state-pill { background: var(--emerald-50); color: var(--emerald-800); }
+    .chevron { color: var(--slate-400); font-size: 1.15rem; transition: transform .22s ease; }
+    .mission.open .chevron { transform: rotate(180deg); }
+
+    .mission-content { display: none; padding: 0 22px 24px; }
+    .mission.open .mission-content { display: grid; gap: 22px; }
+
+    .mission-objective {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 15px;
+      border-radius: 15px;
+      background: var(--mission-soft);
+      border: 1px solid color-mix(in srgb, var(--mission-color) 20%, transparent);
+    }
+    .objective-icon {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 11px; background: white; color: var(--mission-color); font-weight: 950;
+    }
+    .mission-objective strong { display: block; color: var(--slate-900); font-size: .88rem; }
+    .mission-objective p { font-size: .84rem; }
+    .seal-preview { color: var(--mission-color); font-size: .76rem; font-weight: 900; text-align: right; }
+
+    .task-block { display: grid; gap: 12px; padding-top: 2px; }
+    .task-head { display: flex; gap: 11px; align-items: flex-start; }
+    .task-index {
+      width: 29px; height: 29px; flex: 0 0 auto;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: var(--slate-900);
+      color: white;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+    .task-head h3 { margin-bottom: 3px; }
+    .task-head p { font-size: .88rem; }
+
+    .choice-grid { display: grid; gap: 9px; }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 37px minmax(0, 1fr) 22px;
+      gap: 11px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: var(--slate-300); box-shadow: 0 6px 16px rgba(15,23,42,.05); }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice-letter {
+      width: 33px; height: 33px; display: grid; place-items: center;
+      border: 1px solid var(--slate-300); border-radius: 10px;
+      color: var(--slate-600); background: var(--slate-50); font-size: .8rem; font-weight: 900;
+    }
+    .choice-copy strong { display: block; margin-bottom: 2px; color: var(--slate-900); font-size: .91rem; }
+    .choice-copy span { display: block; color: var(--slate-600); font-size: .84rem; }
+    .radio-mark {
+      width: 21px; height: 21px; margin-top: 5px;
+      border: 2px solid var(--slate-300); border-radius: 50%; background: white; position: relative;
+    }
+    .choice:has(input:checked) { border-color: var(--mission-color); background: var(--mission-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 9%, transparent); }
+    .choice:has(input:checked) .choice-letter { border-color: var(--mission-color); background: var(--mission-color); color: white; }
+    .choice:has(input:checked) .radio-mark { border-color: var(--mission-color); }
+    .choice:has(input:checked) .radio-mark::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; background: var(--mission-color); }
+
+    .eps-flow { display: grid; grid-template-columns: 1fr auto 1.25fr auto 1fr; gap: 10px; align-items: stretch; }
+    .eps-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .eps-card strong { color: var(--slate-900); font-size: .83rem; letter-spacing: .04em; text-transform: uppercase; }
+    .eps-card small { color: var(--slate-500); font-size: .75rem; }
+    .eps-arrow { display: grid; place-items: center; color: var(--emerald-600); font-size: 1.35rem; font-weight: 900; }
+
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 34px 9px 10px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    select:focus { border-color: var(--mission-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent); }
+
+    .expression-builder {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+    .ide-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 10px 13px;
+      border-bottom: 1px solid #263244;
+      background: #172033;
+      color: #cbd5e1;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    .ide-dots { display: flex; gap: 6px; }
+    .ide-dot { width: 9px; height: 9px; border-radius: 50%; background: #475569; }
+    .expression-lines { display: grid; gap: 11px; padding: 16px; }
+    .expression-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+    .expression-label { color: #a7f3d0; font: 700 .86rem Consolas, Monaco, monospace; white-space: nowrap; }
+    .expression-line select { min-height: 42px; border-color: #334155; background: #172033; color: #f8fafc; font-family: Consolas, Monaco, monospace; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+    .test-card {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .test-input { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .test-input strong { color: var(--slate-900); font-size: .86rem; }
+    .test-input span { padding: 4px 8px; border-radius: 8px; background: var(--white); color: var(--emerald-800); font: 800 .8rem Consolas, monospace; border: 1px solid var(--slate-200); }
+
+    .branch {
+      display: none;
+      padding: 12px 14px;
+      border-left: 4px solid var(--amber-700);
+      border-radius: 12px;
+      background: var(--amber-50);
+      color: var(--slate-700);
+      font-size: .87rem;
+    }
+    .branch.show { display: block; animation: reveal .18s ease; }
+    .branch strong { display: block; color: var(--amber-700); margin-bottom: 3px; }
+
+    .help-row { display: flex; justify-content: flex-start; }
+    .hint-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 999px;
+      background: var(--emerald-50);
+      color: var(--emerald-800);
+      cursor: pointer;
+      font-size: .84rem;
+      font-weight: 850;
+      transition: .16s ease;
+    }
+    .hint-btn:hover { transform: translateY(-1px); background: #dcfce7; }
+    .hint-btn:disabled { cursor: default; opacity: .62; transform: none; }
+    .hint-drawer {
+      display: none;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 14px;
+      background: var(--emerald-50);
+    }
+    .hint-drawer.show { display: grid; animation: reveal .18s ease; }
+    .hint-number { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 9px; background: var(--emerald-700); color: white; font-size: .75rem; font-weight: 900; }
+    .hint-drawer strong { display: block; color: var(--emerald-900); font-size: .85rem; }
+    .hint-drawer p { margin-top: 2px; font-size: .84rem; }
+
+    .mission-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-top: 3px; }
+    .primary-btn, .secondary-btn {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: .18s ease;
+    }
+    .primary-btn { background: var(--mission-color); color: white; box-shadow: 0 8px 20px color-mix(in srgb, var(--mission-color) 22%, transparent); }
+    .primary-btn:hover { transform: translateY(-1px); filter: brightness(.94); }
+    .primary-btn:disabled { cursor: default; opacity: .62; transform: none; box-shadow: none; }
+    .secondary-btn { border: 1px solid var(--slate-300); background: white; color: var(--slate-700); }
+    .secondary-btn:hover { background: var(--slate-50); transform: translateY(-1px); }
+
+    .feedback { display: none; flex: 1 1 310px; padding: 11px 13px; border-radius: 12px; font-size: .86rem; font-weight: 750; }
+    .feedback.show { display: block; }
+    .feedback.warn { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-100); }
+    .feedback.bad { background: var(--red-50); color: var(--red-700); border: 1px solid var(--red-100); }
+    .feedback.ok { background: var(--emerald-50); color: var(--emerald-800); border: 1px solid var(--emerald-100); }
+
+    .mission-result {
+      display: none;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--emerald-50), #f7fee7);
+    }
+    .mission-result.show { display: grid; animation: reveal .24s ease; }
+    .result-check { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: var(--emerald-600); color: white; font-size: 1.15rem; font-weight: 950; }
+    .mission-result strong { display: block; color: var(--emerald-900); margin-bottom: 3px; }
+    .mission-result p { font-size: .84rem; }
+    .seal {
+      min-width: 142px;
+      padding: 9px 11px;
+      border: 1px solid var(--emerald-100);
+      border-radius: 12px;
+      background: white;
+      color: var(--emerald-800);
+      text-align: center;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border: 1px solid #263244;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+    .code-body { padding: 12px 0; overflow-x: auto; }
+    .code-line {
+      display: grid;
+      grid-template-columns: 43px minmax(max-content, 1fr);
+      min-height: 25px;
+      align-items: center;
+      color: #e2e8f0;
+      font: .84rem/1.55 Consolas, Monaco, "Courier New", monospace;
+      white-space: pre;
+    }
+    .line-number { padding-right: 12px; color: #64748b; text-align: right; user-select: none; }
+    .line-code { padding-right: 18px; }
+    .code-line.entry { background: rgba(29,78,216,.13); border-left: 4px solid #60a5fa; }
+    .code-line.process { background: rgba(5,150,105,.13); border-left: 4px solid #34d399; }
+    .code-line.output { background: rgba(101,163,13,.13); border-left: 4px solid #a3e635; }
+    .tok-pre { color: #c084fc; }
+    .tok-type { color: #67e8f9; }
+    .tok-fn { color: #fde68a; }
+    .tok-str { color: #86efac; }
+    .tok-num { color: #fca5a5; }
+    .tok-var { color: #e2e8f0; }
+    .tok-comment { color: #94a3b8; font-style: italic; }
+    .code-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 13px; border-top: 1px solid #263244; background: #172033; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; color: #cbd5e1; font-size: .73rem; font-weight: 800; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .entry-dot { background: #60a5fa; }
+    .process-dot { background: #34d399; }
+    .output-dot { background: #a3e635; }
+
+    .completion {
+      display: none;
+      padding: 27px;
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 92% 10%, rgba(163,230,53,.15), transparent 18rem),
+        linear-gradient(135deg, var(--emerald-950), var(--emerald-900));
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+    .completion.show { display: block; animation: reveal .3s ease; }
+    .completion-label { color: #bef264; font-size: .75rem; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+    .completion h2 { margin-top: 5px; color: white; font-size: 1.65rem; }
+    .completion > p { margin-top: 7px; color: #d1fae5; }
+    .completion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 17px; }
+    .completion-item { padding: 13px; border: 1px solid rgba(255,255,255,.13); border-radius: 14px; background: rgba(255,255,255,.07); }
+    .completion-item strong { display: block; color: white; font-size: .86rem; }
+    .completion-item span { display: block; margin-top: 3px; color: #d1fae5; font-size: .79rem; }
+    .completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    .completion .secondary-btn { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.10); color: white; }
+    .completion .secondary-btn:hover { background: rgba(255,255,255,.16); }
+
+    .resource-credit { padding: 16px 10px 0; text-align: center; color: var(--slate-500); font-size: .82rem; }
+    .resource-credit a { color: var(--emerald-700); font-weight: 800; text-decoration: none; }
+    .resource-credit a:hover { text-decoration: underline; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 920px) {
+      .hero, .context-card { grid-template-columns: 1fr; }
+      .hero-flow { max-width: 560px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .eps-flow { grid-template-columns: 1fr; }
+      .eps-arrow { transform: rotate(90deg); }
+      .map-line { grid-template-columns: 1fr 28px 1fr 28px 1fr; }
+      .map-node { align-items: center; justify-content: center; padding: 8px; }
+      .map-node-copy { display: none; }
+      .completion-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      body { padding: 12px 10px 30px; }
+      .shell { gap: 12px; }
+      .hero { padding: 22px 18px; border-radius: 21px; }
+      .hero-flow { grid-template-columns: 1fr auto 1fr; padding: 14px; gap: 8px; }
+      .hero-flow > .flow-arrow:last-of-type { display: none; }
+      .flow-results { grid-column: 1 / -1; }
+      .flow-chip { padding: 10px 7px; }
+      .flow-chip strong { font-size: .86rem; }
+      .flow-chip small { font-size: .68rem; }
+      .context-card { padding: 17px; border-radius: 18px; }
+      .mission-map { top: 4px; padding: 11px; border-radius: 15px; }
+      .map-top { margin-bottom: 9px; }
+      .map-top span { display: none; }
+      .mission { border-radius: 20px; }
+      .mission-toggle { grid-template-columns: auto 1fr; padding: 16px; }
+      .mission-icon { width: 44px; height: 44px; border-radius: 14px; }
+      .mission-side { grid-column: 1 / -1; justify-content: space-between; padding-left: 59px; }
+      .mission-meta { justify-items: start; display: flex; gap: 8px; align-items: center; }
+      .mission-content { padding: 0 16px 18px; }
+      .mission-objective { grid-template-columns: auto 1fr; }
+      .seal-preview { grid-column: 1 / -1; text-align: left; padding-left: 45px; }
+      .choice { grid-template-columns: 32px 1fr 20px; padding: 11px; gap: 9px; }
+      .choice-letter { width: 29px; height: 29px; }
+      .mission-result { grid-template-columns: auto 1fr; }
+      .seal { grid-column: 1 / -1; margin-left: 56px; text-align: left; }
+      .mission-actions { align-items: stretch; flex-direction: column; }
+      .primary-btn, .secondary-btn { width: 100%; }
+      .feedback { flex-basis: auto; }
+      .completion { padding: 21px 18px; border-radius: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+    }
+  
+
+    input[type="number"] {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 11px;
+      border: 1px solid var(--slate-300);
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--slate-800);
+      outline: 0;
+    }
+    input[type="number"]:focus {
+      border-color: var(--mission-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-color) 12%, transparent);
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr);
+      gap: 12px;
+    }
+
+    .setup-card {
+      display: grid;
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .setup-card label {
+      color: var(--slate-900);
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .setup-card small {
+      color: var(--slate-500);
+      font-size: .75rem;
+    }
+
+    .trace-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trace-card {
+      position: relative;
+      display: grid;
+      gap: 11px;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+
+    .trace-card::after {
+      content: "→";
+      position: absolute;
+      right: -17px;
+      top: 50%;
+      z-index: 2;
+      color: var(--mission-color);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+
+    .trace-card:last-child::after { display: none; }
+
+    .trace-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trace-number {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .trace-step strong {
+      color: var(--slate-900);
+      font-size: .82rem;
+    }
+
+    .trace-step small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .7rem;
+    }
+
+    .trace-fields {
+      display: grid;
+      gap: 8px;
+    }
+
+    .trace-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .trace-field label {
+      color: var(--slate-600);
+      font-size: .72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .case-level {
+      display: inline-flex;
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .diagnosis-box {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .output-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 9px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+
+    .output-box {
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      background: white;
+      text-align: center;
+    }
+
+    .output-box small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .output-box strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 900 1.05rem Consolas, Monaco, monospace;
+    }
+
+    .comparison-arrow {
+      color: var(--mission-color);
+      font-size: 1.15rem;
+      font-weight: 950;
+    }
+
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+
+    .summary-state {
+      padding: 11px;
+      border-radius: 12px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+    }
+
+    .summary-state small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .summary-state strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--slate-900);
+      font: 800 .78rem/1.45 Consolas, Monaco, monospace;
+    }
+
+    @media (max-width: 920px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr 1fr; }
+      .trace-card:nth-child(2)::after { display: none; }
+      .diagnosis-box, .setup-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .trace-grid, .trace-summary { grid-template-columns: 1fr; }
+      .trace-card::after { display: none; }
+      .output-comparison { grid-template-columns: 1fr; }
+      .comparison-arrow { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .hero-flow.hero-trace {
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .hero-trace .flow-chip {
+      min-height: 78px;
+      display: grid;
+      align-content: center;
+    }
+
+    .hero-trace .flow-chip small {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .hero-trace .flow-chip strong {
+      font-size: .94rem;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 660px) {
+      .hero-flow.hero-trace {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-trace .flow-chip {
+        min-height: 68px;
+      }
+    }
+
+  
+
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .architecture-card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      background: var(--surface);
+    }
+
+    .architecture-card small {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .architecture-card strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 5px;
+    }
+
+    .architecture-card p {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .architecture-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .role-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .role-card code {
+      width: fit-content;
+      border-radius: 8px;
+      padding: 3px 7px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .variable-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .variable-token {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--surface-soft);
+      color: var(--ink);
+      font: 800 .83rem/1.2 Consolas, monospace;
+    }
+
+    .logic-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .logic-panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 15px;
+    }
+
+    .logic-panel h4 {
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    .logic-selects {
+      display: grid;
+      gap: 10px;
+    }
+
+    .logic-row {
+      display: grid;
+      grid-template-columns: minmax(145px, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logic-row label {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .signature-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .signature-card.full { grid-column: 1 / -1; }
+
+    .code-section-label {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font: 800 .68rem/1.3 system-ui, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #D1FAE5;
+      border: 1px solid rgba(209,250,229,.24);
+      background: rgba(16,185,129,.16);
+      margin-right: 8px;
+    }
+
+    .final-code[hidden] { display: none; }
+
+    @media (max-width: 860px) {
+      .architecture-flow,
+      .role-grid,
+      .logic-grid,
+      .signature-grid { grid-template-columns: 1fr; }
+      .architecture-arrow { transform: rotate(90deg); }
+      .logic-row { grid-template-columns: 1fr; gap: 5px; }
+      .signature-card.full { grid-column: auto; }
+    }
+
+
+    .hero-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .loop-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+      align-items: stretch;
+    }
+    .loop-card {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .loop-card:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      z-index: 2;
+      color: var(--emerald-600);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+    .loop-card small { color: var(--slate-500); font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 850; }
+    .loop-card strong { color: var(--slate-900); font-size: .92rem; }
+    .loop-card p { font-size: .8rem; }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .control-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .control-card strong { color: var(--slate-900); font-size: .83rem; }
+    .control-card small { color: var(--slate-500); font-size: .74rem; }
+
+    .state-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+    .state-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .state-table th,
+    .state-table td {
+      padding: 11px;
+      border-bottom: 1px solid var(--slate-200);
+      border-right: 1px solid var(--slate-200);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .state-table th:last-child,
+    .state-table td:last-child { border-right: 0; }
+    .state-table tr:last-child td { border-bottom: 0; }
+    .state-table th {
+      background: var(--slate-50);
+      color: var(--slate-700);
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .state-table td:first-child { color: var(--slate-900); font-weight: 900; }
+    .state-table input[type="number"] { min-width: 112px; }
+
+    .formula-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+    .formula-card {
+      display: grid;
+      gap: 7px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .formula-card strong { color: var(--slate-900); font-size: .84rem; }
+    .formula-arrow { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    .case-level {
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--mission-soft);
+      color: var(--mission-color);
+      font-size: .7rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    @media (max-width: 920px) {
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr 1fr; }
+      .loop-card:not(:last-child)::after { display: none; }
+      .formula-strip { grid-template-columns: 1fr; }
+      .formula-arrow { transform: rotate(90deg); text-align: center; }
+    }
+    @media (max-width: 660px) {
+      .hero-flow { grid-template-columns: 1fr; }
+      .loop-flow,
+      .control-grid { grid-template-columns: 1fr; }
+    }
+
+
+
+    .hero-flow.state-preview {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .state-preview .flow-chip { min-height: 78px; display: grid; align-content: center; }
+    .state-preview .flow-chip small { text-transform: uppercase; letter-spacing: .05em; font-size: .68rem; }
+
+    .variable-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .variable-card {
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+      text-align: center;
+    }
+    .variable-card small { display: block; color: var(--slate-500); font-size: .69rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
+    .variable-card strong { display: block; margin-top: 4px; color: var(--slate-900); font: 900 1.08rem Consolas, Monaco, monospace; }
+
+    .initial-state-grid,
+    .final-state-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .state-input-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .state-input-card strong { color: var(--slate-900); font: 900 .94rem Consolas, Monaco, monospace; }
+    .state-input-card small { color: var(--slate-500); font-size: .73rem; }
+
+    .assignment-demo {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 11px;
+      align-items: stretch;
+    }
+    .assignment-box {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .assignment-box small { display: block; color: var(--slate-500); font-size: .69rem; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+    .assignment-box strong { display: block; margin-top: 5px; color: var(--slate-900); font: 900 .95rem/1.45 Consolas, Monaco, monospace; }
+    .assignment-arrow { display: grid; place-items: center; color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    .state-trace {
+      display: grid;
+      gap: 10px;
+    }
+    .state-step {
+      display: grid;
+      grid-template-columns: 42px minmax(180px, .9fr) minmax(0, 1fr) minmax(160px, .65fr);
+      gap: 11px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .state-step.no-snapshot {
+      grid-template-columns: 42px minmax(0, 1fr) minmax(160px, .65fr);
+    }
+    .state-step-number {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      background: var(--mission-color);
+      color: white;
+      font-size: .78rem;
+      font-weight: 950;
+    }
+    .state-code { color: var(--slate-900); font: 850 .86rem Consolas, Monaco, monospace; }
+    .state-code small { display: block; margin-top: 3px; color: var(--slate-500); font: 600 .72rem/1.35 Inter, system-ui, sans-serif; }
+    .state-current { display: flex; flex-wrap: wrap; gap: 6px; }
+    .state-token {
+      padding: 6px 8px;
+      border: 1px solid var(--slate-200);
+      border-radius: 9px;
+      background: white;
+      color: var(--slate-700);
+      font: 800 .74rem Consolas, Monaco, monospace;
+    }
+    .state-answer label { display: block; margin-bottom: 5px; color: var(--slate-600); font-size: .71rem; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+
+    .state-summary {
+      display: none;
+      margin-top: 12px;
+      overflow-x: auto;
+      border: 1px solid var(--emerald-100);
+      border-radius: 15px;
+      background: var(--emerald-50);
+    }
+    .state-summary.show { display: block; animation: reveal .2s ease; }
+    .state-summary table { width: 100%; min-width: 650px; border-collapse: collapse; }
+    .state-summary th,
+    .state-summary td { padding: 9px 11px; border-bottom: 1px solid rgba(5,150,105,.14); text-align: left; }
+    .state-summary th { color: var(--emerald-900); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+    .state-summary td { color: var(--slate-700); font: 750 .78rem Consolas, Monaco, monospace; }
+    .state-summary tr:last-child td { border-bottom: 0; }
+
+    .order-check {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .order-card {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .order-card strong { color: var(--slate-900); font-size: .84rem; }
+    .order-card code { color: var(--emerald-800); font: 850 .81rem Consolas, Monaco, monospace; }
+
+    @media (max-width: 920px) {
+      .state-step { grid-template-columns: 38px minmax(0, 1fr); }
+      .state-current, .state-answer { grid-column: 2; }
+    }
+    @media (max-width: 660px) {
+      .hero-flow.state-preview,
+      .variable-board,
+      .initial-state-grid,
+      .final-state-grid,
+      .order-check { grid-template-columns: 1fr; }
+      .assignment-demo { grid-template-columns: 1fr; }
+      .assignment-arrow { transform: rotate(90deg); }
+      .state-step { grid-template-columns: 34px minmax(0, 1fr); padding: 11px; }
+    }
+
+
+    .reading-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .reading-card {
+      padding: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+      text-align: center;
+    }
+    .reading-card small {
+      display: block;
+      color: var(--slate-500);
+      font-size: .69rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .reading-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--slate-900);
+      font-size: 1.16rem;
+      font-weight: 950;
+    }
+    .reading-card.result {
+      border-color: var(--emerald-100);
+      background: var(--emerald-50);
+    }
+    .reading-card.result strong { color: var(--emerald-800); }
+
+    .two-field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .field-card {
+      display: grid;
+      gap: 7px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+    .field-card label {
+      color: var(--slate-900);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .decomposition-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+    .decomposition-item {
+      position: relative;
+      display: grid;
+      gap: 5px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+    .decomposition-item:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -13px;
+      top: 50%;
+      z-index: 2;
+      transform: translateY(-50%);
+      color: var(--mission-color);
+      font-weight: 950;
+    }
+    .decomposition-item small {
+      color: var(--slate-500);
+      font-size: .67rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .decomposition-item strong {
+      color: var(--slate-900);
+      font-size: .85rem;
+    }
+
+    .formula-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 15px;
+      border: 1px solid var(--slate-200);
+      border-radius: 15px;
+      background: var(--slate-50);
+    }
+    .formula-value {
+      padding: 11px;
+      border: 1px solid var(--slate-200);
+      border-radius: 11px;
+      background: white;
+      text-align: center;
+    }
+    .formula-value small { display: block; color: var(--slate-500); font-size: .67rem; font-weight: 850; }
+    .formula-value strong { color: var(--slate-900); font-size: 1rem; }
+    .formula-symbol { color: var(--mission-color); font-size: 1.25rem; font-weight: 950; }
+
+    @media (max-width: 920px) {
+      .decomposition-strip { grid-template-columns: 1fr 1fr; }
+      .decomposition-item:not(:last-child)::after { display: none; }
+    }
+    @media (max-width: 660px) {
+      .reading-board,
+      .two-field-grid,
+      .decomposition-strip { grid-template-columns: 1fr; }
+      .formula-card { grid-template-columns: 1fr; }
+      .formula-symbol { transform: rotate(90deg); text-align: center; }
+    }
+
+
+    .order-preview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .data-rule-grid,
+    .representation-grid,
+    .scenario-grid,
+    .final-representation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .data-rule-card,
+    .representation-card,
+    .scenario-card,
+    .final-representation-card {
+      display: grid;
+      gap: 9px;
+      padding: 15px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--slate-50);
+    }
+
+    .data-rule-card strong,
+    .representation-card strong,
+    .scenario-card strong,
+    .final-representation-card strong {
+      color: var(--slate-900);
+    }
+
+    .data-rule-card small,
+    .representation-card small,
+    .scenario-card small,
+    .final-representation-card small {
+      color: var(--slate-500);
+      font-size: .76rem;
+    }
+
+    .formula-board {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .formula-step {
+      display: grid;
+      gap: 8px;
+      padding: 15px;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      background: var(--white);
+    }
+
+    .formula-step code {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: var(--slate-900);
+      color: #d1fae5;
+      font: 800 .84rem/1.45 Consolas, Monaco, monospace;
+    }
+
+    .formula-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--emerald-600);
+      font-size: 1.3rem;
+      font-weight: 950;
+    }
+
+    .sequence-builder {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .sequence-step {
+      position: relative;
+      display: grid;
+      gap: 7px;
+      padding: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+
+    .sequence-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -16px;
+      top: 50%;
+      z-index: 2;
+      color: var(--emerald-600);
+      font-weight: 950;
+      transform: translateY(-50%);
+    }
+
+    .sequence-step span {
+      color: var(--slate-500);
+      font-size: .7rem;
+      font-weight: 900;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .mini-flowchart {
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+      padding: 13px;
+      border: 1px dashed var(--slate-300);
+      border-radius: 14px;
+      background: var(--white);
+    }
+
+    .flow-shape {
+      width: min(100%, 220px);
+      padding: 8px 12px;
+      border: 2px solid var(--emerald-600);
+      border-radius: 10px;
+      background: var(--emerald-50);
+      color: var(--slate-900);
+      text-align: center;
+      font-size: .78rem;
+      font-weight: 850;
+    }
+
+    .flow-shape.terminal { border-radius: 999px; }
+    .flow-shape.io { transform: skew(-8deg); }
+    .flow-shape.io span { display: block; transform: skew(8deg); }
+    .flow-down { color: var(--emerald-600); font-weight: 950; }
+
+    .representation-card.highlight,
+    .final-representation-card.highlight {
+      border-color: var(--emerald-100);
+      background: var(--emerald-50);
+    }
+
+    .result-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .result-field {
+      display: grid;
+      gap: 6px;
+      padding: 13px;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      background: var(--slate-50);
+    }
+
+    .result-field label {
+      color: var(--slate-700);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .final-representation-grid {
+      margin-bottom: 15px;
+    }
+
+    .final-representation-card p {
+      font-size: .84rem;
+    }
+
+    @media (max-width: 920px) {
+      .data-rule-grid,
+      .representation-grid,
+      .scenario-grid,
+      .final-representation-grid,
+      .sequence-builder { grid-template-columns: 1fr 1fr; }
+      .sequence-step:nth-child(2)::after,
+      .sequence-step:nth-child(4)::after { display: none; }
+    }
+
+    @media (max-width: 660px) {
+      .order-preview,
+      .data-rule-grid,
+      .representation-grid,
+      .scenario-grid,
+      .final-representation-grid,
+      .sequence-builder,
+      .formula-board,
+      .result-pair { grid-template-columns: 1fr; }
+      .formula-arrow { transform: rotate(90deg); }
+      .sequence-step::after { display: none !important; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="badge-row">
+          <span class="badge">Roteiro por missões</span>
+          <span class="badge">CCI01</span>
+          <span class="badge">Dados, regras e representações</span>
+        </div>
+        <h1>Planejando um pedido na reprografia</h1>
+        <p class="hero-description">Organize um problema cotidiano antes da programação: identifique os dados, formule as regras e represente a solução de diferentes maneiras.</p>
+      </div>
+
+      <div class="hero-flow order-preview" aria-label="Resumo do pedido de impressão">
+        <div class="flow-chip"><small>páginas do material</small><strong>12</strong></div>
+        <div class="flow-chip"><small>quantidade de cópias</small><strong>3</strong></div>
+        <div class="flow-chip"><small>preço por página</small><strong>R$ 0,25</strong></div>
+        <div class="flow-chip"><small>custo previsto</small><strong>R$ 9,00</strong></div>
+      </div>
+    </header>
+
+    <section class="context-card" aria-label="Contexto da atividade">
+      <article>
+        <p class="kicker">Problema a resolver</p>
+        <h2>Prever o custo antes de confirmar a impressão</h2>
+        <div class="problem-statement">
+          Um estudante precisa imprimir um material com 12 páginas e deseja 3 cópias. A reprografia cobra R$ 0,25 por página impressa. Represente uma solução algorítmica que calcule a quantidade total de páginas e o custo do pedido.
+          <small>Pergunta central: quais dados entram, quais regras transformam esses dados e qual resultado deve ser apresentado?</small>
+        </div>
+
+        <div class="reading-board" aria-label="Dados do pedido">
+          <article class="reading-card"><small>Material</small><strong>12 páginas</strong></article>
+          <article class="reading-card"><small>Pedido</small><strong>3 cópias</strong></article>
+          <article class="reading-card result"><small>Resultado esperado</small><strong>36 páginas · R$ 9,00</strong></article>
+        </div>
+      </article>
+
+      <aside class="meta-stack">
+        <p class="kicker">Resumo pedagógico</p>
+        <h2>Competência trabalhada</h2>
+        <div class="meta-row"><span class="meta-icon">C</span><div><strong>CCI01</strong><p>Representar problemas por soluções algorítmicas.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">T</span><div><strong>12 a 16 minutos</strong><p>Três missões de interpretação, representação e validação.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">K</span><div><strong>Pré-requisitos</strong><p>Multiplicação, valores monetários e sequência de ações.</p></div></div>
+        <div class="meta-row"><span class="meta-icon">E</span><div><strong>Evidência principal</strong><p>Dados e regras coerentes, sequência organizada e escolha justificada da representação.</p></div></div>
+      </aside>
+    </section>
+
+    <nav class="mission-map" aria-label="Mapa das missões">
+      <div class="map-top">
+        <strong id="progressText">Missão atual: 1 de 3</strong>
+        <span>Conclua a missão ativa para desbloquear a próxima.</span>
+      </div>
+      <div class="map-line">
+        <div class="map-node active" data-map="1"><span class="map-node-number">1</span><span class="map-node-copy"><strong>Decompor</strong><small>Em andamento</small></span></div>
+        <div class="map-connector" data-connector="1"></div>
+        <div class="map-node locked" data-map="2"><span class="map-node-number">2</span><span class="map-node-copy"><strong>Representar</strong><small>Bloqueada</small></span></div>
+        <div class="map-connector" data-connector="2"></div>
+        <div class="map-node locked" data-map="3"><span class="map-node-number">3</span><span class="map-node-copy"><strong>Justificar</strong><small>Bloqueada</small></span></div>
+      </div>
+    </nav>
+
+    <section class="mission active open" data-mission="1">
+      <button class="mission-toggle" type="button" aria-expanded="true">
+        <span class="mission-icon">1</span>
+        <span class="mission-heading"><small>Missão 1 de 3</small><h2>Separar dados, regras e resultado</h2><p>Leia o problema sem antecipar comandos de uma linguagem de programação.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 tarefas</span></span><span class="state-pill" data-state>Atual</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Identificar o que é fornecido, o que precisa ser calculado e o que deve ser exibido.</p></div><span class="seal-preview">Selo: Problema decomposto</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Classifique os elementos do pedido</h3><p>Associe cada informação ao papel que desempenha na solução.</p></div></div>
+          <div class="data-rule-grid">
+            <article class="data-rule-card"><strong>Quantidade de páginas</strong><small>Valor informado pelo estudante.</small><select id="m1_pages_role"><option value="">Escolha o papel</option><option value="input">Entrada</option><option value="rule">Regra</option><option value="output">Saída</option></select></article>
+            <article class="data-rule-card"><strong>Número de cópias</strong><small>Quantidade de exemplares desejada.</small><select id="m1_copies_role"><option value="">Escolha o papel</option><option value="input">Entrada</option><option value="rule">Regra</option><option value="output">Saída</option></select></article>
+            <article class="data-rule-card"><strong>Preço por página</strong><small>Tarifa usada no cálculo.</small><select id="m1_price_role"><option value="">Escolha o papel</option><option value="input">Entrada</option><option value="rule">Regra</option><option value="output">Saída</option></select></article>
+            <article class="data-rule-card"><strong>Total de páginas impressas</strong><small>Quantidade física produzida.</small><select id="m1_total_pages_role"><option value="">Escolha o papel</option><option value="input">Entrada</option><option value="process">Resultado intermediário</option><option value="output">Saída final única</option></select></article>
+            <article class="data-rule-card"><strong>Custo total</strong><small>Valor que o estudante precisa prever.</small><select id="m1_cost_role"><option value="">Escolha o papel</option><option value="input">Entrada</option><option value="process">Regra</option><option value="output">Saída</option></select></article>
+            <article class="data-rule-card"><strong>Nome da reprografia</strong><small>Informação contextual que não altera o cálculo.</small><select id="m1_shop_role"><option value="">Escolha o papel</option><option value="needed">Dado necessário</option><option value="context">Contexto dispensável</option><option value="output">Resultado</option></select></article>
+          </div>
+          <div class="branch" id="m1_roles_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Monte as duas regras do cálculo</h3><p>Primeiro descubra quantas páginas serão impressas; depois calcule o custo.</p></div></div>
+          <div class="formula-board">
+            <article class="formula-step"><strong>Regra 1 · quantidade produzida</strong><select id="m1_formula_pages"><option value="">Escolha a expressão</option><option value="multiply">páginas × cópias</option><option value="add">páginas + cópias</option><option value="price">páginas × preço</option></select><code>totalPaginas ← ?</code></article>
+            <div class="formula-arrow">→</div>
+            <article class="formula-step"><strong>Regra 2 · custo do pedido</strong><select id="m1_formula_cost"><option value="">Escolha a expressão</option><option value="correct">totalPaginas × preçoPorPagina</option><option value="copies">cópias × preçoPorPagina</option><option value="sum">totalPaginas + preçoPorPagina</option></select><code>custoTotal ← ?</code></article>
+          </div>
+          <div class="branch" id="m1_formula_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Verifique o exemplo</h3><p>Use 12 páginas, 3 cópias e R$ 0,25 por página.</p></div></div>
+          <div class="result-pair">
+            <div class="result-field"><label for="m1_total_pages">Total de páginas impressas</label><input id="m1_total_pages" type="number" min="0" step="1" placeholder="Digite o total"></div>
+            <div class="result-field"><label for="m1_total_cost">Custo total em reais</label><input id="m1_total_cost" type="number" min="0" step="0.01" placeholder="Ex.: 9.00"></div>
+          </div>
+          <div class="branch" id="m1_example_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="1">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer1"><span class="hint-number">1/3</span><div><strong id="hintTitle1">Pista</strong><p id="hintText1"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="1">Concluir missão</button><p class="feedback" id="m1_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m1_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você separou as entradas, organizou as duas regras e confirmou o resultado do pedido.</p></div><span class="seal">Selo conquistado · Problema decomposto</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="2">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">2</span>
+        <span class="mission-heading"><small>Missão 2 de 3</small><h2>Organizar e comparar representações</h2><p>Expresse a mesma solução em sequência textual, fluxograma e pseudocódigo.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>5 min</strong><span>3 tarefas</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Perceber que diferentes representações descrevem o mesmo algoritmo com níveis distintos de visualidade e precisão.</p></div><span class="seal-preview">Selo: Solução representada</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Organize a sequência de ações</h3><p>Use a ordem do enunciado e respeite a dependência entre leitura, cálculo e apresentação.</p></div></div>
+          <div class="sequence-builder">
+            <article class="sequence-step"><span>Passo 1</span><select id="m2_step1"><option value="">Escolha</option><option value="read_pages">Ler páginas</option><option value="calculate">Calcular totais</option><option value="show">Mostrar custo</option><option value="read_copies">Ler cópias</option><option value="read_price">Ler preço</option></select></article>
+            <article class="sequence-step"><span>Passo 2</span><select id="m2_step2"><option value="">Escolha</option><option value="read_pages">Ler páginas</option><option value="read_copies">Ler cópias</option><option value="read_price">Ler preço</option><option value="calculate">Calcular totais</option><option value="show">Mostrar custo</option></select></article>
+            <article class="sequence-step"><span>Passo 3</span><select id="m2_step3"><option value="">Escolha</option><option value="read_pages">Ler páginas</option><option value="read_copies">Ler cópias</option><option value="read_price">Ler preço</option><option value="calculate">Calcular totais</option><option value="show">Mostrar custo</option></select></article>
+            <article class="sequence-step"><span>Passo 4</span><select id="m2_step4"><option value="">Escolha</option><option value="read_pages">Ler páginas</option><option value="read_copies">Ler cópias</option><option value="read_price">Ler preço</option><option value="calculate">Calcular totais</option><option value="show">Mostrar custo</option></select></article>
+            <article class="sequence-step"><span>Passo 5</span><select id="m2_step5"><option value="">Escolha</option><option value="read_pages">Ler páginas</option><option value="read_copies">Ler cópias</option><option value="read_price">Ler preço</option><option value="calculate">Calcular totais</option><option value="show">Mostrar custo</option></select></article>
+          </div>
+          <div class="branch" id="m2_sequence_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Associe cada representação à sua principal contribuição</h3><p>As três são válidas, mas destacam aspectos diferentes da solução.</p></div></div>
+          <div class="representation-grid">
+            <article class="representation-card"><strong>Linguagem textual</strong><small>Descrição em frases próximas da comunicação cotidiana.</small><select id="m2_textual"><option value="">Principal contribuição</option><option value="accessible">Explicar a ideia de forma acessível</option><option value="visual">Mostrar graficamente o fluxo</option><option value="precise">Aproximar a solução da estrutura do código</option></select></article>
+            <article class="representation-card"><strong>Fluxograma</strong><small>Formas e setas evidenciam o percurso da solução.</small><select id="m2_flowchart"><option value="">Principal contribuição</option><option value="accessible">Explicar em linguagem cotidiana</option><option value="visual">Visualizar a sequência e o fluxo</option><option value="precise">Definir comandos próximos ao código</option></select></article>
+            <article class="representation-card highlight"><strong>Pseudocódigo</strong><small>Descrição estruturada sem depender da sintaxe de C.</small><select id="m2_pseudocode"><option value="">Principal contribuição</option><option value="accessible">Substituir qualquer explicação</option><option value="visual">Representar apenas por desenhos</option><option value="precise">Expressar ações com precisão e proximidade do código</option></select></article>
+          </div>
+          <div class="branch" id="m2_compare_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Escolha o pseudocódigo coerente</h3><p>Observe a ordem das leituras, os resultados intermediários e a saída final.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Escolha do pseudocódigo">
+            <label class="choice"><input type="radio" name="m2_pseudo" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>LER páginas, cópias e preço; calcular total de páginas; calcular custo; mostrar resultados</strong><span>As ações respeitam as dependências do problema.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_pseudo" value="early"><span class="choice-letter">B</span><span class="choice-copy"><strong>Calcular o custo; depois ler páginas, cópias e preço</strong><span>O cálculo é tentado antes de os dados existirem.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m2_pseudo" value="missing"><span class="choice-letter">C</span><span class="choice-copy"><strong>Ler páginas e preço; multiplicar os dois; mostrar o valor</strong><span>O número de cópias não participa da solução.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m2_pseudo_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="2">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer2"><span class="hint-number">1/3</span><div><strong id="hintTitle2">Pista</strong><p id="hintText2"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="2">Concluir missão</button><p class="feedback" id="m2_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m2_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você organizou a sequência e reconheceu o que cada forma de representação torna mais evidente.</p></div><span class="seal">Selo conquistado · Solução representada</span></div>
+      </div>
+    </section>
+
+    <section class="mission locked" data-mission="3">
+      <button class="mission-toggle" type="button" aria-expanded="false" disabled>
+        <span class="mission-icon">3</span>
+        <span class="mission-heading"><small>Missão 3 de 3</small><h2>Aplicar, analisar e justificar escolhas</h2><p>Teste a lógica em outro pedido e selecione a representação mais adequada a cada finalidade.</p></span>
+        <span class="mission-side"><span class="mission-meta"><strong>4 min</strong><span>3 tarefas</span></span><span class="state-pill" data-state>Bloqueada</span><span class="chevron">⌄</span></span>
+      </button>
+
+      <div class="mission-content">
+        <div class="mission-objective"><span class="objective-icon">◇</span><div><strong>Objetivo da missão</strong><p>Verificar a solução e justificar tecnicamente como ela pode ser comunicada.</p></div><span class="seal-preview">Selo: Escolha justificada</span></div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">1</span><div><h3>Reconheça o erro na regra</h3><p>Analise a expressão <code>custo ← páginas + cópias × preço</code>.</p></div></div>
+          <div class="choice-grid" role="radiogroup" aria-label="Diagnóstico da regra incorreta">
+            <label class="choice"><input type="radio" name="m3_error" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>A quantidade total de páginas não foi calculada</strong><span>Páginas e cópias precisam ser multiplicadas antes da aplicação do preço.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_error" value="price"><span class="choice-letter">B</span><span class="choice-copy"><strong>O preço deveria ser somado duas vezes</strong><span>Isso não representa a cobrança por página impressa.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_error" value="none"><span class="choice-letter">C</span><span class="choice-copy"><strong>A expressão está correta</strong><span>A soma produziria um resultado incompatível com o pedido.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m3_error_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">2</span><div><h3>Aplique a solução a um novo pedido</h3><p>Considere 18 páginas, 4 cópias e preço de R$ 0,30 por página.</p></div></div>
+          <div class="result-pair">
+            <div class="result-field"><label for="m3_total_pages">Total de páginas impressas</label><input id="m3_total_pages" type="number" min="0" step="1" placeholder="Digite o total"></div>
+            <div class="result-field"><label for="m3_total_cost">Custo total em reais</label><input id="m3_total_cost" type="number" min="0" step="0.01" placeholder="Ex.: 21.60"></div>
+          </div>
+          <div class="branch" id="m3_apply_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-head"><span class="task-index">3</span><div><h3>Analise qual representação atende melhor a cada finalidade</h3><p>A escolha depende do que precisa ser comunicado e de quem utilizará a solução.</p></div></div>
+          <div class="scenario-grid">
+            <article class="scenario-card"><strong>Apresentar visualmente o percurso para uma turma</strong><select id="m3_scenario1"><option value="">Escolha</option><option value="text">Linguagem textual</option><option value="flow">Fluxograma</option><option value="pseudo">Pseudocódigo</option></select></article>
+            <article class="scenario-card"><strong>Detalhar a lógica antes de programar em C</strong><select id="m3_scenario2"><option value="">Escolha</option><option value="text">Linguagem textual</option><option value="flow">Fluxograma</option><option value="pseudo">Pseudocódigo</option></select></article>
+            <article class="scenario-card"><strong>Explicar informalmente a ideia para um colega</strong><select id="m3_scenario3"><option value="">Escolha</option><option value="text">Linguagem textual</option><option value="flow">Fluxograma</option><option value="pseudo">Pseudocódigo</option></select></article>
+          </div>
+          <div class="choice-grid" role="radiogroup" aria-label="Justificativa sobre representações">
+            <label class="choice"><input type="radio" name="m3_why" value="correct"><span class="choice-letter">A</span><span class="choice-copy"><strong>A melhor representação depende do objetivo e do público</strong><span>Uma mesma solução pode ser expressa por formas complementares.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_why" value="always"><span class="choice-letter">B</span><span class="choice-copy"><strong>O pseudocódigo sempre substitui as demais formas</strong><span>Precisão não elimina a utilidade de uma visão textual ou visual.</span></span><span class="radio-mark"></span></label>
+            <label class="choice"><input type="radio" name="m3_why" value="cosmetic"><span class="choice-letter">C</span><span class="choice-copy"><strong>A escolha é apenas estética</strong><span>Cada forma favorece uma finalidade cognitiva e comunicativa.</span></span><span class="radio-mark"></span></label>
+          </div>
+          <div class="branch" id="m3_analysis_branch" aria-live="polite"></div>
+        </div>
+
+        <div class="help-row"><button class="hint-btn" type="button" data-hint="3">💡 Preciso de uma pista</button></div>
+        <div class="hint-drawer" id="hintDrawer3"><span class="hint-number">1/3</span><div><strong id="hintTitle3">Pista</strong><p id="hintText3"></p></div></div>
+        <div class="mission-actions"><button class="primary-btn" type="button" data-check="3">Concluir missão</button><p class="feedback" id="m3_feedback" aria-live="polite"></p></div>
+        <div class="mission-result" id="m3_result"><span class="result-check">✓</span><div><strong>Missão concluída</strong><p>Você verificou a lógica em outro caso e justificou a escolha das representações.</p></div><span class="seal">Selo conquistado · Escolha justificada</span></div>
+      </div>
+    </section>
+
+    <section class="final-code" id="finalCodeBlock" hidden>
+      <div class="final-code-head"><div><p class="kicker">Solução consolidada</p><h2>O mesmo algoritmo em três representações</h2></div><span class="code-badge">CCI01</span></div>
+
+      <div class="final-representation-grid">
+        <article class="final-representation-card"><strong>1. Linguagem textual</strong><p>Receba a quantidade de páginas, o número de cópias e o preço por página. Multiplique páginas por cópias. Multiplique o total obtido pelo preço e apresente os dois resultados.</p></article>
+        <article class="final-representation-card">
+          <strong>2. Fluxograma</strong>
+          <div class="mini-flowchart" aria-label="Fluxograma resumido">
+            <div class="flow-shape terminal">Início</div><div class="flow-down">↓</div>
+            <div class="flow-shape io"><span>Ler páginas, cópias e preço</span></div><div class="flow-down">↓</div>
+            <div class="flow-shape">Calcular total e custo</div><div class="flow-down">↓</div>
+            <div class="flow-shape io"><span>Mostrar resultados</span></div><div class="flow-down">↓</div>
+            <div class="flow-shape terminal">Fim</div>
+          </div>
+        </article>
+        <article class="final-representation-card highlight"><strong>3. Pseudocódigo</strong><p>Representação estruturada, adequada para verificar a sequência e preparar a implementação.</p></article>
+      </div>
+
+      <div class="code-window">
+        <div class="code-window-bar"><span>pedido_reprografia.alg</span><span>entrada → processamento → saída</span></div>
+        <div class="code-body">
+          <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-type">ALGORITMO</span> <span class="tok-fn">PedidoReprografia</span></span></div>
+          <div class="code-line input"><span class="line-number">2</span><span class="line-code">  <span class="tok-fn">LEIA</span> <span class="tok-var">paginas</span></span></div>
+          <div class="code-line input"><span class="line-number">3</span><span class="line-code">  <span class="tok-fn">LEIA</span> <span class="tok-var">copias</span></span></div>
+          <div class="code-line input"><span class="line-number">4</span><span class="line-code">  <span class="tok-fn">LEIA</span> <span class="tok-var">precoPorPagina</span></span></div>
+          <div class="code-line process"><span class="line-number">5</span><span class="line-code">  <span class="tok-var">totalPaginas</span> ← <span class="tok-var">paginas</span> × <span class="tok-var">copias</span></span></div>
+          <div class="code-line process"><span class="line-number">6</span><span class="line-code">  <span class="tok-var">custoTotal</span> ← <span class="tok-var">totalPaginas</span> × <span class="tok-var">precoPorPagina</span></span></div>
+          <div class="code-line output"><span class="line-number">7</span><span class="line-code">  <span class="tok-fn">ESCREVA</span> <span class="tok-str">"Total de páginas: "</span>, <span class="tok-var">totalPaginas</span></span></div>
+          <div class="code-line output"><span class="line-number">8</span><span class="line-code">  <span class="tok-fn">ESCREVA</span> <span class="tok-str">"Custo: R$ "</span>, <span class="tok-var">custoTotal</span></span></div>
+          <div class="code-line"><span class="line-number">9</span><span class="line-code"><span class="tok-type">FIM</span></span></div>
+        </div>
+      </div>
+      <div class="code-legend"><span><i class="legend-dot input"></i>Entrada</span><span><i class="legend-dot process"></i>Processamento</span><span><i class="legend-dot output"></i>Saída</span></div>
+    </section>
+
+    <section class="completion" id="completionPanel" aria-live="polite">
+      <span class="completion-label">Percurso concluído</span>
+      <h2>Problema representado antes da programação</h2>
+      <p>Você separou dados e regras, organizou a sequência, verificou os cálculos e comparou três formas de comunicar a mesma solução algorítmica.</p>
+      <div class="completion-grid">
+        <article class="completion-item"><strong>Problema decomposto</strong><span>Entradas, resultados intermediários, regras e saída foram identificados.</span></article>
+        <article class="completion-item"><strong>Solução representada</strong><span>A sequência foi expressa em linguagem textual, fluxograma e pseudocódigo.</span></article>
+        <article class="completion-item"><strong>Escolha justificada</strong><span>A representação foi relacionada ao objetivo e ao público da comunicação.</span></article>
+      </div>
+      <div class="completion-actions"><button class="secondary-btn" id="reviewButton" type="button">Revisar desde a missão 1</button><button class="secondary-btn" id="restartButton" type="button">Refazer roteiro</button></div>
+    </section>
+
+    <footer class="resource-credit"><p>Concepção e desenvolvimento deste recurso educacional: <a href="https://github.com/marcosbiao/teste-recursos-educacionais" target="_blank" rel="noopener noreferrer">Marcos Bião</a>.</p></footer>
+  </main>
+
+  <script>
+    const completed = new Set();
+    const hintState = { 1: 0, 2: 0, 3: 0 };
+    const hints = {
+      1: [
+        ["Comece pelo que é informado", "Páginas, cópias e preço por página são valores recebidos. O nome da reprografia não altera o cálculo."],
+        ["Há um resultado intermediário", "Antes de calcular o valor, descubra quantas páginas serão efetivamente impressas."],
+        ["Faça uma regra de cada vez", "12 × 3 produz 36 páginas; 36 × 0,25 produz o custo do pedido."]
+      ],
+      2: [
+        ["Respeite as dependências", "Os dados precisam ser conhecidos antes dos cálculos, e os resultados precisam existir antes da apresentação."],
+        ["Compare o foco de cada forma", "Texto favorece explicação cotidiana; fluxograma favorece visão do percurso; pseudocódigo favorece precisão estrutural."],
+        ["O pseudocódigo não deve omitir entradas", "O número de cópias participa da quantidade total de páginas impressas."]
+      ],
+      3: [
+        ["Revise a unidade cobrada", "O preço é aplicado a cada página efetivamente impressa, não apenas a cada cópia."],
+        ["Resolva em duas etapas", "18 × 4 fornece o total de páginas; depois multiplique esse valor por 0,30."],
+        ["Não existe uma única forma superior em todos os casos", "A escolha depende de visualidade, precisão, público e finalidade da comunicação."]
+      ]
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const value = id => document.getElementById(id)?.value || "";
+    const selected = name => document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+    const numberValue = id => {
+      const raw = document.getElementById(id)?.value;
+      return raw === "" || raw == null ? NaN : Number(raw);
+    };
+    const closeTo = (a, b) => Number.isFinite(a) && Math.abs(a - b) < 0.001;
+
+    function setBranch(id, title = "", text = "") {
+      const branch = document.getElementById(id);
+      if (!title) { branch.classList.remove("show"); branch.innerHTML = ""; return; }
+      branch.innerHTML = `<strong>${title}</strong><span>${text}</span>`;
+      branch.classList.add("show");
+    }
+
+    function showFeedback(number, text, type = "error") {
+      const feedback = document.getElementById(`m${number}_feedback`);
+      feedback.textContent = text;
+      feedback.className = `feedback show ${type}`;
+    }
+
+    function validateMission1(live = false) {
+      const roles = {
+        pages: value("m1_pages_role"), copies: value("m1_copies_role"), price: value("m1_price_role"),
+        totalPages: value("m1_total_pages_role"), cost: value("m1_cost_role"), shop: value("m1_shop_role")
+      };
+      const rolesFilled = Object.values(roles).every(Boolean);
+      const rolesOk = roles.pages === "input" && roles.copies === "input" && roles.price === "input" && roles.totalPages === "process" && roles.cost === "output" && roles.shop === "context";
+      if (rolesFilled && !rolesOk) {
+        if (roles.shop === "needed") setBranch("m1_roles_branch", "Contexto não é dado de cálculo", "O nome da reprografia pode aparecer no enunciado, mas não altera a quantidade nem o custo.");
+        else if (roles.totalPages !== "process") setBranch("m1_roles_branch", "Há um resultado intermediário", "O total de páginas é calculado e depois usado para obter o custo.");
+        else setBranch("m1_roles_branch", "Revise os papéis", "Páginas, cópias e preço entram; o total de páginas é intermediário; o custo é a saída principal.");
+      } else setBranch("m1_roles_branch");
+
+      const formulaPages = value("m1_formula_pages");
+      const formulaCost = value("m1_formula_cost");
+      const formulasOk = formulaPages === "multiply" && formulaCost === "correct";
+      if ((formulaPages || formulaCost) && !formulasOk) {
+        if (formulaPages === "add") setBranch("m1_formula_branch", "Cópias repetem todas as páginas", "Somar 12 + 3 não representa três exemplares de um material com 12 páginas.");
+        else if (formulaCost === "copies") setBranch("m1_formula_branch", "A cobrança é por página impressa", "O preço deve multiplicar o total de páginas, não apenas o número de cópias.");
+        else setBranch("m1_formula_branch", "Use duas transformações", "totalPaginas = paginas × copias; custoTotal = totalPaginas × precoPorPagina.");
+      } else setBranch("m1_formula_branch");
+
+      const totalPages = numberValue("m1_total_pages");
+      const totalCost = numberValue("m1_total_cost");
+      const exampleOk = totalPages === 36 && closeTo(totalCost, 9);
+      if ((Number.isFinite(totalPages) || Number.isFinite(totalCost)) && !exampleOk) {
+        if (Number.isFinite(totalPages) && totalPages !== 36) setBranch("m1_example_branch", "Revise a quantidade produzida", "Cada uma das 3 cópias possui 12 páginas: 12 × 3 = 36.");
+        else setBranch("m1_example_branch", "Revise o valor", "36 páginas × R$ 0,25 = R$ 9,00.");
+      } else setBranch("m1_example_branch");
+
+      const complete = rolesOk && formulasOk && exampleOk;
+      if (!live && !complete) showFeedback(1, "Classifique os elementos, defina as duas regras e verifique o exemplo.");
+      return complete;
+    }
+
+    function validateMission2(live = false) {
+      const steps = [value("m2_step1"), value("m2_step2"), value("m2_step3"), value("m2_step4"), value("m2_step5")];
+      const expected = ["read_pages", "read_copies", "read_price", "calculate", "show"];
+      const sequenceFilled = steps.every(Boolean);
+      const sequenceOk = sequenceFilled && new Set(steps).size === 5 && steps.every((item, index) => item === expected[index]);
+      if (sequenceFilled && !sequenceOk) {
+        if (new Set(steps).size < 5) setBranch("m2_sequence_branch", "Há uma ação repetida", "Cada etapa deve aparecer uma única vez.");
+        else if (steps.indexOf("calculate") < 3) setBranch("m2_sequence_branch", "Cálculo antecipado", "Leia páginas, cópias e preço antes de calcular.");
+        else setBranch("m2_sequence_branch", "Revise a ordem", "Entradas → cálculos → apresentação.");
+      } else setBranch("m2_sequence_branch");
+
+      const compareOk = value("m2_textual") === "accessible" && value("m2_flowchart") === "visual" && value("m2_pseudocode") === "precise";
+      if (["m2_textual", "m2_flowchart", "m2_pseudocode"].some(id => value(id)) && !compareOk) {
+        if (value("m2_flowchart") && value("m2_flowchart") !== "visual") setBranch("m2_compare_branch", "Pense nas formas e setas", "O fluxograma torna a sequência e o percurso visualmente explícitos.");
+        else if (value("m2_pseudocode") && value("m2_pseudocode") !== "precise") setBranch("m2_compare_branch", "Pense na preparação para o código", "O pseudocódigo descreve ações de forma estruturada sem exigir a sintaxe de uma linguagem.");
+        else setBranch("m2_compare_branch", "Compare a finalidade", "Texto comunica de forma cotidiana; fluxograma mostra o fluxo; pseudocódigo estrutura a lógica.");
+      } else setBranch("m2_compare_branch");
+
+      const pseudo = selected("m2_pseudo");
+      if (pseudo && pseudo !== "correct") {
+        setBranch("m2_pseudo_branch", pseudo === "early" ? "Os dados ainda não existem" : "Uma entrada foi omitida", pseudo === "early" ? "Nenhum cálculo deve ocorrer antes das leituras." : "Sem o número de cópias, o total de páginas fica incorreto.");
+      } else setBranch("m2_pseudo_branch");
+
+      const complete = sequenceOk && compareOk && pseudo === "correct";
+      if (!live && !complete) showFeedback(2, "Organize a sequência, associe as representações e selecione o pseudocódigo coerente.");
+      return complete;
+    }
+
+    function validateMission3(live = false) {
+      const error = selected("m3_error");
+      if (error && error !== "correct") {
+        setBranch("m3_error_branch", error === "none" ? "A expressão mistura grandezas" : "O preço não precisa ser duplicado", error === "none" ? "Somar páginas ao produto cópias × preço não produz o número de páginas impressas." : "A falha está em não calcular páginas × cópias.");
+      } else setBranch("m3_error_branch");
+
+      const totalPages = numberValue("m3_total_pages");
+      const totalCost = numberValue("m3_total_cost");
+      const applyOk = totalPages === 72 && closeTo(totalCost, 21.6);
+      if ((Number.isFinite(totalPages) || Number.isFinite(totalCost)) && !applyOk) {
+        if (Number.isFinite(totalPages) && totalPages !== 72) setBranch("m3_apply_branch", "Primeira etapa incorreta", "18 × 4 = 72 páginas impressas.");
+        else setBranch("m3_apply_branch", "Revise o custo", "72 × R$ 0,30 = R$ 21,60.");
+      } else setBranch("m3_apply_branch");
+
+      const scenariosOk = value("m3_scenario1") === "flow" && value("m3_scenario2") === "pseudo" && value("m3_scenario3") === "text";
+      const why = selected("m3_why");
+      if (["m3_scenario1", "m3_scenario2", "m3_scenario3"].some(id => value(id)) && !scenariosOk) {
+        setBranch("m3_analysis_branch", "Relacione forma e finalidade", "Visão do percurso: fluxograma. Preparação estruturada para o código: pseudocódigo. Explicação informal: linguagem textual.");
+      } else if (why && why !== "correct") {
+        setBranch("m3_analysis_branch", "A escolha não é absoluta", why === "always" ? "O pseudocódigo é preciso, mas não substitui todas as necessidades de comunicação." : "A representação modifica o que fica mais fácil de compreender e verificar.");
+      } else setBranch("m3_analysis_branch");
+
+      const complete = error === "correct" && applyOk && scenariosOk && why === "correct";
+      if (!live && !complete) showFeedback(3, "Reconheça o erro, resolva o novo pedido e justifique as representações.");
+      return complete;
+    }
+
+    const validators = { 1: validateMission1, 2: validateMission2, 3: validateMission3 };
+
+    function unlockMission(number) {
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.remove("locked");
+      mission.classList.add("active");
+      const toggle = $(".mission-toggle", mission);
+      toggle.disabled = false;
+      $("[data-state]", mission).textContent = "Disponível";
+    }
+
+    function openMission(number, scroll = false) {
+      $$(".mission").forEach(mission => {
+        const current = Number(mission.dataset.mission);
+        const shouldOpen = current === number;
+        mission.classList.toggle("open", shouldOpen);
+        $(".mission-toggle", mission).setAttribute("aria-expanded", String(shouldOpen));
+      });
+      const mission = $(`.mission[data-mission="${number}"]`);
+      if (scroll) mission.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateMap(activeNumber) {
+      for (let i = 1; i <= 3; i++) {
+        const node = $(`[data-map="${i}"]`);
+        const small = $("small", node);
+        node.classList.remove("active", "locked", "done");
+        if (completed.has(i)) { node.classList.add("done"); small.textContent = "Concluída"; }
+        else if (i === activeNumber) { node.classList.add("active"); small.textContent = "Em andamento"; }
+        else { node.classList.add("locked"); small.textContent = "Bloqueada"; }
+        if (i < 3) $(`[data-connector="${i}"]`).classList.toggle("done", completed.has(i));
+      }
+      document.getElementById("progressText").textContent = activeNumber ? `Missão atual: ${activeNumber} de 3` : "3 de 3 missões concluídas";
+    }
+
+    function completeMission(number, button) {
+      if (completed.has(number)) return;
+      completed.add(number);
+      const mission = $(`.mission[data-mission="${number}"]`);
+      mission.classList.add("completed");
+      mission.classList.remove("active");
+      $("[data-state]", mission).textContent = "Concluída";
+      document.getElementById(`m${number}_result`).classList.add("show");
+      button.textContent = "Missão concluída";
+      button.disabled = true;
+      showFeedback(number, "Respostas verificadas. A próxima parte do percurso foi liberada.", "ok");
+
+      if (number < 3) {
+        unlockMission(number + 1);
+        updateMap(number + 1);
+        setTimeout(() => {
+          mission.classList.remove("open");
+          $(".mission-toggle", mission).setAttribute("aria-expanded", "false");
+          openMission(number + 1, true);
+        }, 650);
+      } else {
+        updateMap(null);
+        document.getElementById("finalCodeBlock").hidden = false;
+        document.getElementById("completionPanel").classList.add("show");
+        setTimeout(() => document.getElementById("finalCodeBlock").scrollIntoView({ behavior: "smooth", block: "start" }), 250);
+      }
+    }
+
+    $$('[data-check]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.check);
+      if (validators[number](false)) completeMission(number, button);
+    }));
+
+    $$('input, select').forEach(field => field.addEventListener('change', () => {
+      const mission = field.closest('.mission');
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+    $$('input[type="number"]').forEach(field => field.addEventListener('input', () => {
+      const mission = field.closest('.mission');
+      if (mission) validators[Number(mission.dataset.mission)](true);
+    }));
+
+    $$('.mission-toggle').forEach(toggle => toggle.addEventListener('click', () => {
+      const mission = toggle.closest('.mission');
+      if (mission.classList.contains('locked')) return;
+      const isOpen = mission.classList.contains('open');
+      $$('.mission').forEach(item => {
+        if (item !== mission) { item.classList.remove('open'); $('.mission-toggle', item).setAttribute('aria-expanded', 'false'); }
+      });
+      mission.classList.toggle('open', !isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    }));
+
+    $$('[data-hint]').forEach(button => button.addEventListener('click', () => {
+      const number = Number(button.dataset.hint);
+      const next = Math.min(hintState[number], hints[number].length - 1);
+      const [title, text] = hints[number][next];
+      hintState[number] = Math.min(hintState[number] + 1, hints[number].length);
+      const drawer = document.getElementById(`hintDrawer${number}`);
+      drawer.classList.add('show');
+      $('.hint-number', drawer).textContent = `${next + 1}/${hints[number].length}`;
+      document.getElementById(`hintTitle${number}`).textContent = title;
+      document.getElementById(`hintText${number}`).textContent = text;
+      button.textContent = next + 1 < hints[number].length ? 'Ver próxima pista' : 'Pistas exibidas';
+      if (next + 1 >= hints[number].length) button.disabled = true;
+    }));
+
+    document.getElementById('reviewButton').addEventListener('click', () => openMission(1, true));
+    document.getElementById('restartButton').addEventListener('click', () => location.reload());
+  </script>
+</body>
+</html>
